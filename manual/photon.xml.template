@@ -1,0 +1,64 @@
+    <ProductSection ovf:required="true">
+    <Info>Information about the installed software</Info>
+      <Product>vCenter Event Broker Appliance</Product>
+      <Vendor>VMware</Vendor>
+      <Version>{{VERSION}}</Version>
+      <ProductUrl>https://flings.vmware.com/vcenter-event-broker-appliance</ProductUrl>
+      <VendorUrl>https://www.vmware.com/</VendorUrl>
+      <Category>Networking</Category>
+        <Property ovf:key="guestinfo.hostname" ovf:type="string" ovf:userConfigurable="true">
+            <Label>Hostname</Label>
+            <Description>Hostname of system</Description>
+        </Property>
+        <Property ovf:key="guestinfo.ipaddress" ovf:type="string" ovf:userConfigurable="true">
+            <Label>IP Address</Label>
+            <Description>IP Address of the system</Description>
+        </Property>
+        <Property ovf:key="guestinfo.netmask" ovf:type="string" ovf:userConfigurable="true">
+            <Label>Netmask Prefix</Label>
+            <Description>CIDR notation (e.g. 24 for 255.255.255.0, 28 for 255.255.255.240)</Description>
+        </Property>
+        <Property ovf:key="guestinfo.gateway" ovf:type="string" ovf:userConfigurable="true">
+            <Label>Gateway</Label>
+            <Description>Gateway of the system</Description>
+        </Property>
+        <Property ovf:key="guestinfo.dns" ovf:type="string" ovf:userConfigurable="true">
+            <Label>DNS</Label>
+            <Description>DNS Server</Description>
+        </Property>
+        <Property ovf:key="guestinfo.domain" ovf:type="string" ovf:userConfigurable="true">
+            <Label>DNS Domain</Label>
+            <Description>DNS Domain</Description>
+        </Property>
+        <Category>Credentials</Category>
+        <Property ovf:key="guestinfo.root_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Root Password</Label>
+            <Description>Password to login in as root. Please use a secure password</Description>
+        </Property>
+        <Property ovf:key="guestinfo.openfaas_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>OpenFaaS Password</Label>
+            <Description>Password to login into OpenFaaS. Please use a secure password</Description>
+        </Property>
+        <Category>vSphere</Category>
+        <Property ovf:key="guestinfo.vcenter_server" ovf:type="string" ovf:userConfigurable="true">
+            <Label>vCenter Server</Label>
+            <Description>IP Address or Hostname of vCenter Server</Description>
+        </Property>
+        <Property ovf:key="guestinfo.vcenter_username" ovf:type="string" ovf:userConfigurable="true">
+            <Label>vCenter Username</Label>
+            <Description>Username to login to vCenter Server</Description>
+        </Property>
+        <Property ovf:key="guestinfo.vcenter_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true">
+            <Label>vCenter Password</Label>
+            <Description>Password to login to vCenter Server</Description>
+        </Property>
+        <Property ovf:key="guestinfo.vcenter_disable_tls_verification" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+            <Label>Disable vCenter Server TLS Verification</Label>
+            <Description>Disable TLS Verification for vCenter Server (required for self-sign certificate)</Description>
+        </Property>
+        <Category>zDebug</Category>
+        <Property ovf:key="guestinfo.debug" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+            <Label>Debugging</Label>
+            <Description>Enable Debugging</Description>
+        </Property>
+    </ProductSection>

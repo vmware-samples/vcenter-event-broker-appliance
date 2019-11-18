@@ -1,0 +1,9 @@
+#!/bin/bash
+# Copyright 2019 VMware, Inc. All rights reserved.
+# SPDX-License-Identifier: BSD-2
+
+if [ -e /root/ran_customization ]; then
+    exit
+else
+    /root/setup.sh &> /var/log/bootstrap.log
+fi

@@ -1,0 +1,16 @@
+provider:
+  name: faas
+  gateway: https://veba.primp-industries.com
+functions:
+  powercli-tag:
+    lang: powercli
+    handler: ./handler
+    image: lamw/powercli-tag:latest
+    environment:
+      write_debug: true
+      read_debug: true
+      function_debug: false
+    secrets:
+      - vcconfig
+    annotations:
+      topic: drs.vm.powered.on

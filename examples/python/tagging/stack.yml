@@ -1,0 +1,15 @@
+provider:
+  name: faas
+  gateway: http://127.0.0.1:8080
+functions:
+  pytag-fn:
+    lang: python3
+    handler: ./handler
+    image: embano1/pytag-fn:0.2
+    environment:
+      write_debug: true
+      read_debuge: true
+    secrets:
+      - vcconfig
+    annotations:
+      topic: vm.powered.on
