@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: tinywww
+  name: tinywww
+  namespace: openfaas
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tinywww
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: tinywww
+    spec:
+      containers:
+      - image: embano1/tinywww:latest
+        imagePullPolicy: Always
+        name: tinywww
+        ports:
+          - containerPort: 8100
+        resources:
+          limits:
+            memory: "56Mi"
+            cpu: "100m"
+        volumeMounts:
+        - mountPath: /etc/issue
+          name: issue
+          readOnly: true
+        - mountPath: /var/log/bootstrap.log
+          name: bootstrap
+          readOnly: true
+        - name: auth
+          readOnly: true
+          mountPath: "/var/secrets"
+      volumes:
+      - name: issue
+        hostPath:
+          # location on host
+          path: /etc/issue
+      - name: bootstrap
+        hostPath:
+          # location on host
+          path: /var/log/bootstrap-debug.log
+      - name: auth
+        secret:
+          secretName: basic-auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: tinywww
+  name: tinywww
+  namespace: openfaas
+spec:
+  ports:
+  - port: 8100
+    protocol: TCP
+    targetPort: 8100
+  selector:
+    app: tinywww
+  sessionAffinity: None

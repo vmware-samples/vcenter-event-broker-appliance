@@ -1,0 +1,6 @@
+{
+    "VC" : "vcenter-hostname",
+    "VC_USERNAME" : "tagadmin@vsphere.local",
+    "VC_PASSWORD" : "FillMeIn",
+    "TAG_NAME" : "VMworld 2019"
+}

@@ -1,0 +1,3 @@
+| Use Cases       | Python                                                                                                       | PowerCLI                                                                                                       |
+|-----------------|--------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| vSphere Tagging | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/python/tagging) | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/powercli/tagging) |

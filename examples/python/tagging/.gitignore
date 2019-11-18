@@ -1,0 +1,10 @@
+template
+build
+.vscode
+lib
+bin
+include
+src
+__pycache__
+pyvenv.cfg
+dive.log
