@@ -2,7 +2,7 @@
 
 The vCenter Event Broker Appliance team welcomes contributions from the community.
 
-If you wish to contribute code and you have not signed our Contributor License Agreement (CLA), our CLA-bot will take you through the process and update the issue when you open a [Pull Request](https://help.github.com/articles/creating-a-pull-request). If you have questions about the CLA process, see our CLA [FAQ](https://cla.vmware.com/faq) or contact us through the GitHub issue tracker.
+Before you start working with the vCenter Event Broker Appliance, please read our [Developer Certificate of Origin](https://cla.vmware.com/dco). All contributions to this repository must be signed as described on that page. Your signature certifies that you wrote the patch or have the right to pass it on as an open-source patch.
 
 This page presents guidelines for contributing to vCenter Event Broker Appliance. The Following the guidelines helps to make the contribution process easy, collaborative, and productive.
 
