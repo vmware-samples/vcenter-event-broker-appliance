@@ -101,12 +101,12 @@ __CUSTOMIZE_PHOTON__
     # Setup k8s
     echo -e "\e[92mSetting up k8s ..." > /dev/console
     HOME=/root
-    kubeadm init --ignore-preflight-errors SystemVerification
+    kubeadm init --ignore-preflight-errors SystemVerification --skip-token-print --config /root/kubeconfig.yml
     mkdir -p $HOME/.kube
     cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
     chown $(id -u):$(id -g) $HOME/.kube/config
     echo -e "\e[92mDeloying kubeadm ..." > /dev/console
-    kubectl --kubeconfig /root/.kube/config apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl --kubeconfig /root/.kube/config version | base64 | tr -d '\n')"
+    kubectl --kubeconfig /root/.kube/config apply -f /root/weave.yaml
     kubectl --kubeconfig /root/.kube/config taint nodes --all node-role.kubernetes.io/master-
     echo -e "\e[92mStarting k8s ..." > /dev/console
     systemctl enable kubelet.service

@@ -7,7 +7,6 @@
 * 2 vCPU and 8GB of memory for VEBA
 * vCenter Server 6.x or greater
 * Account to login to vCenter Server (readOnly is sufficient)
-* Internet connectivity required for VEBA for setup
 
 **Step 1** - Download the VEBA Virtual Appliance (OVA) from the [VMware Fling site](https://flings.vmware.com/vcenter-event-broker-appliance).
 
@@ -15,7 +14,7 @@
 
 *Networking*
 
-  * Hostname - The FQDN of the VEBA Appliance. If you do not have DNS in your enviornment, make sure the hsotname provide is resolvable from your desktop which may require you to manually add a hosts entry. Proper DNS resolution is recommended
+  * Hostname - The FQDN of the VEBA Appliance. If you do not have DNS in your environment, make sure the hostname provide is resolvable from your desktop which may require you to manually add a hosts entry. Proper DNS resolution is recommended
   * IP Address - The IP Address of the VEBA Appliance
   * Netmask Prefix - CIDR Notation (e.g. 24 = 255.255.255.0)
   * Gateway - The Network Gateway address
@@ -30,7 +29,7 @@
 *vSphere*
 
   * vCenter Server - This FQDN or IP Address of your vCenter Server that you wish to associate this VEBA Appliance to for Event subscription
-  * vCenter Username - The username to login to vCenter Server, as mentioned earlier, readOnly account is sufficent
+  * vCenter Username - The username to login to vCenter Server, as mentioned earlier, readOnly account is sufficient
   * vCenter Password - The password to the vCenter Username
   * Disable vCenter Server TLS Verification - If you have a self-signed SSL Certificate, you will need to check this box
 
@@ -50,7 +49,7 @@ OpenFaaS UI: https://[IP]
 
 **Step 4** - You can verify that everything was deployed correctly by opening a web browser to the OpenFaaS UI and logging in with the Admin credentials (user:admin) you had specified as part of the OVA deployment.
 
-At this point, you have successfully deployed the VEBA Appliance and you are ready to start deploying your functions! 
+At this point, you have successfully deployed the VEBA Appliance and you are ready to start deploying your functions!
 
 
 ## Function Deployment
@@ -97,7 +96,7 @@ Take a note of the `urn:...` for `demotag1` as we will need it for the next step
 
 ### Get the example function
 
-Clone this repository which contains the example functions. 
+Clone this repository which contains the example functions.
 
 ```bash
 git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
@@ -184,7 +183,7 @@ If your VM did not get the tag attached, verify:
 - Check the logs (`kubectl` is installed and configured locally on the appliance)):
 
 ```bash
-faas-cli logs pytag-fn --follow --tls-no-verify 
+faas-cli logs pytag-fn --follow --tls-no-verify
 
 # Successful log message in the OpenFaaS tagging function
 2019/01/25 23:48:55 Forking fprocess.

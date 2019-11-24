@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - image: embano1/tinywww:latest
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: tinywww
         ports:
           - containerPort: 8100
