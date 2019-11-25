@@ -23,10 +23,13 @@ Set-PowerCLIConfiguration -InvalidCertificateAction Ignore  -DisplayDeprecationW
 Write-Host "Connecting to vCenter Server ..."
 Connect-VIServer -Server $($VC_CONFIG.VC) -User $($VC_CONFIG.VC_USERNAME) -Password $($VC_CONFIG.VC_PASSWORD)
 
+# Retrieve VM changes
 $Message = (Get-VM $eventObjectName | Get-ViEvent -MaxSamples 1).FullFormattedMessage
+
+# Bold format for titles
 [string]$Message = $Message -replace "Modified","*Modified*" -replace "Added","*Added*" -replace "Deleted","*Deleted*"
 
-# Retrieve VM and apply vSphere Tag
+# Send VM changes
 Write-Host "Detected change to $eventObjectName ..."
 
 New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
