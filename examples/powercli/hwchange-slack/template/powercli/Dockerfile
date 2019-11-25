@@ -7,8 +7,8 @@ RUN echo "Pulling watchdog binary from Github." \
     && chmod +x /usr/bin/fwatchdog \
     && cp /usr/bin/fwatchdog /root
 
+# Add PSSlack https://github.com/RamblingCookieMonster/PSSlack
 RUN pwsh -c "\$ProgressPreference = \"SilentlyContinue\"; Install-Module PSSlack"
-#ADD PSSlack /usr/lib/powershell/Modules/PSSlack
 
 WORKDIR /root
 
