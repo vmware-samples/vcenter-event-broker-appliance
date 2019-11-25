@@ -1,0 +1,7 @@
+{
+    "VC" : "my-vCenter",
+    "VC_USERNAME" : "user@vsphere.local",
+    "VC_PASSWORD" : "userpassword",
+    "SLACK_URL"   : "https://my.slack.com/services/new/incoming-webhook/",
+    "SLACK_CHANNEL" : "vcevent"
+}

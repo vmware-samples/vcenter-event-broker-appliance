@@ -1,0 +1,16 @@
+provider:
+  name: faas
+  gateway: https://veba.dzlabs.local
+functions:
+  powercli-reconfigure:
+    lang: powercli
+    handler: ./handler
+    image: opvizorpa/powercli-slack:latest
+    environment:
+      write_debug: true
+      read_debug: true
+      function_debug: false
+    secrets:
+      - vcconfig
+    annotations:
+      topic: vm.reconfigured
