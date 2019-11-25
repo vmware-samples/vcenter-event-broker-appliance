@@ -2,13 +2,15 @@
 
 ## Table of Contents
 
-* [Description](#description)
-* [Users and Use Cases](#users-and-use-cases)
-* [Getting Stated](#getting-started)
-* [Architecture](#architecture)
-* [Join Conversation](#join-conversation)
-* [Contributing](#contributing)
-* [License](#license)
+- [vCenter Event Broker Appliance](#vcenter-event-broker-appliance)
+  - [Table of Contents](#table-of-contents)
+  - [Description](#description)
+  - [Users and Use Cases](#users-and-use-cases)
+  - [Getting Started](#getting-started)
+  - [Architecture](#architecture)
+  - [Join Conversation](#join-conversation)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 
 ## Description
@@ -45,7 +47,7 @@ For more details about the individual components and how they are used in the vC
 
 ## Join Conversation
 
-We are also on Slack if you would to engage with us and the community. You can find us on[#vcenter-event-broker-appliance](https://vmwarecode.slack.com/archives/CQLT9B5AA) which is part of the [VMware {Code}](https://code.vmware.com/web/code/join) Slack instance.
+We are also on Slack if you would to engage with us and the community. You can find us on [#vcenter-event-broker-appliance](https://vmwarecode.slack.com/archives/CQLT9B5AA) which is part of the [VMware {Code}](https://code.vmware.com/web/code/join) Slack instance.
 
 ## Contributing
 
@@ -53,7 +55,7 @@ The vCenter Event Broker Appliance team welcomes contributions from the communit
 
 Before you start working with the vCenter Event Broker Appliance, please read our [Developer Certificate of Origin](https://cla.vmware.com/dco). All contributions to this repository must be signed as described on that page. Your signature certifies that you wrote the patch or have the right to pass it on as an open-source patch.
 
-To help you get started making contributions to vCenter Event Broker Appliance, we have collected some helpful best practices in the [Contributing guidelines](contributing.md).
+To help you get started making contributions to vCenter Event Broker Appliance, we have collected some helpful best practices in the [Contributing guidelines](CONTRIBUTING.md).
 
 For folks interested in contributing or enhancing VEBA, you can build the VEBA appliance from source. Please refer to the getting started build guide [here](getting-started-build.md).
 
