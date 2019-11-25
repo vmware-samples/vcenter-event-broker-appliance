@@ -1,6 +1,6 @@
 provider:
   name: faas
-  gateway: https://veba.dzlabs.local
+  gateway: https://veba.mynetwork.local
 functions:
   powercli-reconfigure:
     lang: powercli
