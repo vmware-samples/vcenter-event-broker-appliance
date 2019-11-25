@@ -12,7 +12,7 @@ Step 1 - Initialize function, only required during the first deployment
 faas-cli template pull
 ```
 
-Step 2 - Update `stack.yml` and `vcconfig.json` with your enviornment information
+Step 2 - Update `stack.yml` and `vcconfig.json` with your environment information
 
 Step 3 - Build the function container
 
