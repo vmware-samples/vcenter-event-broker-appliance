@@ -1,0 +1,29 @@
+version: 1.0
+provider:
+  name: faas
+  gateway: https://veba.yourdomain.com
+functions:
+  powercli-entermaint:
+    lang: powercli
+    handler: ./handler
+    image: doogleit/powercli-hostmaint:latest
+    environment:
+      write_debug: true
+      read_debug: true
+      function_debug: false
+    secrets:
+      - vcconfig
+    annotations:
+      topic: entered.maintenance.mode
+  powercli-exitmaint:
+    lang: powercli
+    handler: ./handler
+    image: doogleit/powercli-hostmaint:latest
+    environment:
+      write_debug: true
+      read_debug: true
+      function_debug: false
+    secrets:
+      - vcconfig
+    annotations:
+      topic: exit.maintenance.mode
