@@ -39,7 +39,6 @@
       "vmx_data": {
         "numvcpus": "{{ user `numvcpus` }}",
         "memsize": "{{ user `ramsize` }}",
-
         "ethernet0.networkName": "{{ user `builder_host_portgroup` }}",
         "ethernet0.present": "TRUE",
         "ethernet0.startConnected": "TRUE",
@@ -53,9 +52,22 @@
   "provisioners": [
     {
       "type": "shell",
+      "expect_disconnect" : true,
       "scripts": [
         "scripts/photon-settings.sh",
-        "scripts/photon-docker.sh",
+        "scripts/photon-docker.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "pause_before": "20s",
+      "scripts": [
+        "scripts/photon-containers.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "scripts": [
         "scripts/photon-openfaas.sh",
         "scripts/photon-cleanup.sh"
       ]
@@ -84,6 +96,11 @@
       "type": "file",
       "source": "files/tinywww-debug.yml",
       "destination": "/root/tinywww-debug.yml"
+    },
+    {
+      "type": "file",
+      "source": "files/kubeconfig.yml",
+      "destination": "/root/kubeconfig.yml"
     }
   ],
   "post-processors": [

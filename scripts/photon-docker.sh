@@ -9,6 +9,7 @@
 echo '> Enabling Docker...'
 
 systemctl enable docker
+reboot
 
 echo '> Done'
 
