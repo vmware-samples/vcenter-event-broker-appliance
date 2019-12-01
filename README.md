@@ -39,7 +39,7 @@ The vCenter Event Broker Appliance follows a highly modular approach, using Kube
 - Kubernetes ([Github](https://github.com/kubernetes/kubernetes))
 - Contour ([Github](https://github.com/projectcontour/contour))
 - OpenFaaS ([Website](https://www.openfaas.com/))
-- vCenter Connector ([Github](https://github.com/openfaas-incubator/vcenter-connector/))
+- OpenFaaS vcenter-connector ([Github](https://github.com/openfaas-incubator/vcenter-connector/))
 
 <center><div style="height:250px;width:250px"><img src="veba-appliance-diagram.png" /></div></center>
 

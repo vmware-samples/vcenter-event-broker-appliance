@@ -22,7 +22,7 @@ Step 2 - Update `stack.yml` and `vcconfig.json` with your enviornment informatio
 
 ```
 provider:
-  name: faas
+  name: openfaas
   gateway: https://veba.mynetwork.local
 functions:
   powercli-reconfigure:

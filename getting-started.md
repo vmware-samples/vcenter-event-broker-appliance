@@ -139,7 +139,7 @@ Lastly, define the vCenter event which will trigger this function. Such function
 
 ```yaml
 provider:
-  name: faas
+  name: openfaas
   gateway: https://VEBA_FQDN_OR_IP # replace with your VEBA environment
 functions:
   pytag-fn:
