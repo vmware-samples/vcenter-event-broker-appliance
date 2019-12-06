@@ -2,7 +2,7 @@
 
 ## Requirements
 
-* 2 vCPU and 8GB of memory for VEBA
+* 2 vCPU and 8GB of memory for vCenter Event Broker Appliance
 * vCenter Server or Standalone ESXi host 6.x or greater
 * [VMware OVFTool](https://www.vmware.com/support/developer/ovf/)
 * [Docker Client](https://docs.docker.com/v17.09/engine/installation/)
@@ -10,13 +10,13 @@
 * [Packer](https://www.packer.io/intro/getting-started/install.html)
 
 
-Step 1 - Clone the VEBA Git repository
+Step 1 - Clone the vCenter Event Broker Appliance Git repository
 
 ```
 git clone https://github.com/lamw/vcenter-event-broker-appliance.git
 ```
 
-Step 2 - Edit the `photon-builder.json` file to configure the vSphere endpoint for building the VEBA appliance
+Step 2 - Edit the `photon-builder.json` file to configure the vSphere endpoint for building the vCenter Event Broker Appliance
 
 ```
 {
@@ -28,7 +28,7 @@ Step 2 - Edit the `photon-builder.json` file to configure the vSphere endpoint f
 }
 ```
 
-**Note:** If you need to change the default root password on the VEBA appliance, take a look at `photon-version.json`
+**Note:** If you need to change the default root password on the vCenter Event Broker Appliance, take a look at `photon-version.json`
 
 Step 3 - Start the build by running the build script
 
@@ -36,4 +36,4 @@ Step 3 - Start the build by running the build script
 ./build.sh
 ````
 
-If you wish to automatically deploy the VEBA appliance after successfully building the OVA. You can edit the `photon-dev.xml.template` file and change the `ovftool_deploy_*` variables and run `./build.sh dev` instead.
+If you wish to automatically deploy the vCenter Event Broker Appliance after successfully building the OVA. You can edit the `photon-dev.xml.template` file and change the `ovftool_deploy_*` variables and run `./build.sh dev` instead.

@@ -1,4 +1,4 @@
-# PowerCLI Function Example
+# Send VM Configuration Changes to Slack
 
 ## Description
 
@@ -63,7 +63,7 @@ Step 4 - Push the function container to Docker Registry (default but can be chan
 faas-cli push -f stack.yml
 ```
 
-Step 5 - Deploy function to VEBA
+Step 5 - Deploy function to vCenter Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com

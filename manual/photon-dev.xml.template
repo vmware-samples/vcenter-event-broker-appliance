@@ -3,7 +3,7 @@
       <Product>vCenter Event Broker Appliance</Product>
       <Vendor>VMware</Vendor>
       <Version>{{VERSION}}</Version>
-      <ProductUrl>https://flings.vmware.com/vcenter-event-broker-appliance</ProductUrl>
+      <ProductUrl>https://github.com/vmware-samples/vcenter-event-broker-appliance</ProductUrl>
       <VendorUrl>https://www.vmware.com/</VendorUrl>
       <Category>Networking</Category>
         <Property ovf:key="guestinfo.hostname" ovf:type="string" ovf:userConfigurable="true" ovf:value="veba.primp-industries.com">

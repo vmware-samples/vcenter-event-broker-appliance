@@ -52,7 +52,7 @@ Now go ahead and store this configuration file as secret in the appliance.
 ```bash
 # set up faas-cli for first use
 export OPENFAAS_URL=https://VEBA_FQDN_OR_IP
-faas-cli login -p VEBA_OPENFAAS_PASSWORD --tls-no-verify # VEBA is configured with authentication, pass in the password used during the VEBA deployment process
+faas-cli login -p VEBA_OPENFAAS_PASSWORD --tls-no-verify # vCenter Event Broker Appliance is configured with authentication, pass in the password used during the vCenter Event Broker Appliance deployment process
 
 # now create the secret
 faas-cli secret create vcconfig --from-file=vcconfig.toml --tls-no-verify
@@ -65,7 +65,7 @@ Lastly, define the vCenter event which will trigger this function. Such function
 ```yaml
 provider:
   name: faas
-  gateway: https://VEBA_FQDN_OR_IP # replace with your VEBA environment
+  gateway: https://VEBA_FQDN_OR_IP # replace with your vCenter Event Broker Appliance environment
 functions:
   pytag-fn:
     lang: python3

@@ -1,4 +1,5 @@
 | Use Cases       | Python                                                                                                       | PowerCLI                                                                                                       |
 |-----------------|--------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
 | vSphere Tagging | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/python/tagging) | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/powercli/tagging) |
-| Disable Alarms for Host Maintenance | | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/powercli/hostmaint-alarms)
+| Send VM Configuration Changes to Slack | | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/powercli/hwchange-slack) |
+| Disable Alarms for Host Maintenance | | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/powercli/hostmaint-alarms) |
