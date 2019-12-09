@@ -12,6 +12,8 @@ In the following sections we describe the individual components.
 
 <center><div style="height:250px;width:250px"><img src="veba-appliance-diagram.png" /></div></center>
 
+> **Note:** Encompassing details are also provided in the [FAQ](FAQ.md).
+
 ### Photon OS
 
 Photon OS&trade; is an open source Linux container host optimized for cloud-native applications, cloud platforms, and VMware infrastructure. Photon OS provides a **secure run-time environment for efficiently running containers** and out of the box support for Kubernetes.
