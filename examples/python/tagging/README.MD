@@ -73,7 +73,7 @@ functions:
     image: embano1/pytag-fn:0.2
     environment:
       write_debug: true
-      read_debuge: true
+      read_debug: true
     secrets:
       - vcconfig # leave as is unless you changed the name during the creation of the vCenter credentials secrets above
     annotations:
