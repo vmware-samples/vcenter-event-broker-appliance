@@ -6,7 +6,7 @@
 ## Misc configuration
 ##
 
-echo '> VEBA Settings...'
+echo '> vCenter Event Broker Appliance Settings...'
 
 echo '> Disable IPv6'
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
