@@ -16,4 +16,8 @@ Feature requests should fall within the scope of the project.
 
 ## Pull Requests
 
-Before submitting a pull request, please make sure that you can build vCenter Event Broker Appliance. See the getting started build guide [here](getting-started-build.md).
+Before submitting a pull request, please make sure that your change satisfies the following requirements:
+- vCenter Event Broker Appliance can be built and deployed. See the getting started build guide [here](getting-started-build.md).
+- The change is signed as described by the [Developer Certificate of Origin](https://cla.vmware.com/dco) doc.
+- The change is clearly documented
+- Contributions to the [examples](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples) contains a titled readme and the title is listed in the [use cases table](https://github.com/vmware-samples/vcenter-event-broker-appliance/blob/master/examples/README.md).
