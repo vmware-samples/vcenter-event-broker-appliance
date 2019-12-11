@@ -1,6 +1,6 @@
 version: 1.0
 provider:
-  name: faas
+  name: openfaas
   gateway: https://veba.yourdomain.com
 functions:
   powercli-entermaint:

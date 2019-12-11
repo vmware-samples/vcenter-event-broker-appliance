@@ -23,7 +23,7 @@ faas-cli secret create vcconfig --from-file=vcconfig.json --tls-no-verify
 2. Update the gateway in the stack.yml file with your vCenter Event Broker Appliance address and deploy the functions.
 ```yaml
 provider:
-  name: faas
+  name: openfaas
   gateway: https://veba.yourdomain.com
 ...
 ```
