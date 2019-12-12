@@ -1,0 +1,15 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+functions:
+  esx-mtu-fixer:
+    lang: python
+    handler: ./esx-mtu-fixer
+    image: martindekov/esx-mtu-fixer:0.0.1
+    annotations:
+      topic: vm.powered.on
+    environment:
+      write_debug: true
+    secrets:
+      - vc-credentials
