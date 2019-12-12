@@ -21,9 +21,7 @@ Feel free to raise issues/file pull requests to this Github repository to help u
 
 Even though the vCenter Event Broker Appliance is instantiated as a single running virtual machine, internally it's components follow a [microservices architecture](architecture.md) running on Kubernetes. The individual services communicate via TCP/IP network sockets. Most of the communication is performed internally in the appliance so the chance of losing network packets is reduced. 
 
-However, in case of a component being unavailable (crash-loop, overloaded and slow to respond) communication might be impacted and so it's important to understand the communication flow as depicted further below. To avoid the risk of blocking remote calls, which could render the whole system unusable, sensible default timeouts are applied which can be fine-tuned if needed.
-
-<!-- TODO: insert image and show timeouts -->
+However, in case of a component being unavailable (crash-loop, overloaded and slow to respond) communication might be impacted and so it's important to understand the communication flow as depicted further below (TODO). To avoid the risk of blocking remote calls, which could render the whole system unusable, sensible default timeouts are applied which can be fine-tuned if needed.
 
 Kubernetes is a great platform and foundation for building highly available distributed systems. Even though we currently don't make use of its multi-node clustering capabilities (i.e. scale out), Kubernetes provides a lot of benefits to developers and users. Its self-healing capabilities continuously watch the critical vCenter Event Broker Appliance components and user-deployed functions and trigger restarts when necessary.
 
@@ -84,6 +82,8 @@ We are currently investigating options to support at least once delivery semanti
 - Describe mitigation strategies for data loss in the appliance (snapshots, backups)
 
 ## The Event Specification
+
+> **Note:** WIP, this new event spec will be a feature in an upcoming release of the appliance
 
 The event payload structure used by the vCenter Event Broker Appliance has been significantly enriched since the beginning. It mostly follows the [CloudEvents](https://github.com/cloudevents/sdk-go/blob/master/pkg/cloudevents/eventcontext_v1.go) specification (v1), deviating only in some small cases (type definitions). The current data content type which is sent as payload when invoking a function is JSON.
 
@@ -191,7 +191,7 @@ Functions in OpenFaaS can be invoked synchronously or asynchronously:
 
 If you directly invoke your functions deployed in the appliance you can decide which invocation mode is used (per function). More details can be found [here](https://github.com/openfaas/workshop/blob/master/lab7.md).
 
-> **Note:** The vCenter Event Broker appliance by default uses synchronous invocation mode. If you experience performance issues due to long-running/slow/blocking functions, consider running the OpenFaaS vcenter-connector in asynchronous mode (`-async` flag in the Kubernetes deployment manifest).
+> **Note:** The vCenter Event Broker appliance by default uses synchronous invocation mode. If you experience performance issues due to long-running/slow/blocking functions, consider running the OpenFaaS vcenter-connector in asynchronous mode (`-async` flag in the Kubernetes deployment manifest, TODO).
 
 ## Code Best Practices
 
