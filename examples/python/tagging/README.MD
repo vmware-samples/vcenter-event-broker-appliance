@@ -64,7 +64,7 @@ Lastly, define the vCenter event which will trigger this function. Such function
 
 ```yaml
 provider:
-  name: faas
+  name: openfaas
   gateway: https://VEBA_FQDN_OR_IP # replace with your vCenter Event Broker Appliance environment
 functions:
   pytag-fn:
@@ -88,7 +88,7 @@ After you've performed the steps and modifications above, you can go ahead and d
 
 ```bash
 faas-cli template pull # only required during the first deployment
-faas deploy -f stack.yml --tls-no-verify
+faas-cli deploy -f stack.yml --tls-no-verify
 Deployed. 202 Accepted.
 ```
 
