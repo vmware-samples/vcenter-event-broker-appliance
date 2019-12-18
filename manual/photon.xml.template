@@ -24,7 +24,7 @@
         </Property>
         <Property ovf:key="guestinfo.dns" ovf:type="string" ovf:userConfigurable="true">
             <Label>DNS</Label>
-            <Description>DNS Server</Description>
+            <Description>DNS Servers (space separated)</Description>
         </Property>
         <Property ovf:key="guestinfo.domain" ovf:type="string" ovf:userConfigurable="true">
             <Label>DNS Domain</Label>

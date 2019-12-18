@@ -18,7 +18,7 @@
   * IP Address - The IP Address of the vCenter Event Broker Appliance
   * Netmask Prefix - CIDR Notation (e.g. 24 = 255.255.255.0)
   * Gateway - The Network Gateway address
-  * DNS - A DNS Server that will be able to resolve to external sites such as Github for initial configuration
+  * DNS - DNS Server(s) that will be able to resolve to external sites such as Github for initial configuration. If you have multiple DNS Servers, input needs to be space separated.
   * DNS Domain - The DNS domain of your network
 
 *Credentials*
@@ -91,6 +91,8 @@ urn:... # we don't need the category URN for this example
 ./govc tags.create -c democat1 demotag1
 urn:vmomi:InventoryServiceTag:019c0a9e-0672-48f5-ac2a-e394669e2916:GLOBAL
 ```
+
+**Note:** You can also create the demo vSphere Category/Tag by using the vSphere UI. Once you have created the vSphere Tag, you can browse to the Tag inventory object and in the browser, you can copy the URN which will be in the format `urn:vmomi:InventoryServiceTag:<UUID>:GLOBAL`
 
 Take a note of the `urn:...` for `demotag1` as we will need it for the next steps.
 
@@ -172,6 +174,12 @@ Deployed. 202 Accepted.
 Turn on a virtual machine, e.g. in vCenter or via `govc` CLI, to trigger the function via a `(DRS)VmPoweredOnEvent`. Verify the virtual machine was correctly tagged.
 
 **Note:** If you don't see a tag being assigned verify that you correctly followed each step above, IPs/FQDNs and credentials are correct and see the [troubleshooting](#troubleshooting) section below.
+
+## Mapping vCenter Events
+
+A vCenter Server instance ships with a number of "default" Events but it can also include custom and extended events which maybe published by both 2nd and 3rd party solutions. In addition, with each version of vSphere, additional Events may also be included. For these reasons, it is very difficult to publish a single list containing all possible configurations.
+
+To help, you can refer to this blog post [here](https://www.virtuallyghetto.com/2019/12/listing-all-events-for-vcenter-server.html) which includes a script to help extract all Events for a specific vCenter Server deployment including the vCenter Event ID, Type and Description.
 
 ## Troubleshooting
 
