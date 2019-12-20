@@ -6,27 +6,35 @@ This function demonstrates using PowerCLI to apply vSphere Tag to Virtual Machin
 
 ## Instruction
 
-Step 1 - Initialize function, only required during the first deployment
+Step 1 -  Clone this repository which contains the example functions.
+
+```bash
+git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
+git checkout development
+cd vcenter-event-broker-appliance/examples/examples/powercli/tagging
+```
+
+Step 2 - Initialize function, only required during the first deployment
 
 ```
 faas-cli template pull
 ```
 
-Step 2 - Update `stack.yml` and `vcconfig.json` with your environment information
+Step 3 - Update `stack.yml` and `vcconfig.json` with your environment information
 
-Step 3 - Build the function container
+Step 4 - Build the function container
 
 ```
 faas-cli build -f stack.yml
 ```
 
-Step 4 - Push the function container to Docker Registry (default but can be changed to internal registry)
+Step 5 - Push the function container to Docker Registry (default but can be changed to internal registry)
 
 ```
 faas-cli push -f stack.yml
 ```
 
-Step 5 - Deploy function to vCenter Event Broker Appliance
+Step 6 - Deploy function to vCenter Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com

@@ -1,9 +1,10 @@
 ### Get the example function
 
-Clone this repository which contains the example functions. 
+Clone this repository which contains the example functions.
 
 ```bash
 git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
+git checkout development
 cd vcenter-event-broker-appliance/examples/python/tagging
 ```
 

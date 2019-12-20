@@ -11,6 +11,16 @@ Prerequisites are :
 
 The function needs credentials and endpoint of the vCenter with which the function will interact. You can see how to create a secret containing those credentials in your kubernetes cluster in the [create_secret](./create_secret.sh) script. Your `kubectl` must be configured to communicate with your remote cluster first.
 
+## Clone Repo
+
+Clone this repository which contains the example functions.
+
+```bash
+git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
+git checkout development
+cd vcenter-event-broker-appliance/examples/python/esx-mtu-fixer
+```
+
 ## Deploy the function
 
 Login to the gateway:

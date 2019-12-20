@@ -11,12 +11,20 @@ The custom PowerShell template for OpenFaaS is using [PSSlack](https://github.co
 
 ## Instruction
 
-Step 1 - Setup Slack
+Step 1 -  Clone this repository which contains the example functions.
+
+```bash
+git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
+git checkout development
+cd vcenter-event-broker-appliance/examples/powercli/hwchange-slack
+```
+
+Step 2 - Setup Slack
 
 Make sure to create a channel for the notifications and a [Slack webhook](https://my.slack.com/services/new/incoming-webhook/).
 
 
-Step 2 - Update `stack.yml` and `vcconfig.json` with your enviornment information
+Step 3 - Update `stack.yml` and `vcconfig.json` with your enviornment information
 
 `stack.yml` **lines: gateway, image**
 
@@ -51,19 +59,19 @@ functions:
 }
 ```
 
-Step 3 - Build the function container
+Step 4 - Build the function container
 
 ```
 faas-cli build -f stack.yml
 ```
 
-Step 4 - Push the function container to Docker Registry (default but can be changed to internal registry)
+Step 5 - Push the function container to Docker Registry (default but can be changed to internal registry)
 
 ```
 faas-cli push -f stack.yml
 ```
 
-Step 5 - Deploy function to vCenter Event Broker Appliance
+Step 6 - Deploy function to vCenter Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com
