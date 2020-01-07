@@ -30,6 +30,7 @@ else
     GATEWAY_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.gateway")
     DNS_SERVER_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.dns")
     DNS_DOMAIN_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.domain")
+    NTP_SERVER_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.ntp")
     ROOT_PASSWORD_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.root_password")
     OPENFAAS_PASSWORD_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.openfaas_password")
     VCENTER_SERVER_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.vcenter_server")
@@ -71,12 +72,28 @@ Gateway=${GATEWAY}
 DNS=${DNS_SERVER}
 Domain=${DNS_DOMAIN}
 __CUSTOMIZE_PHOTON__
+    #########################
+    ### NTP Settings      ###
+    #########################
+    NTP_SERVER=$(echo "${NTP_SERVER_PROPERTY}" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
+
+    echo -e "\e[92mConfiguring NTP ..." > /dev/console
+    cat > /etc/systemd/timesyncd.conf << __CUSTOMIZE_PHOTON__
+
+[Match]
+Name=e*
+
+[Time]
+NTP=${NTP_SERVER}
+__CUSTOMIZE_PHOTON__
 
     echo -e "\e[92mConfiguring hostname ..." > /dev/console
     hostnamectl set-hostname ${HOSTNAME}
     echo "${IP_ADDRESS} ${HOSTNAME}" >> /etc/hosts
     echo -e "\e[92mRestarting Network ..." > /dev/console
     systemctl restart systemd-networkd
+    echo -e "\e[92mRestarting Timesync ..." > /dev/console
+    systemctl restart systemd-timesyncd
     fi
 
     echo -e "\e[92mConfiguring root password ..." > /dev/console
