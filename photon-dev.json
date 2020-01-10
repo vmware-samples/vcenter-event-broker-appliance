@@ -12,6 +12,7 @@
     "ovftool_deploy_vm_prefix": "24",
     "ovftool_deploy_vm_gateway": "192.168.30.1",
     "ovftool_deploy_vm_dns": "192.168.30.1",
+    "ovftool_deploy_vm_ntp": "pool.ntp.org",
     "ovftool_deploy_vm_dns_domain": "primp-industries.com",
     "ovftool_deploy_vm_root_password": "VMware1!",
     "ovftool_deploy_vm_openfaas_password": "VMware1!",
@@ -19,7 +20,8 @@
     "ovftool_deploy_vm_vcenter_username": "administrator@vsphere.local",
     "ovftool_deploy_vm_vcenter_password": "VMware1!",
     "ovftool_deploy_vm_network": "VM Network",
-    "ovftool_deploy_vm_datastore": "sm-vsanDatastore"
+    "ovftool_deploy_vm_datastore": "sm-vsanDatastore",
+    "ovftool_deploy_vm_pod_network_cidr": "10.100.0.0/20"
   },
   "builders": [
     {
@@ -133,7 +135,7 @@
     {
       "type": "shell-local",
       "inline": [
-        "ovftool --powerOn --name={{ user `ovftool_deploy_vm_name` }} --net:'VM Network={{ user `ovftool_deploy_vm_network` }}' --datastore={{ user `ovftool_deploy_vm_datastore` }} --prop:guestinfo.hostname={{ user `ovftool_deploy_vm_hostname` }} --prop:guestinfo.ipaddress={{ user `ovftool_deploy_vm_ip_address` }} --prop:guestinfo.netmask={{ user `ovftool_deploy_vm_prefix` }} --prop:guestinfo.gateway={{ user `ovftool_deploy_vm_gateway` }} --prop:guestinfo.dns={{ user `ovftool_deploy_vm_dns` }} --prop:guestinfo.domain={{ user `ovftool_deploy_vm_dns_domain` }} --prop:guestinfo.root_password={{ user `vm_ovftool_deploy_root_password` }} --prop:guestinfo.openfaas_password={{ user `ovftool_deploy_vm_openfaas_password` }} --prop:guestinfo.vcenter_server={{ user `ovftool_deploy_vm_vcenter_server` }} --prop:guestinfo.vcenter_username={{ user `ovftool_deploy_vm_vcenter_username` }} --prop:guestinfo.vcenter_password={{ user `ovftool_deploy_vm_vcenter_password` }} --prop:guestinfo.vcenter_disable_tls_verification=True --prop:guestinfo.debug=True output-vmware-iso/{{ user `vm_name` }}_{{user `version`}}.ova 'vi://{{ user `ovftool_deploy_vcenter_username` }}:{{ user `ovftool_deploy_vcenter_password` }}@{{ user `ovftool_deploy_vcenter` }}/{{ user `ovftool_deploy_datacenter` }}/host/{{ user `ovftool_deploy_cluster` }}/'"
+        "ovftool --powerOn --name={{ user `ovftool_deploy_vm_name` }} --net:'VM Network={{ user `ovftool_deploy_vm_network` }}' --datastore={{ user `ovftool_deploy_vm_datastore` }} --prop:guestinfo.hostname={{ user `ovftool_deploy_vm_hostname` }} --prop:guestinfo.ipaddress={{ user `ovftool_deploy_vm_ip_address` }} --prop:guestinfo.netmask={{ user `ovftool_deploy_vm_prefix` }} --prop:guestinfo.gateway={{ user `ovftool_deploy_vm_gateway` }} --prop:guestinfo.dns={{ user `ovftool_deploy_vm_dns` }} --prop:guestinfo.ntp={{ user `ovftool_deploy_vm_ntp` }} --prop:guestinfo.domain={{ user `ovftool_deploy_vm_dns_domain` }} --prop:guestinfo.root_password={{ user `vm_ovftool_deploy_root_password` }} --prop:guestinfo.openfaas_password={{ user `ovftool_deploy_vm_openfaas_password` }} --prop:guestinfo.vcenter_server={{ user `ovftool_deploy_vm_vcenter_server` }} --prop:guestinfo.vcenter_username={{ user `ovftool_deploy_vm_vcenter_username` }} --prop:guestinfo.vcenter_password={{ user `ovftool_deploy_vm_vcenter_password` }} --prop:guestinfo.vcenter_disable_tls_verification=True --prop:guestinfo.pod_network_cidr={{ user `ovftool_deploy_vm_pod_network_cidr` }} --prop:guestinfo.debug=True output-vmware-iso/{{ user `vm_name` }}_{{user `version`}}.ova 'vi://{{ user `ovftool_deploy_vcenter_username` }}:{{ user `ovftool_deploy_vcenter_password` }}@{{ user `ovftool_deploy_vcenter` }}/{{ user `ovftool_deploy_datacenter` }}/host/{{ user `ovftool_deploy_cluster` }}/'"
       ]
     },
     {
