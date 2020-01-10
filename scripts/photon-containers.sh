@@ -5,6 +5,7 @@
 echo '> Downloading weave.yaml'
 curl -L https://cloud.weave.works/k8s/net?k8s-version=Q2xpZW50IFZlcnNpb246IHZlcnNpb24uSW5mb3tNYWpvcjoiMSIsIE1pbm9yOiIxNCIsIEdpdFZlcnNpb246InYxLjE0LjYiLCBHaXRDb21taXQ6Ijk2ZmFjNWNkMTNhNWRjMDY0ZjdkOWY0ZjIzMDMwYTZhZWZhY2U2Y2MiLCBHaXRUcmVlU3RhdGU6ImFyY2hpdmUiLCBCdWlsZERhdGU6IjIwMTktMTAtMzFUMDY6MDQ6MDNaIiwgR29WZXJzaW9uOiJnbzEuMTMuMyIsIENvbXBpbGVyOiJnYyIsIFBsYXRmb3JtOiJsaW51eC9hbWQ2NCJ9ClNlcnZlciBWZXJzaW9uOiB2ZXJzaW9uLkluZm97TWFqb3I6IjEiLCBNaW5vcjoiMTQiLCBHaXRWZXJzaW9uOiJ2MS4xNC45IiwgR2l0Q29tbWl0OiI1MDBmNWFiYTgwZDcxMjUzY2MwMWFjNmE4NjIyYjgzNzdmNGE3ZWY5IiwgR2l0VHJlZVN0YXRlOiJjbGVhbiIsIEJ1aWxkRGF0ZToiMjAxOS0xMS0xM1QxMToxMzowNFoiLCBHb1ZlcnNpb246ImdvMS4xMi4xMiIsIENvbXBpbGVyOiJnYyIsIFBsYXRmb3JtOiJsaW51eC9hbWQ2NCJ9Cg -o /root/weave.yaml
 sed -i '/^          hostNetwork:.*/i \              imagePullPolicy: IfNotPresent' /root/weave.yaml
+sed -i '0,/^              env:/s//              env:\n                - name: IPALLOC_RANGE\n                  value: POD_NETWORK_CIDR/' /root/weave.yaml
 
 echo '> Pre-Downloading Kubeadm Docker Containers'
 

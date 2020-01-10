@@ -60,6 +60,11 @@
             <Label>Disable vCenter Server TLS Verification</Label>
             <Description>Disable TLS Verification for vCenter Server (required for self-sign certificate)</Description>
         </Property>
+        <Category>zAdvanced</Category>
+        <Property ovf:key="guestinfo.pod_network_cidr" ovf:type="string" ovf:userConfigurable="true" ovf:value="10.99.0.0/20">
+            <Label>POD CIDR Network</Label>
+            <Description>Customize POD CIDR Network (Default 10.99.0.0/20)</Description>
+        </Property>
         <Category>zDebug</Category>
         <Property ovf:key="guestinfo.debug" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Debugging</Label>
