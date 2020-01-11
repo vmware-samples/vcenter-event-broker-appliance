@@ -19,7 +19,7 @@ $details = [pscustomobject] @{
 $data = ($details | convertTo-Json).toString()
 
 $payload = New-Object Amazon.EventBridge.Model.PutEventsRequestEntry
-$payload.EventBusName = "VMware-VMC" #EventBride Bus Name
+$payload.EventBusName = $SECRETS_CONFIG.AWS_EVENTBRIDGE_BUS
 $payload.Source = $json.source
 $payload.Detail = $data
 $payload.DetailType = $json.topic
