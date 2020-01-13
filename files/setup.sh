@@ -37,6 +37,7 @@ else
     VCENTER_USERNAME_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.vcenter_username")
     VCENTER_PASSWORD_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.vcenter_password")
     VCENTER_DISABLE_TLS_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.vcenter_disable_tls_verification")
+    POD_NETWORK_CIDR_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.pod_network_cidr")
 
     ##################################
     ### No User Input, assume DHCP ###
@@ -106,6 +107,7 @@ __CUSTOMIZE_PHOTON__
     VCENTER_USERNAME=$(echo "${VCENTER_USERNAME_PROPERTY}" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
     VCENTER_PASSWORD=$(echo "${VCENTER_PASSWORD_PROPERTY}" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
     VCENTER_DISABLE_TLS=$(echo "${VCENTER_DISABLE_TLS_PROPERTY}" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
+    POD_NETWORK_CIDR=$(echo "${POD_NETWORK_CIDR_PROPERTY}" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 
     echo -e "\e[92mStarting Docker ..." > /dev/console
     systemctl start docker.service
@@ -123,6 +125,14 @@ __CUSTOMIZE_PHOTON__
     cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
     chown $(id -u):$(id -g) $HOME/.kube/config
     echo -e "\e[92mDeloying kubeadm ..." > /dev/console
+
+    # Customize the POD CIDR Network if provided or else default to 10.99.0.0/20
+    if [ -z "${POD_NETWORK_CIDR}" ]; then
+      POD_NETWORK_CIDR="10.99.0.0/20"
+    fi
+
+    sed -i "s#POD_NETWORK_CIDR#${POD_NETWORK_CIDR}#g" /root/weave.yaml
+
     kubectl --kubeconfig /root/.kube/config apply -f /root/weave.yaml
     kubectl --kubeconfig /root/.kube/config taint nodes --all node-role.kubernetes.io/master-
     echo -e "\e[92mStarting k8s ..." > /dev/console
