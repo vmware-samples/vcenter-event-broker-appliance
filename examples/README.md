@@ -4,3 +4,4 @@
 | Send VM Configuration Changes to Slack | | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/powercli/hwchange-slack) |
 | Disable Alarms for Host Maintenance | | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/powercli/hostmaint-alarms) |
 | ESX Maximum transmission unit fixer | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/python/esx-mtu-fixer) | |
+| AWS EventBridge | | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/development/examples/powercli/eventbridge) |
