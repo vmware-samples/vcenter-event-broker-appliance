@@ -30,6 +30,10 @@
             <Label>DNS Domain</Label>
             <Description>DNS Domain</Description>
         </Property>
+        <Property ovf:key="guestinfo.ntp" ovf:type="string" ovf:userConfigurable="true" ovf:value="pool.ntp.org">
+            <Label>NTP</Label>
+            <Description>NTP Servers (space separated)</Description>
+        </Property>
         <Category>Credentials</Category>
         <Property ovf:key="guestinfo.root_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="VMware1!">
             <Label>Root Password</Label>
