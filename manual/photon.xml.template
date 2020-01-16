@@ -34,6 +34,27 @@
             <Label>NTP</Label>
             <Description>NTP Servers (space separated)</Description>
         </Property>
+        <Category>Proxy Settings (optional)</Category>
+        <Property ovf:key="guestinfo.http_proxy" ovf:type="string" ovf:userConfigurable="true">
+            <Label>HTTP Proxy</Label>
+            <Description>Enter HTTP Proxy Server followed by the port and without typing "http://" before. Example: "proxy.provider.com:3128"</Description>
+        </Property>
+        <Property ovf:key="guestinfo.https_proxy" ovf:type="string" ovf:userConfigurable="true">
+            <Label>HTTPS Proxy</Label>
+            <Description>Enter HTTPS Proxy Server followed by the port and without typing "https://" before. Example: "proxy.provider.com:3128"</Description>
+        </Property>
+        <Property ovf:key="guestinfo.proxy_username" ovf:type="string" ovf:userConfigurable="true">
+            <Label>Proxy Username (optional)</Label>
+            <Description>Username for the Proxy Server</Description>
+        </Property>
+        <Property ovf:key="guestinfo.proxy_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Proxy Password (optional)</Label>
+            <Description>Password for the Proxy User</Description>
+        </Property>
+        <Property ovf:key="guestinfo.no_proxy" ovf:type="string" ovf:userConfigurable="true">
+            <Label>No Proxy</Label>
+            <Description>No Proxy for e.g. your internal domain suffix. Comma separated (localhost, 127.0.0.1, domain.local)</Description>
+        </Property>
         <Category>Credentials</Category>
         <Property ovf:key="guestinfo.root_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Root Password</Label>

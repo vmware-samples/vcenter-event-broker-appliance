@@ -31,6 +31,11 @@ else
     DNS_SERVER_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.dns")
     DNS_DOMAIN_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.domain")
     NTP_SERVER_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.ntp")
+    HTTP_PROXY_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.http_proxy")
+    HTTPS_PROXY_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.https_proxy")
+    PROXY_USERNAME_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.proxy_username")
+    PROXY_PASSWORD_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.proxy_password")
+    NO_PROXY_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.no_proxy")
     ROOT_PASSWORD_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.root_password")
     OPENFAAS_PASSWORD_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.openfaas_password")
     VCENTER_SERVER_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.vcenter_server")
@@ -38,6 +43,47 @@ else
     VCENTER_PASSWORD_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.vcenter_password")
     VCENTER_DISABLE_TLS_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.vcenter_disable_tls_verification")
     POD_NETWORK_CIDR_PROPERTY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.pod_network_cidr")
+
+    #########################
+    ### Proxy Settings    ###
+    #########################
+    HTTP_PROXY=$(echo "${HTTP_PROXY_PROPERTY}" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
+    HTTPS_PROXY=$(echo "${HTTPS_PROXY_PROPERTY}" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
+    PROXY_USERNAME=$(echo "${PROXY_USERNAME_PROPERTY}" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
+    PROXY_PASSWORD=$(echo "${PROXY_PASSWORD_PROPERTY}" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
+    NO_PROXY=$(echo "${NO_PROXY_PROPERTY}" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
+
+    if [ -n "${HTTP_PROXY}" ] || [ -n "${HTTPS_PROXY}" ]; then
+        PROXY_CONF=/etc/sysconfig/proxy
+        echo -e "\e[92mConfiguring Proxy ..." > /dev/console
+        echo "PROXY_ENABLED=\"yes\"" > ${PROXY_CONF}
+        YES_CREDS=0
+        if [ -n "${PROXY_USERNAME}" ] && [ -n "${PROXY_PASSWORD}" ]; then
+            YES_CREDS=1
+        fi
+
+        if [ ! -z "${HTTP_PROXY}" ]; then
+            if [ $YES_CREDS -eq 1 ]; then
+                HTTP_PROXY_URL="http://${PROXY_USERNAME}:${PROXY_PASSWORD}@${HTTP_PROXY}"
+            else
+                HTTP_PROXY_URL="http://${HTTP_PROXY}"
+            fi
+            echo "HTTP_PROXY=\"${HTTP_PROXY_URL}\"" >> ${PROXY_CONF}
+        fi
+
+        if [ ! -z "${HTTPS_PROXY}" ]; then
+            if [ $YES_CREDS -eq 1 ]; then
+                HTTPS_PROXY_URL="https://${PROXY_USERNAME}:${PROXY_PASSWORD}@${HTTPS_PROXY}"
+            else
+                HTTPS_PROXY_URL="https://${HTTPS_PROXY}"
+            fi
+            echo "HTTPS_PROXY=\"${HTTPS_PROXY_URL}\"" >> ${PROXY_CONF}
+        fi
+
+        if [ ! -z "${NO_PROXY}" ]; then
+            echo "NO_PROXY=\"${NO_PROXY}\"" >> ${PROXY_CONF}
+        fi
+    fi
 
     ##################################
     ### No User Input, assume DHCP ###
