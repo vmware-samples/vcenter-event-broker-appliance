@@ -30,9 +30,9 @@ cd ..
 cat << EOF > /etc/issue
 Welcome to the vCenter Event Broker Appliance
 
-Appliance Status: https://[IP]/status
-Install Logs: https://[IP]/bootstrap
-OpenFaaS UI: https://[IP]
+Appliance Status: https://[hostname]/status
+Install Logs: https://[hostname]/bootstrap
+OpenFaaS UI: https://[hostname]
 
 
 EOF

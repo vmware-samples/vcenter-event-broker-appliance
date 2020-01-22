@@ -40,14 +40,14 @@
 **Step 3** - Power On the vCenter Event Broker Appliance after successful deployment. Depending on your external network connectivity, it can take a few minutes while the system is being setup. You can open the VM Console to view the progress. Once everything is completed, you should see an updated login banner for the various endpoints:
 
 ```
-Appliance Status: https://[IP]/status
-Install Logs: https://[IP]/bootstrap
-OpenFaaS UI: https://[IP]
+Appliance Status: https://[hostname]/status
+Install Logs: https://[hostname]/bootstrap
+OpenFaaS UI: https://[hostname]
 ```
 
 **Note**: If you enable Debugging, the install logs endpoint will automatically contain the more verbose log entries.
 
-**Step 4** - You can verify that everything was deployed correctly by opening a web browser to the OpenFaaS UI and logging in with the Admin credentials (user:admin) you had specified as part of the OVA deployment.
+**Step 4** - You can verify that everything was deployed correctly by opening a web browser to the OpenFaaS UI available on https://[hostname]/ and logging in with the Admin credentials (user:admin) you had specified as part of the OVA deployment.
 
 At this point, you have successfully deployed the vCenter Event Broker Appliance and you are ready to start deploying your functions!
 
