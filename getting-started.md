@@ -42,7 +42,7 @@
 ```
 Appliance Status: https://[hostname]/status
 Install Logs: https://[hostname]/bootstrap
-OpenFaaS UI: https://[hostname]
+OpenFaaS UI: https://[hostname] 
 ```
 
 **Note**: If you enable Debugging, the install logs endpoint will automatically contain the more verbose log entries.
