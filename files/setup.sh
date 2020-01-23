@@ -55,11 +55,18 @@ else
 
     if [ -n "${HTTP_PROXY}" ] || [ -n "${HTTPS_PROXY}" ]; then
         PROXY_CONF=/etc/sysconfig/proxy
+        DOCKER_PROXY=/etc/systemd/system/docker.service.d
+
         echo -e "\e[92mConfiguring Proxy ..." > /dev/console
         echo "PROXY_ENABLED=\"yes\"" > ${PROXY_CONF}
+        mkdir -p ${DOCKER_PROXY}
         YES_CREDS=0
         if [ -n "${PROXY_USERNAME}" ] && [ -n "${PROXY_PASSWORD}" ]; then
             YES_CREDS=1
+        fi
+
+        if [ ! -z "${NO_PROXY}" ]; then
+            echo "NO_PROXY=\"${NO_PROXY}\"" >> ${PROXY_CONF}
         fi
 
         if [ ! -z "${HTTP_PROXY}" ]; then
@@ -69,6 +76,10 @@ else
                 HTTP_PROXY_URL="http://${HTTP_PROXY}"
             fi
             echo "HTTP_PROXY=\"${HTTP_PROXY_URL}\"" >> ${PROXY_CONF}
+            cat > ${DOCKER_PROXY}/http-proxy.conf << __HTTP_DOCKER_PROXY__
+[Service]
+Environment="HTTP_PROXY=${HTTP_PROXY_URL}" "NO_PROXY=${NO_PROXY}"
+__HTTP_DOCKER_PROXY__
         fi
 
         if [ ! -z "${HTTPS_PROXY}" ]; then
@@ -78,10 +89,10 @@ else
                 HTTPS_PROXY_URL="https://${HTTPS_PROXY}"
             fi
             echo "HTTPS_PROXY=\"${HTTPS_PROXY_URL}\"" >> ${PROXY_CONF}
-        fi
-
-        if [ ! -z "${NO_PROXY}" ]; then
-            echo "NO_PROXY=\"${NO_PROXY}\"" >> ${PROXY_CONF}
+            cat > ${DOCKER_PROXY}/https-proxy.conf << __HTTPS_DOCKER_PROXY__
+[Service]
+Environment="HTTPS_PROXY=${HTTPS_PROXY_URL}" "NO_PROXY=${NO_PROXY}"
+__HTTPS_DOCKER_PROXY__
         fi
     fi
 
@@ -156,6 +167,7 @@ __CUSTOMIZE_PHOTON__
     POD_NETWORK_CIDR=$(echo "${POD_NETWORK_CIDR_PROPERTY}" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 
     echo -e "\e[92mStarting Docker ..." > /dev/console
+    systemctl daemon-reload
     systemctl start docker.service
     systemctl enable docker.service
 
