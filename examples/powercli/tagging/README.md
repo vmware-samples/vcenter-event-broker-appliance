@@ -12,7 +12,7 @@ Step 1 - Initialize function, only required during the first deployment
 faas-cli template pull
 ```
 
-Step 2 - Update `stack.yml` and `vcconfig.json` with your environment information
+Step 2 - Update `stack.yml` and `vcconfig.json` with your environment information. TAG_FILTER lets you tag only VMs with a specific tag alread on them. For example, if TAG_FILTER is set to 'tag-on-power', only VMs that are already tagged with the tag 'tag-on-power' will be tagged with TAG_NAME when powered on.
 
 Step 3 - Build the function container
 

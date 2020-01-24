@@ -1,6 +1,7 @@
 {
-    "VC" : "vcenter-hostname",
+    "VC" : "myvcenter.foo.com",
     "VC_USERNAME" : "tagadmin@vsphere.local",
     "VC_PASSWORD" : "FillMeIn",
-    "TAG_NAME" : "VMworld 2019"
+    "TAG_NAME" : "vm-powered-on",
+	"TAG_FILTER" : ""
 }

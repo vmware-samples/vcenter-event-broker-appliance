@@ -1,11 +1,11 @@
 provider:
   name: openfaas
-  gateway: https://veba.primp-industries.com
+  gateway: https://veba01
 functions:
   powercli-tag:
     lang: powercli
     handler: ./handler
-    image: lamw/powercli-tag:latest
+    image: kremerpatrick/powercli-tag:latest
     environment:
       write_debug: true
       read_debug: true
