@@ -4,7 +4,7 @@ metadata:
   labels:
     app: tinywww
   name: tinywww
-  namespace: openfaas
+  namespace: vmware
 spec:
   replicas: 1
   selector:
@@ -56,7 +56,7 @@ metadata:
   labels:
     app: tinywww
   name: tinywww
-  namespace: openfaas
+  namespace: vmware
 spec:
   ports:
   - port: 8100
