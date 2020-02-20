@@ -23,7 +23,6 @@ embano1/tinywww:latest
 projectcontour/contour:v1.0.0-beta.1
 openfaas/faas-netes:0.9.0
 openfaas/gateway:0.17.4
-openfaas/vcenter-connector:0.4.0
 openfaas/basic-auth-plugin:0.17.0
 openfaas/queue-worker:0.8.0
 openfaas/faas-idler:0.2.1
@@ -31,9 +30,27 @@ envoyproxy/envoy:v1.11.1
 prom/prometheus:v2.11.0
 prom/alertmanager:v0.18.0
 nats-streaming:0.11.2
+vmware/veba-event-router:latest
 )
 
 for i in ${CONTAINERS[@]};
 do
 	docker pull $i
 done
+
+mkdir -p /root/download && cd /root/download
+
+echo '> Downloading FaaS-Netes...'
+git clone https://github.com/openfaas/faas-netes
+cd faas-netes
+git checkout 0.9.2
+sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' yaml/*.yml
+cd ..
+
+echo '> Downloading Contour...'
+git clone https://github.com/projectcontour/contour.git
+cd contour
+git checkout v1.0.0-beta.1
+sed -i '/^---/i \      dnsPolicy: ClusterFirstWithHostNet\n      hostNetwork: true' examples/contour/03-envoy.yaml
+sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' examples/contour/*.yaml
+cd ..
