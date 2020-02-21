@@ -6,5 +6,8 @@
 
 set -euo pipefail
 
+systemctl disable sshd
+systemctl stop sshd
+
 echo -e "\e[92mConfiguring OS Root password ..." > /dev/console
 echo "root:${ROOT_PASSWORD}" | /usr/sbin/chpasswd
