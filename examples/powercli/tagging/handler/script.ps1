@@ -1,5 +1,5 @@
 # Process function Secrets passed in
-$VC_CONFIG_FILE = "/var/openfaas/secrets/vcconfig"
+$VC_CONFIG_FILE = "/var/openfaas/secrets/vc-tag-config"
 $VC_CONFIG = (Get-Content -Raw -Path $VC_CONFIG_FILE | ConvertFrom-Json)
 if($env:function_debug -eq "true") {
     Write-host "DEBUG: `"$VC_CONFIG`""
@@ -8,10 +8,10 @@ if($env:function_debug -eq "true") {
 # Process payload sent from vCenter Server Event
 $json = $args | ConvertFrom-Json
 if($env:function_debug -eq "true") {
-    Write-Host "DEBUG: `"$json`""
+    Write-Host "DEBUG: json=`"$($json | Format-List | Out-String)`""
 }
 
-$eventObjectName = $json.objectName
+$vmName = $json.data.vm.name
 
 Set-PowerCLIConfiguration -InvalidCertificateAction Ignore  -DisplayDeprecationWarnings $false -ParticipateInCeip $false -Confirm:$false | Out-Null
 
@@ -20,8 +20,8 @@ Write-Host "Connecting to vCenter Server ..."
 Connect-VIServer -Server $($VC_CONFIG.VC) -User $($VC_CONFIG.VC_USERNAME) -Password $($VC_CONFIG.VC_PASSWORD)
 
 # Retrieve VM and apply vSphere Tag
-Write-Host "Applying vSphere Tag `"$($VC_CONFIG.TAG_NAME)`" to $eventObjectName ..."
-Get-VM $eventObjectName | New-TagAssignment -Tag (Get-Tag -Name $($VC_CONFIG.TAG_NAME)) -Confirm:$false
+Write-Host "Applying vSphere Tag `"$($VC_CONFIG.TAG_NAME)`" to $vmName ..."
+Get-VM $vmName | New-TagAssignment -Tag (Get-Tag -Name $($VC_CONFIG.TAG_NAME)) -Confirm:$false
 
 Write-Host "Disconnecting from vCenter Server ..."
 Disconnect-VIServer * -Confirm:$false

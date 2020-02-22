@@ -1,29 +1,29 @@
 version: 1.0
 provider:
   name: openfaas
-  gateway: https://veba.yourdomain.com
+  gateway: https://veba.primp-industries.com
 functions:
   powercli-entermaint:
     lang: powercli
     handler: ./handler
-    image: doogleit/powercli-hostmaint:latest
+    image: vmware/veba-powercli-esx-maintenance:latest
     environment:
       write_debug: true
       read_debug: true
       function_debug: false
     secrets:
-      - vcconfig
+      - vc-hostmaint-config
     annotations:
-      topic: entered.maintenance.mode
+      topic: EnteredMaintenanceModeEvent
   powercli-exitmaint:
     lang: powercli
     handler: ./handler
-    image: doogleit/powercli-hostmaint:latest
+    image: vmware/veba-powercli-esx-maintenance:latest
     environment:
       write_debug: true
       read_debug: true
       function_debug: false
     secrets:
-      - vcconfig
+      - vc-hostmaint-config
     annotations:
-      topic: exit.maintenance.mode
+      topic: ExitMaintenanceModeEvent

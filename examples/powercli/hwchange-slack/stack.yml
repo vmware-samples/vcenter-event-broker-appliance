@@ -1,16 +1,16 @@
 provider:
   name: openfaas
-  gateway: https://veba.mynetwork.local
+  gateway: https://veba.primp-industries.com
 functions:
   powercli-reconfigure:
     lang: powercli
     handler: ./handler
-    image: opvizorpa/powercli-slack:latest
+    image: vmware/veba-powercli-vm-config-change-slack:latest
     environment:
       write_debug: true
       read_debug: true
       function_debug: false
     secrets:
-      - vcconfig
+      - vc-slack-config
     annotations:
-      topic: vm.reconfigured
+      topic: VmReconfiguredEvent

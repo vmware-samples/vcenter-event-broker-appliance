@@ -1,0 +1,14 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+functions:
+  veba-echo:
+    lang: python
+    handler: ./handler
+    image: vmware/veba-python-echo:latest
+    environment:
+      write_debug: true
+      read_debug: true
+    annotations:
+      topic: "VmPoweredOnEvent,VmPoweredOffEvent"

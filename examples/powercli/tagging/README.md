@@ -4,7 +4,32 @@
 
 This function demonstrates using PowerCLI to apply vSphere Tag to Virtual Machine when the VM Powered On Event is triggered
 
-## Instruction
+## Consume Function Instruction
+
+Step 1 - Update `stack.yml` and `vc-tag-config.json` with your environment information
+
+Step 2 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
+
+```
+VEBA_GATEWAY=https://veba.primp-industries.com
+export OPENFAAS_URL=${VEBA_GATEWAY}
+
+faas-cli login --username admin --password-stdin --tls-no-verify
+```
+
+Step 3 - Create function secret (only required once)
+
+```
+faas-cli secret create vc-tag-config --from-file=vc-tag-config.json --tls-no-verify
+```
+
+Step 4 - Deploy function to vCenter Event Broker Appliance
+
+```
+faas-cli deploy -f stack.yml --tls-no-verify
+```
+
+## Build Function Instruction
 
 Step 1 - Initialize function, only required during the first deployment
 
@@ -12,7 +37,7 @@ Step 1 - Initialize function, only required during the first deployment
 faas-cli template pull
 ```
 
-Step 2 - Update `stack.yml` and `vcconfig.json` with your environment information
+Step 2 - Update `stack.yml` and `vc-tag-config.json` with your environment information. Please ensure you replace the name of the container image with your own account.
 
 Step 3 - Build the function container
 
@@ -26,13 +51,23 @@ Step 4 - Push the function container to Docker Registry (default but can be chan
 faas-cli push -f stack.yml
 ```
 
-Step 5 - Deploy function to vCenter Event Broker Appliance
+Step 5 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com
-export OPENFAAS_URL=${VEBA_GATEWAY} # this is handy so you don't have to keep specifying OpenFaaS endpoint in command-line
+export OPENFAAS_URL=${VEBA_GATEWAY}
 
-faas-cli login --username admin --password-stdin --tls-no-verify # login with your admin password
-faas-cli secret create vcconfig --from-file=vcconfig.json --tls-no-verify # create secret, only required once
+faas-cli login --username admin --password-stdin --tls-no-verify
+```
+
+Step 6 - Create function secret (only required once)
+
+```
+faas-cli secret create vc-tag-config --from-file=vc-tag-config.json --tls-no-verify
+```
+
+Step 7 - Deploy function to vCenter Event Broker Appliance
+
+```
 faas-cli deploy -f stack.yml --tls-no-verify
 ```
