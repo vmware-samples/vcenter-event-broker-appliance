@@ -8,7 +8,7 @@ set -euo pipefail
 VEBA_DEBUG=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.debug" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 HOSTNAME=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.hostname" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 IP_ADDRESS=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.ipaddress" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
-NETMASK=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.netmask" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
+NETMASK=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.netmask" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}' | awk -F ' ' '{print $1}')
 GATEWAY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.gateway" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 DNS_SERVER=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.dns" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 DNS_DOMAIN=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.domain" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
@@ -31,7 +31,7 @@ AWS_EVENTBRIDGE_ACCESS_SECRET=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | gre
 AWS_EVENTBRIDGE_EVENT_BUS=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.aws_eb_event_bus" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 AWS_EVENTBRIDGE_REGION=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.aws_eb_region" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 AWS_EVENTBRIDGE_RULE_ARN=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.aws_eb_arn" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
-AWS_EVENTBRIDGE_ADV_OPTION=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.aws_eb_arn" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
+AWS_EVENTBRIDGE_ADV_OPTION=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.aws_eb_advanced_options" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 POD_NETWORK_CIDR=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.pod_network_cidr" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 
 if [ -e /root/ran_customization ]; then
@@ -78,6 +78,9 @@ else
 	. /root/setup/setup-09-banner.sh &
 
 	echo -e "\e[92mCustomization Completed ..." > /dev/console
+
+	# Clear guestinfo.ovfEnv
+	vmtoolsd --cmd "info-set guestinfo.ovfEnv NULL"
 
 	# Ensure we don't run customization again
 	touch /root/ran_customization
