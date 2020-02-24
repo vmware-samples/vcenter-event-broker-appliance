@@ -1,0 +1,39 @@
+[{
+        "type": "stream",
+        "provider": "vmware_vcenter",
+        "address": "https://10.0.0.1:443/sdk",
+        "auth": {
+            "method": "user_password",
+            "secret": {
+                "username": "administrator@vsphere.local",
+                "password": "REPLACE_ME"
+            }
+        },
+        "options": {
+            "insecure": "true"
+        }
+    },
+    {
+        "type": "processor",
+        "provider": "openfaas",
+        "address": "http://gateway.openfaas:8080",
+        "auth": {
+            "method": "basic_auth",
+            "secret": {
+                "username": "admin",
+                "password": "REPLACE_ME"
+            }
+        },
+        "options": {
+            "async": "false"
+        }
+    },
+    {
+        "type": "metrics",
+        "provider": "internal",
+        "address": "0.0.0.0:8080",
+        "auth": {
+            "method": "none"
+        }
+    }
+]
