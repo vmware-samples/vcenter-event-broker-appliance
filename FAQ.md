@@ -9,6 +9,7 @@ Feel free to raise issues/file pull requests to this Github repository to help u
 
 - [Architecture](#architecture)
 - [Event Handling](#event-handling)
+  - [Event Types supported](#event-types-supported)
   - [Message Delivery Guarantees](#message-delivery-guarantees)
   - [The Event Specification](#the-event-specification)
 - [Functions](#functions)
@@ -29,13 +30,19 @@ Kubernetes and its dependencies, such as the Docker, are deployed as systemd uni
 
 > **Note:** We are considering to use Kubernetes' cluster capabilities in the future to provide increased resiliency (node crashes), scalability (scale out individual components to handle higher load) and durability (replication and persistency). The downside is the added complexity of deploying and managing a multi-node vCenter Event Broker Appliance environment.
 
-Currently one OpenFaaS vcenter-connector is deployed per appliance (1:1 mapping). That means, only one vCenter event stream can be processed per appliance. We are evaluating options to support multiple vCenter environments per appliance (scale up) or alternatively support multi-node appliance deployments (scale out), which might be required in large deployments (performance, throughput). 
+The [VMware Event Router](architecture.md#vmware-event-router) is responsible for connecting to event stream sources, such as VMware vCenter, and forward events to an event processor. To allow for extensibility and different event sources/processors event sources and processors are abstracted via `go interfaces`.
+
+Currently, one VMware Event Router is deployed per appliance (1:1 mapping). Also, only one event stream (source) and one processor can be configured. The list of supported event sources and processors can be found [here](architecture.md#vmware-event-router). That means, only one vCenter event stream can be processed per appliance. We are evaluating options to support multiple event sources (vCenter servers) and processors per appliance (scale up) or alternatively support multi-node appliance deployments (scale out), which might be required in large deployments (performance, throughput). 
 
 > **Note:** We have not done any extensive performance and scalability testing to understand the limits of the single appliance model.
 
 # Event Handling
 
 As described in the architecture section [above](#architecture) due to the microservices architecture used in the vCenter Event Broker Appliance one always has to consider message delivery problems such as timeouts, delays, reordering, loss. These challenges are fundamental to [distributed systems](https://github.com/papers-we-love/papers-we-love/blob/master/distributed_systems/a-note-on-distributed-computing.pdf) and must be understood and considered by function authors.
+
+## Event Types supported
+
+For the configured event stream source, e.g. VMware vCenter, all event available in vCenter are supported. Since event types are environment specific (vSphere version, extensions), a list of events for vCenter as an event source can be generated with this [script](https://github.com/lamw/vcenter-event-mapping/blob/master/vsphere-6.7-update-3.md).
 
 ## Message Delivery Guarantees
 
@@ -71,42 +78,40 @@ As of today the vCenter Event Broker Appliance guarantees at most once delivery.
 - Using asynchronous function [invocation](#invocation) (defaults to "off", i.e. "synchronus", in the appliance) which internally uses a message queue for event processing
 - Following [best practices](#code-best-practices) for writing functions
 
-> **Note:** The vCenter Event Broker Appliance currently does not persist (to disk) or retry event delivery in case of failure during function invocation or upstream (external system, such as Slack) communication issues. For introspection and debugging purposes invocations are logged to standard output by the OpenFaaS vcenter-connector ("sync" invocation mode) or OpenFaaS queue-worker ("async" invocation mode).
+> **Note:** The vCenter Event Broker Appliance currently does not persist (to disk) or retry event delivery in case of failure during function invocation or upstream (external system, such as Slack) communication issues. For introspection and debugging purposes invocations are logged to standard output by the VMware Event Router.
 
-We are currently investigating options to support at least once delivery semantics. However, this requires significant changes to the OpenFaaS vcenter-connector, such as:
+We are currently [investigating](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/38) options to support at least once delivery semantics. However, this requires significant changes to the VMware Event Router, such as:
 
 - Tracking and checkpointing (to disk) successfully processed vCenter events (stream history position)
-- Buffering events in the connector (incl. queue management to protect from overflows)
+- Buffering events in the router (incl. queue management to protect from overflows)
 - Raising awareness (docs, tutorials) for function authors to deal with duplicated, delayed or out of order arriving event messages
 - High-availability deployments (active-active/active-passive) to continue to retrieve the event stream during appliance downtime (maintenance, crash)
 - Describe mitigation strategies for data loss in the appliance (snapshots, backups)
 
 ## The Event Specification
 
-> **Note:** WIP, this new event spec will be a feature in an upcoming release of the appliance
-
-The event payload structure used by the vCenter Event Broker Appliance has been significantly enriched since the beginning. It mostly follows the [CloudEvents](https://github.com/cloudevents/sdk-go/blob/master/pkg/cloudevents/eventcontext_v1.go) specification (v1), deviating only in some small cases (type definitions). The current data content type which is sent as payload when invoking a function is JSON.
+The event payload structure used by the vCenter Event Broker Appliance has been significantly enriched since the beginning. It follows the [CloudEvents](https://github.com/cloudevents/sdk-go/blob/master/pkg/cloudevents/eventcontext_v1.go) specification (v1). The current data content type which is sent as payload when processing events is JSON.
 
 The following example shows the event structure (trimmed for better readability):
 
 ```json
 {
     "id": "6da664a7-7ad1-4b7a-b97f-8f7c75eae75a",
-    "source": "10.0.10.1",
+    "source": "https://10.10.0.1:443/sdk",
     "specversion": "1.0",
-    "type": "com.github.openfaas-incubator.openfaas-vcenter-connector.vm.powered.on",
+    "type": "com.vmware.event.router/event",
     "subject": "VmPoweredOnEvent",
-    "time": "2019-12-08T10:57:35.596934Z",
+    "time": "2020-01-13T15:31:26.846182Z",
     "data": {
         "Key": 9420,
-        "CreatedTime": "2019-12-08T10:57:27.915136Z",
+        "CreatedTime": "2020-01-13T15:29:35.300455Z",
         [...]
     },
     "datacontenttype": "application/json"
 }
 ```
 
-> **Note:** This is not the event as emitted by vCenter. The appliance, using the OpenFaaS vcenter-connector, wraps the corresponding vCenter event (as seen in "data") into its own event structure.
+> **Note:** This is not the event as emitted by vCenter. The appliance, using the VMware Event Router, wraps the corresponding vCenter event (as seen in "data") into its own event structure.
 
 `id:` The unique ID ([UUID](https://tools.ietf.org/html/rfc4122)) of the event
 
@@ -114,11 +119,11 @@ The following example shows the event structure (trimmed for better readability)
 
 `specversion:` The event specification the appliances uses (can be used for schema handling)
 
-`type:` The canonical name of the event in "." dot notation (including the emitter, i.e. OpenFaaS vcenter-connector) 
+`type:` The event category (event, eventex, extendedevent) with a fixed VMware Event Router prefix
 
 `subject:` The vCenter event name (CamelCase)
 
-`time:` Timestamp when this event was produced by the appliance
+`time:` Timestamp when this event was produced by the VMware Event Router
 
 `data:` Original vCenter event
 
@@ -134,7 +139,7 @@ Please see the section on function [best practices](#code-best-practices) below 
 
 ## Getting Started
 
-The vCenter Event Broker Appliance uses OpenFaaS as a Function-as-a-Service (FaaS) platform. Alex Ellis, the creator of OpenFaaS, and the community have put together comprehensive documentation and workshop materials to get you started with writing your first functions:
+The vCenter Event Broker Appliance can be configured to use OpenFaaS as a Function-as-a-Service (FaaS) platform. Alex Ellis, the creator of OpenFaaS, and the community have put together comprehensive documentation and workshop materials to get you started with writing your first functions:
 
 - [Your first OpenFaaS Function with Python](https://docs.openfaas.com/tutorials/first-python-function/)
 - [OpenFaaS Workshop](https://docs.openfaas.com/tutorials/workshop/)
@@ -152,12 +157,10 @@ functions:
   pytag-fn:
     lang: python3
     handler: ./handler
-    image: embano1/pytag-fn:0.2
+    image: embano1/pytag-fn:0.3
 ```
 
-`pytag-fn:` The name of the function used by OpenFaaS as the canonical name and identifier throughout the lifecycle of the function. Internally this will be the name used by Kubernetes to run the function as a Kubernetes deployment.
-
-<!-- TODO: clarify deployment/pod via OpenFaaS -->
+`pytag-fn:` The name of the function used by OpenFaaS as the canonical name and identifier throughout the lifecycle of the function. Internally this will be the name used by Kubernetes to run the function as a Kubernetes pod.
 
 The value of this field:
 
@@ -178,28 +181,57 @@ The value of this field:
   - supports common CI/CD version control flows
   - changing the tag is sufficient
 
-
 > **Note:** `functions` can contain multiple functions described as a list in YAML (not shown here).
 
 ## Invocation
 
 Functions in OpenFaaS can be invoked synchronously or asynchronously:
 
-`synchronous:` The function is called and the caller, e.g. OpenFaaS vcenter-connector, waits until the function returns (successful/error) or the timeout threshold is hit.
+`synchronous:` The function is called and the caller, e.g. VMware Event Router, waits until the function returns (successful/error) or the timeout threshold is hit.
 
 `asynchronous:` The function is not directly called. Instead, HTTP status code 202 ("accepted") is returned and the request, including the event payload, is stored in a [NATS Streaming](https://docs.nats.io/nats-streaming-concepts/intro) queue. One or more "queue-workers" process the queue items.
 
 If you directly invoke your functions deployed in the appliance you can decide which invocation mode is used (per function). More details can be found [here](https://github.com/openfaas/workshop/blob/master/lab7.md).
 
-> **Note:** The vCenter Event Broker appliance by default uses synchronous invocation mode. If you experience performance issues due to long-running/slow/blocking functions, consider running the OpenFaaS vcenter-connector in asynchronous mode (`-async` flag in the Kubernetes deployment manifest, TODO).
+The vCenter Event Broker appliance by default uses synchronous invocation mode. If you experience performance issues due to long-running/slow/blocking functions, consider running the VMware Event Router in asynchronous mode by setting the `"async"` option to `"true"` (quotes required) in the configuration file for the VMware Event Router deployment:
+
+```json
+{
+    "type": "processor",
+    "provider": "openfaas",
+    "address": "http://127.0.0.1:8080",
+    "auth": {
+          ...skipped
+        }
+    },
+    "options": {
+        "async": "true"
+    }
+}
+```
+
+When the AWS EventBridge [event processor](architecture.md#aws-eventbridge) is used, events are only forwarded for the patterns configured in the AWS event rule ARN. For example, if the rule is configured with this event pattern:
+
+```json
+{
+  "detail": {
+    "subject": [
+      "VmPoweredOnEvent",
+      "VmPoweredOffEvent",
+      "VmReconfiguredEvent"
+    ]
+  }
+}
+```
+
+Only these three vCenter event types would be forwarded. Other events are discarded to save network bandwidth and costs.
+
 
 ## Code Best Practices
 
 Compared to writing repetitive boilerplate logic to handle vCenter events, the vCenter Event Broker Appliance powered by OpenFaaS makes it remarkable easy to consume and process events with minimal code required.
 
 However, as outlined in previous sections in this guide, there are still some best practices and pitfalls to be considered when it comes to messaging in a distributed system. The following list tries to provide guidance for function authors. Before applying them thoroughly think about your problem statement and whether all of these recommendations apply to your specific scenario.
-
-<!-- TODO: add more stuff from AWS? -->
 
 <!-- omit in toc -->
 ### Single Responsibility Principle
@@ -277,7 +309,7 @@ As discussed in earlier sections of this guide, the vCenter Event Broker Applian
 
 A workaround is to persist the event to an external (durable) datastore or queue and consume/process from there. If this fails a log message can be produced with debugging information (critical event payload) or the event sent to a backup system, e.g. dead letter queue (DLQ).
 
->**Note:** Strictly speaking this does not address the appliance-internal scenario where the OpenFaaS vcenter-connector might not be able to invoke your function (resource busy, unavailable, etc.) but addresses common network communication issues when making outbound calls from the appliance.
+>**Note:** Strictly speaking this does not address the appliance-internal scenario where the VMware Event Router might not be able to invoke your function (resource busy, unavailable, etc.) but addresses common network communication issues when making outbound calls from the appliance.
 
 If your function executes quickly, retrying within the function might be a viable approach as well (retry three times with an increasing backoff delay). Pseudo-code:
 
@@ -306,13 +338,15 @@ To support idempotency checks, the vCenter Event Broker Appliance [event payload
 {
   [...]
   "id":"0058c998-cc0f-49ca-8cc3-1b60abf5957c",
-  "source":"10.160.94.63",
+  "source":"https://10.160.94.63/sdk",
   "subject":"UserLogoutSessionEvent"
 }
 ```
 
 > **Note:** The "id" field is a UUID which, practically speaking, is guaranteed to be unique per event (even across multiple appliances). "Source" or "subject" can be used for faster indexing/lookups in tables or caches.
 
+In the very unlikely scenario that the appliance fails right after emitting an event and then immediately restarts, depending on the event source (e.g. vCenter) some events might be processed again since they are delivered to the VMware Event Router again after a restart. This would cause the generation of a new UUID for the same event(s). This is easy to detect though, as vCenter also uses a monotonically increasing counter available in the event payload
+under `"data.Key: <int>"`.
 
 <!-- omit in toc -->
 ### Out of Order Message Arrival

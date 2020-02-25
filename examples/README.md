@@ -1,3 +1,9 @@
+# About the Example Functions
+
+This page lists ready to use functions curated by the vCenter Event Broker community. They serve as an easy way to use the appliance and as an inspiration for how to write functions in different languages.
+
+> **Note:** These functions are provided and tested to be used with the vCenter Event Broker Appliance deployed with [OpenFaaS](../architecture.md#openfaas) as the event stream processor. 
+
 | Use Cases       | Python                                                                                                       | PowerCLI                                                                                                       |
 |-----------------|--------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
 | vSphere Tagging | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/python/tagging) | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/powercli/tagging) |
