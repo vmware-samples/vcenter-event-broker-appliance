@@ -73,6 +73,7 @@ func NewServer(cfg connection.Config) (*Server, error) {
 // occurs. It will collect metrics for the given event streams and processors.
 func (s *Server) Run(ctx context.Context, bindAddr string) error {
 	errCh := make(chan error, 1)
+	defer close(errCh)
 	go func() {
 		addr := fmt.Sprintf("http://%s%s", bindAddr, endpoint)
 		s.Printf("starting metrics server and listening on %q", addr)
