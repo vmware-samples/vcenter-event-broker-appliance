@@ -141,14 +141,14 @@ func main() {
 		time.Sleep(3 * time.Second)
 	}()
 
-	eg := errgroup.Group{}
+	eg, egCtx := errgroup.WithContext(ctx)
 	eg.Go(func() error {
-		return metricsServer.Run(ctx, bindAddr)
+		return metricsServer.Run(egCtx, bindAddr)
 	})
 
 	eg.Go(func() error {
-		defer streamer.Shutdown(ctx)
-		return streamer.Stream(ctx, proc)
+		defer streamer.Shutdown(egCtx)
+		return streamer.Stream(egCtx, proc)
 	})
 
 	// blocks
