@@ -47,7 +47,7 @@ The vCenter Event Broker Appliance follows a highly modular approach, using Kube
 
 <center><div style="height:250px;width:250px"><img src="veba-appliance-diagram.png" /></div></center>
 
-For more details about the individual components and how they are used in the vCenter Event Broker Appliance, please see the [architecture page](architecture.md) or [FAQ](FAQ.md).
+For more details about the individual components and how they are used in the vCenter Event Broker Appliance, please see the [design page](DESIGN.md).
 
 ## Join Conversation
 
