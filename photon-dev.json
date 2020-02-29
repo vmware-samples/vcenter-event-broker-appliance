@@ -9,7 +9,7 @@
     "ovftool_deploy_vm_name": "PACKER-TEST-vCenter_Event_Broker_Appliance",
     "ovftool_deploy_vm_hostname": "veba.primp-industries.com",
     "ovftool_deploy_vm_ip_address": "192.168.30.170",
-    "ovftool_deploy_vm_prefix": "24",
+    "ovftool_deploy_vm_prefix": "24 (255.255.255.0)",
     "ovftool_deploy_vm_gateway": "192.168.30.1",
     "ovftool_deploy_vm_dns": "192.168.30.1",
     "ovftool_deploy_vm_dns_domain": "primp-industries.com",

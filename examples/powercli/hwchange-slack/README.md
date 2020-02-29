@@ -11,14 +11,22 @@ The custom PowerShell template for OpenFaaS is using [PSSlack](https://github.co
 
 ## Consume Function Instruction
 
-Step 1 - Setup Slack
+Step 1 - Clone repo
+
+```
+git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
+cd vcenter-event-broker-appliance/examples/powercli/hwchange-slack
+git checkout master
+```
+
+Step 2 - Setup Slack
 
 Make sure to create a channel for the notifications and a [Slack webhook](https://my.slack.com/services/new/incoming-webhook/).
 
 
-Step 2 - Update `stack.yml` and `vc-slack-config.json` with your environment information
+Step 3 - Update `stack.yml` and `vc-slack-config.json` with your environment information
 
-Step 3 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
+Step 4 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com
@@ -27,13 +35,13 @@ export OPENFAAS_URL=${VEBA_GATEWAY}
 faas-cli login --username admin --password-stdin --tls-no-verify
 ```
 
-Step 4 - Create function secret (only required once)
+Step 5 - Create function secret (only required once)
 
 ```
 faas-cli secret create vc-slack-config --from-file=vc-slack-config.json --tls-no-verify
 ```
 
-Step 5 - Deploy function to vCenter Event Broker Appliance
+Step 6 - Deploy function to vCenter Event Broker Appliance
 
 ```
 faas-cli deploy -f stack.yml --tls-no-verify
@@ -41,27 +49,35 @@ faas-cli deploy -f stack.yml --tls-no-verify
 
 ## Build Function Instruction
 
-Step 1 - Initialize function, only required during the first deployment
+Step 1 - Clone repo
+
+```
+git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
+cd vcenter-event-broker-appliance/examples/powercli/hwchange-slack
+git checkout master
+```
+
+Step 2 - Initialize function, only required during the first deployment
 
 ```
 faas-cli template pull
 ```
 
-Step 2 - Update `stack.yml` and `vc-slack-config.json` with your environment information. Please ensure you replace the name of the container image with your own account.
+Step 3 - Update `stack.yml` and `vc-slack-config.json` with your environment information. Please ensure you replace the name of the container image with your own account.
 
-Step 3 - Build the function container
+Step 4 - Build the function container
 
 ```
 faas-cli build -f stack.yml
 ```
 
-Step 4 - Push the function container to Docker Registry (default but can be changed to internal registry)
+Step 5 - Push the function container to Docker Registry (default but can be changed to internal registry)
 
 ```
 faas-cli push -f stack.yml
 ```
 
-Step 5 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
+Step 6 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com
@@ -70,13 +86,13 @@ export OPENFAAS_URL=${VEBA_GATEWAY}
 faas-cli login --username admin --password-stdin --tls-no-verify
 ```
 
-Step 6 - Create function secret (only required once)
+Step 7 - Create function secret (only required once)
 
 ```
 faas-cli secret create vc-slack-config --from-file=vc-slack-config.json --tls-no-verify
 ```
 
-Step 7 - Deploy function to vCenter Event Broker Appliance
+Step 8 - Deploy function to vCenter Event Broker Appliance
 
 ```
 faas-cli deploy -f stack.yml --tls-no-verify
