@@ -5,12 +5,17 @@ ARG COMMIT
 
 WORKDIR /build
 
+# install linter into ./bin/
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.23.7
+
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
 
 COPY cmd cmd
 COPY internal internal
+
+RUN ./bin/golangci-lint run ./...
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o vmware-event-router cmd/main.go
 
 # debian:stable-slim

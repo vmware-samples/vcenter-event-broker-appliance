@@ -31,9 +31,9 @@ tidy:
 	$(info Make: syncing and cleaning up Go dependencies.)
 	go mod tidy -v
 
+# intended for local dev use (won't check for unclean git)
 binary: test tidy
 	$(info Make: Building binary "$(DIST_FOLDER)/$(BINARY)".)
-	$(if $(GIT_NOT_CLEAN_CHECK), $(error "Dirty Git repository."))
 	CGO_ENABLED=0 go build -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o $(DIST_FOLDER)/$(BINARY) cmd/main.go
 
 build: test tidy
