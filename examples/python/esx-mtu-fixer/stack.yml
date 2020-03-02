@@ -1,15 +1,16 @@
 version: 1.0
 provider:
   name: openfaas
-  gateway: http://127.0.0.1:8080
+  gateway: https://veba.yourdomain.com
 functions:
   esx-mtu-fixer:
     lang: python
     handler: ./esx-mtu-fixer
-    image: martindekov/esx-mtu-fixer:0.0.1
+    image: vmware/veba-python-esx-mtu:latest
     annotations:
-      topic: vm.powered.on
+      topic: VmPoweredOnEvent
     environment:
       write_debug: true
+      read_debug: true
     secrets:
       - vc-credentials

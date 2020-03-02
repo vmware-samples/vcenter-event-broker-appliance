@@ -72,7 +72,7 @@ functions:
   pytag-fn:
     lang: python3
     handler: ./handler
-    image: embano1/pytag-fn:0.3
+    image: vmware/veba-python-tagging:latest
     environment:
       write_debug: true
       read_debug: true
