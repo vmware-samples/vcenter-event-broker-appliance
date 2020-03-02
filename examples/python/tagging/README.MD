@@ -5,6 +5,7 @@ Clone this repository which contains the example functions.
 ```bash
 git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
 cd vcenter-event-broker-appliance/examples/python/tagging
+git checkout master
 ```
 
 ### Categories and tags
