@@ -52,7 +52,7 @@ func NewServer(cfg connection.Config) (*Server, error) {
 	mux := http.NewServeMux()
 	switch basicAuth {
 	case true:
-		mux.Handle(endpoint, withBasicAuth(expvar.Handler(), username, password))
+		mux.Handle(endpoint, withBasicAuth(logger, expvar.Handler(), username, password))
 	default:
 		mux.Handle(endpoint, expvar.Handler())
 	}
@@ -102,7 +102,7 @@ func (s *Server) Run(ctx context.Context, bindAddr string) error {
 
 // withBasicAuth enforces basic auth as a middleware for the given username and
 // password
-func withBasicAuth(next http.Handler, u string, p string) http.HandlerFunc {
+func withBasicAuth(logger *log.Logger, next http.Handler, u string, p string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		user, password, ok := r.BasicAuth()
@@ -110,7 +110,10 @@ func withBasicAuth(next http.Handler, u string, p string) http.HandlerFunc {
 
 		if !ok || !(p == password && u == user) {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("invalid credentials"))
+			_, err := w.Write([]byte("invalid credentials"))
+			if err != nil {
+				logger.Printf("could not write http response: %v", err)
+			}
 			return
 		}
 
@@ -128,14 +131,16 @@ func (s *Server) publish(ctx context.Context) {
 	expvar.Publish("system.allLoad", expvar.Func(allLoadAvg))
 	programName.Set(os.Args[0])
 
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case <-time.Tick(time.Second):
+		case <-ticker.C:
 			numberOfSecondsRunning.Add(1)
 			lastLoad.Set(loadAvg(0))
-			// eventRouterStats.Set("EventStats", &stats)
 		}
 	}
 }

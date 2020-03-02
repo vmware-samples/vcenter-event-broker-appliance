@@ -104,11 +104,13 @@ func (vcenter *vCenterStream) Source() string {
 }
 
 func (vcenter *vCenterStream) PushMetrics(ctx context.Context, ms *metrics.Server) {
+	ticker := time.NewTicker(metrics.PushInterval)
+	defer ticker.Stop()
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case <-time.Tick(metrics.PushInterval):
+		case <-ticker.C:
 			vcenter.lock.RLock()
 			eventsSec := math.Round((float64(*vcenter.stats.EventsTotal)/time.Since(vcenter.stats.Started).Seconds())*100) / 100 // 0.2f syntax
 			vcenter.stats.EventsSec = &eventsSec

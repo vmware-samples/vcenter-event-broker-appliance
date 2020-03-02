@@ -3,7 +3,6 @@ package processor
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -93,7 +92,7 @@ func NewOpenFaaSProcessor(ctx context.Context, cfg connection.Config, source str
 
 // Response prints status information for each function invokation
 func (openfaas *openfaasProcessor) Response(res sdk.InvokerResponse) {
-	// update stats 
+	// update stats
 	// TODO: currently we only support metrics when in sync invokation mode
 	// because we don't have a callback for async invocations
 	openfaas.lock.Lock()
@@ -109,8 +108,6 @@ func (openfaas *openfaasProcessor) Response(res sdk.InvokerResponse) {
 
 // Process implements the stream processor interface
 func (openfaas *openfaasProcessor) Process(moref types.ManagedObjectReference, baseEvent []types.BaseEvent) error {
-	fmt.Printf("of topics: %v", openfaas.controller.Topics())
-
 	for idx := range baseEvent {
 		// process slice in reverse order to maintain Event.Key ordering
 		event := baseEvent[len(baseEvent)-1-idx]
@@ -148,17 +145,19 @@ func handleEvent(event types.BaseEvent, source string) (string, []byte, error) {
 	cloudEvent := events.NewCloudEvent(event, eventInfo, source)
 	message, err := json.Marshal(cloudEvent)
 	if err != nil {
-		return "", nil, errors.Wrapf(err, "could not marshal cloud event for vSphere event %s from source %s", event.GetEvent().Key, source)
+		return "", nil, errors.Wrapf(err, "could not marshal cloud event for vSphere event %d from source %s", event.GetEvent().Key, source)
 	}
 	return eventInfo.Name, message, nil
 }
 
 func (openfaas *openfaasProcessor) PushMetrics(ctx context.Context, ms *metrics.Server) {
+	ticker := time.NewTicker(metrics.PushInterval)
+	defer ticker.Stop()
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case <-time.Tick(metrics.PushInterval):
+		case <-ticker.C:
 			openfaas.lock.RLock()
 			ms.Receive(openfaas.stats)
 			openfaas.lock.RUnlock()

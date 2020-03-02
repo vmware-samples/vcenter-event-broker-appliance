@@ -52,6 +52,19 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// signal handler
+	go func() {
+		sigCh := make(chan os.Signal, 1)
+		signal.Notify(sigCh, syscall.SIGTERM, os.Interrupt)
+
+		sig := <-sigCh
+		logger.Printf("got signal: %v, cleaning up...", sig)
+
+		cancel()
+		// give goroutines some grace time to clean up
+		time.Sleep(3 * time.Second)
+	}()
+
 	f, err := os.Open(configPath)
 	if err != nil {
 		logger.Fatalf("could not open configuration file: %v", err)
@@ -130,24 +143,18 @@ func main() {
 		logger.Fatal("no configuration for metrics server found")
 	}
 
-	// handle OS signals gracefully
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGTERM, os.Interrupt)
-	go func() {
-		sig := <-sigCh
-		logger.Printf("got signal: %v, cleaning up...", sig)
-		cancel()
-		// give goroutines some grace time to clean up
-		time.Sleep(3 * time.Second)
-	}()
-
 	eg, egCtx := errgroup.WithContext(ctx)
+
+	// metrics server
 	eg.Go(func() error {
 		return metricsServer.Run(egCtx, bindAddr)
 	})
 
+	// event stream
 	eg.Go(func() error {
-		defer streamer.Shutdown(egCtx)
+		defer func() {
+			_ = streamer.Shutdown(egCtx)
+		}()
 		return streamer.Stream(egCtx, proc)
 	})
 
