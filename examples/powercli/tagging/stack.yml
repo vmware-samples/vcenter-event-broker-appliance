@@ -5,12 +5,12 @@ functions:
   powercli-tag:
     lang: powercli
     handler: ./handler
-    image: lamw/powercli-tag:latest
+    image: vmware/veba-powercli-tagging:latest
     environment:
       write_debug: true
       read_debug: true
       function_debug: false
     secrets:
-      - vcconfig
+      - vc-tag-config
     annotations:
-      topic: drs.vm.powered.on
+      topic: DrsVmPoweredOnEvent

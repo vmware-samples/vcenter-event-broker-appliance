@@ -5,5 +5,5 @@
 if [ -e /root/ran_customization ]; then
     exit
 else
-    /root/setup.sh &> /var/log/bootstrap.log
+    /root/setup/setup.sh &> /var/log/bootstrap.log
 fi

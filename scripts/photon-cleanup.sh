@@ -34,6 +34,7 @@ echo '> Setting random root password...'
 RANDOM_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
 echo "root:${RANDOM_PASSWORD}" | /usr/sbin/chpasswd
 
+echo '> Clearing history ...'
 unset HISTFILE && history -c && rm -fr /root/.bash_history
 
 echo '> Done'

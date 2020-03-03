@@ -1,5 +1,5 @@
 # Process function Secrets passed in
-$VC_CONFIG_FILE = "/var/openfaas/secrets/vcconfig"
+$VC_CONFIG_FILE = "/var/openfaas/secrets/vc-hostmaint-config"
 $VC_CONFIG = (Get-Content -Raw -Path $VC_CONFIG_FILE | ConvertFrom-Json)
 if($env:function_debug -eq "true") {
     Write-host "DEBUG: `"$VC_CONFIG`""
@@ -8,11 +8,11 @@ if($env:function_debug -eq "true") {
 # Process payload sent from vCenter Server Event
 $json = $args | ConvertFrom-Json
 if($env:function_debug -eq "true") {
-    Write-Host "DEBUG: `"$json`""
+    Write-Host "DEBUG: json=`"$($json | Format-List | Out-String)`""
 }
 
-$eventObjectName = $json.objectName
-$managedObjectReference = $json.managedObjectReference
+$eventObjectName = $json.data.host.name
+$managedObjectReference = $json.data.host.type
 
 Set-PowerCLIConfiguration -InvalidCertificateAction Ignore  -DisplayDeprecationWarnings $false -ParticipateInCeip $false -Confirm:$false | Out-Null
 

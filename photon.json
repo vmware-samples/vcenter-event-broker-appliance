@@ -32,7 +32,6 @@
       "ssh_username": "{{ user `guest_username` }}",
       "ssh_password": "{{ user `guest_password` }}",
       "ssh_port": 22,
-      "ssh_wait_timeout": "60m",
       "format": "ovf",
       "shutdown_command": "/sbin/shutdown -h now",
       "shutdown_timeout": "1000s",
@@ -62,13 +61,7 @@
       "type": "shell",
       "pause_before": "20s",
       "scripts": [
-        "scripts/photon-containers.sh"
-      ]
-    },
-    {
-      "type": "shell",
-      "scripts": [
-        "scripts/photon-openfaas.sh",
+        "scripts/photon-containers.sh",
         "scripts/photon-cleanup.sh"
       ]
     },
@@ -79,13 +72,53 @@
     },
     {
       "type": "file",
-      "source": "files/setup-banner.sh",
-      "destination": "/root/setup-banner.sh"
+      "source": "files/setup.sh",
+      "destination": "/root/setup/setup.sh"
     },
     {
       "type": "file",
-      "source": "files/setup.sh",
-      "destination": "/root/setup.sh"
+      "source": "files/setup-01-os.sh",
+      "destination": "/root/setup/setup-01-os.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-02-proxy.sh",
+      "destination": "/root/setup/setup-02-proxy.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-03-network.sh",
+      "destination": "/root/setup/setup-03-network.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-04-kubernetes.sh",
+      "destination": "/root/setup/setup-04-kubernetes.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-05-event-processor.sh",
+      "destination": "/root/setup/setup-05-event-processor.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-06-event-router.sh",
+      "destination": "/root/setup/setup-06-event-router.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-07-tinywww.sh",
+      "destination": "/root/setup/setup-07-tinywww.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-08-ingress.sh",
+      "destination": "/root/setup/setup-08-ingress.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-09-banner.sh",
+      "destination": "/root/setup/setup-09-banner.sh"
     },
     {
       "type": "file",

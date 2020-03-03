@@ -26,4 +26,7 @@ tdnf install -y \
   tar \
   kubernetes-kubeadm
 
+echo '> Creating directory for setup scripts'
+mkdir -p /root/setup
+
 echo '> Done'

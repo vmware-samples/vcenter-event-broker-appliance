@@ -10,4 +10,5 @@ This page lists ready to use functions curated by the vCenter Event Broker commu
 | Send VM Configuration Changes to Slack | | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/powercli/hwchange-slack) |
 | Disable Alarms for Host Maintenance | | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/powercli/hostmaint-alarms) |
 | ESX Maximum transmission unit fixer | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/python/esx-mtu-fixer) | |
-| AWS EventBridge | | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/development/examples/powercli/eventbridge) |
+| Datastore Usage Notification | | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/powercli/datastore-usage-email) |
+| Echo VEBA Event | [Link](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/python/echo)| |

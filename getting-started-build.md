@@ -13,7 +13,7 @@
 Step 1 - Clone the vCenter Event Broker Appliance Git repository
 
 ```
-git clone https://github.com/lamw/vcenter-event-broker-appliance.git
+git clone https://github.com/vmware-samples/vcenter-event-broker-appliance.git
 ```
 
 Step 2 - Edit the `photon-builder.json` file to configure the vSphere endpoint for building the vCenter Event Broker Appliance

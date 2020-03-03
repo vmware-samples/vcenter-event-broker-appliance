@@ -1,4 +1,4 @@
-FROM lamw/powercli-eventbridge
+FROM vmware/powerclicore:latest
 
 RUN mkdir -p /home/app
 USER root

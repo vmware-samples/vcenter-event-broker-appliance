@@ -2,15 +2,15 @@ provider:
   name: openfaas
   gateway: https://veba.primp-industries.com
 functions:
-  powershell-eventbridge:
+  powershell-datastore-usage:
     lang: powercli
     handler: ./handler
-    image: lamw/powershell-eventbridge:latest
+    image: vmware/veba-powercli-datastore-notification:latest
     environment:
       write_debug: true
       read_debug: true
       function_debug: false
     secrets:
-      - eventbridge-secrets
+      - vc-datastore-config
     annotations:
-      topic: vm.removed
+      topic: AlarmStatusChangedEvent
