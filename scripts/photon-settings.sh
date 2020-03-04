@@ -29,4 +29,14 @@ tdnf install -y \
 echo '> Creating directory for setup scripts'
 mkdir -p /root/setup
 
+echo '> Creating tools.conf to prioritize eth0 interface...'
+cat /etc/vmware-tools/tools.conf << EOF
+[guestinfo]
+primary-nics=eth0
+low-priority-nics=weave,docker0
+
+[guestinfo]
+exclude-nics=veth*,vxlan*,datapath
+EOF
+
 echo '> Done'
