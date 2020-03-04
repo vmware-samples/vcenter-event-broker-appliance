@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/connection"
 )
 
@@ -48,7 +49,7 @@ func NewServer(cfg connection.Config) (*Server, error) {
 		return nil, errors.Errorf("unsupported authentication method for metrics server: %q", cfg.Auth.Method)
 	}
 
-	logger := log.New(os.Stdout, "[Metrics Server] ", log.LstdFlags)
+	logger := log.New(os.Stdout, color.Teal("[Metrics Server] "), log.LstdFlags)
 	mux := http.NewServeMux()
 	switch basicAuth {
 	case true:

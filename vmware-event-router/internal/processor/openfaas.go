@@ -11,6 +11,7 @@ import (
 	sdk "github.com/openfaas-incubator/connector-sdk/types"
 	"github.com/openfaas/faas-provider/auth"
 	"github.com/pkg/errors"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/connection"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
@@ -43,7 +44,7 @@ type openfaasProcessor struct {
 // source. Asynchronous function invokation can be configured for
 // high-throughput (non-blocking) requirements.
 func NewOpenFaaSProcessor(ctx context.Context, cfg connection.Config, source string, verbose bool, ms *metrics.Server) (Processor, error) {
-	logger := log.New(os.Stdout, "[OpenFaaS] ", log.LstdFlags)
+	logger := log.New(os.Stdout, color.Purple("[OpenFaaS] "), log.LstdFlags)
 	openfaas := openfaasProcessor{
 		source:  source,
 		verbose: verbose,

@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/eventbridge"
 	"github.com/pkg/errors"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/connection"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
@@ -50,7 +51,7 @@ type eventPattern struct {
 // NewAWSEventBridgeProcessor returns an AWS EventBridge processor for the given
 // stream source.
 func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, source string, verbose bool, ms *metrics.Server) (Processor, error) {
-	logger := log.New(os.Stdout, "[AWS EventBridge] ", log.LstdFlags)
+	logger := log.New(os.Stdout, color.Yellow("[AWS EventBridge] "), log.LstdFlags)
 	eventBridge := awsEventBridgeProcessor{
 		source:     source,
 		verbose:    verbose,
