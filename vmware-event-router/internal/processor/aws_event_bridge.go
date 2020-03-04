@@ -113,6 +113,7 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, sour
 			return nil, errors.Wrap(err, "could not list event bridge rules")
 		}
 
+		arnLoop:
 		for _, rule := range rules.Rules {
 			switch {
 			case *rule.Arn == ruleARN:
@@ -134,7 +135,7 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, sour
 					eventBridge.patternMap[s] = *rule.EventBusName
 				}
 				found = true
-				break
+				break arnLoop
 
 			default:
 				continue
@@ -142,7 +143,7 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, sour
 		}
 
 		switch {
-		case found == true: // return early
+		case found: // return early
 			break
 		case rules.NextToken != nil: // try next batch of rules, if any
 			nextToken = rules.NextToken
@@ -170,7 +171,6 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, sour
 // throttling/batching
 // https://docs.aws.amazon.com/eventbridge/latest/userguide/cloudwatch-limits-eventbridge.html#putevents-limits
 func (awsEventBridge *awsEventBridgeProcessor) Process(moref types.ManagedObjectReference, baseEvent []types.BaseEvent) error {
-
 	input, err := awsEventBridge.createPutEventsInput(baseEvent)
 	if err != nil {
 		awsEventBridge.Printf("could not create PutEventsInput for event(s): %v", err)
@@ -219,7 +219,7 @@ func (awsEventBridge *awsEventBridgeProcessor) createPutEventsInput(baseEvent []
 		cloudEvent := events.NewCloudEvent(event, eventInfo, awsEventBridge.source)
 		jsonBytes, err := json.Marshal(cloudEvent)
 		if err != nil {
-			return eventbridge.PutEventsInput{}, errors.Wrapf(err, "could not marshal cloud event for vSphere event %s from source %s", event.GetEvent().Key, awsEventBridge.source)
+			return eventbridge.PutEventsInput{}, errors.Wrapf(err, "could not marshal cloud event for vSphere event %d from source %s", event.GetEvent().Key, awsEventBridge.source)
 		}
 
 		jsonString := string(jsonBytes)
@@ -273,6 +273,7 @@ func (awsEventBridge *awsEventBridgeProcessor) syncRules(ctx context.Context, ev
 			return errors.Wrap(err, "could not list event bridge rules")
 		}
 
+		arnLoop:
 		for _, rule := range rules.Rules {
 			switch {
 			case *rule.Arn == ruleARN:
@@ -298,7 +299,7 @@ func (awsEventBridge *awsEventBridgeProcessor) syncRules(ctx context.Context, ev
 				awsEventBridge.mu.Unlock()
 
 				found = true
-				break
+				break arnLoop
 
 			default:
 				continue
@@ -306,7 +307,7 @@ func (awsEventBridge *awsEventBridgeProcessor) syncRules(ctx context.Context, ev
 		}
 
 		switch {
-		case found == true: // return early
+		case found: // return early
 			break
 		case rules.NextToken != nil: // try next batch of rules, if any
 			nextToken = rules.NextToken
@@ -319,11 +320,14 @@ func (awsEventBridge *awsEventBridgeProcessor) syncRules(ctx context.Context, ev
 }
 
 func (awsEventBridge *awsEventBridgeProcessor) PushMetrics(ctx context.Context, ms *metrics.Server) {
+	ticker := time.NewTicker(metrics.PushInterval)
+	defer ticker.Stop()
+
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case <-time.Tick(metrics.PushInterval):
+		case <-ticker.C:
 			awsEventBridge.mu.RLock()
 			ms.Receive(awsEventBridge.stats)
 			awsEventBridge.mu.RUnlock()
