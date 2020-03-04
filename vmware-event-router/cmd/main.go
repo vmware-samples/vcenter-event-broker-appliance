@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/connection"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
@@ -33,7 +34,7 @@ var banner = `
 
 func main() {
 	fmt.Println(banner)
-	var logger = log.New(os.Stdout, "[VMware Event Router] ", log.LstdFlags)
+	var logger = log.New(os.Stdout, color.Green("[VMware Event Router] "), log.LstdFlags)
 
 	var configPath string
 	var verbose bool
