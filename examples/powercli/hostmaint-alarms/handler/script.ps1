@@ -12,7 +12,6 @@ if($env:function_debug -eq "true") {
 }
 
 $eventObjectName = $json.data.host.name
-$managedObjectReference = $json.data.host.type
 
 Set-PowerCLIConfiguration -InvalidCertificateAction Ignore  -DisplayDeprecationWarnings $false -ParticipateInCeip $false -Confirm:$false | Out-Null
 
@@ -20,17 +19,25 @@ Set-PowerCLIConfiguration -InvalidCertificateAction Ignore  -DisplayDeprecationW
 Write-Host "Connecting to vCenter Server ..."
 Connect-VIServer -Server $($VC_CONFIG.VC) -User $($VC_CONFIG.VC_USERNAME) -Password $($VC_CONFIG.VC_PASSWORD)
 
+# Construct MoRef from Type/Value
+$moRef = New-Object VMware.Vim.ManagedObjectReference
+$moRef.Type = $json.data.host.host.type
+$moRef.Value = $json.data.host.host.Value
+$hostMoRef = Get-View $moRef
+
 # Get the vCenter AlarmManager
 $alarmManager = Get-View AlarmManager
-if ($json.topic -eq "entered.maintenance.mode") {
+
+if ($json.subject -eq "EnteredMaintenanceModeEvent") {
     # Disable alarm actions on the host
     Write-Host "Disabling alarm actions on host: $eventObjectName"
-    $alarmManager.EnableAlarmActions($managedObjectReference, $false)
+    $alarmManager.EnableAlarmActions($hostMoRef.MoRef, $false)
 }
-else {
+
+if ($json.subject -eq "ExitMaintenanceModeEvent") {
     # Enable alarm actions on the host
     Write-Host "Enabling alarm actions on host: $eventObjectName"
-    $alarmManager.EnableAlarmActions($managedObjectReference, $true)
+    $alarmManager.EnableAlarmActions($hostMoRef.MoRef, $true)
 }
 
 Write-Host "Disconnecting from vCenter Server ..."

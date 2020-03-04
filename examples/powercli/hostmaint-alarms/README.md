@@ -2,8 +2,7 @@
 
 ## Description
 
-This example will disable alarm actions on a host while it is in maintenance mode.  It deploys two functions that use the same PowerCLI script.  The first function subscribes to the `entered.maintenance.mode` event to run when a host is put into maintenance mode and disable alarms.  The second function subscribes to the `exit.maintenance.mode` event to re-enable alarms when the host exits maintenance mode.  There is an accompanying blog post with more details:  [Automate Host Maintenance with the vCenter Event Broker Appliance
-](https://doogleit.github.io/2019/11/automate-host-maintenance-with-the-vcenter-event-broker-appliance/)
+This example will disable alarm actions on a host when it has entered maintenance mode and will re-enable alarm actions on a host after it has exited maintenance mode. There is an accompanying blog post with more details:  [Automate Host Maintenance with the vCenter Event Broker Appliance](https://doogleit.github.io/2019/11/automate-host-maintenance-with-the-vcenter-event-broker-appliance/)
 
 ## Consume Function Instruction
 
