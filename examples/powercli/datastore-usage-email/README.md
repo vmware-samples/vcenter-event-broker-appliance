@@ -15,7 +15,8 @@ git checkout master
 ```
 
 Step 2 - Update `stack.yml` and `vc-datastore-config.json` with your environment information
-Note: leave SMTP_USERNAME and SMTP_PASSWORD blank if you do not want to use authenticated SMTP
+
+<B>Note:</B> leave SMTP_USERNAME and SMTP_PASSWORD blank if you do not want to use authenticated SMTP
 
 Step 3 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
 

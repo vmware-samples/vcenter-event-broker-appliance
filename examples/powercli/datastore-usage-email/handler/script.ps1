@@ -50,17 +50,12 @@ if( ("$alarmName" -match "$($VC_CONFIG.VC_ALARM_NAME)") -and ([bool]($VC_CONFIG.
         Datacenter: $datacenter
         Datastore: $datastoreName	
 "@
-	if ($VC_CONFIG.SMTP_PASSWORD.length -gt 0 -and $VC_CONFIG.SMTP_USERNAME.length -gt 0)
-	{
+	if ($VC_CONFIG.SMTP_PASSWORD.length -gt 0 -and $VC_CONFIG.SMTP_USERNAME.length -gt 0) {
 		$password = ConvertTo-SecureString "$($VC_CONFIG.SMTP_PASSWORD)" -AsPlainText -Force
 		$credential = New-Object System.Management.Automation.PSCredential($($VC_CONFIG.SMTP_USERNAME), $password)
 		Send-MailMessage -From $($VC_CONFIG.EMAIL_FROM) -to $($VC_CONFIG.EMAIL_TO) -Subject $Subject -Body $Body -SmtpServer $($VC_CONFIG.SMTP_SERVER) -port $($VC_CONFIG.SMTP_PORT) -UseSsl -Credential $credential -Encoding UTF32
+	} else {
+	    Send-MailMessage -From $($VC_CONFIG.EMAIL_FROM) -to $($VC_CONFIG.EMAIL_TO) -Subject $Subject -Body $Body -SmtpServer $($VC_CONFIG.SMTP_SERVER) -port $($VC_CONFIG.SMTP_PORT) -Encoding UTF32
 	}
-	else
-	{
-		Send-MailMessage -From $($VC_CONFIG.EMAIL_FROM) -to $($VC_CONFIG.EMAIL_TO) -Subject $Subject -Body $Body -SmtpServer $($VC_CONFIG.SMTP_SERVER) -port $($VC_CONFIG.SMTP_PORT) -Encoding UTF32
-	}
-
-
 }
 
