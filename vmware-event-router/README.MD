@@ -171,7 +171,7 @@ The VMware Event Router uses the `"subject"` field in the event payload to store
 }
 ```
 
-`"subject"` can contain one or more event categories. Wildcards (`"*"`) are not supported. The VMware Event Router periodically synchronizes the its internal pattern map against AWS EventBridge.
+`"subject"` can contain one or more event categories. Wildcards (`"*"`) are not supported. If one wants to modify the event pattern match rule **after** deploying the VMware Event Router, its internal rules cache is periodically synchronized with AWS EventBridge at a fixed interval of 5 minutes.
 
 > **Note:** A list of event names (categories) and how to retrieve them can be found [here](https://github.com/lamw/vcenter-event-mapping/blob/master/vsphere-6.7-update-3.md).
 
