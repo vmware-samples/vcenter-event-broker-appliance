@@ -72,7 +72,7 @@ else
     # Setup OpenFaaS Secret
     kubectl --kubeconfig /root/.kube/config -n openfaas create secret generic basic-auth \
         --from-literal=basic-auth-user=admin \
-        --from-literal=basic-auth-password="${ROOT_PASSWORD}"
+        --from-literal=basic-auth-password="${OPENFAAS_PASSWORD}"
 
     kubectl --kubeconfig /root/.kube/config create -f /root/download/faas-netes/yaml
 
@@ -100,7 +100,7 @@ else
 			"method": "basic_auth",
 			"secret": {
 				"username": "admin",
-				"password": "${ROOT_PASSWORD}"
+				"password": "${OPENFAAS_PASSWORD}"
 			}
 		},
 		"options": {

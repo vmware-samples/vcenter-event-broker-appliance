@@ -8,8 +8,6 @@ set -euo pipefail
 
 echo -e "\e[92mCreating Login Banner ..." > /dev/console
 
-HOSTNAME=$(hostname -f)
-
 if [ "${EVENT_PROCESSOR_TYPE}" == "OpenFaaS" ]; then
     cat << EOF > /etc/issue
 Welcome to the vCenter Event Broker Appliance
