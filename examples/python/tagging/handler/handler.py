@@ -13,12 +13,31 @@ VC_CONFIG='/var/openfaas/secrets/vcconfig'
 
 ### Simple VAPI REST tagging implementation
 class FaaSResponse:
+    """FaaSResponse is a helper class to construct a properly formatted message returned by this function.
+    By default, OpenFaaS will marshal this response message as JSON.
+    """    
     def __init__(self, status, message):
+        """
+        
+        Arguments:
+
+            status {str} -- the response status code
+            message {str} -- the response message
+        """        
         self.status=status
         self.message=message
 
 class Tagger:
+    """Tagger is a vSphere REST API tagging client used to connect and tag objects in vCenter."""    
+
     def __init__(self,conn):
+        """
+        
+        Arguments:
+
+            conn {Session} -- connection to vCenter REST API
+        """        
+
         try:
             with open(VC_CONFIG, 'r') as vcconfigfile:
                 vcconfig = toml.load(vcconfigfile)
@@ -37,6 +56,11 @@ class Tagger:
 
     # vCenter connection handling    
     def connect(self):
+        """performs a login to vCenter
+        
+        Returns:
+            FaaSResponse -- status code and message
+        """        
         try:
             resp = self.session.post('https://'+self.vc+VAPI_SESSION_PATH,auth=(self.username,self.password))
             resp.raise_for_status()
@@ -46,6 +70,15 @@ class Tagger:
 
     # VAPI REST tagging implementation        
     def tag(self,obj):
+        """tags an object in vCenter
+        
+        Arguments:
+
+            obj {dict} -- ManagedObjectReference
+
+        Returns:
+            FaaSResponse -- status code and message
+        """        
         try:
             resp = self.session.post('https://'+self.vc+VAPI_TAG_PATH+self.tagurn+'?~action='+self.action,json=obj)
             resp.raise_for_status()
@@ -57,7 +90,7 @@ class Tagger:
 def handle(req):
     # Validate input
     try:
-        j = json.loads(req)
+        body = json.loads(req)
     except ValueError as err:
         res = FaaSResponse('400','invalid JSON {0}'.format(err))
         print(json.dumps(vars(res)))
@@ -67,7 +100,7 @@ def handle(req):
     # For debugging: validate the JSON blob we received - uncomment if needed
     # print(j)
     try:
-        ref = (j['managedObjectReference'])
+        ref = (body['data']['Vm']['Vm'])
     except KeyError as err:
         res = FaaSResponse('400','JSON does not contain ManagedObjectReference {0}'.format(err))
         print(json.dumps(vars(res)))

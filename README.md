@@ -35,15 +35,19 @@ Please refer to the getting started guide [here](getting-started.md)
 
 The vCenter Event Broker Appliance follows a highly modular approach, using Kubernetes and containers as an abstraction layer between the base operating system ([Photon OS](https://github.com/vmware/photon)) and the required application services. Currently the following components are used in the appliance:
 
-- Photon OS ([Github](https://github.com/vmware/photon))
-- Kubernetes ([Github](https://github.com/kubernetes/kubernetes))
+- VMware Event Router ([Github](https://github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router))
+  - Supported Event Stream Sources:
+    - VMware vCenter ([Website](https://www.vmware.com/products/vcenter-server.html))
+  - Supported Event Stream Processors: 
+    - OpenFaaS ([Website](https://www.openfaas.com/))
+    - AWS EventBridge ([Website](https://aws.amazon.com/eventbridge/))
 - Contour ([Github](https://github.com/projectcontour/contour))
-- OpenFaaS ([Website](https://www.openfaas.com/))
-- vCenter Connector ([Github](https://github.com/openfaas-incubator/vcenter-connector/))
+- Kubernetes ([Github](https://github.com/kubernetes/kubernetes))
+- Photon OS ([Github](https://github.com/vmware/photon))
 
 <center><div style="height:250px;width:250px"><img src="veba-appliance-diagram.png" /></div></center>
 
-For more details about the individual components and how they are used in the vCenter Event Broker Appliance, please see the [architecture page](architecture.md) or [FAQ](FAQ.md).
+For more details about the individual components and how they are used in the vCenter Event Broker Appliance, please see the [design page](DESIGN.md).
 
 ## Join Conversation
 

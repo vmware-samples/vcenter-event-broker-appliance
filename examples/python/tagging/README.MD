@@ -5,6 +5,7 @@ Clone this repository which contains the example functions.
 ```bash
 git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
 cd vcenter-event-broker-appliance/examples/python/tagging
+git checkout master
 ```
 
 ### Categories and tags
@@ -32,7 +33,7 @@ Take a note of the `urn:...` for `demotag1` as we will need it for the next step
 
 For security reasons to not expose sensitive data we will create a Kubernetes [secret](https://kubernetes.io/docs/concepts/configuration/secret/) which will hold the vCenter credentials and tag information. This secret will be mounted into the function during runtime. This is all taken care of for your by the appliance. We only have to create the secret with a simple command through `faas-cli`.
 
-First, change the configuration file `vcconfig.toml` holding your secret vCenter information located in the tagging example folder:
+First, change the configuration file [vcconfig.toml](vcconfig.toml) holding your secret vCenter information located in this folder:
 
 ```toml
 # vcconfig.toml contents
@@ -62,6 +63,8 @@ faas-cli secret create vcconfig --from-file=vcconfig.toml --tls-no-verify
 
 Lastly, define the vCenter event which will trigger this function. Such function-specific settings are performed in the `stack.yml` file. Open and edit the `stack.yml` provided with in the Python tagging example code. Change `gateway` and `topic` as per your environment/needs.
 
+> **Note:** A key-value annotation under `topic` defines which VM event should trigger the function. A list of VM events from vCenter can be found [here](https://code.vmware.com/doc/preview?id=4206#/doc/vim.event.VmEvent.html). Multiple topics can be specified using a `","` delimiter syntax, e.g. "`topic: "VmPoweredOnEvent,VmPoweredOffEvent"`".
+
 ```yaml
 provider:
   name: openfaas
@@ -70,17 +73,17 @@ functions:
   pytag-fn:
     lang: python3
     handler: ./handler
-    image: embano1/pytag-fn:0.2
+    image: vmware/veba-python-tagging:latest
     environment:
       write_debug: true
       read_debug: true
     secrets:
       - vcconfig # leave as is unless you changed the name during the creation of the vCenter credentials secrets above
     annotations:
-      topic: vm.powered.on # or drs.vm.powered.on in a DRS-enabled cluster
+      topic: VmPoweredOnEvent # or DrsVmPoweredOnEvent in a DRS-enabled cluster
 ```
 
-**Note:** If you are running a vSphere DRS-enabled cluster the topic annotation above should be `drs.vm.powered.on`. Otherwise the function would never be triggered.
+**Note:** If you are running a vSphere DRS-enabled cluster the topic annotation above should be `DrsVmPoweredOnEvent`. Otherwise the function would never be triggered.
 
 ### Deploy the function
 
@@ -104,7 +107,7 @@ If your VM did not get the tag attached, verify:
 
 - vCenter IP/username/password
 - Permissions of the vCenter user
-- Whether the components can talk to each other (connector to vCenter and OpenFaaS, function to vCenter)
+- Whether the components can talk to each other (VMware Event Router to vCenter and OpenFaaS, function to vCenter)
 - Check the logs (`kubectl` is installed and configured locally on the appliance)):
 
 ```bash
@@ -118,16 +121,3 @@ faas-cli logs pytag-fn --follow --tls-no-verify
 {"status": "200", "message": "successfully attached tag on VM: vm-267"}
 2019/01/25 23:48:56 Duration: 1.551482 seconds
 ```
-
-Or via `kubectl` locally on the appliance:
-
-```bash
-kubectl -n openfaas logs deploy/vcenter-connector -f
-
-# Successful log message in the OpenFaaS vCenter connector
-2019/01/25 23:39:09 Message on topic: vm.powered.on
-2019/01/25 23:39:09 Invoke function: pytag-fn
-2019/01/25 23:39:10 Response [200] from pytag-fn
-```
-
-You can access appliance specific logs on the endpoint `https://VEBA_FQDN/boostrap`. For debug level information, turn on debugging during the appliance deployment process.

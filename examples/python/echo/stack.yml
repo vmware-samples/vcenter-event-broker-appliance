@@ -1,0 +1,14 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://veba.primp-industries.com
+functions:
+  veba-echo:
+    lang: python
+    handler: ./handler
+    image: vmware/veba-python-echo:latest
+    environment:
+      write_debug: true
+      read_debug: true
+    annotations:
+      topic: "VmPoweredOnEvent,VmPoweredOffEvent"

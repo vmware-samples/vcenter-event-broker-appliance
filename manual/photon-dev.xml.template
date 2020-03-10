@@ -14,9 +14,9 @@
             <Label>IP Address</Label>
             <Description>IP Address of the system</Description>
         </Property>
-        <Property ovf:key="guestinfo.netmask" ovf:type="string" ovf:userConfigurable="true" ovf:value="24">
-            <Label>Netmask Prefix</Label>
-            <Description>CIDR notation (e.g. 24 for 255.255.255.0, 28 for 255.255.255.240)</Description>
+        <Property ovf:key="guestinfo.netmask" ovf:qualifiers="ValueMap{&quot;32 (255.255.255.255)&quot;, &quot;31 (255.255.255.254)&quot;, &quot;30 (255.255.255.252)&quot;, &quot;29 (255.255.255.248)&quot;, &quot;28 (255.255.255.240)&quot;, &quot;27 (255.255.255.224)&quot;, &quot;26 (255.255.255.192)&quot;, &quot;25 (255.255.255.128)&quot;, &quot;24 (255.255.255.0)&quot;, &quot;23 (255.255.254.0)&quot;, &quot;22 (255.255.252.0)&quot;, &quot;21 (255.255.248.0)&quot;, &quot;20 (255.255.240.0)&quot;, &quot;19 (255.255.224.0)&quot;, &quot;18 (255.255.192.0)&quot;, &quot;17 (255.255.128.0)&quot;, &quot;16 (255.255.0.0)&quot;, &quot;15 (255.254.0.0)&quot;, &quot;14 (255.252.0.0)&quot;, &quot;13 (255.248.0.0)&quot;, &quot;12 (255.240.0.0)&quot;, &quot;11 (255.224.0.0)&quot;, &quot;10 (255.192.0.0)&quot;, &quot;9 (255.128.0.0)&quot;, &quot;8 (255.0.0.0)&quot;, &quot;7 (254.0.0.0)&quot;, &quot;6 (252.0.0.0)&quot;, &quot;5 (248.0.0.0)&quot;, &quot;4 (240.0.0.0)&quot;, &quot;3 (224.0.0.0)&quot;, &quot;2 (192.0.0.0)&quot;, &quot;1 (128.0.0.0)&quot;, &quot;0 (0.0.0.0)&quot;}" ovf:type="string" ovf:userConfigurable="true" ovf:value="24 (255.255.255.0)">
+            <Label>Network CIDR Prefix</Label>
+            <Description>Network CIDR Prefix</Description>
         </Property>
         <Property ovf:key="guestinfo.gateway" ovf:type="string" ovf:userConfigurable="true" ovf:value="192.168.30.1">
             <Label>Gateway</Label>
@@ -34,7 +34,7 @@
             <Label>NTP</Label>
             <Description>NTP Servers (space separated)</Description>
         </Property>
-        <Category>Proxy Settings (optional)</Category>
+      <Category>Proxy Settings (optional)</Category>
         <Property ovf:key="guestinfo.http_proxy" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>HTTP Proxy</Label>
             <Description>Enter HTTP Proxy Server followed by the port and without typing "http://" before. Example: "proxy.provider.com:3128"</Description>
@@ -55,16 +55,12 @@
             <Label>No Proxy</Label>
             <Description>No Proxy for e.g. your internal domain suffix. Comma separated (localhost, 127.0.0.1, domain.local)</Description>
         </Property>
-        <Category>Credentials</Category>
+      <Category>OS Credentials</Category>
         <Property ovf:key="guestinfo.root_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="VMware1!">
             <Label>Root Password</Label>
             <Description>Password to login in as root. Please use a secure password</Description>
         </Property>
-        <Property ovf:key="guestinfo.openfaas_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="VMware1!">
-            <Label>OpenFaaS Password</Label>
-            <Description>Password to login into OpenFaaS. Please use a secure password</Description>
-        </Property>
-        <Category>vSphere</Category>
+      <Category>vSphere</Category>
         <Property ovf:key="guestinfo.vcenter_server" ovf:type="string" ovf:userConfigurable="true" ovf:value="192.168.30.200">
             <Label>vCenter Server</Label>
             <Description>IP Address or Hostname of vCenter Server</Description>
@@ -81,14 +77,52 @@
             <Label>Disable vCenter Server TLS Verification</Label>
             <Description>Disable TLS Verification for vCenter Server (required for self-sign certificate)</Description>
         </Property>
-        <Category>zAdvanced</Category>
-        <Property ovf:key="guestinfo.pod_network_cidr" ovf:type="string" ovf:userConfigurable="true" ovf:value="10.99.0.0/20">
-            <Label>POD CIDR Network</Label>
-            <Description>Customize POD CIDR Network (Default 10.99.0.0/20)</Description>
+      <Category>Event Processor Configuration</Category>
+        <Property ovf:qualifiers="ValueMap{&quot;OpenFaaS&quot;, &quot;AWS EventBridge&quot;}" ovf:userConfigurable="true" ovf:value="OpenFaaS" ovf:type="string" ovf:key="guestinfo.event_processor_type">
+          <Label>Event Processor</Label>
+          <Description>Choose either OpenFaaS (default) or AWS EventBridge and only fill in the configuration for the select event processor below</Description>
         </Property>
-        <Category>zDebug</Category>
+      <Category>OpenFaaS Configuration</Category>
+        <Property ovf:key="guestinfo.openfaas_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="VMware1!">
+            <Label>Password</Label>
+            <Description>Password to login into OpenFaaS. Please use a secure password</Description>
+        </Property>
+        <Property ovf:key="guestinfo.openfaas_advanced_options" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Advanced Settings</Label>
+            <Description>Opaque string for applying advanced configurations for OpenFaaS Processor. For advanced use cases only, please see documentation for more details</Description>
+        </Property>
+      <Category>AWS EventBridge Configuration</Category>
+        <Property ovf:key="guestinfo.aws_eb_access_key" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Access Key</Label>
+            <Description>A valid AWS Access Key to AWS EventBridge</Description>
+        </Property>
+        <Property ovf:key="guestinfo.aws_eb_access_secret" vf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Access Secret</Label>
+            <Description>A valid AWS Access Secret to AWS EventBridge</Description>
+        </Property>
+        <Property ovf:key="guestinfo.aws_eb_event_bus" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Event Bus Name</Label>
+            <Description>Name of the AWS Event Bus to use</Description>
+        </Property>
+        <Property ovf:key="guestinfo.aws_eb_region" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Region</Label>
+            <Description>Region where Event Bus is running (e.g. us-west-2)</Description>
+        </Property>
+        <Property ovf:key="guestinfo.aws_eb_arn" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Rule ARN</Label>
+            <Description>ID of the Rule ARN created in AWS EventBridge</Description>
+        </Property>
+        <Property ovf:key="guestinfo.aws_eb_advanced_options" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Advanced Settings</Label>
+            <Description>Opaque string for applying advanced configurations for AWS EventBridge Processor. For advanced use cases only, please see documentation for more details</Description>
+        </Property>
+      <Category>zAdvanced</Category>
         <Property ovf:key="guestinfo.debug" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="true">
             <Label>Debugging</Label>
             <Description>Enable Debugging</Description>
+        </Property>
+        <Property ovf:key="guestinfo.pod_network_cidr" ovf:type="string" ovf:userConfigurable="true" ovf:value="10.99.0.0/20">
+            <Label>POD CIDR Network</Label>
+            <Description>Customize POD CIDR Network (Default 10.99.0.0/20)</Description>
         </Property>
     </ProductSection>

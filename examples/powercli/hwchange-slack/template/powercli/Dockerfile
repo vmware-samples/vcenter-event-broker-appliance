@@ -18,8 +18,6 @@ USER root
 SHELL [ "pwsh", "-command" ]
 ENV fprocess="xargs pwsh ./function/script.ps1"
 COPY function function
-# Set to true to see request in function logs
-ENV write_debug="true"
 
 EXPOSE 8080
 

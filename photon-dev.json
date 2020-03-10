@@ -4,12 +4,12 @@
     "ovftool_deploy_vcenter": "192.168.30.200",
     "ovftool_deploy_vcenter_username": "administrator@vsphere.local",
     "ovftool_deploy_vcenter_password": "VMware1!",
-    "ovftool_deploy_datacenter": "Datacenter",
-    "ovftool_deploy_cluster": "SuperMicro-Cluster",
+    "ovftool_deploy_datacenter": "Primp-Datacenter",
+    "ovftool_deploy_cluster": "Supermicro-Cluster",
     "ovftool_deploy_vm_name": "PACKER-TEST-vCenter_Event_Broker_Appliance",
     "ovftool_deploy_vm_hostname": "veba.primp-industries.com",
     "ovftool_deploy_vm_ip_address": "192.168.30.170",
-    "ovftool_deploy_vm_prefix": "24",
+    "ovftool_deploy_vm_prefix": "24 (255.255.255.0)",
     "ovftool_deploy_vm_gateway": "192.168.30.1",
     "ovftool_deploy_vm_dns": "192.168.30.1",
     "ovftool_deploy_vm_dns_domain": "primp-industries.com",
@@ -26,7 +26,8 @@
     "ovftool_deploy_vm_vcenter_password": "VMware1!",
     "ovftool_deploy_vm_network": "VM Network",
     "ovftool_deploy_vm_datastore": "sm-vsanDatastore",
-    "ovftool_deploy_vm_pod_network_cidr": "10.100.0.0/20"
+    "ovftool_deploy_vm_pod_network_cidr": "10.100.0.0/20",
+    "ovftool_deploy_vm_event_processor_type": "OpenFaaS"
   },
   "builders": [
     {
@@ -55,8 +56,6 @@
       "ssh_username": "{{ user `guest_username` }}",
       "ssh_password": "{{ user `guest_password` }}",
       "ssh_port": 22,
-      "ssh_wait_timeout": "60m",
-
       "format": "ovf",
       "shutdown_command": "/sbin/shutdown -h now",
       "shutdown_timeout": "1000s",
@@ -87,13 +86,7 @@
       "type": "shell",
       "pause_before": "20s",
       "scripts": [
-        "scripts/photon-containers.sh"
-      ]
-    },
-    {
-      "type": "shell",
-      "scripts": [
-        "scripts/photon-openfaas.sh",
+        "scripts/photon-containers.sh",
         "scripts/photon-cleanup.sh"
       ]
     },
@@ -104,13 +97,53 @@
     },
     {
       "type": "file",
-      "source": "files/setup-banner.sh",
-      "destination": "/root/setup-banner.sh"
+      "source": "files/setup.sh",
+      "destination": "/root/setup/setup.sh"
     },
     {
       "type": "file",
-      "source": "files/setup.sh",
-      "destination": "/root/setup.sh"
+      "source": "files/setup-01-os.sh",
+      "destination": "/root/setup/setup-01-os.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-02-proxy.sh",
+      "destination": "/root/setup/setup-02-proxy.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-03-network.sh",
+      "destination": "/root/setup/setup-03-network.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-04-kubernetes.sh",
+      "destination": "/root/setup/setup-04-kubernetes.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-05-event-processor.sh",
+      "destination": "/root/setup/setup-05-event-processor.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-06-event-router.sh",
+      "destination": "/root/setup/setup-06-event-router.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-07-tinywww.sh",
+      "destination": "/root/setup/setup-07-tinywww.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-08-ingress.sh",
+      "destination": "/root/setup/setup-08-ingress.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-09-banner.sh",
+      "destination": "/root/setup/setup-09-banner.sh"
     },
     {
       "type": "file",
@@ -140,7 +173,7 @@
     {
       "type": "shell-local",
       "inline": [
-        "ovftool --powerOn --name={{ user `ovftool_deploy_vm_name` }} --net:'VM Network={{ user `ovftool_deploy_vm_network` }}' --datastore={{ user `ovftool_deploy_vm_datastore` }} --prop:guestinfo.hostname={{ user `ovftool_deploy_vm_hostname` }} --prop:guestinfo.ipaddress={{ user `ovftool_deploy_vm_ip_address` }} --prop:guestinfo.netmask={{ user `ovftool_deploy_vm_prefix` }} --prop:guestinfo.gateway={{ user `ovftool_deploy_vm_gateway` }} --prop:guestinfo.dns={{ user `ovftool_deploy_vm_dns` }} --prop:guestinfo.domain={{ user `ovftool_deploy_vm_dns_domain` }} --prop:guestinfo.ntp={{ user `ovftool_deploy_vm_ntp` }} --prop:guestinfo.http_proxy={{ user `ovftool_deploy_vm_http_proxy` }} --prop:guestinfo.https_proxy={{ user `ovftool_deploy_vm_https_proxy` }} --prop:guestinfo.proxy_username={{ user `ovftool_deploy_vm_proxy_username` }} --prop:guestinfo.proxy_password={{ user `ovftool_deploy_vm_proxy_password` }} --prop:guestinfo.no_proxy={{ user `ovftool_deploy_vm_no_proxy` }} --prop:guestinfo.root_password={{ user `vm_ovftool_deploy_root_password` }} --prop:guestinfo.openfaas_password={{ user `ovftool_deploy_vm_openfaas_password` }} --prop:guestinfo.vcenter_server={{ user `ovftool_deploy_vm_vcenter_server` }} --prop:guestinfo.vcenter_username={{ user `ovftool_deploy_vm_vcenter_username` }} --prop:guestinfo.vcenter_password={{ user `ovftool_deploy_vm_vcenter_password` }} --prop:guestinfo.vcenter_disable_tls_verification=True --prop:guestinfo.pod_network_cidr={{ user `ovftool_deploy_vm_pod_network_cidr` }} --prop:guestinfo.debug=True output-vmware-iso/{{ user `vm_name` }}_{{user `version`}}.ova 'vi://{{ user `ovftool_deploy_vcenter_username` }}:{{ user `ovftool_deploy_vcenter_password` }}@{{ user `ovftool_deploy_vcenter` }}/{{ user `ovftool_deploy_datacenter` }}/host/{{ user `ovftool_deploy_cluster` }}/'"
+        "ovftool --powerOn --name={{ user `ovftool_deploy_vm_name` }} --net:'VM Network={{ user `ovftool_deploy_vm_network` }}' --datastore={{ user `ovftool_deploy_vm_datastore` }} --prop:guestinfo.hostname={{ user `ovftool_deploy_vm_hostname` }} --prop:guestinfo.ipaddress={{ user `ovftool_deploy_vm_ip_address` }} --prop:guestinfo.netmask={{ user `ovftool_deploy_vm_prefix` }} --prop:guestinfo.gateway={{ user `ovftool_deploy_vm_gateway` }} --prop:guestinfo.dns={{ user `ovftool_deploy_vm_dns` }} --prop:guestinfo.domain={{ user `ovftool_deploy_vm_dns_domain` }} --prop:guestinfo.ntp={{ user `ovftool_deploy_vm_ntp` }} --prop:guestinfo.http_proxy={{ user `ovftool_deploy_vm_http_proxy` }} --prop:guestinfo.https_proxy={{ user `ovftool_deploy_vm_https_proxy` }} --prop:guestinfo.proxy_username={{ user `ovftool_deploy_vm_proxy_username` }} --prop:guestinfo.proxy_password={{ user `ovftool_deploy_vm_proxy_password` }} --prop:guestinfo.no_proxy={{ user `ovftool_deploy_vm_no_proxy` }} --prop:guestinfo.root_password={{ user `vm_ovftool_deploy_root_password` }} --prop:guestinfo.event_processor_type={{ user `ovftool_deploy_vm_event_processor_type` }} --prop:guestinfo.openfaas_password={{ user `ovftool_deploy_vm_openfaas_password` }} --prop:guestinfo.vcenter_server={{ user `ovftool_deploy_vm_vcenter_server` }} --prop:guestinfo.vcenter_username={{ user `ovftool_deploy_vm_vcenter_username` }} --prop:guestinfo.vcenter_password={{ user `ovftool_deploy_vm_vcenter_password` }} --prop:guestinfo.vcenter_disable_tls_verification=True --prop:guestinfo.pod_network_cidr={{ user `ovftool_deploy_vm_pod_network_cidr` }} --prop:guestinfo.debug=True output-vmware-iso/{{ user `vm_name` }}_{{user `version`}}.ova 'vi://{{ user `ovftool_deploy_vcenter_username` }}:{{ user `ovftool_deploy_vcenter_password` }}@{{ user `ovftool_deploy_vcenter` }}/{{ user `ovftool_deploy_datacenter` }}/host/{{ user `ovftool_deploy_cluster` }}/'"
       ]
     },
     {

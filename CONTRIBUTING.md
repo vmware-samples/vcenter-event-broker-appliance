@@ -19,5 +19,5 @@ Feature requests should fall within the scope of the project.
 Before submitting a pull request, please make sure that your change satisfies the following requirements:
 - vCenter Event Broker Appliance can be built and deployed. See the getting started build guide [here](getting-started-build.md).
 - The change is signed as described by the [Developer Certificate of Origin](https://cla.vmware.com/dco) doc.
-- The change is clearly documented
+- The change is clearly documented and follows Git commit [best practices](https://chris.beams.io/posts/git-commit/)
 - Contributions to the [examples](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples) contains a titled readme and the title is listed in the [use cases table](https://github.com/vmware-samples/vcenter-event-broker-appliance/blob/master/examples/README.md).
