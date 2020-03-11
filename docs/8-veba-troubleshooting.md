@@ -109,7 +109,7 @@ Here is some of the JSON from the config file - you can see the mistake in the c
 
 We now fix the Kubernetes configuration with 3 commands - delete and recreate the secret file, then delete the broken pod. Kubernetes will automatically spin up a new pod with the new configuration
 
-```console
+```
 kubectl --kubeconfig /root/.kube/config -n vmware delete secret event-router-config
 kubectl -kubeconfig /root/.kube/config -n vmware create secret generic event-router-config –-from-file=event-router-config.json
 kubectl -kubeconfig /root/.kube/config -n vmware delete pod vmware-event-router-5dd9c8f858-5c9mh 
@@ -141,6 +141,7 @@ vmware           vmware-event-router-5dd9c8f858-5c9mh   0/1     Terminating   40
 vmware           vmware-event-router-5dd9c8f858-wt64s   1/1     Running       0          28s
 ```
 
+Now view the event router logs:
 ```
 kubectl logs -n vmware vmware-event-router-5dd9c8f858-wt64s
 
@@ -165,3 +166,87 @@ Here is the command output:
 
 ```
 We now see that the Event Router came online, connected to vCenter, and successfully received an event.
+
+## OpenFaaS Function troubleshooting
+
+If a function is not behaving as expected, you can look at the logs to troubleshoot. First, SSH or console to VEBA as shown in the Requirements section.
+
+List out the pods:
+```
+kubectl get pods -A
+```
+
+This is the function output:
+```
+NAMESPACE        NAME                                   READY   STATUS      RESTARTS   AGE
+kube-system      coredns-584795fc57-4bp2s               1/1     Running     1          6d4h
+kube-system      coredns-584795fc57-76pwr               1/1     Running     1          6d4h
+kube-system      etcd-veba01                            1/1     Running     2          6d4h
+kube-system      kube-apiserver-veba01                  1/1     Running     2          6d4h
+kube-system      kube-controller-manager-veba01         1/1     Running     3          6d4h
+kube-system      kube-proxy-fvf2n                       1/1     Running     2          6d4h
+kube-system      kube-scheduler-veba01                  1/1     Running     2          6d4h
+kube-system      weave-net-v9jss                        2/2     Running     6          6d4h
+openfaas-fn      powercli-entermaint-d84fd8d85-sjdgl    1/1     Running     1          6d4h
+openfaas         alertmanager-58f8d787d9-nqwm8          1/1     Running     1          6d4h
+openfaas         basic-auth-plugin-dd49cd66b-rv6n7      1/1     Running     1          6d4h
+openfaas         faas-idler-59ff9778fd-84szz            1/1     Running     4          6d4h
+openfaas         gateway-74f6f9489b-btgz8               2/2     Running     5          6d4h
+openfaas         nats-6dfbf45d77-9swph                  1/1     Running     1          6d4h
+openfaas         prometheus-5f5494b54f-srs2d            1/1     Running     1          6d4h
+openfaas         queue-worker-59b67bf4-wqhm5            1/1     Running     4          6d4h
+projectcontour   contour-5cddfc8f6-hpzn8                1/1     Running     1          6d4h
+projectcontour   contour-5cddfc8f6-tdv2r                1/1     Running     2          6d4h
+projectcontour   contour-certgen-wrgnb                  0/1     Completed   0          6d4h
+projectcontour   envoy-8mdhb                            1/1     Running     2          6d4h
+vmware           tinywww-7fcfc6fb94-v7ncj               1/1     Running     1          6d4h
+vmware           vmware-event-router-5dd9c8f858-9g44h   1/1     Running     4          6d4h
+```
+
+First, we want to see if the event router is capturing events and forwarding them on to a function. 
+
+Use this command to follow the live Event Router log
+```
+kubectl logs -n vmware vmware-event-router-5dd9c8f858-9g44h --follow
+```
+
+For this sample troubleshooting, we have the sample hostmaintenance alarms function running. To see if VEBA is properly handling the event, we put a host into maintenance mode. 
+
+When we look at the log output, we see various entries regarding EnteredMaintenanceModeEvent, ending with the following:
+
+```
+
+[OpenFaaS] 2020/03/11 22:15:09 invoking function(s) on topic: EnteredMaintenanceModeEvent
+[OpenFaaS] 2020/03/11 22:15:09 successfully invoked function powercli-entermaint for topic EnteredMaintenanceModeEvent
+```
+
+This lets us know that the function was invoked. If we still don't see the expected result, we need to look at the function logs.
+
+Each OpenFaaS function will have its own pod running in the openfaas-fn namespace. We can examine the logs with the following command:
+
+```
+kubectl logs -n openfaas-fn powercli-entermaint-d84fd8d85-sjdgl
+```
+
+We don't need the --follow switch because we are just trying to look at recent logs, but --follow would work too.  
+Some other useful switches are --since and --tail. 
+
+This command will show you the last 5 minutes worth of logs:
+```
+kubectl logs -n openfaas-fn powercli-entermaint-d84fd8d85-sjdgl --since=5m
+```
+
+This command will show you the last 20 lines of logs
+```
+kubectl logs -n openfaas-fn powercli-entermaint-d84fd8d85-sjdgl --tail=20
+```
+
+Log output showing a succesful function invocation: 
+```
+Connecting to vCenter Server ...
+
+Disabling alarm actions on host: esx01.labad.int
+Disconnecting from vCenter Server ...
+
+2020/03/11 22:15:15 Duration: 6.085448 seconds
+```
