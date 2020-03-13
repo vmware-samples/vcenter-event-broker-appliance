@@ -1,5 +1,10 @@
 # vCenter Event Broker Appliance
 
+[![Photon OS 3.0](https://img.shields.io/badge/Photon%20OS-3.0-orange)](https://vmware.github.io/photon/)
+[![Published VMware Fling](https://img.shields.io/badge/VMware-Fling-green)](https://flings.vmware.com/vcenter-event-broker-appliance)
+[![Twitter Follow](https://img.shields.io/twitter/follow/lamw?style=social)](https://twitter.com/lamw)
+[![Twitter Follow](https://img.shields.io/twitter/follow/embano1?style=social)](https://twitter.com/embano1)
+
 ## Table of Contents
 
 - [vCenter Event Broker Appliance](#vcenter-event-broker-appliance)
