@@ -2,33 +2,13 @@
 
 ## Requirements
 
-You must log on to the VEBA appliance as root. You can do this from the console. If you want SSH access, do the following:
-
-**Step 1** - After logging into the console as root, edit the sshd_config file
+You must log on to the VEBA appliance as root. You can do this from the console. If you want SSH access, execute the following command:
 
 ```
-vi /etc/ssh/sshd_config
+systemctl start sshd 
 ```
 
-**Step 2** - Change the PermitRootLogin configuration line to `yes`. In vi, you can use the arrow keys to navigate up and down, delete characters with the `x` key, switch to insert mode with the `i` key, and then type your replacement characters. 
-
-```
-PermitRootLogin yes
-```
-
-**Step 3** - Save the configuration file. In vi, you hit the `Escape` key to get into command mode, type a colon `:` character, then `wq` for "write quit".
-
-```
-{Escape} :wq
-````
-
-**Step 4** - Restart the SSHD service
-
-```
-systemctl restart sshd
-```
-
-At this point you should be able to use your favorite SSH client to SSH to the VEBA host.
+This turns on the SSH daemon but does not enable it to start on appliance boot. You should now be able to SSH into the VEBA appliance. 
 
 <BR>
 
