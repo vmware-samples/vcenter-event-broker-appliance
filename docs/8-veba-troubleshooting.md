@@ -1,20 +1,30 @@
 # vCenter Event Broker Appliance - Troubleshooting
 
+## Table of Contents
+[Requirements](#requirements)<br>
+[Troubleshooting an initial deployment](#troubleshooting-an-initial-deployment)<br>
+[OpenFaaS Function troubleshooting](#openfaas-function-troubleshooting)
+
 ## Requirements
 
-You must log on to the VEBA appliance as root. You can do this from the console. If you want SSH access, execute the following command:
+You must log on to the vCenter Event Broker appliance as root. You can do this from the console. If you want SSH access, execute the following command:
 
 ```
 systemctl start sshd 
 ```
 
-This turns on the SSH daemon but does not enable it to start on appliance boot. You should now be able to SSH into the VEBA appliance. 
+This turns on the SSH daemon but does not enable it to start on appliance boot. You should now be able to SSH into the appliance. 
 
+If you wish to disable the SSH daemon when you are done troubleshooting, execute the following command:
+
+```
+systemctl stop sshd 
+```
 <BR>
 
 ## Troubleshooting an initial deployment
 
-If VEBA is not working immediately after deployment, the first thing to do is check your Kubernetes pods. 
+If the appliance is not working immediately after deployment, the first thing to do is check your Kubernetes pods. 
 
 ```
 kubectl get pods -A
@@ -39,12 +49,14 @@ projectcontour   envoy-gcmqt                            1/1     Running         
 vmware           tinywww-7fcfc6fb94-mfltm               1/1     Running              1          4d15h
 vmware           vmware-event-router-5dd9c8f858-5c9mh   0/1     CrashLoopBackoff     6          4d13h
 ```
+<B>Note:</B> The status ```Completed``` of the container ```contour-certgen-f92l5``` is expected after successful appliance deployment.
 
 One of the first things to look for is whether a pod is in a crash state. In this case, the vmware-event-router pod is crashing. We need to look at the logs with this command:
 
 ```
 kubectl logs vmware-event-router-5dd9c8f858-5c9mh  -n vmware
 ```
+<B>Note:</B> The pod suffix ```-5dd9c8f858-5c9mh``` will be different in each environment
 
 Here is the command output:
 
@@ -87,14 +99,13 @@ Here is some of the JSON from the config file - you can see the mistake in the c
 
 ```
 
-We now fix the Kubernetes configuration with 3 commands - delete and recreate the secret file, then delete the broken pod. Kubernetes will automatically spin up a new pod with the new configuration
+We now fix the Kubernetes configuration with 3 commands - delete and recreate the secret file, then delete the broken pod. Kubernetes will automatically spin up a new pod with the new configuration. We need to do this because the JSON configuration file is not directly referenced by the event router. The JSON file is mounted into the event router pod as a Kubernetes secret. 
 
 ```
-kubectl --kubeconfig /root/.kube/config -n vmware delete secret event-router-config
-kubectl -kubeconfig /root/.kube/config -n vmware create secret generic event-router-config –-from-file=event-router-config.json
-kubectl -kubeconfig /root/.kube/config -n vmware delete pod vmware-event-router-5dd9c8f858-5c9mh 
+kubectl -n vmware delete secret event-router-config
+kubectl -n vmware create secret generic event-router-config --from-file=event-router-config.json
+kubectl -n vmware delete pod vmware-event-router-5dd9c8f858-5c9mh 
 ```
-
 
 We get a pod list again to determine the name of the new pod
 ```
@@ -147,9 +158,11 @@ Here is the command output:
 ```
 We now see that the Event Router came online, connected to vCenter, and successfully received an event.
 
+<BR>
+
 ## OpenFaaS Function troubleshooting
 
-If a function is not behaving as expected, you can look at the logs to troubleshoot. First, SSH or console to VEBA as shown in the Requirements section.
+If a function is not behaving as expected, you can look at the logs to troubleshoot. First, SSH or console to the appliance as shown in the Requirements section.
 
 List out the pods:
 ```
@@ -190,7 +203,7 @@ Use this command to follow the live Event Router log
 kubectl logs -n vmware vmware-event-router-5dd9c8f858-9g44h --follow
 ```
 
-For this sample troubleshooting, we have the sample hostmaintenance alarms function running. To see if VEBA is properly handling the event, we put a host into maintenance mode. 
+For this sample troubleshooting, we have the sample hostmaintenance alarms function running. To see if the appliance is properly handling the event, we put a host into maintenance mode. 
 
 When we look at the log output, we see various entries regarding EnteredMaintenanceModeEvent, ending with the following:
 
@@ -230,3 +243,35 @@ Disconnecting from vCenter Server ...
 
 2020/03/11 22:15:15 Duration: 6.085448 seconds
 ```
+
+An alternative way to troubleshoot OpenFaaS logs is to use faas-cli
+
+This faas-cli command will show all available functions in the appliance. ```--tls-no-verify``` bypasses SSL certificate validation
+
+```
+faas-cli list --tls-no-verify
+```
+
+The command output is:
+```
+Function                        Invocations     Replicas
+powercli-entermaint             3               1
+```
+
+We can  look at the logs with this command:
+
+```
+faas-cli logs powercli-entermaint --tls-no-verify
+```
+
+The logs are the same: 
+
+```
+2020-03-11T22:15:15Z Connecting to vCenter Server ...
+2020-03-11T22:15:15Z
+2020-03-11T22:15:15Z Disabling alarm actions on host: esx01.labad.int
+2020-03-11T22:15:15Z Disconnecting from vCenter Server ...
+2020-03-11T22:15:15Z
+2020-03-11T22:15:15Z 2020/03/11 22:15:15 Duration: 6.085448 seconds
+```
+All of the same switches shown in the kubectl commands such as ```--tail``` and ```--since``` work with faas-cli
