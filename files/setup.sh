@@ -32,6 +32,7 @@ AWS_EVENTBRIDGE_EVENT_BUS=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "g
 AWS_EVENTBRIDGE_REGION=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.aws_eb_region" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 AWS_EVENTBRIDGE_RULE_ARN=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.aws_eb_arn" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 AWS_EVENTBRIDGE_ADV_OPTION=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.aws_eb_advanced_options" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
+DOCKER_NETWORK_CIDR=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.docker_network_cidr" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 POD_NETWORK_CIDR=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.pod_network_cidr" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 
 if [ -e /root/ran_customization ]; then
