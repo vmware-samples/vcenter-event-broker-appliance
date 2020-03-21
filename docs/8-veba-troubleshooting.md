@@ -1,8 +1,8 @@
 # vCenter Event Broker Appliance - Troubleshooting
 
 ## Table of Contents
-[Requirements](#requirements)<br>
-[Troubleshooting an initial deployment](#troubleshooting-an-initial-deployment)<br>
+[Requirements](#requirements)  
+[Troubleshooting an initial deployment](#troubleshooting-an-initial-deployment)  
 [OpenFaaS Function troubleshooting](#openfaas-function-troubleshooting)
 
 ## Requirements
@@ -20,8 +20,8 @@ If you wish to disable the SSH daemon when you are done troubleshooting, execute
 ```
 systemctl stop sshd 
 ```
-<BR>
-
+  
+  
 ## Troubleshooting an initial deployment
 
 If the appliance is not working immediately after deployment, the first thing to do is check your Kubernetes pods. 
@@ -157,9 +157,8 @@ Here is the command output:
 
 ```
 We now see that the Event Router came online, connected to vCenter, and successfully received an event.
-
-<BR>
-
+  
+  
 ## OpenFaaS Function troubleshooting
 
 If a function is not behaving as expected, you can look at the logs to troubleshoot. First, SSH or console to the appliance as shown in the Requirements section.
