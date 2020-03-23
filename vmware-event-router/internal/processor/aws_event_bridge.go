@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/eventbridge"
+	"github.com/aws/aws-sdk-go/service/eventbridge/eventbridgeiface"
 	"github.com/pkg/errors"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/connection"
@@ -32,7 +33,7 @@ const (
 // awsEventBridgeProcessor implements the Processor interface
 type awsEventBridgeProcessor struct {
 	session session.Session
-	eventbridge.EventBridge
+	eventbridgeiface.EventBridgeAPI
 	source  string
 	verbose bool
 	*log.Logger
@@ -100,7 +101,7 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, sour
 	if ebSession == nil {
 		return nil, errors.Errorf("could not create AWS event bridge session")
 	}
-	eventBridge.EventBridge = *ebSession
+	eventBridge.EventBridgeAPI = ebSession
 
 	var found bool
 	var nextToken *string
