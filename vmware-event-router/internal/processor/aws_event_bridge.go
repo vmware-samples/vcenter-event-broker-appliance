@@ -144,7 +144,7 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, sour
 		}
 
 		switch {
-		case found: // return early
+		case found:
 			break
 		case rules.NextToken != nil: // try next batch of rules, if any
 			nextToken = rules.NextToken
@@ -309,7 +309,7 @@ func (awsEventBridge *awsEventBridgeProcessor) syncRules(ctx context.Context, ev
 
 		switch {
 		case found: // return early
-			break
+			return nil
 		case rules.NextToken != nil: // try next batch of rules, if any
 			nextToken = rules.NextToken
 			continue
