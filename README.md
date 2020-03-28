@@ -1,45 +1,50 @@
-# vCenter Event Broker Appliance
+# VMware Event Broker Appliance
 
 [![Photon OS 3.0](https://img.shields.io/badge/Photon%20OS-3.0-orange)](https://vmware.github.io/photon/)
 [![Published VMware Fling](https://img.shields.io/badge/VMware-Fling-green)](https://flings.vmware.com/vcenter-event-broker-appliance)
+![Website](https://img.shields.io/website?label=vmweventbroker.io&url=https%3A%2F%2Fvmweventbroker.io%2F)
 [![Twitter Follow](https://img.shields.io/twitter/follow/lamw?style=social)](https://twitter.com/lamw)
 [![Twitter Follow](https://img.shields.io/twitter/follow/embano1?style=social)](https://twitter.com/embano1)
 
-![Otto Logo](logo/veba_otto_the_orca_320x320.png)
+
+<img src="logo/veba_otto_the_orca_320x320.png" align="right" height="320px"/>
 
 ## Table of Contents
 
-- [vCenter Event Broker Appliance](#vcenter-event-broker-appliance)
-  - [Table of Contents](#table-of-contents)
-  - [Description](#description)
+- [VMware Event Broker Appliance](#vcenter-event-broker-appliance)
   - [Getting Started](#getting-started)
+  - [Overview](#overview)
   - [Architecture](#architecture)
-  - [Join Conversation](#join-conversation)
+  - [Getting in touch](#getting-in-touch)
   - [Contributing](#contributing)
   - [License](#license)
 
 
-## Description
+## Getting Started
 
-The [vCenter Event Broker Appliance Fling](https://flings.vmware.com/vcenter-event-broker-appliance#summary) enables customers to easily create [event-driven automation based on vCenter Server Events](https://octo.vmware.com/vsphere-power-event-driven-automation/). For example, vCenter Event Broker Appliance can drive basic workflows like automatically attaching a vSphere tag when a virtual machine (VM) is created. Even more powerful integrations between datacenter-internal enterprise services and cloud services, for example Slack and Pager Duty, can be created with vCenter Event Broker Appliance out of the box.
+Visit our website [vmweventbroker.io](https://vmweventbroker.io/) and explore our [documentation](https://vmweventbroker.io/kb) to get started quickly.
 
-vCenter Event Broker Appliance is provided as a Virtual Appliance that can be deployed to any vSphere-based infrastructure, including an on-premises and/or any public cloud environment, running on vSphere such as VMware Cloud on AWS or VMware Cloud on Dell-EMC.
+## Overview
+
+The [VMware Event Broker Appliance](https://flings.vmware.com/vcenter-event-broker-appliance#summary) Fling enables customers unlock the hidden potential of events in their SDDC to easily create [event-driven automation](https://octo.vmware.com/vsphere-power-event-driven-automation/) and take vCenter Server Events to the next level! Extending vSphere by easily triggering custom or prebuilt actions to deliver powerful integrations within your datacenter across public cloud has never been more easier before. A detailed list of use cases and possibilities with VMware Event Broker Appliance is available [here](https://vmweventbroker.io)
 
 With this appliance, end-users, partners and independent software vendors only have to write minimal business logic without going through a steep learning curve understanding vSphere APIs. As such, we believe this solution not only offers a better user experience in solving existing problems for vSphere operators. More importantly, it will enable new integration use cases and workflows to grow the vSphere ecosystem and community, similar to what AWS has achieved with AWS Lambda.
 
-To learn more about the vCenter Event Broker Appliance, [Michael Gasch](https://github.com/embano1) and [William Lam](https://github.com/lamw/) of VMware recently presented a session at VMworld called ["If This Then That" for vSphere- The Power of Event-Driven Automation](https://videos.vmworld.com/global/2019/videoplayer/29523) (free VMworld account login is required to view).
+Learn more about the VMware Event Broker Appliance [here](https://vmweventbroker.io). 
+
+Additional resources can be found [here](https://vmweventbroker.io) and some quick references are highlighted below
+ - Watch [Michael Gasch](https://github.com/embano1) and [William Lam](https://github.com/lamw/) of VMware present a session at VMworld 2019 called ["If This Then That" for vSphere- The Power of Event-Driven Automation](https://videos.vmworld.com/global/2019/videoplayer/29523) (free VMworld account login is required to view).
+ - Watch [Partheeban Kandasamy (PK)](https://github.com/embano1), [Michael Gasch](https://github.com/embano1) and [William Lam](https://github.com/lamw/) present about [Unlocking the potential of Events for SDDC automation](https://youtu.be/tOjp5_qn-Fg)
 
 <!-- ## Users and Use Cases
 
-Hear from the community on how they are taking advantage of the vCenter Server Appliance [here](users-and-use-cases.md) -->
-
-## Getting Started
-
-Please refer to the getting started guide [here](getting-started.md)
+Hear from the community on how they are taking advantage of the vCenter Server Appliance [here](https://vmweventbroker.io/casestudy-wip.md) -->
 
 ## Architecture
 
-The vCenter Event Broker Appliance follows a highly modular approach, using Kubernetes and containers as an abstraction layer between the base operating system ([Photon OS](https://github.com/vmware/photon)) and the required application services. Currently the following components are used in the appliance:
+VMware Event Broker Appliance is provided as a Virtual Appliance that can be deployed to any vSphere-based infrastructure, including an on-premises and/or any public cloud environment, running on vSphere such as VMware Cloud on AWS or VMware Cloud on Dell-EMC.
+
+The VMware Event Broker Appliance follows a highly modular approach, using Kubernetes and containers as an abstraction layer between the base operating system ([Photon OS](https://github.com/vmware/photon)) and the required application services. Currently the following components are used in the appliance:
 
 - VMware Event Router ([Github](https://github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router))
   - Supported Event Stream Sources:
@@ -51,24 +56,25 @@ The vCenter Event Broker Appliance follows a highly modular approach, using Kube
 - Kubernetes ([Github](https://github.com/kubernetes/kubernetes))
 - Photon OS ([Github](https://github.com/vmware/photon))
 
-<center><div style="height:250px;width:250px"><img src="veba-appliance-diagram.png" /></div></center>
+<center><div style="height:250px;"><img src="docs/kb/img/veba-architecture.png"/></div></center>
 
-For more details about the individual components and how they are used in the vCenter Event Broker Appliance, please see the [design page](DESIGN.md).
+For more details about the individual components and how they are used in the VMware Event Broker Appliance, please see the [Architecture page](https://vmweventbroker.io/kb/architecture).
 
-## Join Conversation
+## Getting in touch
 
-We are also on Slack if you would to engage with us and the community. You can find us on [#vcenter-event-broker-appliance](https://vmwarecode.slack.com/archives/CQLT9B5AA) which is part of the [VMware {Code}](https://code.vmware.com/web/code/join) Slack instance.
+Feel free to reach out to [Team #VEBA](https://vmweventbroker.io/#team-veba) and the community 
+  - Email us at [dl-veba@vmware.com](mailto:dl-veba@vmware.com)
+  - Join our users on slack [#vcenter-event-broker-appliance](https://vmwarecode.slack.com/archives/CQLT9B5AA) which is part of the [VMware {Code}](https://code.vmware.com/web/code/join) Slack instance
+  - Follow for updates [@VMWEventBroker](https://twitter.com/VMWEventBroker)
 
 ## Contributing
 
-The vCenter Event Broker Appliance team welcomes contributions from the community.
+The VMware Event Broker Appliance team welcomes contributions from the community.
 
-Before you start working with the vCenter Event Broker Appliance, please read our [Developer Certificate of Origin](https://cla.vmware.com/dco). All contributions to this repository must be signed as described on that page. Your signature certifies that you wrote the patch or have the right to pass it on as an open-source patch.
+To help you get started making contributions to VMware Event Broker Appliance, we have collected some helpful best practices in the [Contributing guidelines](https://vmweventbroker.io/community#guidelines).
 
-To help you get started making contributions to vCenter Event Broker Appliance, we have collected some helpful best practices in the [Contributing guidelines](CONTRIBUTING.md).
-
-For folks interested in contributing or enhancing vCenter Event Broker Appliance, you can build the vCenter Event Broker Appliance from source. Please refer to the getting started build guide [here](getting-started-build.md).
+Before submitting a pull request, please make sure that your change satisfies the requirements specified [here](https://vmweventbroker.io/community#pull-requests)
 
 ## License
 
-vCenter Event Broker Appliance is available under the BSD-2 license. Please see [LICENSE.txt](LICENSE.txt).
+VMware Event Broker Appliance is available under the BSD-2 license. Please see [LICENSE.txt](LICENSE.txt).

@@ -1,0 +1,89 @@
+.home-hero {
+
+  @include media-breakpoint-up(md) {
+    min-height: 500px;  
+  }
+
+  color: $white;
+  h1,
+  h2,
+  h3 {
+    color: $white;
+    font-weight: $font-weight-light;
+  }
+  .section-content {
+    margin-top: 15px;
+    
+    .hero-content,
+    .hero-cta {       
+      
+      
+      p {
+        @include media-breakpoint-up(md) {
+          width: 100% ! important;
+        }
+
+        @include media-breakpoint-down(md) {
+          width: 150% ! important;
+        }
+
+        @media only screen and (min-width: 900px) {
+          width: 100% ! important;
+        }
+
+        @include media-breakpoint-down(sm) {
+          width: 100% ! important;
+        }
+      }
+    }
+    
+  }
+
+  .hero-veba-mascot {
+    
+    overflow: hidden;
+    
+    
+    img {
+      height: 100%;
+      width: 100%;
+    }
+    @include media-breakpoint-down(sm) {
+      height: 1px;
+      background-image: none !important;
+    }
+  }
+
+  .hero-cta {
+    display: block;
+    margin-bottom: 70px;
+    
+    @include media-breakpoint-up(md) { 
+      display: flex;
+      flex-direction: row;
+      justify-content: left;
+    }
+
+    .btn {
+
+      @include media-breakpoint-up(md) { 
+        min-width: 250px;
+      }
+
+      padding: {
+        top: 16px;
+        bottom: 16px;
+      }
+
+      margin: 0 32px 0 0;
+    }
+  }
+  
+  .section-card {
+    margin-top: 68px;
+    .section-content {
+      background-color: transparent;
+      padding: 0;
+    }
+  }
+}

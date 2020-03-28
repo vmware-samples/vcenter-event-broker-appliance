@@ -21,7 +21,7 @@ Step 2 - Update `stack.yml` and `vro-secrets.json` with your environment informa
 
 > **Note:** If you are building your own function, you will need to update the `image:` property in the stack.yaml to point to your own Dockerhub account and Docker Image (e.g. `<dockerhubid>/<dockerimagename>`)
 
-Step 3 - Deploy function to vCenter Event Broker Appliance
+Step 3 - Deploy function to VMware Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com
@@ -32,7 +32,7 @@ faas-cli secret create vro-secrets --from-file=vro-secrets.json --tls-no-verify 
 faas-cli deploy -f stack.yml --tls-no-verify
 ```
 
-Step 4 - To remove the function and secret from vCenter Event Broker Appliance
+Step 4 - To remove the function and secret from VMware Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com

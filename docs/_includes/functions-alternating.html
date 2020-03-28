@@ -1,0 +1,28 @@
+
+<div class="alternating-cards">
+  {% for fn in site.functions %}
+    <div class="row no-gutters align-items-center shadow">
+      {% if fn.icon %}
+      <div class="order-xs-first bash col-md-3 icon bg-color-{{ page.backgrounds.case_study }} {%  cycle('order-md-first', 'order-md-last') %}">
+        <img src="{{ '/assets/img/case-study-icons/' | append: fn.icon | relative_url }}" alt="{{ fn.title }}"/>
+        {% for link in fn.links %}
+        <a class="card-link btn btn-secondary btn-sm" href="{{ link[1] }}">{{ link[0] }}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
+      
+      <div class="order-xs-last col-md-9 {% cycle('order-md-last', 'order-md-first') %}">
+        <div class="card-body">
+          {% if fn.title != blank %}
+          <h5 class="card-title">{{ fn.title }}</h5>
+          {% endif %}
+          <p class="card-text">{{ fn.content | markdownify }}</p>
+          
+        </div>
+      </div>
+    </div>
+    {% if limit > 0 and forloop.index >= limit %}
+        {% break %}
+    {% endif %}
+  {% endfor %}
+</div>

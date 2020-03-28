@@ -1,0 +1,272 @@
+.post-thumbnail {
+  width: 100%;  
+  margin: 0 auto 1.875rem auto;
+  height: 125px;
+  position: relative;
+  img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.post-single-hero {
+  background-color: map-get($field-backgrounds, 'med-blue'); // default
+  padding-bottom: 105px;
+  h1,
+  h2,
+  h3 {
+    color: $white;
+    font-weight: $font-weight-light;
+    text-align: center;
+  }
+  &.post-single-hero-short {
+    padding-bottom: 0;
+  }
+}
+
+.post-single-body {
+  margin-top: -105px;
+
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  
+  h1 {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+  }
+
+  h2 {
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+  }
+
+  h3 {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    margin-left: 1rem;
+    margin-top: 1rem;
+  }
+}
+
+.post-single-meta {
+  display: flex;
+  align-items: center;
+  color: $post-meta-foreground;
+  margin-bottom: 3rem;
+
+  @include media-breakpoint-down(sm) {
+    // flex-direction: column;
+    display: block;
+  }
+}
+
+.post-single-meta-author {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  margin-right: 1rem;
+
+  @include media-breakpoint-down(sm) {
+    justify-content: center;
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+}
+
+.post-single-meta-author-avatar {
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  margin-right: 1rem;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.post-single-meta-author-name {
+  flex: 1;
+  font-weight: $font-weight-semibold;
+
+  @include media-breakpoint-down(sm) {
+    flex: none;
+  }
+}
+
+.post-single-meta-date {
+  text-align: right;
+
+  @include media-breakpoint-down(sm) {
+    text-align: center;
+  }
+}
+
+.post-single-image {
+  margin: 0 auto 3rem auto;
+  max-width: 700px;
+
+  img {
+    height: auto;
+    width: 100%;
+  }
+
+  @include media-breakpoint-down(sm) {
+    margin-left: -30px;
+    margin-right: -30px;
+  }
+}
+
+.post-single-content {
+  max-width: 98%;
+  margin: 0 auto 3rem auto;
+
+  h2,
+  h3,
+  p {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    margin-top: 0.5rem;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-base;
+  }
+
+  h3 {
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    margin-top: 0.5rem;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  img {
+    max-width: 100%;
+  }
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0rem;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+th, td {
+  padding: 10px;
+}
+
+.faqs {
+  svg {
+    padding-top: 3px;
+  }
+
+  p {
+    flex: 1;
+    margin: 0px;
+    padding: 0px 5px;
+  }
+}
+
+.examples {
+  
+  h2 {
+    margin: 1rem 0rem;
+  }
+
+  p {
+    padding: 0rem 0.5rem;
+    margin: 0rem 0rem 0.25rem 0rem;
+    width: 100%;
+  }
+
+  .title {
+    margin-top: 1rem;
+    padding: 0.5rem 1.5rem 0rem 1.5rem;
+    width: 100%;
+
+    h3 {
+      font-weight: $font-weight-semibold;
+      font-size: $font-size-sm;
+      margin: 0.5rem 0rem 0.5rem 0rem;
+    }
+
+    .language {
+      vertical-align: bottom;
+      margin-top: auto;
+      margin-bottom: auto;
+      text-align: left;
+      img {
+        height: 20px;
+      }
+      span {
+        font-size: $font-size-xs;
+        font-weight: $font-weight-semibold;
+      }
+    }
+  }
+
+  .usecases {
+    padding: 0rem .5rem 0.1rem .5rem;
+    margin-bottom: 0.5rem;
+    
+    span {
+      padding: 0.1rem 1rem;
+      border-radius: 10px;
+      font-size: $font-size-xs;
+      font-weight: $font-weight-semibold;
+      color: #FFFFFF;
+      border: 1px #4f676638 solid;
+
+      &.notification {
+        background-color: #a56fa5;
+      }
+
+      &.automation {
+        background-color: #c293e6;
+      }
+
+      &.integration {
+        background-color: rgb(156, 156, 238);
+      }
+
+      &.remediation {
+        background-color: #79ad79;
+      }
+
+      &.audit {
+        background-color: rgb(253, 253, 159);
+      }
+
+      &.analytics {
+        background-color: rgb(253, 212, 136);
+      }
+
+      &.other {
+        background-color: grey;
+      }
+    }
+  }
+}
+
+#otto-hack {
+  background: gray; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(left, orange , yellow, green, cyan, blue, violet); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(right, orange, yellow, green, cyan, blue, violet); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(right, orange, yellow, green, cyan, blue, violet); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(to right, orange , yellow, green, cyan, blue, violet); /* Standard syntax (must be last) */
+}

@@ -1,0 +1,44 @@
+#
+# Core team members that are actively contributing to the project
+#
+teamlimit: 8
+members:
+  - name: Michael Gasch 
+    img: https://avatars0.githubusercontent.com/u/15986659?v=4
+    website: https://www.mgasch.com/
+    twitter: embano1
+    github: embano1
+  - name: William Lam
+    img: https://avatars0.githubusercontent.com/u/602199?v=4
+    website: https://www.virtuallyghetto.com/
+    twitter: lamw
+    github: lamw
+  - name: Frankie Gold 
+    img: https://avatars1.githubusercontent.com/u/17328443?v=4
+    twitter: codegold79
+    github: codegold79
+  - name: Partheeban Kandasamy (PK)
+    img: https://avatars0.githubusercontent.com/u/30903187?v=4
+    website: https://about.pdotk.com
+    twitter: pkblah
+    github: pksrc
+  - name: Patrick Kremer 
+    img: https://avatars2.githubusercontent.com/u/29929717?v=4
+    website: http://www.patrickkremer.com/
+    twitter: kremerpatrick
+    github: kremerpatrick
+  - name: Robert Guske
+    img: https://avatars1.githubusercontent.com/u/31652019?v=4
+    website: https://rguske.github.io/
+    twitter: vmw_rguske
+    github: rguske
+  - name: Vladimir Velikov
+    img: https://avatars3.githubusercontent.com/u/46163850?v=4
+    website: https://pluginsblog.com/
+    twitter: vladi_velikov
+    github: vladi-velikov
+  - name: Martin Dekov 
+    img: https://avatars1.githubusercontent.com/u/34942004?v=4
+    twitter: dekovmartin
+    github: martindekov
+

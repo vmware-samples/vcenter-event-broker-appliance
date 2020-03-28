@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include head.html %}
+
+<body id="{{ page.id }}">
+  <div class="container-fluid site-outer-container">
+    <div class="site-container">
+      {% include site-header.html %}
+      {{ content }}
+      {% include footer.html %}
+    </div>
+  </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.1.1/gsap.min.js"></script>
+<script src="{{ '/assets/js/day-night.js' | relative_url}}?{{site.time | date: '%s%N'}}"></script>
+</html>
