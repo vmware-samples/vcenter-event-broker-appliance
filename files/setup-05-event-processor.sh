@@ -64,6 +64,7 @@ if [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
 	}
 ]
 __AWS_EVENTBRIDGE_PROCESSOR__
+echo "Processor: EventBridge" >> /etc/veba-release
 else
     # Setup OpenFaaS
     echo -e "\e[92mSetting up OpenFaas Processor ..." > /dev/console
@@ -121,4 +122,5 @@ else
 	}
 ]
 __OPENFAAS_PROCESSOR__
+echo "Processor: OpenFaaS" >> /etc/veba-release
 fi

@@ -39,4 +39,9 @@ low-priority-nics=weave,docker0
 exclude-nics=veth*,vxlan*,datapath
 EOF
 
+cat > /etc/veba-release << EOF
+Version: ${VEBA_VERSION}
+Commit: ${VEBA_COMMIT}
+EOF
+
 echo '> Done'

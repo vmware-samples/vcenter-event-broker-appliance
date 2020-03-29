@@ -51,6 +51,10 @@
   "provisioners": [
     {
       "type": "shell",
+      "environment_vars": [
+        "VEBA_VERSION={{ user `VEBA_VERSION` }}",
+        "VEBA_COMMIT={{ user `VEBA_COMMIT` }}"
+      ],
       "expect_disconnect" : true,
       "scripts": [
         "scripts/photon-settings.sh",
