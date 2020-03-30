@@ -1,9 +1,13 @@
 # vCenter Event Broker Appliance - Troubleshooting
 
-## Table of Contents
-[Requirements](#requirements)  
-[Troubleshooting an initial deployment](#troubleshooting-an-initial-deployment)  
-[OpenFaaS Function troubleshooting](#openfaas-function-troubleshooting)
+# Table of Contents
+<!-- TOC depthFrom:2 -->
+
+- [Requirements](#requirements)
+- [Troubleshooting an initial deployment](#troubleshooting-an-initial-deployment)
+- [OpenFaaS Function troubleshooting](#openfaas-function-troubleshooting)
+
+<!-- /TOC -->
 
 ## Requirements
 
@@ -49,14 +53,14 @@ projectcontour   envoy-gcmqt                            1/1     Running         
 vmware           tinywww-7fcfc6fb94-mfltm               1/1     Running              1          4d15h
 vmware           vmware-event-router-5dd9c8f858-5c9mh   0/1     CrashLoopBackoff     6          4d13h
 ```
-<B>Note:</B> The status ```Completed``` of the container ```contour-certgen-f92l5``` is expected after successful appliance deployment.
+**Note:** The status ```Completed``` of the container ```contour-certgen-f92l5``` is expected after successful appliance deployment.
 
 One of the first things to look for is whether a pod is in a crash state. In this case, the vmware-event-router pod is crashing. We need to look at the logs with this command:
 
 ```
 kubectl logs vmware-event-router-5dd9c8f858-5c9mh  -n vmware
 ```
-<B>Note:</B> The pod suffix ```-5dd9c8f858-5c9mh``` will be different in each environment
+**Note:** The pod suffix ```-5dd9c8f858-5c9mh``` will be different in each environment
 
 Here is the command output:
 
@@ -135,7 +139,6 @@ vmware           vmware-event-router-5dd9c8f858-wt64s   1/1     Running       0 
 Now view the event router logs:
 ```
 kubectl logs -n vmware vmware-event-router-5dd9c8f858-wt64s
-
 ```
 
 Here is the command output:
@@ -157,7 +160,6 @@ Here is the command output:
 
 ```
 We now see that the Event Router came online, connected to vCenter, and successfully received an event.
-  
   
 ## OpenFaaS Function troubleshooting
 
@@ -273,4 +275,5 @@ The logs are the same:
 2020-03-11T22:15:15Z
 2020-03-11T22:15:15Z 2020/03/11 22:15:15 Duration: 6.085448 seconds
 ```
+
 All of the same switches shown in the kubectl commands such as ```--tail``` and ```--since``` work with faas-cli
