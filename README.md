@@ -10,7 +10,6 @@
 - [vCenter Event Broker Appliance](#vcenter-event-broker-appliance)
   - [Table of Contents](#table-of-contents)
   - [Description](#description)
-  - [Users and Use Cases](#users-and-use-cases)
   - [Getting Started](#getting-started)
   - [Architecture](#architecture)
   - [Join Conversation](#join-conversation)
@@ -28,9 +27,9 @@ With this appliance, end-users, partners and independent software vendors only h
 
 To learn more about the vCenter Event Broker Appliance, [Michael Gasch](https://github.com/embano1) and [William Lam](https://github.com/lamw/) of VMware recently presented a session at VMworld called ["If This Then That" for vSphere- The Power of Event-Driven Automation](https://videos.vmworld.com/global/2019/videoplayer/29523) (free VMworld account login is required to view).
 
-## Users and Use Cases
+<!-- ## Users and Use Cases
 
-Hear from the community on how they are taking advantage of the vCenter Server Appliance [here](users-and-use-cases.md)
+Hear from the community on how they are taking advantage of the vCenter Server Appliance [here](users-and-use-cases.md) -->
 
 ## Getting Started
 
