@@ -1,0 +1,8 @@
+[vcenter]
+server = "10.0.0.1"
+user = "administrator@vsphere.local"
+password = "DontUseThisPassword"
+
+[tag]
+urn = "urn:vmomi:InventoryServiceTag:6a7653a0-6fb0-407e-a4ec-a0196d9ea425:GLOBAL"
+action = "attach" # or detach

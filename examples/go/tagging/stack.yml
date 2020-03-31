@@ -1,0 +1,16 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: https://veba.yourdomain.com
+functions:
+  gotag-fn:
+    lang: golang-http
+    handler: ./handler
+    image: vmware/veba-go-tagging:latest
+    environment:
+      write_debug: true
+      read_debug: true
+    secrets:
+      - vcconfig
+    annotations:
+      topic: VmPoweredOnEvent
