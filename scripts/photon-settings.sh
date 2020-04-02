@@ -26,8 +26,9 @@ tdnf install -y \
   tar \
   kubernetes-kubeadm
 
-echo '> Creating directory for setup scripts'
+echo '> Creating directory for setup scripts and configuration files'
 mkdir -p /root/setup
+mkdir -p /root/config
 
 echo '> Creating tools.conf to prioritize eth0 interface...'
 cat > /etc/vmware-tools/tools.conf << EOF

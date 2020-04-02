@@ -18,7 +18,7 @@ systemctl disable iptables
 # Setup k8s
 echo -e "\e[92mSetting up k8s ..." > /dev/console
 HOME=/root
-kubeadm init --ignore-preflight-errors SystemVerification --skip-token-print --config /root/kubeconfig.yml
+kubeadm init --ignore-preflight-errors SystemVerification --skip-token-print --config /root/config/kubeconfig.yml
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
@@ -29,9 +29,9 @@ if [ -z "${POD_NETWORK_CIDR}" ]; then
     POD_NETWORK_CIDR="10.99.0.0/20"
 fi
 
-sed -i "s#POD_NETWORK_CIDR#${POD_NETWORK_CIDR}#g" /root/weave.yaml
+sed -i "s#POD_NETWORK_CIDR#${POD_NETWORK_CIDR}#g" /root/config/weave.yaml
 
-kubectl --kubeconfig /root/.kube/config apply -f /root/weave.yaml
+kubectl --kubeconfig /root/.kube/config apply -f /root/config/weave.yaml
 kubectl --kubeconfig /root/.kube/config taint nodes --all node-role.kubernetes.io/master-
 
 echo -e "\e[92mStarting k8s ..." > /dev/console

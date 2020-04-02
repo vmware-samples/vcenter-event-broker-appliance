@@ -14,7 +14,7 @@ kubectl --kubeconfig /root/.kube/config -n vmware create secret generic basic-au
         --from-literal=basic-auth-password="${ROOT_PASSWORD}"
 
 # Setup Event Processor Configuration File
-EVENT_ROUTER_CONFIG=/root/event-router-config.json
+EVENT_ROUTER_CONFIG=/root/config/event-router-config.json
 
 if [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
     echo -e "\e[92mSetting up AWS Event Bridge Processor ..." > /dev/console

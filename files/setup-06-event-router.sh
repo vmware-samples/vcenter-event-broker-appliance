@@ -9,7 +9,7 @@ set -euo pipefail
 echo -e "\e[92mDeploying VMware Event Router ..." > /dev/console
 kubectl --kubeconfig /root/.kube/config -n vmware create secret generic event-router-config --from-file=${EVENT_ROUTER_CONFIG}
 
-cat > /root/event-router-k8s.yaml << __EVENT_ROUTER_CONFIG
+cat > /root/config/event-router-k8s.yaml << __EVENT_ROUTER_CONFIG
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -59,4 +59,4 @@ spec:
   sessionAffinity: None
 __EVENT_ROUTER_CONFIG
 
-kubectl --kubeconfig /root/.kube/config -n vmware create -f /root/event-router-k8s.yaml
+kubectl --kubeconfig /root/.kube/config -n vmware create -f /root/config/event-router-k8s.yaml
