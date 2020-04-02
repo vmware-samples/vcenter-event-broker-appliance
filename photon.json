@@ -127,17 +127,17 @@
     {
       "type": "file",
       "source": "files/tinywww.yml",
-      "destination": "/root/tinywww.yml"
+      "destination": "/root/config/tinywww.yml"
     },
     {
       "type": "file",
       "source": "files/tinywww-debug.yml",
-      "destination": "/root/tinywww-debug.yml"
+      "destination": "/root/config/tinywww-debug.yml"
     },
     {
       "type": "file",
       "source": "files/kubeconfig.yml",
-      "destination": "/root/kubeconfig.yml"
+      "destination": "/root/config/kubeconfig.yml"
     }
   ],
   "post-processors": [

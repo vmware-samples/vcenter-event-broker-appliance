@@ -36,4 +36,4 @@ Step 3 - Start the build by running the build script
 ./build.sh
 ````
 
-If you wish to automatically deploy the vCenter Event Broker Appliance after successfully building the OVA. You can edit the `photon-dev.xml.template` file and change the `ovftool_deploy_*` variables and run `./build.sh dev` instead.
+If you wish to automatically deploy the vCenter Event Broker Appliance after successfully building the OVA, please take a look at the script samples located in the test directory.
