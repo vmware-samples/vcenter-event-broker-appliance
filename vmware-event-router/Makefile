@@ -46,7 +46,7 @@ gofmt:
 	@test -z "$(shell gofmt -s -l -d -e ./cmd | tee /dev/stderr)"
 
 test: gofmt
-	GORACE=history_size=5 go test -race -timeout $(TIMEOUT)s $(TESTPKGS)
+	GORACE=history_size=5 go test -race -timeout -cover $(TIMEOUT)s $(TESTPKGS) 
 
 tag: 
 	$(info Make: Tagging image "$(IMAGE_NAME)" with "$(BUILD_TAG)" and "$(LATEST_TAG)".)

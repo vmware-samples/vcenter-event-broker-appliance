@@ -28,6 +28,7 @@ const (
 	authMethodAWS  = "access_key"    // only this method is supported by the processor
 	resyncInterval = time.Minute * 5 // resync rule patterns after interval
 	pageLimit      = 50              // max 50 results per page for list operations
+	batchSize      = 10              // max 10 input events per batch sent to AWS
 )
 
 // awsEventBridgeProcessor implements the Processor interface
@@ -115,7 +116,7 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, sour
 			return nil, errors.Wrap(err, "could not list event bridge rules")
 		}
 
-		arnLoop:
+	arnLoop:
 		for _, rule := range rules.Rules {
 			switch {
 			case *rule.Arn == ruleARN:
@@ -173,36 +174,40 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, sour
 // throttling/batching
 // https://docs.aws.amazon.com/eventbridge/latest/userguide/cloudwatch-limits-eventbridge.html#putevents-limits
 func (awsEventBridge *awsEventBridgeProcessor) Process(moref types.ManagedObjectReference, baseEvent []types.BaseEvent) error {
-	input, err := awsEventBridge.createPutEventsInput(baseEvent)
+	batchInput, err := awsEventBridge.createPutEventsInput(baseEvent)
 	if err != nil {
 		awsEventBridge.Printf("could not create PutEventsInput for event(s): %v", err)
 		return nil
 	}
 
 	// nothing to send
-	if len(input.Entries) == 0 {
+	if len(batchInput) == 0 {
 		return nil
 	}
 
-	// TODO: investigate limits on number/size of entries in a single put
-	resp, err := awsEventBridge.PutEvents(&input)
-	if err != nil {
-		awsEventBridge.Printf("could not send event(s): %v", err)
-		return nil
-	}
-	if awsEventBridge.verbose {
-		awsEventBridge.Printf("successfully sent event(s) from source %s: %+v", awsEventBridge.source, resp)
+	for idx, input := range batchInput {
+		resp, err := awsEventBridge.PutEvents(&input)
+		if err != nil {
+			awsEventBridge.Printf("could not send event(s) for batch %d: %v", idx, err)
+			continue
+		}
+		if awsEventBridge.verbose {
+			awsEventBridge.Printf("successfully sent event(s) from source %s: %+v batch: %d",
+				awsEventBridge.source,
+				resp,
+				idx)
+		}
 	}
 	return nil
 }
 
-func (awsEventBridge *awsEventBridgeProcessor) createPutEventsInput(baseEvent []types.BaseEvent) (eventbridge.PutEventsInput, error) {
-	// TODO: Array Members: Minimum number of 1 item. Maximum number of 10 items. for []*eventbridge.PutEventsRequestEntry{}
-	// https://github.com/pacedotdev/batch
+func (awsEventBridge *awsEventBridgeProcessor) createPutEventsInput(baseEvent []types.BaseEvent) ([]eventbridge.PutEventsInput, error) {
 	awsEventBridge.mu.Lock()
 	defer awsEventBridge.mu.Unlock()
 
-	input := eventbridge.PutEventsInput{
+	batch := []eventbridge.PutEventsInput{}
+
+	tmpInput := eventbridge.PutEventsInput{
 		Entries: []*eventbridge.PutEventsRequestEntry{},
 	}
 
@@ -221,9 +226,8 @@ func (awsEventBridge *awsEventBridgeProcessor) createPutEventsInput(baseEvent []
 		cloudEvent := events.NewCloudEvent(event, eventInfo, awsEventBridge.source)
 		jsonBytes, err := json.Marshal(cloudEvent)
 		if err != nil {
-			return eventbridge.PutEventsInput{}, errors.Wrapf(err, "could not marshal cloud event for vSphere event %d from source %s", event.GetEvent().Key, awsEventBridge.source)
+			return nil, errors.Wrapf(err, "could not marshal cloud event for vSphere event %d from source %s", event.GetEvent().Key, awsEventBridge.source)
 		}
-
 		jsonString := string(jsonBytes)
 		entry := eventbridge.PutEventsRequestEntry{
 			Detail:       aws.String(jsonString),
@@ -231,13 +235,23 @@ func (awsEventBridge *awsEventBridgeProcessor) createPutEventsInput(baseEvent []
 			Source:       aws.String(cloudEvent.Source),
 			DetailType:   aws.String(cloudEvent.Subject),
 		}
-		input.Entries = append(input.Entries, &entry)
+		tmpInput.Entries = append(tmpInput.Entries, &entry)
 
 		// update metrics
 		awsEventBridge.stats.Invocations[eventInfo.Name]++
+
+		if idx%batchSize == 0 && idx != 0 {
+			batch = append(batch, tmpInput)
+			tmpInput = eventbridge.PutEventsInput{
+				Entries: []*eventbridge.PutEventsRequestEntry{},
+			}
+		}
+	}
+	if len(tmpInput.Entries) > 0 {
+		batch = append(batch, tmpInput)
 	}
 
-	return input, nil
+	return batch, nil
 }
 
 func (awsEventBridge *awsEventBridgeProcessor) syncPatternMap(ctx context.Context, eventbus string, ruleARN string) {
@@ -275,7 +289,7 @@ func (awsEventBridge *awsEventBridgeProcessor) syncRules(ctx context.Context, ev
 			return errors.Wrap(err, "could not list event bridge rules")
 		}
 
-		arnLoop:
+	arnLoop:
 		for _, rule := range rules.Rules {
 			switch {
 			case *rule.Arn == ruleARN:
