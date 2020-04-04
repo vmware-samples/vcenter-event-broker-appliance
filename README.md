@@ -5,6 +5,8 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/lamw?style=social)](https://twitter.com/lamw)
 [![Twitter Follow](https://img.shields.io/twitter/follow/embano1?style=social)](https://twitter.com/embano1)
 
+![Otto Logo](logo/veba_otto_the_orca_320x320.png)
+
 ## Table of Contents
 
 - [vCenter Event Broker Appliance](#vcenter-event-broker-appliance)
