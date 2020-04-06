@@ -16,18 +16,30 @@ kubectl --kubeconfig /root/.kube/config -n vmware create secret generic basic-au
 # Setup Event Processor Configuration File
 EVENT_ROUTER_CONFIG=/root/config/event-router-config.json
 
+# Slicing of escaped variables needed to properly handle the double quotation issue with constructing vCenter Server URL
+ESCAPED_VCENTER_SERVER=$(echo -n ${VCENTER_SERVER} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
+ESCAPED_VCENTER_USERNAME=$(echo -n ${VCENTER_USERNAME} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
+ESCAPED_VCENTER_PASSWORD=$(echo -n ${VCENTER_PASSWORD} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
+ESCAPED_ROOT_PASSWORD=$(echo -n ${ROOT_PASSWORD} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
+
 if [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
     echo -e "\e[92mSetting up AWS Event Bridge Processor ..." > /dev/console
+
+	ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY=$(echo -n ${AWS_EVENTBRIDGE_ACCESS_KEY} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
+	ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET=$(echo -n ${AWS_EVENTBRIDGE_ACCESS_SECRET} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
+	ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS=$(echo -n ${VCENTER_USEAWS_EVENTBRIDGE_EVENT_BUSNAME} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
+	ESCAPED_AWS_EVENTBRIDGE_RULE_ARN=$(echo -n ${AWS_EVENTBRIDGE_RULE_ARN} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
+
     cat > ${EVENT_ROUTER_CONFIG} << __AWS_EVENTBRIDGE_PROCESSOR__
 [{
 		"type": "stream",
 		"provider": "vmware_vcenter",
-		"address": "https://${VCENTER_SERVER}/sdk",
+		"address": "https://${ESCAPED_VCENTER_SERVER}/sdk",
 		"auth": {
 			"method": "user_password",
 			"secret": {
-				"username": "${VCENTER_USERNAME}",
-				"password": "${VCENTER_PASSWORD}"
+				"username": "${ESCAPED_VCENTER_USERNAME}",
+				"password": "${ESCAPED_VCENTER_PASSWORD}"
 			}
 		},
 		"options": {
@@ -40,14 +52,14 @@ if [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
 		"auth": {
 			"method": "access_key",
 			"secret": {
-				"aws_access_key_id": "${AWS_EVENTBRIDGE_ACCESS_KEY}",
-				"aws_secret_access_key": "${AWS_EVENTBRIDGE_ACCESS_SECRET}"
+				"aws_access_key_id": "${ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY}",
+				"aws_secret_access_key": "${ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET}"
 			}
 		},
 		"options": {
 			"aws_region": "${AWS_EVENTBRIDGE_REGION}",
-			"aws_eventbridge_event_bus": "${AWS_EVENTBRIDGE_EVENT_BUS}",
-			"aws_eventbridge_rule_arn": "${AWS_EVENTBRIDGE_RULE_ARN}"
+			"aws_eventbridge_event_bus": "${ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS}",
+			"aws_eventbridge_rule_arn": "${ESCAPED_AWS_EVENTBRIDGE_RULE_ARN}"
 		}
 	},
 	{
@@ -58,7 +70,7 @@ if [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
 			"method": "basic_auth",
 			"secret": {
 				"username": "admin",
-				"password": "${ROOT_PASSWORD}"
+				"password": "${ESCAPED_ROOT_PASSWORD}"
 			}
 		}
 	}
@@ -77,16 +89,18 @@ else
 
     kubectl --kubeconfig /root/.kube/config create -f /root/download/faas-netes/yaml
 
+	ESCAPED_OPENFAAS_PASSWORD=$(echo -n ${OPENFAAS_PASSWORD} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
+
     cat > ${EVENT_ROUTER_CONFIG} << __OPENFAAS_PROCESSOR__
 [{
 		"type": "stream",
 		"provider": "vmware_vcenter",
-		"address": "https://${VCENTER_SERVER}/sdk",
+		"address": "https://${ESCAPED_VCENTER_SERVER}/sdk",
 		"auth": {
 			"method": "user_password",
 			"secret": {
-				"username": "${VCENTER_USERNAME}",
-				"password": "${VCENTER_PASSWORD}"
+				"username": "${ESCAPED_VCENTER_USERNAME}",
+				"password": "${ESCAPED_VCENTER_PASSWORD}"
 			}
 		},
 		"options": {
@@ -101,7 +115,7 @@ else
 			"method": "basic_auth",
 			"secret": {
 				"username": "admin",
-				"password": "${OPENFAAS_PASSWORD}"
+				"password": "${ESCAPED_OPENFAAS_PASSWORD}"
 			}
 		},
 		"options": {
@@ -116,7 +130,7 @@ else
 			"method": "basic_auth",
 			"secret": {
 				"username": "admin",
-				"password": "${ROOT_PASSWORD}"
+				"password": "${ESCAPED_ROOT_PASSWORD}"
 			}
 		}
 	}
