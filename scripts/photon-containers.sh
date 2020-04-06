@@ -3,8 +3,10 @@
 # SPDX-License-Identifier: BSD-2
 
 echo '> Downloading weave.yaml'
-curl -L https://cloud.weave.works/k8s/net?k8s-version=Q2xpZW50IFZlcnNpb246IHZlcnNpb24uSW5mb3tNYWpvcjoiMSIsIE1pbm9yOiIxNCIsIEdpdFZlcnNpb246InYxLjE0LjYiLCBHaXRDb21taXQ6Ijk2ZmFjNWNkMTNhNWRjMDY0ZjdkOWY0ZjIzMDMwYTZhZWZhY2U2Y2MiLCBHaXRUcmVlU3RhdGU6ImFyY2hpdmUiLCBCdWlsZERhdGU6IjIwMTktMTAtMzFUMDY6MDQ6MDNaIiwgR29WZXJzaW9uOiJnbzEuMTMuMyIsIENvbXBpbGVyOiJnYyIsIFBsYXRmb3JtOiJsaW51eC9hbWQ2NCJ9ClNlcnZlciBWZXJzaW9uOiB2ZXJzaW9uLkluZm97TWFqb3I6IjEiLCBNaW5vcjoiMTQiLCBHaXRWZXJzaW9uOiJ2MS4xNC45IiwgR2l0Q29tbWl0OiI1MDBmNWFiYTgwZDcxMjUzY2MwMWFjNmE4NjIyYjgzNzdmNGE3ZWY5IiwgR2l0VHJlZVN0YXRlOiJjbGVhbiIsIEJ1aWxkRGF0ZToiMjAxOS0xMS0xM1QxMToxMzowNFoiLCBHb1ZlcnNpb246ImdvMS4xMi4xMiIsIENvbXBpbGVyOiJnYyIsIFBsYXRmb3JtOiJsaW51eC9hbWQ2NCJ9Cg -o /root/config/weave.yaml
-sed -i '/^          hostNetwork:.*/i \              imagePullPolicy: IfNotPresent' /root/config/weave.yaml
+curl -L https://raw.githubusercontent.com/weaveworks/weave/9f00f78d3b9d5a8a31fdd90ec691095028e2690a/prog/weave-kube/weave-daemonset-k8s-1.11.yaml -o /root/config/weave.yaml
+sed -i "s/weaveworks\/weave-kube:latest/weaveworks\/weave-kube:2.6.2/g" /root/config/weave.yaml
+sed -i "s/weaveworks\/weave-npc:latest/weaveworks\/weave-npc:2.6.2/g" /root/config/weave.yaml
+sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' /root/config/weave.yaml
 sed -i '0,/^              env:/s//              env:\n                - name: IPALLOC_RANGE\n                  value: POD_NETWORK_CIDR/' /root/config/weave.yaml
 
 echo '> Pre-Downloading Kubeadm Docker Containers'
@@ -17,8 +19,8 @@ k8s.gcr.io/kube-proxy:v1.14.9
 k8s.gcr.io/pause:3.1
 k8s.gcr.io/etcd:3.3.10
 k8s.gcr.io/coredns:1.3.1
-docker.io/weaveworks/weave-kube:2.6.0
-docker.io/weaveworks/weave-npc:2.6.0
+docker.io/weaveworks/weave-kube:2.6.2
+docker.io/weaveworks/weave-npc:2.6.2
 embano1/tinywww:latest
 projectcontour/contour:v1.0.0-beta.1
 openfaas/faas-netes:0.9.0
