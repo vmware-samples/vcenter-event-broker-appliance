@@ -32,7 +32,7 @@ envoyproxy/envoy:v1.11.1
 prom/prometheus:v2.11.0
 prom/alertmanager:v0.18.0
 nats-streaming:0.11.2
-vmware/veba-event-router:latest
+vmware/veba-event-router:${VEBA_VERSION}
 )
 
 for i in ${CONTAINERS[@]};

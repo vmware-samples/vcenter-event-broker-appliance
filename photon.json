@@ -63,6 +63,9 @@
     },
     {
       "type": "shell",
+      "environment_vars": [
+        "VEBA_VERSION={{ user `VEBA_VERSION` }}"
+      ],
       "pause_before": "20s",
       "scripts": [
         "scripts/photon-containers.sh",
