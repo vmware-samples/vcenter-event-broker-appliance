@@ -5,8 +5,10 @@ IMAGE_NAME=$(IMAGE_REPO)/veba-event-router
 DIST_FOLDER=dist
 BINARY=vmware-event-router
 BUILD_TAG=$(IMAGE_NAME):$(COMMIT)
+VERSION_TAG=$(IMAGE_NAME):$(VERSION)
 LATEST_TAG=$(IMAGE_NAME):latest
 
+GIT_BRANCH := $(shell git branch --show-current)
 GIT_NOT_CLEAN_CHECK := $(shell git status --porcelain)
 export GO111MODULE=on
 
@@ -38,7 +40,7 @@ binary: test tidy
 
 build: test tidy
 	$(info Make: Building image "$(IMAGE_NAME)".)
-	$(if $(GIT_NOT_CLEAN_CHECK), $(error "Dirty Git repository."))
+	$(if $(GIT_NOT_CLEAN_CHECK), $(error "Dirty Git repository!"))
 	docker build -t $(BUILD_TAG) --build-arg COMMIT=$(COMMIT) --build-arg VERSION=$(VERSION) .
 
 gofmt:
@@ -49,14 +51,21 @@ test: gofmt
 	GORACE=history_size=5 go test -race -timeout $(TIMEOUT)s $(TESTPKGS)
 
 tag: 
-	$(info Make: Tagging image "$(IMAGE_NAME)" with "$(BUILD_TAG)" and "$(LATEST_TAG)".)
-	docker tag $(BUILD_TAG) $(LATEST_TAG)
+	$(info Make: Tagging image "$(IMAGE_NAME)" with "$(BUILD_TAG)", "$(LATEST_TAG) and "$(VERSION_TAG)".)
+	@docker tag $(BUILD_TAG) $(LATEST_TAG)
+	@docker tag $(BUILD_TAG) $(VERSION_TAG)
 
 push: tag
 	$(info Make: Pushing image "$(IMAGE_NAME)".)
+ifneq ($(GIT_BRANCH),master)
+	$(error "Not on master branch, won't push!")
+endif
+
 	docker push $(BUILD_TAG)
+	docker push $(VERSION_TAG)
 	docker push $(LATEST_TAG)
 
 output: test
 	@echo Docker Image: $(BUILD_TAG)
+	@echo Docker Image: $(VERSION_TAG)
 	@echo Docker Image: $(LATEST_TAG)
