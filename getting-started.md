@@ -71,14 +71,13 @@ OpenFaaS UI: https://[hostname]
 
 If you are using the AWS EventBridge Processor, the OpenFaaS UI endpoint will not be available which is expected and is not shown in the login banner.
 
-**Note**: If you enable Debugging, the install logs endpoint will automatically contain the more verbose log entries.
+> **Note:** If you enable Debugging, the install logs endpoint will automatically contain the more verbose log entries.
 
 **Step 4** - You can verify that everything was deployed correctly by opening a web browser and accessing one of the endpoints along with the associated admin password you had specified as part of the OVA deployment.
 
 At this point, you have successfully deployed the vCenter Event Broker Appliance and you are ready to start deploying your functions! Check the [examples](./examples/README.md) to quickly get started.
 
 If the appliance does not appear to be working correctly, try some of the techniques in the [VEBA troubleshooting](./docs/8-veba-troubleshooting.md) guide.
-
 
 ## Additional Learning
 

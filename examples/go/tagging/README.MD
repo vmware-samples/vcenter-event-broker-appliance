@@ -109,7 +109,7 @@ Deployed. 202 Accepted.
 
 Turn on a virtual machine, e.g. in vCenter or via `govc` CLI, to trigger the function via a `(DRS)VmPoweredOnEvent`. Verify the virtual machine was correctly tagged.
 
-**Note:** If you don't see a tag being assigned verify that you correctly followed each step above, IPs/FQDNs and credentials are correct and see the [troubleshooting](#troubleshooting) section below.
+> **Note:** If you don't see a tag being assigned verify that you correctly followed each step above, IPs/FQDNs and credentials are correct and see the [troubleshooting](#troubleshooting) section below.
 
 ## Troubleshooting
 
