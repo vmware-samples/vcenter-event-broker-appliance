@@ -1,0 +1,34 @@
+{
+    "url": "https://pk-sdesk.atlassian.net/rest/api/2/issue",
+    "headers": {
+        "Content-Type": "application/json; charset=UTF-8",
+        "Accept": "application/json; charset=UTF-8"
+    },
+    "auth": {
+        "un": "<username required>",
+        "pwd": "<password required>"
+    },
+    "body": {
+        "fields": {
+           "project":
+           {
+              "key": "VEBA"
+           },
+           "summary": "REST ye merry gentlemen.",
+           "description": "Creating of an issue using project keys and issue type names using the REST API",
+           "issuetype": {
+              "name": "Bug"
+           }
+       }
+    },
+    "mappings": [
+        {
+            "push": "fields/summary",
+            "pull": "data/FullFormattedMessage"
+        },
+        {
+            "push": "fields/description",
+            "pull": "data/FullFormattedMessage"
+        }
+    ]
+}
