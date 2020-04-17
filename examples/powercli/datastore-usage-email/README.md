@@ -16,25 +16,15 @@ git checkout master
 
 Step 2 - Update `stack.yml` and `vc-datastore-config.json` with your environment information
 
-<<<<<<< HEAD
-**Note:** 
-- Leave SMTP_USERNAME and SMTP_PASSWORD blank if you do not want to use authenticated SMTP
-- The function supports pulling a To: email address from a custom field in vCenter. This allows administrators with vCenter access to configure email notifications without having to alter the JSON script configuration. To enable this feature, do the following:
-    - Create a custom field in vCenter, assign it to a datastore and give it an email address. For example, create a custom field named `NotifyEmail` and assign it a value of `admin@foo.com`
-    - In `vc-datastore-config.json`, add the name of the custom field `NotifyEmail` as the value for `DATASTORE_CUSTOM_PROP_EMAIL_TO`
-    - Add a vCenter URL and credentials to `VC`, `VC_USERNAME`, and `VC_PASSWORD`
+> **Note:**
+ Leave SMTP_USERNAME and SMTP_PASSWORD blank if you do not want to use authenticated SMTP
 
-    When this is configured, an email address found in the custom field will be added to the email already defined in the `EMAIL_TO` section of the JSON file. 
-=======
-**Note:**
-- Leave SMTP_USERNAME and SMTP_PASSWORD blank if you do not want to use authenticated SMTP
-- The function supports pulling a To: email address from a custom attribute in vCenter. This allows administrators with vCenter access to configure email notifications without having to alter the JSON script configuration. To enable this feature, do the following:
-    - Create a custom attribute in vCenter, assign it to a datastore and give it an email address. For example, create a custom attribute named `NotifyEmail` and assign it a value of `admin@foo.com`
-    - In `vc-datastore-config.json`, add the name of the custom attribute `NotifyEmail` as the value for `DATASTORE_CUSTOM_PROP_EMAIL_TO`
-    - Add a vCenter URL and credentials to `VC`, `VC_USERNAME`, and `VC_PASSWORD`
+The function supports pulling a To: email address from a custom attribute in vCenter. This allows administrators with vCenter access to configure email notifications without having to alter the JSON script configuration. To enable this feature, do the following:
+- Create a custom attribute in vCenter, assign it to a datastore and give it an email address. For example, create a custom attribute named `NotifyEmail` and assign it a value of `admin@foo.com`
+- In `vc-datastore-config.json`, add the name of the custom attribute `NotifyEmail` as the value for `DATASTORE_CUSTOM_PROP_EMAIL_TO`
+- Add a vCenter URL and credentials to `VC`, `VC_USERNAME`, and `VC_PASSWORD`
 
-    When this is configured, an email address found in the custom attribute will be added to the email already defined in the `EMAIL_TO` section of the JSON file. 
->>>>>>> 240b532... Support datastore custom attribute as To: address. Tested on vCenter 7 and VMC SDDC M9. Validated succesful email delivery with all possible combinations of: authenticated SMTP, unauthenticated SMTP, custom attribute present, and custom attribute not present
+When this is configured, an email address found in the custom attribute will be added to the email already defined in the `EMAIL_TO` section of the JSON file. 
 
 Step 3 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
 
