@@ -28,7 +28,7 @@ Step 2 - Edit the `photon-builder.json` file to configure the vSphere endpoint f
 }
 ```
 
-**Note:** If you need to change the default root password on the vCenter Event Broker Appliance, take a look at `photon-version.json`
+> **Note:** If you need to change the default root password on the vCenter Event Broker Appliance, take a look at `photon-version.json`
 
 Step 3 - Start the build by running the build script
 

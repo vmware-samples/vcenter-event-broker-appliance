@@ -46,7 +46,9 @@ Before you start deploy arbitrary VM on one of your ESX hosts.
 
 ### Fix the MTU
 
-* Trigger `vm.powered.on` event, by powering on a VM.
-> Note for DRS-enabled clusters the event should be `drs.vm.powered.on`
+* Trigger a `VmPoweredOnEvent` by powering on a VM.
+  
+> **Note:** for DRS-enabled clusters the event should be `DrsVmPoweredOnEvent`
+
 * Navigate to the same place to see the MTU is back to `1500`
 

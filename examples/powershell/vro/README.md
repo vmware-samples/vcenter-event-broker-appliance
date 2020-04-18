@@ -19,7 +19,7 @@ faas-cli template pull
 
 Step 2 - Update `stack.yml` and `vro-secrets.json` with your environment information
 
-**Note:** If you are building your own function, you will need to update the `image:` property in the stack.yaml to point to your own Dockerhub account and Docker Image (e.g. `<dockerhubid>/<dockerimagename>`)
+> **Note:** If you are building your own function, you will need to update the `image:` property in the stack.yaml to point to your own Dockerhub account and Docker Image (e.g. `<dockerhubid>/<dockerimagename>`)
 
 Step 3 - Deploy function to vCenter Event Broker Appliance
 
