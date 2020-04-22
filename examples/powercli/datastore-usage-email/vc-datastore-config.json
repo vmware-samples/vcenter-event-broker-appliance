@@ -7,5 +7,9 @@
     "SMTP_PASSWORD" : "FILE-ME-IN-PLEASE",
     "EMAIL_SUBJECT" : "[VMC Datastore Notification Alarm]",
     "EMAIL_TO": ["admins@primp-industries.com"],
-    "EMAIL_FROM" : "vmc-notification-do-not-reply@primp-industries.com"
+    "EMAIL_FROM" : "vmc-notification-do-not-reply@primp-industries.com",
+    "DATASTORE_CUSTOM_PROP_EMAIL_TO" : "",
+    "VC" : "",
+    "VC_USERNAME" : "",
+    "VC_PASSWORD" : ""
 }
