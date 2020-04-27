@@ -13,3 +13,4 @@ This page lists ready to use functions curated by the vCenter Event Broker commu
 | Datastore Usage Notification | | [Link](powercli/datastore-usage-email) | | |
 | Echo VEBA Event | [Link](python/echo)| | |
 | vRealize Orchestrator | | | [Link](powershell/vro) | |
+| Send sDRS recommendation alert to Webex Teams | | [Link](powercli/sdrs-recommendation-webexteams) | | |

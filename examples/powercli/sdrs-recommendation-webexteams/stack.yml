@@ -1,0 +1,16 @@
+provider:
+  name: openfaas
+  gateway: https://veba.primp-industries.com
+functions:
+  powercli-sdrs-notification:
+    lang: powercli
+    handler: ./handler
+    image: vmware/veba-powercli-sdrs-notification:latest
+    environment:
+      write_debug: true
+      read_debug: true
+      function_debug: true
+    secrets:
+      - vc-sdrs-config
+    annotations:
+      topic: com.vmware.vc.sdrs.StorageDrsNewRecommendationPendingEvent
