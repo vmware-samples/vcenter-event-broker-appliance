@@ -13,6 +13,7 @@ echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
 
 echo '> Applying latest Updates...'
 tdnf -y update
+tdnf upgrade linux-esx
 
 echo '> Installing Additional Packages...'
 tdnf install -y \
