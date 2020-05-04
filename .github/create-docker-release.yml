@@ -1,0 +1,22 @@
+name: Build and push VMware Event Router to Docker Hub
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source (master branch)
+        uses: actions/checkout@master
+        with:
+          ref: 'master'
+      - name: log in to Docker
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_SECRET: ${{ secrets.DOCKER_SECRET }}
+        run: echo "${DOCKER_SECRET}" | docker login -u "${DOCKER_USER}" --password-stdin
+      - name: test, build, tag and push image
+        run: cd vmware-event-router && make release
