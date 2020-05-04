@@ -2,13 +2,6 @@
 # Copyright 2019 VMware, Inc. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
-echo '> Downloading weave.yaml'
-curl -L https://raw.githubusercontent.com/weaveworks/weave/9f00f78d3b9d5a8a31fdd90ec691095028e2690a/prog/weave-kube/weave-daemonset-k8s-1.11.yaml -o /root/config/weave.yaml
-sed -i "s/weaveworks\/weave-kube:latest/weaveworks\/weave-kube:2.6.2/g" /root/config/weave.yaml
-sed -i "s/weaveworks\/weave-npc:latest/weaveworks\/weave-npc:2.6.2/g" /root/config/weave.yaml
-sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' /root/config/weave.yaml
-sed -i '0,/^              env:/s//              env:\n                - name: IPALLOC_RANGE\n                  value: POD_NETWORK_CIDR/' /root/config/weave.yaml
-
 echo '> Pre-Downloading Kubeadm Docker Containers'
 
 CONTAINERS=(
@@ -19,8 +12,7 @@ k8s.gcr.io/kube-proxy:v1.14.9
 k8s.gcr.io/pause:3.1
 k8s.gcr.io/etcd:3.3.10
 k8s.gcr.io/coredns:1.3.1
-docker.io/weaveworks/weave-kube:2.6.2
-docker.io/weaveworks/weave-npc:2.6.2
+antrea/antrea-ubuntu:v0.6.0
 embano1/tinywww:latest
 projectcontour/contour:v1.0.0-beta.1
 openfaas/faas-netes:0.9.0
@@ -56,3 +48,8 @@ git checkout v1.0.0-beta.1
 sed -i '/^---/i \      dnsPolicy: ClusterFirstWithHostNet\n      hostNetwork: true' examples/contour/03-envoy.yaml
 sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' examples/contour/*.yaml
 cd ..
+
+echo '> Downloading Antrea...'
+wget https://github.com/vmware-tanzu/antrea/releases/download/v0.6.0/antrea.yml -O /root/download/antrea.yml
+sed -i 's/image: antrea\/antrea-ubuntu:.*/image: antrea\/antrea-ubuntu:v0.6.0/g' /root/download/antrea.yml
+sed -i '/image:.*/i \        imagePullPolicy: IfNotPresent' /root/download/antrea.yml

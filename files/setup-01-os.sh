@@ -21,3 +21,7 @@ if [ "${DOCKER_NETWORK_CIDR}" != "172.17.0.1/16" ]; then
 EOF
 systemctl restart docker
 fi
+
+echo -e "\e[92mConfiguring IP Tables for Antrea ..." > /dev/console
+iptables -A INPUT -i gw0 -j ACCEPT
+iptables-save > /etc/systemd/scripts/ip4save
