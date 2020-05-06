@@ -46,4 +46,29 @@ Version: ${VEBA_VERSION}
 Commit: ${VEBA_COMMIT}
 EOF
 
+echo '> Creating VEBA DCUI systemd unit file...'
+mkdir -p /usr/lib/systemd/system/getty@tty1.service.d/
+cat > /usr/lib/systemd/system/getty@tty1.service.d/dcui_override.conf << EOF
+[Unit]
+Description=
+Description=VEBA DCUI
+After=
+After=network-online.target
+
+[Service]
+ExecStart=
+ExecStart=-/usr/bin/veba-dcui
+Restart=always
+RestartSec=1sec
+StandardOutput=tty
+StandardInput=tty
+StandardError=journal
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+KillMode=process
+EOF
+
+systemctl enable getty@tty1.service
+
 echo '> Done'

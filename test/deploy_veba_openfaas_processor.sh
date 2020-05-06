@@ -5,7 +5,7 @@
 # Sample Shell Script to test deployment of VEBA w/OpenFaaS Processor
 
 OVFTOOL_BIN_PATH="/Applications/VMware OVF Tool/ovftool"
-VEBA_OVA="../output-vmware-iso/vCenter_Event_Broker_Appliance_0.4.0-beta.ova"
+VEBA_OVA="../output-vmware-iso/vCenter_Event_Broker_Appliance_0.4.0.ova"
 
 # vCenter
 DEPLOYMENT_TARGET_ADDRESS="192.168.30.200"

@@ -12,20 +12,6 @@ if [ "${EVENT_PROCESSOR_TYPE}" == "OpenFaaS" ]; then
     cat << EOF > /etc/issue
 Welcome to the vCenter Event Broker Appliance
 
-Appliance Status: https://${HOSTNAME}/status
-Install Logs: https://${HOSTNAME}/bootstrap
-Appliance Statistics: https://${HOSTNAME}/stats
-OpenFaaS UI: https://${HOSTNAME}
-
-EOF
-else
-    cat << EOF > /etc/issue
-Welcome to the vCenter Event Broker Appliance
-
-Appliance Status: https://${HOSTNAME}/status
-Install Logs: https://${HOSTNAME}/bootstrap
-Appliance Statistics: https://${HOSTNAME}/stats
-
 EOF
 fi
 
