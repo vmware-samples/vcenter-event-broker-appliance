@@ -1,0 +1,34 @@
+{
+    "url": "https://instance.my.salesforce.com/services/data/v48.0/sobjects/Case/",
+    "headers": {
+        "Content-Type": "application/json; charset=UTF-8",
+        "Accept": "application/json; charset=UTF-8"
+    },
+    "auth": {
+        "un": "username_required",
+        "pwd": "password_required",
+        "client_id": "clientid_required",
+        "client_secret": "clientsecret_required",
+        "redirect_uri": "https://OPENFAAS_URL"
+    },
+    "body": {
+        "ContactId": "0034T00000BoZxKQAV",
+        "AccountId": "0014T000008U4VWQA0",
+        "OwnerId": "0054T000000tmp0QAA",
+        "Status": "New",
+        "Origin": "Phone",
+        "Subject": "Test - Subject",
+        "Priority": "Medium",
+        "Description": "Description"
+    },
+    "mappings": [
+        {
+            "push": "Subject",
+            "pull": "data/FullFormattedMessage"
+        },
+        {
+            "push": "Description",
+            "pull": "data/FullFormattedMessage"
+        }
+    ]
+}

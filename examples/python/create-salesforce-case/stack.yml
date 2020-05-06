@@ -1,0 +1,18 @@
+version: 1.0
+provider:
+  name: openfaas                                  
+  gateway: https://https://VEBA_FQDN_OR_IP # OpenFaaS URL (VEBA endpoint) 
+functions:
+  salesforce-fn:                           # name of the function (unique in your k8s cluster)
+    lang: python3
+    handler: ./handler                     # folder name which has your scripts
+    image: vmware/veba-python-sfdc:latest  # docker container to pull for this deployment
+    environment:
+      write_debug: true
+      read_debug: true
+      combine_output: false               # env variable allows us to use syserr to print to console while sysout is returned back to OpenFaaS
+      insecure_ssl: true                  # env variable to let us work with self signed certs
+    secrets:
+      - sfconfig                          # configuration for the function
+    annotations:
+      topic: "VmPoweredOffEvent,VmPoweredOnEvent"          # comma separated events that trigger this fn
