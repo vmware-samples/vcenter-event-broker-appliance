@@ -1,7 +1,7 @@
 <!-- omit in toc -->
 # VMware Event Router
 
-The VMware Event Router is used to connect to various VMware event `streams` (i.e. "sources") and forward these events to different `processors` (i.e. "sinks"). This project is currently used by the [*vCenter Event Broker Appliance*](https://github.com/vmware-samples/vcenter-event-broker-appliance) as the core logic to forward vCenter events to configurable event `processors` (see below).
+The VMware Event Router is used to connect to various VMware event `streams` (i.e. "sources") and forward these events to different `processors` (i.e. "sinks"). This project is currently used by the [*VMware Event Broker Appliance*](https://www.vmweventbroker.io/) as the core logic to forward vCenter events to configurable event `processors` (see below).
 
 **Supported event sources:**
 - [VMware vCenter Server](https://www.vmware.com/products/vcenter-server.html)
@@ -17,7 +17,6 @@ The VMware Event Router uses the [CloudEvents](https://cloudevents.io/) standard
 - Only one event `stream` and one event `processor` can be configured at a time
   - It is possible though to run **multiple instances** of the event router
 - At-most-once delivery semantics are provided
-  - See [this FAQ](https://github.com/vmware-samples/vcenter-event-broker-appliance/blob/development/FAQ.md) for a deeper understanding of messaging semantics
 
 <!-- omit in toc -->
 ## Table of Contents
@@ -28,6 +27,8 @@ The VMware Event Router uses the [CloudEvents](https://cloudevents.io/) standard
   - [Stream Processor: Configuration Details for AWS EventBridge](#stream-processor-configuration-details-for-aws-eventbridge)
   - [Metrics Server: Configuration Details](#metrics-server-configuration-details)
   - [Deployment](#deployment)
+    - [Assisted Deployment](#assisted-deployment)
+    - [Manual Deployment](#manual-deployment)
 - [Build from Source](#build-from-source)
 - [Example Event Structure](#example-event-structure)
 
@@ -263,6 +264,12 @@ Example of the configuration section for the metrics server:
 VMware Event Router can be deployed and run as standalone binary (see [below](#build-from-source)). However, it is designed to be run in a Kubernetes cluster for increased availability and ease of scaling out. The following steps describe the deployment of the VMware Event Router in **a Kubernetes cluster** for an existing OpenFaaS ("faas-netes") environment, respectively AWS EventBridge.
 
 > **Note:** Docker images are available [here](https://hub.docker.com/r/vmware/veba-event-router).
+
+#### Assisted Deployment
+
+For your convenience we provide an install script [here](hack/README.md).
+
+#### Manual Deployment
 
 Create a namespace where the VMware Event Router will be deployed to:
 
