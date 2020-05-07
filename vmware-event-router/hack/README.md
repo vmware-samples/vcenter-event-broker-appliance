@@ -1,8 +1,8 @@
-# Deploy vCenter Event Broker Application to existing Kubernetes Cluster
+# Deploy VMware Event Broker Application to existing Kubernetes Cluster
 
-For customers with an existing Kubernetes ("K8s") cluster, you can deploy the underlying components that make up the vCenter Event Broker Appliance. The instructions below will guide you in downloading the required files and using the `create_k8s_config.sh` shell script to aide in deploying the VEBA K8s application.
+For customers with an existing Kubernetes ("K8s") cluster, you can deploy the underlying components that make up the VMware Event Broker Appliance. The instructions below will guide you in downloading the required files and using the `create_k8s_config.sh` shell script to aide in deploying the VEBA K8s application.
 
-The script will prompt users for the required input and automatically setup and deploy both OpenFaaS and the VMware Event Router components giving you a similar setup like the vCenter Event Broke Appliance. If you have already deployed OpenFaaS, you can skip that step during the script input phase.
+The script will prompt users for the required input and automatically setup and deploy both OpenFaaS and the VMware Event Router components giving you a similar setup like the VMware Event Broke Appliance. If you have already deployed OpenFaaS, you can skip that step during the script input phase.
 
 ## Pre-Req:
 * Ability to create namespaces, secrets and deployments in your K8s Cluster using kubectl
