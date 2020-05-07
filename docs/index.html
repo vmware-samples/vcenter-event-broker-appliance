@@ -1,0 +1,203 @@
+---
+layout: default
+id: home
+description: vCenter Event-driven Functions as a Service Platform
+backgrounds:
+  case_study: cornflower-blue
+  team: dark-blue
+hero:
+  headline: Unlocking the Hidden Potential of Events in the VMware SDDC
+  content: Use event-driven automation and take your vSphere Events to the next level! Easily trigger custom or pre-built actions to deliver powerful integrations within your datacenter but also across public cloud services. Integrations like Slack, Pager Duty, Service Now, etc. has never been easier before
+  cta_link1:
+    text: Download & Install
+    external_url: https://flings.vmware.com/vcenter-event-broker-appliance
+  cta_link2:
+    text: Deploy Functions
+    url: /examples
+  cta_link3: # ignored
+    text: Write Functions
+    external_url: https://github.com/vmware-samples/vcenter-event-broker-appliance
+  promo1:
+    icon: /assets/img/cta-icons/vcenter-icon.png
+    title: Extend vCenter Actions
+    content: Simplify integrations and deliver new automated capabilities to vCenter
+  promo2:
+    icon: /assets/img/cta-icons/scale-icon.png
+    title: Event-Driven Functions
+    content: Imagine new possibilities with functions triggered by vSphere Events.
+  promo3:
+    icon: /assets/img/cta-icons/functions-icon.png
+    title: Bring Your Own Language
+    content: Build functions using the language of your choice
+secondary_ctas:
+  cta1:
+    title: Explore our documentation to help you get started quickly
+    url: /kb
+    content: Learn more about VMware Event Broker Appliance and its capabilities
+  cta2:
+    title: Get started quickly with community-sourced, prebuilt functions
+    url: /examples
+    content: Deploy the appliance and prebuilt functions in under 60 minutes
+---
+
+<div class="home-hero bg-color-{{ site.hero.background-color }}">
+  <div class="section">
+    <div class="section-content">
+      <div class="row">
+        <div class="col-md-7">
+          <div class="hero-content">
+            <h1 class="mb-3">{{ page.hero.headline }}</h1>
+            <p class="mb-1">{{ page.hero.content }}</p>
+            
+            {% include day-night.html%}
+          </div>
+          <div class="hero-cta mt-2">
+            {% if page.hero.cta_link1.external_url or size > 0 %}
+              <a href="{{ page.hero.cta_link1.external_url }}" target="_blank" class="btn btn-primary mb-3 mb-sm-0">{{ page.hero.cta_link1.text }}</a>
+            {% else %}
+              <a href="{{ page.hero.cta_link1.url | relative_url }}" class="btn btn-primary mb-3 mb-sm-0">{{ page.hero.cta_link1.text }}</a>
+            {% endif %}
+            {% if page.hero.cta_link2.external_url or size > 0 %}
+              <a href="{{ page.hero.cta_link2.external_url }}" target="_blank" class="btn btn-outline-light">{{ page.hero.cta_link2.text }}</a>
+            {% else %}
+              <a href="{{ page.hero.cta_link2.url | relative_url }}" class="btn btn-outline-light">{{ page.hero.cta_link2.text }}</a>
+            {% endif %}
+            
+            <!--<a href="{{ page.hero.cta_link3.url }}" class="btn btn-outline-light">{{ page.hero.cta_link3.text }}</a>-->
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="hero-veba-mascot">
+            {% include arc-reactor.html%}
+            
+            <img id="otto" src="{{site.banner_main | relative_url}}"/>
+            <img id="otto-pride" src="{{site.banner_alt | relative_url}}" style="display:none; opacity:0.5;"/>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div> <!-- /home-hero -->
+
+<div class="section section-card section-card-offset-top promo-cards pb-0">
+  <div class="section-content">
+    <div class="row">
+      <div class="col-md">
+        <div class="card card-light mb-3 mb-md-0 shadow">
+          <div class="card-body match-height">
+            <figure>
+              <img src="{{ page.hero.promo1.icon | relative_url }}" alt="{{ page.hero.promo1.title }}" />
+            </figure>
+            {% if page.hero.promo1.external_url or size > 0 %}
+            <h5><a href="{{ page.hero.promo1.external_url }}" target="_blank" class="dark">{{ page.hero.promo1.title }}</a></h5>
+            {% elsif page.hero.promo1.url or size > 0 %}
+            <h5><a href="{{ page.hero.promo1.url | relative_url }}" class="dark">{{ page.hero.promo1.title }}</a></h5>
+            {% else %}
+            <h5>{{ page.hero.promo1.title }}</h5>
+            {% endif %}
+            <p>{{ page.hero.promo1.content }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="card card-light mb-3 mb-md-0 shadow">
+          <div class="card-body match-height">
+            <figure>
+              <img src="{{ page.hero.promo2.icon | relative_url }}" alt="{{ page.hero.promo2.title }}" />
+            </figure>
+            {% if page.hero.promo2.external_url or size > 0 %}
+            <h5><a href="{{ page.hero.promo2.external_url }}" target="_blank" class="dark">{{ page.hero.promo2.title }}</a></h5>
+            {% elsif page.hero.promo2.url or size > 0 %}
+            <h5><a href="{{ page.hero.promo2.url | relative_url }}" class="dark">{{ page.hero.promo2.title }}</a></h5>
+            {% else %}
+            <h5>{{ page.hero.promo2.title }}</h5>
+            {% endif %}
+            <p>{{ page.hero.promo2.content }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="card card-light mb-3 mb-md-0 shadow">
+          <div class="card-body match-height">
+            <figure>
+              <img src="{{ page.hero.promo3.icon | relative_url }}" alt="{{ page.hero.promo3.title }}" />
+            </figure>
+            {% if page.hero.promo3.external_url or size > 0 %}
+            <h5><a href="{{ page.hero.promo3.external_url }}" target="_blank" class="dark">{{ page.hero.promo3.title }}</a></h5>
+            {% elsif page.hero.promo3.url or size > 0 %}
+            <h5><a href="{{ page.hero.promo3.url | relative_url }}" class="dark">{{ page.hero.promo3.title }}</a></h5>
+            {% else %}
+            <h5>{{ page.hero.promo3.title }}</h5>
+            {% endif %}
+            <p>{{ page.hero.promo3.content }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section section-grey">
+  <div class="section-content">
+    <div class="row bg-grey">
+      <div class="col-sm-5 mb-3 mb-sm-0">
+        <h6 class="mb-1">
+          {% if page.secondary_ctas.cta1.external_url or size > 0 %}
+          <a href="{{ page.secondary_ctas.cta1.external_url }}" target="_blank">{{ page.secondary_ctas.cta1.title }}</a>
+          {% else %}
+          <a href="{{ page.secondary_ctas.cta1.url | relative_url }}">{{ page.secondary_ctas.cta1.title }}</a>
+          {% endif %}
+        </h6>
+        <p class="mb-0">{{ page.secondary_ctas.cta1.content }}</p>
+      </div>
+      <div class="col-sm-5 offset-sm-2">
+        <h6 class="mb-1">
+          {% if page.secondary_ctas.cta2.external_url  or size > 0 %}
+          <a href="{{ page.secondary_ctas.cta2.external_url }}" target="_blank">{{ page.secondary_ctas.cta2.title }}</a>
+          {% else %}
+          <a href="{{ page.secondary_ctas.cta2.url | relative_url }}">{{ page.secondary_ctas.cta2.title }}</a>
+          {% endif %}
+        </h6>
+        <p class="mb-0">{{ page.secondary_ctas.cta2.content }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section pt-3">
+  <div class="section-content promo-cards">
+    <div class="row">
+      <h2>#VEBA Use Cases</h2>
+    </div>
+    {% assign limit = 6 %}
+    {% include usecase-posts.html %}
+    <div class="row pt-4">
+      <div class="col text-center">
+        <a href="{{ '/kb' | append: '#use-cases' | relative_url}}" class="btn btn-secondary btn-sm">See All Use cases</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section pt-0 pb-0">
+  <div class="section-content">
+    <div class="row">
+      <h2>Featured Functions</h2>
+    </div>
+    {% assign limit = 3 %}
+    {% include functions-alternating.html %}
+    <div class="row pt-1 mb-4">
+      <div class="col text-center">
+        <a href="{{ '/examples' | relative_url}}" class="btn btn-secondary btn-sm">See All Functions</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="team-veba" class="section section-background-{{ page.backgrounds.team }}">
+  <div class="section-content">
+    {% include team.html %}
+  </div>
+</div>

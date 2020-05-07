@@ -1,17 +1,18 @@
-# vCenter Event Broker Appliance - Troubleshooting
-
-# Table of Contents
-<!-- TOC depthFrom:2 -->
-
-- [Requirements](#requirements)
-- [Troubleshooting an initial deployment](#troubleshooting-an-initial-deployment)
-- [OpenFaaS Function troubleshooting](#openfaas-function-troubleshooting)
-
-<!-- /TOC -->
+---
+layout: docs
+toc_id: troubleshoot-appliance
+title: VMware Event Broker Appliance Troubleshooting
+description: Troubleshooting guide for general appliance issues
+permalink: /kb/troubleshoot-appliance
+cta:
+ title: Still having trouble? 
+ description: Please submit bug reports and feature requests by using our GitHub [Issues](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues){:target="_blank"} page or Join us on slack [#vcenter-event-broker-appliance](https://vmwarecode.slack.com/archives/CQLT9B5AA){:target="_blank"} on vmwarecode.slack.com.
+---
+# VMware Event Broker Appliance - Troubleshooting
 
 ## Requirements
 
-You must log on to the vCenter Event Broker appliance as root. You can do this from the console. If you want SSH access, execute the following command:
+You must log on to the VMware Event Broker appliance as root. You can do this from the console. If you want SSH access, execute the following command:
 
 ```bash
 systemctl start sshd 
@@ -80,7 +81,7 @@ Here is the command output:
 The error message shows us that we made a mistake when we configured our username or password. We must now edit the Event Router JSON configuration file to fix the mistake.
 
 ```bash
-vi /root/config/event-router-config.json
+vi /root/event-router-config.json
 
 ```
 
@@ -165,128 +166,99 @@ Here is the command output:
 ```
 
 We now see that the Event Router came online, connected to vCenter, and successfully received an event.
-  
-## OpenFaaS Function troubleshooting
 
-If a function is not behaving as expected, you can look at the logs to troubleshoot. First, SSH or console to the appliance as shown in the Requirements section.
+## Changing the vCenter service account
 
-List out the pods.
+If you need to change the account the appliance uses to connect to vCenter, use the following procedure. 
 
+Open a console to the appliance. If you want to do the configuration via SSH, you must first enable the SSH daemon with the following command
+```bash 
+systemcl start sshd
+```
+The SSH daemon will run but not automatically start with the next reboot. You can use the same command with `stop` instead of `start` when you are finished. Or you can type everything directly into the console if you do not want to use SSH.
+
+Edit the configuration file with vi
+```bash
+vi /root/event-router-config.json
+```
+
+The editor will open with output similar to this (truncated)
+```bash
+[{
+                "type": "stream",
+                "provider": "vmware_vcenter",
+                "address": "https://vc01.lab.int/sdk",
+                "auth": {
+                        "method": "user_password",
+                        "secret": {
+                                "username": "administrator@vsphere.local",
+                                "password": "KeepMeSecure123!"
+                        }
+                },
+                "options": {
+                        "insecure": "true"
+                }
+        },
+```
+
+Change the username and password, then save the file. Then delete and recreate the event router pod secret with the following commands:
+```bash
+kubectl -n vmware delete secret event-router-config
+kubectl -n vmware create secret generic event-router-config --from-file=/root/event-router-config.json
+```
+
+Now, restart the event router pod. Get the current pod name with the following command:
 ```bash
 kubectl get pods -A
 ```
-
-This is the function output:
-
-```
-NAMESPACE        NAME                                   READY   STATUS      RESTARTS   AGE
-kube-system      coredns-584795fc57-4bp2s               1/1     Running     1          6d4h
-kube-system      coredns-584795fc57-76pwr               1/1     Running     1          6d4h
-kube-system      etcd-veba01                            1/1     Running     2          6d4h
-kube-system      kube-apiserver-veba01                  1/1     Running     2          6d4h
-kube-system      kube-controller-manager-veba01         1/1     Running     3          6d4h
-kube-system      kube-proxy-fvf2n                       1/1     Running     2          6d4h
-kube-system      kube-scheduler-veba01                  1/1     Running     2          6d4h
-kube-system      weave-net-v9jss                        2/2     Running     6          6d4h
-openfaas-fn      powercli-entermaint-d84fd8d85-sjdgl    1/1     Running     1          6d4h
-openfaas         alertmanager-58f8d787d9-nqwm8          1/1     Running     1          6d4h
-openfaas         basic-auth-plugin-dd49cd66b-rv6n7      1/1     Running     1          6d4h
-openfaas         faas-idler-59ff9778fd-84szz            1/1     Running     4          6d4h
-openfaas         gateway-74f6f9489b-btgz8               2/2     Running     5          6d4h
-openfaas         nats-6dfbf45d77-9swph                  1/1     Running     1          6d4h
-openfaas         prometheus-5f5494b54f-srs2d            1/1     Running     1          6d4h
-openfaas         queue-worker-59b67bf4-wqhm5            1/1     Running     4          6d4h
-projectcontour   contour-5cddfc8f6-hpzn8                1/1     Running     1          6d4h
-projectcontour   contour-5cddfc8f6-tdv2r                1/1     Running     2          6d4h
-projectcontour   contour-certgen-wrgnb                  0/1     Completed   0          6d4h
-projectcontour   envoy-8mdhb                            1/1     Running     2          6d4h
-vmware           tinywww-7fcfc6fb94-v7ncj               1/1     Running     1          6d4h
-vmware           vmware-event-router-5dd9c8f858-9g44h   1/1     Running     4          6d4h
-```
-
-First, we want to see if the event router is capturing events and forwarding them on to a function. 
-
-Use this command to follow the live Event Router log.
-
+You will see output similar the following (trucnated):
 ```bash
-kubectl logs -n vmware vmware-event-router-5dd9c8f858-9g44h --follow
+projectcontour   contour-certgen-7r9dl                  0/1     Completed   0          22d
+projectcontour   envoy-htrwv                            1/1     Running     1          22d
+vmware           tinywww-7fcfc6fb94-tv98j               1/1     Running     1          22d
+vmware           vmware-event-router-5dd9c8f858-7htv5   1/1     Running     14         19d
 ```
 
-For this sample troubleshooting, we have the sample hostmaintenance alarms function running. To see if the appliance is properly handling the event, we put a host into maintenance mode. 
-
-When we look at the log output, we see various entries regarding EnteredMaintenanceModeEvent, ending with the following:
-
-```
-[OpenFaaS] 2020/03/11 22:15:09 invoking function(s) on topic: EnteredMaintenanceModeEvent
-[OpenFaaS] 2020/03/11 22:15:09 successfully invoked function powercli-entermaint for topic EnteredMaintenanceModeEvent
-```
-
-This lets us know that the function was invoked. If we still don't see the expected result, we need to look at the function logs.
-
-Each OpenFaaS function will have its own pod running in the openfaas-fn namespace. We can examine the logs with the following command.
-
+Find the event router pod. Every environment will have a unique suffix on the pod name - in this example, it is `-5dd9c8f858-7htv5`. Delete the event router pod with the following command (make sure to match the pod name with the one in your environment):
 ```bash
-kubectl logs -n openfaas-fn powercli-entermaint-d84fd8d85-sjdgl
+kubectl -n vmware delete pod vmware-event-router-5dd9c8f858-7htv5
 ```
 
-We don't need the --follow switch because we are just trying to look at recent logs, but --follow would work too.  
-Some other useful switches are `--since` and `--tail`. 
-
-This command will show you the last 5 minutes worth of logs.
-
+The pod will automatically recreate itself. You can repeatedly run the following command:
 ```bash
-kubectl logs -n openfaas-fn powercli-entermaint-d84fd8d85-sjdgl --since=5m
+kubectl get pods -A
 ```
-
-This command will show you the last 20 lines of logs.
-
+Various stages of the pod lifecycle may be shown. Here, we see the original pod terminating while the new pod is spinning up.
 ```bash
-kubectl logs -n openfaas-fn powercli-entermaint-d84fd8d85-sjdgl --tail=20
+projectcontour   envoy-htrwv                            1/1     Running             1          22d
+vmware           tinywww-7fcfc6fb94-tv98j               1/1     Running             1          22d
+vmware           vmware-event-router-5dd9c8f858-7htv5   0/1     Terminating         14         19d
+vmware           vmware-event-router-5dd9c8f858-l6gdj   0/1     ContainerCreating   0          4s
 ```
 
-Log output showing a succesful function invocation: 
-
-```
-Connecting to vCenter Server ...
-
-Disabling alarm actions on host: esx01.labad.int
-Disconnecting from vCenter Server ...
-
-2020/03/11 22:15:15 Duration: 6.085448 seconds
-```
-
-An alternative way to troubleshoot OpenFaaS logs is to use `faas-cli`.
-
-This faas-cli command will show all available functions in the appliance. ```--tls-no-verify``` bypasses SSL certificate validation
-
+Eventually the old pod will disappear and the new pod will show as running:
 ```bash
-faas-cli list --tls-no-verify
+projectcontour   contour-certgen-7r9dl                  0/1     Completed   0          22d
+projectcontour   envoy-htrwv                            1/1     Running     1          22d
+vmware           tinywww-7fcfc6fb94-tv98j               1/1     Running     1          22d
+vmware           vmware-event-router-5dd9c8f858-l6gdj   1/1     Running     0          92s
 ```
 
-The command output is:
-
-```
-Function                        Invocations     Replicas
-powercli-entermaint             3               1
-```
-
-We can  look at the logs with this command.
-
+You can check the pod logs with the following command (make sure to add the correct suffix shown in your environment):
 ```bash
-faas-cli logs powercli-entermaint --tls-no-verify
+kubectl logs -n vmware kubectl logs -n vmware  vmware-event-router-5dd9c8f858-n9pg6
 ```
+You should see a successful connection to vCenter in the logs
+```bash
+ _    ____  ___                            ______                 __     ____              __
+| |  / /  |/  /      ______ _________     / ____/   _____  ____  / /_   / __ \____  __  __/ /____  _____
+| | / / /|_/ / | /| / / __  / ___/ _ \   / __/ | | / / _ \/ __ \/ __/  / /_/ / __ \/ / / / __/ _ \/ ___/
+| |/ / /  / /| |/ |/ / /_/ / /  /  __/  / /___ | |/ /  __/ / / / /_   / _, _/ /_/ / /_/ / /_/  __/ /
+|___/_/  /_/ |__/|__/\__,_/_/   \___/  /_____/ |___/\___/_/ /_/\__/  /_/ |_|\____/\__,_/\__/\___/_/
 
-The logs are the same: 
 
+[VMware Event Router] 2020/04/08 05:07:11 connecting to vCenter https://vc01.lab.int/sdk
+[VMware Event Router] 2020/04/08 05:07:11 connecting to OpenFaaS gateway http://gateway.openfaas:8080 (async mode: false)
+[VMware Event Router] 2020/04/08 05:07:11 exposing metrics server on 0.0.0.0:8080 (auth: basic_auth)
+[Metrics Server] 2020/04/08 05:07:11 starting metrics server and listening on "http://0.0.0.0:8080/stats"
 ```
-2020-03-11T22:15:15Z Connecting to vCenter Server ...
-2020-03-11T22:15:15Z
-2020-03-11T22:15:15Z Disabling alarm actions on host: esx01.labad.int
-2020-03-11T22:15:15Z Disconnecting from vCenter Server ...
-2020-03-11T22:15:15Z
-2020-03-11T22:15:15Z 2020/03/11 22:15:15 Duration: 6.085448 seconds
-```
-
-All of the same switches shown in the kubectl commands such as `--tail` and `--since` work with `faas-cli`.
-
-> **Note:** `faas-cli` will stop tailing the log after a fixed period.

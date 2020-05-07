@@ -18,7 +18,7 @@ Step 2 - Update `stack.yml` and `vc-datastore-config.json` with your environment
 
 > **Note:** leave SMTP_USERNAME and SMTP_PASSWORD blank if you do not want to use authenticated SMTP
 
-Step 3 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
+Step 3 - Login to the OpenFaaS gateway on VMware Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com
@@ -33,7 +33,7 @@ Step 4 - Create function secret (only required once)
 faas-cli secret create vc-datastore-config --from-file=vc-datastore-config.json --tls-no-verify
 ```
 
-Step 5 - Deploy function to vCenter Event Broker Appliance
+Step 5 - Deploy function to VMware Event Broker Appliance
 
 ```
 faas-cli deploy -f stack.yml --tls-no-verify
@@ -69,7 +69,7 @@ Step 5 - Push the function container to Docker Registry (default but can be chan
 faas-cli push -f stack.yml
 ```
 
-Step 6 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
+Step 6 - Login to the OpenFaaS gateway on VMware Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com
@@ -84,7 +84,7 @@ Step 7 - Create function secret (only required once)
 faas-cli secret create vc-datastore-config --from-file=vc-datastore-config.json --tls-no-verify
 ```
 
-Step 8 - Deploy function to vCenter Event Broker Appliance
+Step 8 - Deploy function to VMware Event Broker Appliance
 
 ```
 faas-cli deploy -f stack.yml --tls-no-verify

@@ -1,0 +1,30 @@
+
+<div class="row">
+    {% for usecase in site.usecases %}
+    <div class="col-md m-1 p-1">
+        <div class="card card-light shadow match-height">
+            <div class="card-body align-middle pt-4">
+                <a href="{{ '/kb' | append: '#use-cases' | relative_url}}">
+                    <h5 class="mt-2">
+                        <span class="{{ usecase.image }} text-dark"></span>
+                        <span class="card-title">
+                            {{ usecase.title }}
+                        </span>
+                   </h5>
+                </a>
+                <p >
+                    {{ usecase.excerpt | strip_html }}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% if limit > 0 and forloop.index >= limit %}
+    {% break %}
+    {% endif %}
+    {% assign row = forloop.index | modulo: 3 %}
+    {% if row == 0 %}
+</div>
+<div class="row mt-3">
+    {% endif %}
+    {% endfor %}
+</div>

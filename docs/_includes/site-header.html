@@ -1,0 +1,18 @@
+<header class="site-header">
+    <div class="site-header-content">
+        <div class="logo">
+            <a href="{{ '/' | relative_url }}" aria-label="VEBA homepage"><img src="{{ '/assets/img/' | append: site.logo | relative_url }}" class="logo" alt="Homepage"/></a>
+        </div>
+        <ul class="nav-menu" id="header-nav">
+            <li class="home"><a href="{{ '/' | relative_url }}" title="{{ site.title }}">Home</a></li>
+            <li class="docs"><a href="{{ '/kb' | append: site.latest | relative_url }}" title="Documentation">Documentation</a></li>
+            <li class="functions"><a href="{{ '/examples' | relative_url }}" title="Functions">Functions</a></li>
+            <li class="community"><a href="{{ '/community' | relative_url }}" title="Community">Community</a></li>
+            <li class="faq"><a href="{{ '/faq' | relative_url }}" title="FAQs">FAQs</a></li>
+            <li class="resources"><a href="{{ '/resources' | relative_url }}" title="Resources">Resources</a></li>
+        </ul>
+        <div class="nav-mobile-link">
+            <a href="javascript:void(0);" id="nav-mobile-toggle"></a>
+        </div>
+    </div>
+</header>

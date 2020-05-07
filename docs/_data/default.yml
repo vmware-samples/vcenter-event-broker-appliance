@@ -1,0 +1,84 @@
+toc:
+  - title: Introduction
+    subfolderitems:
+      - page: About
+        id: intro-about
+        url: /kb 
+      - page: Architecture
+        id: intro-architecture
+        url: /kb/architecture
+      - page: VMware Event Router
+        id: intro-event-router
+        url: /kb/event-router
+      - page: Functions
+        id: intro-functions
+        url: /kb/functions
+
+  - title: Install
+    subfolderitems:
+      - page: VEBA (OpenFaaS)
+        id: install-openfaas
+        url: /kb/install-openfaas
+      - page: VEBA (AWS EventBridge)
+        id: install-eventbridge
+        url: /kb/install-eventbridge
+
+  - title: Use
+    subfolderitems:
+      - page: vCenter Events
+        id: use-vcenter-events
+        url: /kb/vcenter-events
+      - page: Event Specification
+        id: use-eventspec
+        url: /kb/eventspec
+      - page: Deploy Functions
+        id: use-functions
+        url: /kb/use-functions
+
+  - title: Contribute
+    subfolderitems:
+      - page: Getting Started
+        id: contribute-start
+        url: /kb/contribute-start
+      - page: Build Functions
+        id: contribute-functions
+        url: /kb/contribute-functions
+      - page: Build Event Router
+        id: contribute-eventrouter
+        url: /kb/contribute-eventrouter
+      - page: Build Appliance
+        id: contribute-appliance
+        url: /kb/contribute-appliance
+      - page: Build Website
+        id: contribute-site
+        url: /kb/contribute-site
+
+  - title: Advanced
+    subfolderitems:
+      - page: Deploy VEBA to Kubernetes
+        id: advanced-deploy-k8s
+        url: /kb/advanced-deploy-k8s
+      - page: Replace TLS Certificates on VEBA
+        id: advanced-certificates
+        url: /kb/advanced-certificates
+      - page: Using Harbor with VEBA
+        id: site-resources
+        external_url: https://rguske.github.io/post/using-harbor-with-the-vcenter-event-broker-appliance/
+  
+  - title: Troubleshoot
+    subfolderitems:
+      - page: Troubleshooting Appliance
+        id: troubleshoot-appliance
+        url: /kb/troubleshoot-appliance
+      - page: Troubleshooting Functions
+        id: troubleshoot-functions
+        url: /kb/troubleshoot-functions
+
+  - title: More..
+    subfolderitems:
+      - page: FAQ
+        id: site-faq
+        url: /faq
+      - page: Resources
+        id: site-resources
+        url: /resources

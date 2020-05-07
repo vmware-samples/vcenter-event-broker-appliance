@@ -1,0 +1,75 @@
+.alternating-cards {
+  .row {
+    border: 1px solid $border-color;
+    margin-bottom: 20px;
+  }
+  .icon {
+    min-height: 120px;
+    background: cornflowerblue; // default
+    text-align: center;
+    
+    img {
+      height: 50px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -75%);
+    }
+    a {
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      width: 100%;
+      vertical-align: baseline;
+      padding: 0.25rem;
+      border-radius: 0%;
+    }
+  }
+  .card-body {
+    padding: 0rem;
+    margin: 1rem;
+    .card-title {
+      font-weight: $font-weight-medium;
+    }
+    p {
+      font-weight: $font-weight-light;
+      font-size: $font-size-sm;
+    }
+  }
+
+  .bash {
+    background-color: black;
+    background-image: radial-gradient(
+      #6495ED, black 120%
+    );
+    margin: 0;
+    overflow: hidden;
+    padding: 1rem;
+    color: white;
+    font: Inconsolata, monospace;
+    text-shadow: 0 0 5px #C8C8C8;
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(black, 0.15),
+        rgba(black, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+    }
+  }
+  ::selection {
+    background: #0080FF;
+    text-shadow: none;
+  }
+  pre {
+    margin: 0;
+  }
+}
