@@ -1,0 +1,38 @@
+name: Build and push VMware Event Router Pre-Release Image to Docker Hub
+
+on:
+  push:
+    branches:
+      - release-*
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./vmware-event-router
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source (this.release branch)
+        uses: actions/checkout@master
+      - name: get the version from ref without prefixes
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+      - name: log in to Docker
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_SECRET: ${{ secrets.DOCKER_SECRET }}
+        run: echo "${DOCKER_SECRET}" | docker login -u "${DOCKER_USER}" --password-stdin
+      - name: test and build pre-release image
+        env: 
+          VERSION: ${{ steps.get_version.outputs.VERSION }}        
+        run: |
+          echo "Building pre-release of vmware-event-router with version $VERSION"        
+          make
+          docker tag vmware/veba-event-router:latest vmware/veba-event-router:$VERSION
+      - name: push just the pre-release image
+        env: 
+          VERSION: ${{ steps.get_version.outputs.VERSION }}        
+        run: |
+          docker push vmware/veba-event-router:$VERSION
