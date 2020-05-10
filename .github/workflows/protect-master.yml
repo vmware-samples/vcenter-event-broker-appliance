@@ -1,0 +1,19 @@
+# Even though branch protection rules might be in place, this is an additional
+# safety net to protect against unwanted pull requests against "master"
+name: Protect Master Branch
+
+# This workflow is triggered on PRs to the master branch
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  protect:
+    name: Reject
+    runs-on: ubuntu-latest
+    # sanity check
+    if: github.event_name == 'pull_request' && github.base_ref == 'master'
+    steps:
+      - name: Must reject PR
+        run: exit 1
