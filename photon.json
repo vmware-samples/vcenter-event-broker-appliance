@@ -151,7 +151,7 @@
   "post-processors": [
     {
       "type": "shell-local",
-      "environment_vars": ["VEBA_VERSION={{ user `version` }}", "VEBA_APPLIANCE_NAME={{ user `vm_name` }}", "FINAL_VEBA_APPLIANCE_NAME={{ user `vm_name` }}_{{user `version`}}", "VEBA_OVF_TEMPLATE={{ user `veba_ovf_template` }}"],
+      "environment_vars": ["VEBA_VERSION={{ user `VEBA_VERSION` }}", "VEBA_APPLIANCE_NAME={{ user `vm_name` }}", "FINAL_VEBA_APPLIANCE_NAME={{ user `vm_name` }}_{{user `VEBA_VERSION`}}", "VEBA_OVF_TEMPLATE={{ user `veba_ovf_template` }}"],
       "inline": [
         "cd manual",
         "./add_ovf_properties.sh"
