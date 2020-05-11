@@ -1,0 +1,25 @@
+{
+    "url": "https://pk-zen.zendesk.com/api/v2/tickets.json",
+    "headers": {
+        "Content-Type": "application/json; charset=UTF-8",
+        "Accept": "application/json; charset=UTF-8"
+    },
+    "auth": {
+        "un": "<username required>",
+        "pwd": "<password required>"
+    },
+    "body": {
+        "ticket": {
+          "subject": "My printer is on fire!",
+          "comment": {
+            "body": "VEBA: Please look into this ASAP"
+          }
+        }
+    },
+    "mappings": [
+        {
+            "push": "ticket/subject",
+            "pull": "data/FullFormattedMessage"
+        }
+    ]
+}

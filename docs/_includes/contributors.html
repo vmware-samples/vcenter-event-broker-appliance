@@ -1,0 +1,40 @@
+<div class="row mb-0">
+    <p>
+      {{ site.title }} is released as open source software and provides community support through our GitHub project page.
+        If you encounter an issue or have a question, feel free to reach out on the <strong><a href="{{ site.gh_repo }}/issues" target="_blank">GitHub issues page for {{ site.title }}</a></strong>.</p>
+    <p>
+      Our team welcomes contributions from the community!
+    </p>
+</div>
+
+<div class="row mt-0">
+  <h2 class="mb-4 mt-3">Top Contributors</h2>    
+  {% if site.people %}
+  <div class="row thumbnail-grid">
+    {% for person in site.github.contributors %}
+      <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="media thumbnail-item d-flex flex-column align-items-center mb-3">
+          {% if person.login == "vmwghbot" %}
+            <a href="https://www.youtube.com/watch?v=FdSJ0QxhHro" target="_blank" class="p-1 text-center">
+              <img src="{{'/assets/img/heroes/veba_banner_sm.png' | relative_url}}" alt="Person" />
+              <span id="otto-hack" class="mt-1 p-1 w-100 badge badge-secondary align-middle text-dark">
+                &bsol;&Ograve;&boxhd;&Oacute;&frasl;
+              </span>
+            </a>
+          {% else %}
+            <a href="{{person.html_url}}" target="_blank" class="p-1 text-center">
+              <img src="{{ person.avatar_url }}" class="rounded-circle shadow-sm" alt="Person" />
+              <span class="mt-1 p-1 w-100 badge badge-secondary align-middle">
+                {{ person.login }} 
+              </span>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+      {% if site.peoplelimit > 0 and forloop.index >= site.people_limit %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>

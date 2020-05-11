@@ -4,7 +4,7 @@
 
 This function demonstrates using PowerCLI to send VM configuration changes to Slack when the VM Reconfigure Event is triggered
 
-There is a blog post covering this example in detail: [Audit VM configuration changes using the vCenter Event Broker
+There is a blog post covering this example in detail: [Audit VM configuration changes using the VMware Event Broker
 ](https://www.opvizor.com/audit-vm-configuration-changes-using-the-vcenter-event-broker)
 
 The custom PowerShell template for OpenFaaS is using [PSSlack](https://github.com/RamblingCookieMonster/PSSlack)
@@ -26,7 +26,7 @@ Make sure to create a channel for the notifications and a [Slack webhook](https:
 
 Step 3 - Update `stack.yml` and `vc-slack-config.json` with your environment information
 
-Step 4 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
+Step 4 - Login to the OpenFaaS gateway on VMware Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com
@@ -41,7 +41,7 @@ Step 5 - Create function secret (only required once)
 faas-cli secret create vc-slack-config --from-file=vc-slack-config.json --tls-no-verify
 ```
 
-Step 6 - Deploy function to vCenter Event Broker Appliance
+Step 6 - Deploy function to VMware Event Broker Appliance
 
 ```
 faas-cli deploy -f stack.yml --tls-no-verify
@@ -77,7 +77,7 @@ Step 5 - Push the function container to Docker Registry (default but can be chan
 faas-cli push -f stack.yml
 ```
 
-Step 6 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
+Step 6 - Login to the OpenFaaS gateway on VMware Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com
@@ -92,7 +92,7 @@ Step 7 - Create function secret (only required once)
 faas-cli secret create vc-slack-config --from-file=vc-slack-config.json --tls-no-verify
 ```
 
-Step 8 - Deploy function to vCenter Event Broker Appliance
+Step 8 - Deploy function to VMware Event Broker Appliance
 
 ```
 faas-cli deploy -f stack.yml --tls-no-verify

@@ -1,0 +1,99 @@
+# theme: jekyll-theme-leap-day
+
+# Site settings
+title: VMware Event Broker Appliance
+email: dl-veba@vmware.com
+author: VEBA Authors
+show_downloads: false
+description: The VMware Event Broker Appliance Fling enables customers to easily create event-driven automation based on vCenter Server Events.
+#url: veba.io
+logo: veba-logo.png
+banner_main: assets/img/heroes/veba_banner_md.png
+banner_alt: assets/img/heroes/veba_otto_the_orca_md.png
+people: true
+people_limit: 12
+twitter:
+  username: VMWEventBroker
+  card: summary
+vm_logo: vm-logo.png
+gh_repo: https://github.com/vmware-samples/vcenter-event-broker-appliance
+repository: vmware-samples/vcenter-event-broker-appliance
+google_analytics: UA-164266140-1
+
+hero:
+  background-color: cornflower-blue
+footer:
+  title: Getting Started
+  content: To help you get started, see the documentation.
+  cta_title: ''
+  cta_url: /kb/
+  cta_text: Documentation
+  vm-link: http://vmware.github.io/
+
+footer_social_links:
+  Twitter:
+    fa_icon: fab fa-twitter
+    url: https://twitter.com/VMWEventBroker
+  Slack:
+    fa_icon: fab fa-slack
+    url: https://vmwarecode.slack.com/archives/CQLT9B5AA
+  Email:
+    fa_icon: fas fa-envelope
+    url: mail:dl-veba@vmware.com
+  GitHub:
+    fa_icon: fab fa-github
+    url: https://github.com/vmware-samples/vcenter-event-broker-appliance
+
+github:
+  zip_url: https://github.com/vmware-samples/vcenter-event-broker-appliance/archive/master.zip
+  fling_url: https://flings.vmware.com/vcenter-event-broker-appliance
+    
+collections:
+  - functions
+  - usecases
+
+page_gen:
+  - data: shortlinks
+    template: redirect
+    name: key
+    dir: docs
+
+versioning: false
+#latest: v0.3.0
+#versions:
+#- master
+#- v0.3.0
+#- v0.2.0
+
+# Build settings
+permalink: /blog/:title/
+sass:
+  sass_dir: assets/css
+  style: :compressed
+
+# Use the following plug-ins
+plugins:
+  - jekyll-readme-index # use README.md as index.html
+  - jekyll-sitemap # Create a sitemap using the official Jekyll sitemap gem
+  - jekyll-feed # Create an Atom feed using the official Jekyll feed gem
+  - jekyll-relative-links # Used to auto generate md links to html links
+  - jekyll-optional-front-matter # Parse Markdown files that do not have front-matter callouts
+  - jekyll-titles-from-headings # pull the page title from the first Markdown heading when none is specified.
+  - jekyll-paginate # pagination object for collections (e.g. posts)
+  - jekyll-redirect-from
+  - jekyll-seo-tag
+  - jekyll-github-metadata
+
+# Include these subdirectories
+include:
+  - CONTRIBUTING.md
+  - README.md
+
+# Exclude these files from your production _site
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README-JEKYLL.md
+  - LICENSE
+  - CNAME
+  - '*.sh'

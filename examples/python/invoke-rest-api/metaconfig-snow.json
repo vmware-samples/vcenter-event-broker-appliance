@@ -1,0 +1,20 @@
+{
+    "url": "https://<instance>.service-now.com/api/now/table/incident?sysparm_limit=1",
+    "headers": {
+        "content-type": "application/json; charset=UTF-8"
+    },
+    "auth": {
+        "un": "<username required>",
+        "pwd": "<password required>"
+    },
+    "body": {
+        "short_description":"Test incident creation through REST", 
+        "comments":"VEBA > Please validate this incident"
+    },
+    "mappings": [
+        {
+            "push": "short_description",
+            "pull": "data/FullFormattedMessage"
+        }
+    ]
+}

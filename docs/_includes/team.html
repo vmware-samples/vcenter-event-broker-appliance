@@ -1,0 +1,45 @@
+<div class="row">
+  <div class="col">
+    <h2 class="mb-2">{{ site.title }} Team</h2>    
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <p>{{ site.title }} is released as open source software and provides community support through our GitHub project page.
+        If you encounter an issue or have a question, feel free to reach out on the <strong><a href="{{ site.gh_repo }}/issues" target="_blank" class="light">GitHub issues page for {{ site.title }}</a></strong>.</p>
+    <p>Meet and get to know Team <strong>#VEBA</strong>.
+    </p>
+  </div>
+</div>
+
+<div id="team-veba" class="row thumbnail-grid mt-3">
+  {% for member in site.data.team.members %}
+    <div class="col-xs-6 col-sm-6 col-md-3">
+      <div class="media thumbnail-item d-flex flex-column align-items-center">
+        <img src="{{ member.img }}" class="imageicon rounded-circle" alt="Person" />
+        <div class="row socials">
+          <div class="col github">
+            <a href="https://github.com/{{member.github}}" target="_blank"><i class="fab fa-github"></i></a>
+          </div>
+          {% if member.twitter %}
+          <div class="col twitter">
+            <a href="https://twitter.com/{{member.twitter}}" target="_blank"><i class="fab fa-twitter"></i></a>
+          </div>
+          {% endif %} 
+          {% if member.website %}
+          <div class="col website">
+            <a href="{{member.website}}" target="_blank"><i class="fas fa-globe"></i></a>
+          </div>
+          {% endif %} 
+        </div>
+
+        <div class="membername row w-100 badge badge-light">
+          <span class="col-md-9 text-dark">{{ member.name }}</span>
+        </div>
+      </div>
+    </div>
+    {% if site.data.team.teamlimit > 0 and forloop.index >= site.data.team.teamlimit %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+</div>

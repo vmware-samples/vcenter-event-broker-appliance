@@ -59,7 +59,7 @@ faas-cli login -p VEBA_OPENFAAS_PASSWORD --tls-no-verify # vCenter Event Broker 
 faas-cli secret create vcconfig --from-file=vcconfig.toml --tls-no-verify
 ```
 
-**Note:** Delete the local `vcconfig.toml` after you're done with this exercise to not expose this sensitive information.
+> **Note:** Delete the local `vcconfig.toml` after you're done with this exercise to not expose this sensitive information.
 
 Lastly, define the vCenter event which will trigger this function. Such function-specific settings are performed in the `stack.yml` file. Open and edit the `stack.yml` provided with in the Python tagging example code. Change `gateway` and `topic` as per your environment/needs.
 
@@ -83,7 +83,7 @@ functions:
       topic: VmPoweredOnEvent # or DrsVmPoweredOnEvent in a DRS-enabled cluster
 ```
 
-**Note:** If you are running a vSphere DRS-enabled cluster the topic annotation above should be `DrsVmPoweredOnEvent`. Otherwise the function would never be triggered.
+> **Note:** If you are running a vSphere DRS-enabled cluster the topic annotation above should be `DrsVmPoweredOnEvent`. Otherwise the function would never be triggered.
 
 ### Deploy the function
 
@@ -99,7 +99,7 @@ Deployed. 202 Accepted.
 
 Turn on a virtual machine, e.g. in vCenter or via `govc` CLI, to trigger the function via a `(DRS)VmPoweredOnEvent`. Verify the virtual machine was correctly tagged.
 
-**Note:** If you don't see a tag being assigned verify that you correctly followed each step above, IPs/FQDNs and credentials are correct and see the [troubleshooting](#troubleshooting) section below.
+> **Note:** If you don't see a tag being assigned verify that you correctly followed each step above, IPs/FQDNs and credentials are correct and see the [troubleshooting](#troubleshooting) section below.
 
 ## Troubleshooting
 

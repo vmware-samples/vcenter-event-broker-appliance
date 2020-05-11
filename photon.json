@@ -51,6 +51,10 @@
   "provisioners": [
     {
       "type": "shell",
+      "environment_vars": [
+        "VEBA_VERSION={{ user `VEBA_VERSION` }}",
+        "VEBA_COMMIT={{ user `VEBA_COMMIT` }}"
+      ],
       "expect_disconnect" : true,
       "scripts": [
         "scripts/photon-settings.sh",
@@ -59,6 +63,9 @@
     },
     {
       "type": "shell",
+      "environment_vars": [
+        "VEBA_VERSION={{ user `VEBA_VERSION` }}"
+      ],
       "pause_before": "20s",
       "scripts": [
         "scripts/photon-containers.sh",
@@ -123,23 +130,28 @@
     {
       "type": "file",
       "source": "files/tinywww.yml",
-      "destination": "/root/tinywww.yml"
+      "destination": "/root/config/tinywww.yml"
     },
     {
       "type": "file",
       "source": "files/tinywww-debug.yml",
-      "destination": "/root/tinywww-debug.yml"
+      "destination": "/root/config/tinywww-debug.yml"
     },
     {
       "type": "file",
       "source": "files/kubeconfig.yml",
-      "destination": "/root/kubeconfig.yml"
+      "destination": "/root/config/kubeconfig.yml"
+    },
+    {
+      "type": "file",
+      "source": "files/veba-dcui",
+      "destination": "/usr/bin/veba-dcui"
     }
   ],
   "post-processors": [
     {
       "type": "shell-local",
-      "environment_vars": ["VEBA_VERSION={{ user `version` }}", "VEBA_APPLIANCE_NAME={{ user `vm_name` }}", "FINAL_VEBA_APPLIANCE_NAME={{ user `vm_name` }}_{{user `version`}}", "VEBA_OVF_TEMPLATE={{ user `veba_ovf_template` }}"],
+      "environment_vars": ["VEBA_VERSION={{ user `VEBA_VERSION` }}", "VEBA_APPLIANCE_NAME={{ user `vm_name` }}", "FINAL_VEBA_APPLIANCE_NAME={{ user `vm_name` }}_{{user `VEBA_VERSION`}}", "VEBA_OVF_TEMPLATE={{ user `veba_ovf_template` }}"],
       "inline": [
         "cd manual",
         "./add_ovf_properties.sh"

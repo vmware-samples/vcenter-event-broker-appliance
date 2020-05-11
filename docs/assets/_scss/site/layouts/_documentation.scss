@@ -1,0 +1,199 @@
+#docs {
+  .container.container-max {
+    max-width: 90%;
+  }
+
+  .section-card {
+    margin-bottom: $section-padding-y;
+  }
+
+  table {
+    @extend .table;
+    @extend .table-striped;
+    @extend .table-bordered;
+    thead {
+      @extend .thead-light;
+    }
+    td {
+      code {
+        word-break: keep-all;
+      }
+    }
+  }
+
+  h2, h3, p {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    line-height: $line-height-base;
+    color: #292F33;
+  }
+
+  .toc {
+    nav {
+      ul {
+        padding: 0;
+        list-style: none;
+      }
+
+      li {
+        margin-left: 0px;
+        font-size: $font-size-sm;
+        
+        span {
+          font-family: monospace;
+          color: #000000 !important;
+        }
+
+        &.selected {
+          a {
+            font-weight: $font-weight-semibold;
+            color: #033a56;          }
+        }
+
+      }
+    }
+    
+    h3 {
+      font-size: $font-size-base;
+      font-weight: $font-weight-normal;
+      margin-top: 1rem;
+      border-bottom: 1px solid rgba(15,70,100,0.25);
+    }
+  }
+
+  .documentation-container {
+    margin: 1rem 0 1rem 0;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-normal;
+    
+    @include media-breakpoint-down(lg) {
+      max-width: 100%;
+      overflow-x: scroll;
+    }
+  
+    h1 {
+      margin-top: 2rem;
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+    }
+
+    h1:first-of-type {
+      margin-top: 0.5rem;
+    }
+  
+    h2 {
+      margin-top: 1.5rem;
+      font-size: $font-size-base;
+      font-weight: $font-weight-semibold;
+    }
+
+    h2:first-of-type {
+      margin-top: 1rem;
+    }
+  
+    h3 {
+      margin-top: 1rem;
+      padding-left: 0.25rem;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-semibold;
+    }
+
+    h4 {
+      padding-left: 0.5rem;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-normal;
+    }
+
+    blockquote {
+      margin: 0 .5rem;
+      padding: 0 1rem;
+      color: #6a737d;
+      border-left: .25em solid #dfe2e5;
+    }
+
+    pre { 
+      code {
+        font-size: 90%;
+        word-break: break-all;
+        white-space: break-spaces;
+      }
+    }
+
+    .highlighter-rouge pre {
+      margin: 1rem .5rem;
+      padding: 0.5rem 1rem;
+    }
+
+    
+    .highlighter-rouge-dark{
+      div.highlight {
+        background-color: black;
+        background-image: radial-gradient(
+          #667292, black 120%
+        );
+        pointer-events: none;
+      }
+      pre.highlight {
+        background: repeating-linear-gradient(
+          0deg,
+          rgba(black, 0.15),
+          rgba(black, 0.15) 1px,
+          transparent 1px,
+          transparent 2px
+        );
+        color: greenyellow;
+        font: Inconsolata, monospace;
+        text-shadow: 0 0 5px #C8C8C8;
+      }
+      ::selection {
+        background: #0080FF;
+        text-shadow: none;
+      }
+    }
+
+    .copy-code-button {
+      position: absolute;
+      right: 15px;
+      margin: 5px 15px 0px 0px;
+      width: 80px;
+      height: 30px;
+      color: #FFFFFF;
+      background-color: grey;
+      
+      .icon {
+        width:20px;
+        margin-top: 2px;
+        padding-right:2px;
+        background-size: 12px 12px;
+        float: left;
+      }
+      .text {
+        width: 60px;
+        font-size: 12px;
+        float: right;
+        padding-right:5px;
+        margin-top: 5px;
+        text-align: center;
+      }
+
+    }
+    
+    .copy-code-button:hover {
+        cursor: pointer;
+        
+    }
+    
+    .copy-code-button:focus {
+        /* Avoid an ugly focus outline on click in Chrome,
+          but darken the button for accessibility.
+          See https://stackoverflow.com/a/25298082/1481479 */
+        outline: 0;
+    }
+  }
+}
+
+#navigation nav {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 80px;
+}

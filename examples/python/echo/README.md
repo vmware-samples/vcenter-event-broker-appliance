@@ -1,4 +1,4 @@
-# vCenter Event Broker Appliance Echo Event Function
+# VMware Event Broker Appliance Echo Event Function
 
 ## Description
 
@@ -14,7 +14,7 @@ git checkout master
 
 Step 2 - Edit `stack.yml` and update the topic with the specific vCenter Server Event(s) from [vCenter Event Mapping](https://github.com/lamw/vcenter-event-mapping) document
 
-Step 3 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
+Step 3 - Login to the OpenFaaS gateway on VMware Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com
@@ -23,7 +23,7 @@ export OPENFAAS_URL=${VEBA_GATEWAY}
 faas-cli login --username admin --password-stdin --tls-no-verify
 ```
 
-Step 4 - Deploy function to vCenter Event Broker Appliance
+Step 4 - Deploy function to VMware Event Broker Appliance
 
 ```
 faas-cli deploy -f stack.yml --tls-no-verify

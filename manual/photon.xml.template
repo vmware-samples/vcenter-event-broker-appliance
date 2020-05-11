@@ -121,8 +121,12 @@
             <Label>Debugging</Label>
             <Description>Enable Debugging</Description>
         </Property>
-        <Property ovf:key="guestinfo.pod_network_cidr" ovf:type="string" ovf:userConfigurable="true" ovf:value="10.99.0.0/20">
+        <Property ovf:key="guestinfo.docker_network_cidr" ovf:type="string" ovf:userConfigurable="true" ovf:value="172.17.0.1/16">
+            <Label>Docker Bridge CIDR Network</Label>
+            <Description>Customize Docker Bridge CIDR Network (Default 172.17.0.1/16)</Description>
+        </Property>
+        <Property ovf:key="guestinfo.pod_network_cidr" ovf:type="string" ovf:userConfigurable="true" ovf:value="10.10.0.0/16">
             <Label>POD CIDR Network</Label>
-            <Description>Customize POD CIDR Network (Default 10.99.0.0/20)</Description>
+            <Description>Customize POD CIDR Network (Default 10.10.0.0/16)</Description>
         </Property>
     </ProductSection>

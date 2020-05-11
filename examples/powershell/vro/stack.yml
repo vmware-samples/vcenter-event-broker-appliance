@@ -1,0 +1,17 @@
+provider:
+  name: openfaas
+  gateway: https://veba.primp-industries.com
+functions:
+  powershell-vro:
+    lang: powercli
+    handler: ./handler
+    image: vmware/veba-powershell-vro:latest
+    environment:
+      write_debug: true
+      read_debug: true
+      function_debug: false
+      skip_vro_cert_check: true
+    secrets:
+      - vro-secrets
+    annotations:
+      topic: DrsVmPoweredOnEvent,VmPoweredOnEvent

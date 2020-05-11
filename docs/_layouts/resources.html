@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include head.html %}
+
+<body id="resources">
+  <div class="container-fluid site-outer-container">
+    <div class="site-container">
+    {% include site-header.html %}
+    
+      <div class="post-single-hero  post-single-hero-short bg-color-{{ site.hero.background-color }}"> 
+        <div class="section">
+          <div class="section-content">
+            <h1>{{ page.title }}</h1>
+          </div>
+        </div>
+      </div>
+
+      <div class="resources section section-card pt-4 pb-0">
+          <div class="container container-max">
+            
+            <h2>Videos</h2>
+            <div class="external-videos row align-items-center">
+              {% for video in site.data.resources.videos limit:site.data.resources.videolimit %}
+                <div class="order-xs-first col-md-4">
+                  <div class="embed-container">
+                    <iframe
+                        src="https://www.youtube.com/embed/{{video.video_id}}"
+                        width="400"
+                        height="300"
+                        frameborder=""
+                        allowfullscreen="true">
+                    </iframe>
+                  </div>
+                </div>
+                
+                {% if limit > 0 and forloop.index >= limit %}
+                  {% break %}
+                {% endif %} 
+              {% endfor %}
+            </div>
+            
+            <div class="post-single-content row mt-4 pt-4 border-top">
+              
+              <div class="col-md-4 toc tweetfeed">
+                <script>
+                  window.onload = function() {
+                    let frameElement = document.getElementById("twitter-widget-0");
+                    let doc = frameElement.contentDocument;
+                    doc.body.innerHTML = doc.body.innerHTML + '<style>.timeline-TweetList {max-height: 1200px; overflow:auto}</style>';
+                  }
+                </script>
+                <a class="twitter-timeline" href="https://twitter.com/{{site.data.resources.tweet_collection.user_handle}}/timelines/{{site.data.resources.tweet_collection.collection_id}}">
+                  Tweets #VEBA - Curated tweets by {{site.data.resources.tweet_collection.user_handle}}
+                </a> 
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+              </div>
+              
+              <div class="col-md-8">
+                
+                <div class="post-single-content">
+                  <div class="external-links ">
+                    <h2>External References</h2>
+                    {% for link in site.data.resources.links limit:site.data.resources.linklimit %}
+                      {% if link.display == true %}
+                      <div class="link-container">
+                        {% if link.title != blank %}
+                        <h3 class="card-title card-resource-title">{{ link.title }}</h3>
+                        {% endif %}
+                        <div class="row no-gutters align-items-center">
+                          {% if link.details.external_image %}
+                          <div class="order-xs-first col-md-3 card-body-override">
+                            <img class="card-img card-resource-img" src="{{ link.details.external_image }}" alt="{{ casestudy.title }}" />
+                            <a class="card-link card-resource-link btn btn-primary btn-sm" href="{{ link.details.external_url }}" target="_blank">{{ link.details.url_text }}</a>
+                          </div>
+                          {% endif %}
+                          
+                          <div class="order-xs-last col-md-9 {% cycle('order-md-last', 'order-md-first') %}">
+                            <div class="card-body card-body-override {% cycle('', 'card-body-alt') %}">
+                              <p class="card-text"><b>{{ link.details.author_name }} - </b>
+                                <q class="card-text">{{ link.details.excerpt }}</q>
+                              </p>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                      {% endif %}
+                      {% if limit > 0 and forloop.index >= limit %}
+                        {% break %}
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+
+                  <div class="other-links ">
+                    <h3>Other References</h3>
+                    <ul>
+                    {% for otherlink in site.data.resources.otherlinks %}
+                      {% if otherlink.display == true %}
+                        <li>
+                          <a href="{{otherlink.url}}" target="_blank">{{otherlink.title}}</a>
+                        </li>
+                      {% endif %}
+                      {% if limit > 0 and forloop.index >= limit %}
+                        {% break %}
+                      {% endif %}
+                    {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% include footer.html %}
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

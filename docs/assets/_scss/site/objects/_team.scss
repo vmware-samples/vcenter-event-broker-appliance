@@ -1,0 +1,43 @@
+#team-veba {
+
+    .imageicon {
+        border: 1px solid #FFF !important;
+        box-shadow: 0px 2px 4px 0px #52FEFE !important;
+    }
+
+    .socials {
+        padding: 0.5rem 0 0.25rem 0;
+        color: #FFF;
+        //background-color: #343a40 !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+
+        .github svg {
+            color: #000 !important;
+            background-color: #FFFFFFdd !important;
+        }
+
+        .twitter svg {
+            color: #007bff !important;
+            background-color: #FFFFFFdd !important;
+        }
+
+        .website svg {
+            color: #030303 !important;
+            background-color: #FFFFFFdd !important;
+        }
+
+        svg {
+            height: 30px;
+            width: 30px;
+            padding: 0.25rem;
+            border-radius: 50% !important;
+            border: 1px solid #FFF !important;
+            box-shadow: 0px 1px 2px 0px #FFF !important;
+        }
+    }
+
+    .membername {
+        padding: 0.5rem 0;
+    }
+}

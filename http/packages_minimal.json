@@ -1,7 +1,7 @@
 {
     "packages": [
                  "minimal",
-                 "linux",
+                 "linux-esx",
                  "initramfs"
                  ]
 }

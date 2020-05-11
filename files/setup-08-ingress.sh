@@ -10,8 +10,8 @@ echo -e "\e[92mDeploying Contour ..." > /dev/console
 kubectl --kubeconfig /root/.kube/config create -f /root/download/contour/examples/contour/
 
 ## Create SSL Certificate & Secret
-KEY_FILE=/root/eventrouter.key
-CERT_FILE=/root/eventrouter.crt
+KEY_FILE=/root/config/eventrouter.key
+CERT_FILE=/root/config/eventrouter.crt
 CN_NAME=$(hostname -f)
 CERT_NAME=eventrouter-tls
 
@@ -22,7 +22,7 @@ kubectl --kubeconfig /root/.kube/config -n vmware create secret tls ${CERT_NAME}
 # Deploy Ingress Route
 
 if [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
-  cat << EOF > /root/ingressroute-gateway.yaml
+  cat << EOF > /root/config/ingressroute-gateway.yaml
 apiVersion: contour.heptio.com/v1beta1
 kind: IngressRoute
 metadata:
@@ -54,7 +54,7 @@ spec:
         port: 8080
 EOF
 else
-  cat << EOF > /root/ingressroute-gateway.yaml
+  cat << EOF > /root/config/ingressroute-gateway.yaml
 apiVersion: contour.heptio.com/v1beta1
 kind: IngressRoute
 metadata:
@@ -103,4 +103,4 @@ spec:
 EOF
 fi
 
-kubectl --kubeconfig /root/.kube/config create -f /root/ingressroute-gateway.yaml
+kubectl --kubeconfig /root/.kube/config create -f /root/config/ingressroute-gateway.yaml

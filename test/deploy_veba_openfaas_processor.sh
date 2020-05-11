@@ -5,7 +5,7 @@
 # Sample Shell Script to test deployment of VEBA w/OpenFaaS Processor
 
 OVFTOOL_BIN_PATH="/Applications/VMware OVF Tool/ovftool"
-VEBA_OVA="../output-vmware-iso/vCenter_Event_Broker_Appliance_0.3.0.ova"
+VEBA_OVA="../output-vmware-iso/vCenter_Event_Broker_Appliance_0.4.0.ova"
 
 # vCenter
 DEPLOYMENT_TARGET_ADDRESS="192.168.30.200"
@@ -31,6 +31,7 @@ VEBA_VCENTER_USER="administrator@vsphere.local"
 VEBA_VCENTER_PASS="VMware1!"
 VEBA_VCENTER_DISABLE_TLS="True"
 VEBA_OPENFAAS_PASS="VMware1!"
+VEBA_DOCKER_NETWORK="172.26.0.1/16"
 
 ### DO NOT EDIT BEYOND HERE ###
 
@@ -58,5 +59,6 @@ VEBA_OPENFAAS_PASS="VMware1!"
     --prop:guestinfo.event_processor_type="OpenFaaS" \
     --prop:guestinfo.openfaas_password=${VEBA_OPENFAAS_PASS} \
     --prop:guestinfo.debug=${VEBA_DEBUG} \
+    --prop:guestinfo.docker_network_cidr=${VEBA_DOCKER_NETWORK} \
     "${VEBA_OVA}" \
     "vi://${DEPLOYMENT_TARGET_USERNAME}:${DEPLOYMENT_TARGET_PASSWORD}@${DEPLOYMENT_TARGET_ADDRESS}/${DEPLOYMENT_TARGET_DATACENTER}/host/${DEPLOYMNET_TARGET_CLUSTER}"

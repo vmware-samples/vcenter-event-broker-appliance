@@ -1,0 +1,10 @@
+[vcenter]
+    server = "veba.local.corp"
+    password = "password1234"
+    insecure = true
+
+[tag]
+    action = "detach"
+
+[debug]
+    verbose = true

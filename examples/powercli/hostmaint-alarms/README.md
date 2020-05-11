@@ -2,7 +2,7 @@
 
 ## Description
 
-This example will disable alarm actions on a host when it has entered maintenance mode and will re-enable alarm actions on a host after it has exited maintenance mode. There is an accompanying blog post with more details:  [Automate Host Maintenance with the vCenter Event Broker Appliance](https://doogleit.github.io/2019/11/automate-host-maintenance-with-the-vcenter-event-broker-appliance/)
+This example will disable alarm actions on a host when it has entered maintenance mode and will re-enable alarm actions on a host after it has exited maintenance mode. There is an accompanying blog post with more details:  [Automate Host Maintenance with the VMware Event Broker Appliance](https://doogleit.github.io/2019/11/automate-host-maintenance-with-the-vcenter-event-broker-appliance/)
 
 ## Consume Function Instruction
 
@@ -16,7 +16,7 @@ git checkout master
 
 Step 2 - Update `stack.yml` and `vc-hostmaint-config.json` with your environment information
 
-Step 3 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
+Step 3 - Login to the OpenFaaS gateway on VMware Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com
@@ -31,7 +31,7 @@ Step 4 - Create function secret (only required once)
 faas-cli secret create vc-hostmaint-config --from-file=vc-hostmaint-config.json --tls-no-verify
 ```
 
-Step 5 - Deploy function to vCenter Event Broker Appliance
+Step 5 - Deploy function to VMware Event Broker Appliance
 
 ```
 faas-cli deploy -f stack.yml --tls-no-verify
@@ -67,7 +67,7 @@ Step 5 - Push the function container to Docker Registry (default but can be chan
 faas-cli push -f stack.yml
 ```
 
-Step 6 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
+Step 6 - Login to the OpenFaaS gateway on VMware Event Broker Appliance
 
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com
@@ -82,7 +82,7 @@ Step 7 - Create function secret (only required once)
 faas-cli secret create vc-hostmaint-config --from-file=vc-hostmaint-config.json --tls-no-verify
 ```
 
-Step 8 - Deploy function to vCenter Event Broker Appliance
+Step 8 - Deploy function to VMware Event Broker Appliance
 
 ```
 faas-cli deploy -f stack.yml --tls-no-verify

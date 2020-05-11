@@ -1,0 +1,18 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: https://VEBA_FQDN_OR_IP
+functions:
+  restpost-fn:
+    lang: python3
+    handler: ./handler
+    image: vmware/veba-python-restpost:latest
+    environment:
+      write_debug: true
+      read_debug: true
+      combine_output: false
+      insecure_ssl: true
+    secrets:
+      - metaconfig
+    annotations:
+      topic: VmPoweredOnEvent,VmPoweredOffEvent
