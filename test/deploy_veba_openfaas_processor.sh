@@ -32,6 +32,11 @@ VEBA_VCENTER_PASS="VMware1!"
 VEBA_VCENTER_DISABLE_TLS="True"
 VEBA_OPENFAAS_PASS="VMware1!"
 VEBA_DOCKER_NETWORK="172.26.0.1/16"
+VEBA_HTTP_PROXY=""
+VEBA_HTTPS_PROXY=""
+VEBA_PROXY_USERNAME=""
+VEBA_PROXY_PASSWORD=""
+VEBA_NOPROXY=""
 
 ### DO NOT EDIT BEYOND HERE ###
 
@@ -51,6 +56,11 @@ VEBA_DOCKER_NETWORK="172.26.0.1/16"
     --prop:guestinfo.dns=${VEBA_DNS} \
     --prop:guestinfo.domain=${VEBA_DNS_DOMAIN} \
     --prop:guestinfo.ntp=${VEBA_NTP} \
+    --prop:guestinfo.http_proxy=${VEBA_HTTP_PROXY} \
+    --prop:guestinfo.https_proxy=${VEBA_HTTPS_PROXY} \
+    --prop:guestinfo.proxy_username=${VEBA_PROXY_USERNAME} \
+    --prop:guestinfo.proxy_password=${VEBA_PROXY_PASSWORD} \
+    --prop:guestinfo.no_proxy=${VEBA_NOPROXY} \	
     --prop:guestinfo.root_password=${VEBA_OS_PASSWORD} \
     --prop:guestinfo.vcenter_server=${VEBA_VCENTER_SERVER} \
     --prop:guestinfo.vcenter_username=${VEBA_VCENTER_USER} \
