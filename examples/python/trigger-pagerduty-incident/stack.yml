@@ -5,7 +5,7 @@ functions:
   pdinvoke-fn:
     lang: python3
     handler: ./handler
-    image: vmware/veba-pagerduty-invoke:latest
+    image: vmware/veba-python-pagerduty:latest
     environment:
       write_debug: true
       read_debug: true
