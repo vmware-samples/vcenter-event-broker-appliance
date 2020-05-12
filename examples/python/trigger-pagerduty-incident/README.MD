@@ -46,7 +46,7 @@ functions:
   pdinvoke-fn:
     lang: python3
     handler: ./handler
-    image: vmware/veba-pagerduty-invoke:latest
+    image: vmware/veba-python-pagerduty:latest
     environment:
       write_debug: true #function writes verbose entries to the log when set to true, also requires combine_output to be set to false to avoid debug messages from showing up in the response
       read_debug: true
