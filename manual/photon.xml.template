@@ -53,7 +53,7 @@
         </Property>
         <Property ovf:key="guestinfo.no_proxy" ovf:type="string" ovf:userConfigurable="true">
             <Label>No Proxy</Label>
-            <Description>No Proxy for e.g. your internal domain suffix. Comma separated (localhost, 127.0.0.1, domain.local)</Description>
+            <Description>No Proxy for e.g. your internal domain suffix. Adding the appliance IP address is recommended. Comma separated (localhost, 127.0.0.1, domain.local)</Description>
         </Property>
       <Category>OS Credentials</Category>
         <Property ovf:key="guestinfo.root_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
