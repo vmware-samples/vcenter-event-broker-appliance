@@ -179,7 +179,7 @@ The SSH daemon will run but not automatically start with the next reboot. You ca
 
 Edit the configuration file with vi
 ```bash
-vi /root/event-router-config.json
+vi /root/config/event-router-config.json
 ```
 
 The editor will open with output similar to this (truncated)
