@@ -3,6 +3,7 @@ package processor
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -176,8 +177,9 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, sour
 func (awsEventBridge *awsEventBridgeProcessor) Process(moref types.ManagedObjectReference, baseEvent []types.BaseEvent) error {
 	batchInput, err := awsEventBridge.createPutEventsInput(baseEvent)
 	if err != nil {
-		awsEventBridge.Printf("could not create PutEventsInput for event(s): %v", err)
-		return nil
+		errMsg := fmt.Errorf("could not create PutEventsInput for event(s): %v", err)
+		awsEventBridge.Printf(errMsg.Error())
+		return NewError(ProviderAWS, errMsg).Error()
 	}
 
 	// nothing to send
