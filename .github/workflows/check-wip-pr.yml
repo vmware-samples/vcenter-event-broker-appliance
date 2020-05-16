@@ -1,0 +1,14 @@
+# Perform "exit 1" if PR title starts with "WIP" to block accidental merges
+name: Check "WIP" in PR Title
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  WIP:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.pull_request.title, 'WIP')
+    steps:
+      - name: Must Exit
+        run: exit 1
