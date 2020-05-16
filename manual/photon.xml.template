@@ -60,6 +60,10 @@
             <Label>Root Password</Label>
             <Description>Password to login in as root. Please use a secure password</Description>
         </Property>
+        <Property ovf:key="guestinfo.enable_ssh" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+            <Label>Enable SSH</Label>
+            <Description>Automatically start SSH daemon</Description>
+        </Property>
      <Category>vSphere</Category>
         <Property ovf:key="guestinfo.vcenter_server" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>vCenter Server</Label>
