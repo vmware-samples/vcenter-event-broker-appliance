@@ -16,15 +16,15 @@ links:
       author_name: Partheeban Kandasamy (PK)
       excerpt: Uptime and Reliability is more important now than ever during these times when Technology and Infrastructure is enabling us fight a global pandemic with work from home policies. It is no wonder that eyes lit up when you say PagerDuty and vCenter integration...
   
-  - title: Using Harbor with the vCenter Event Broker Appliance
+  - title: Monitoring the VMware Event Broker Appliance with vRealize Operations Manager
     display: true
-    details: 
+    details:
       url_text: blog post
-      external_url: https://rguske.github.io/post/using-harbor-with-the-vcenter-event-broker-appliance/
-      external_image: https://rguske.github.io/img/veba_harbor_cover.jpg
+      external_url: https://rguske.github.io/post/monitoring-the-vmware-event-broker-appliance-with-vrealize-operations-manager/
+      external_image: https://rguske.github.io/img/posts/202005_vropsveba/CapturFiles-20200512_041624.jpg
       author_name: Robert Guske
-      excerpt: ...I wanted to use Harbor this time. In order to implement this, I have to replace the original image specification in the stack.yml and point to my Harbor instance, the corresponding project and the image with tag...
-  
+      excerpt: ...Let me demonstrate you how we can prepare VEBA to send the desired data (metrics) to vROPs and how we import a custom dashboard that provides you with plenty of interesting and useful information...
+
   - title: vCenter Event Broker Appliance Updates – VMworld, Fling, Community & Open Source
     display: true
     details: 
@@ -73,6 +73,9 @@ otherlinks:
     display: true
   - title: Blog post walkthrough of VEBA deployment
     url: https://www.patrickkremer.com/veba/
+    display: true
+  - title: Using Harbor with the vCenter Event Broker Appliance
+    url: https://rguske.github.io/post/using-harbor-with-the-vcenter-event-broker-appliance/
     display: true
   - title: Automate host maintenance with vCenter
     url: https://doogleit.github.io/2019/11/automate-host-maintenance-with-the-vcenter-event-broker-appliance/
