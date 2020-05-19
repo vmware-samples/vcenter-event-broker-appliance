@@ -11,7 +11,7 @@ cta:
 
 # Writing your own functions
 
-The VMware Event Broker Appliance uses OpenFaaS as a Function-as-a-Service (FaaS) platform. If you are looking to understand the basics of functions, start [here](kb/functions).
+The VMware Event Broker Appliance uses OpenFaaS as a Function-as-a-Service (FaaS) platform. If you are looking to understand the basics of functions, start [here](functions).
 
 You can also get started quickly with these quickstart [templates](https://github.com/pksrc/vebafn){:target="_blank"}.
 
