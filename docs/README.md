@@ -59,7 +59,7 @@ Install the following for an easy to use dev environment:
 ```bash
 brew install rbenv
 rbenv install 2.6.3
-gem install bundler
+gem install bundler --user-install
 ```
 
 ### Dependencies for Linux
@@ -82,6 +82,7 @@ This mirrors the plug-ins used by GitHub Pages on your local machine including J
 ```bash
 git clone git@github.com:vmware-samples/vcenter-event-broker-appliance.git
 cd vcenter-event-broker-appliance/docs
+bundle config set path '~/.vendor/bundle'
 bundle install
 ```
 
