@@ -17,7 +17,7 @@ You can also get started quickly with these quickstart [templates](https://githu
 
 ## Instructions
 
-> **ASSUMPTION:** The following steps assume VMware Event Broker Appliance has been [installed (configured with OpenFaaS)](/kb/install-openfaas) and is running.
+> **ASSUMPTION:** The following steps assume VMware Event Broker Appliance has been [installed (configured with OpenFaaS)](install-openfaas) and is running.
 
 
 * Create a directory for your function and set up the secret config file
