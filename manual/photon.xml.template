@@ -8,7 +8,7 @@
       <Category>Networking</Category>
         <Property ovf:key="guestinfo.hostname" ovf:type="string" ovf:userConfigurable="true">
             <Label>Hostname</Label>
-            <Description>Hostname of system</Description>
+            <Description>Hostname (FQDN) of system</Description>
         </Property>
         <Property ovf:key="guestinfo.ipaddress" ovf:type="string" ovf:userConfigurable="true">
             <Label>IP Address</Label>
