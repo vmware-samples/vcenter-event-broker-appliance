@@ -146,6 +146,11 @@
       "type": "file",
       "source": "files/veba-dcui",
       "destination": "/usr/bin/veba-dcui"
+    },
+    {
+      "type": "file",
+      "source": "veba-bom.json",
+      "destination": "/root/config/veba-bom.json"
     }
   ],
   "post-processors": [
