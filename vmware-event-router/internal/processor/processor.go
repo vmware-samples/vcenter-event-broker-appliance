@@ -22,12 +22,11 @@ type Error struct {
 	err       error
 }
 
-// NewError constructs Error structure
-func NewError(processor string, err error) *Error {
+func processorError(processor string, err error) error {
 	return &Error{
 		processor: processor,
 		err:       err,
 	}
 }
 
-func (e *Error) Error() error { return fmt.Errorf("%s: %s", e.processor, e.err.Error()) }
+func (e *Error) Error() string { return fmt.Sprintf("%s: %s", e.processor, e.err.Error()) }

@@ -179,7 +179,7 @@ func (awsEventBridge *awsEventBridgeProcessor) Process(moref types.ManagedObject
 	if err != nil {
 		errMsg := fmt.Errorf("could not create PutEventsInput for event(s): %v", err)
 		awsEventBridge.Printf(errMsg.Error())
-		return NewError(ProviderAWS, errMsg).Error()
+		return processorError(ProviderAWS, errMsg)
 	}
 
 	// nothing to send
