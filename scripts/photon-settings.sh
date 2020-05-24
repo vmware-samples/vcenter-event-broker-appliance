@@ -25,7 +25,8 @@ tdnf install -y \
   unzip \
   awk \
   tar \
-  kubernetes-kubeadm
+  kubernetes-kubeadm \
+  jq
 
 echo '> Creating directory for setup scripts and configuration files'
 mkdir -p /root/setup
