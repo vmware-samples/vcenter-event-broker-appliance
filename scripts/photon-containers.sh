@@ -8,7 +8,8 @@ VEBA_BOM_FILE=/root/config/veba-bom.json
 
 for component_name in $(jq '. | keys | .[]' ${VEBA_BOM_FILE});
 do
-    if [ $component_name != "\"veba\"" ]; then
+    HAS_CONTAINERS=$(jq ".$component_name | select(.containers != null)" ${VEBA_BOM_FILE})
+    if [ "${HAS_CONTAINERS}" != "" ]; then
         for i in $(jq ".$component_name.containers | keys | .[]" ${VEBA_BOM_FILE}); do
             value=$(jq -r ".$component_name.containers[$i]" ${VEBA_BOM_FILE});
             container_name=$(jq -r '.name' <<< "$value");
@@ -39,7 +40,7 @@ cd ..
 
 echo '> Downloading Antrea...'
 ANTREA_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["antrea"].version')
-ANTREA_CONTAINER_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["antrea"].containers' | jq -r '.[] | select(.name | contains("antrea/antrea-ubuntu")).version')
+ANTREA_CONTAINER_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["antrea"].containers | .[] | select(.name | contains("antrea/antrea-ubuntu")).version')
 wget https://github.com/vmware-tanzu/antrea/releases/download/${ANTREA_VERSION}/antrea.yml -O /root/download/antrea.yml
 sed -i "s/image: antrea\/antrea-ubuntu:.*/image: antrea\/antrea-ubuntu:${ANTREA_CONTAINER_VERSION}/g" /root/download/antrea.yml
 sed -i '/image:.*/i \        imagePullPolicy: IfNotPresent' /root/download/antrea.yml

@@ -26,10 +26,10 @@ fi
 echo -e "\e[92mSetting up k8s ..." > /dev/console
 K8S_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["kubernetes"].version')
 cat > /root/config/kubeconfig.yml << __EOF__
-apiVersion: kubeadm.k8s.io/v1beta1
+apiVersion: kubeadm.k8s.io/v1beta2
 kind: InitConfiguration
 ---
-apiVersion: kubeadm.k8s.io/v1beta1
+apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
 kubernetesVersion: ${K8S_VERSION}
 networking:

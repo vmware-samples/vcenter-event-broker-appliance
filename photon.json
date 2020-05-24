@@ -51,6 +51,15 @@
   "provisioners": [
     {
       "type": "shell",
+      "inline": ["mkdir -p /root/config"]
+    },
+    {
+      "type": "file",
+      "source": "veba-bom.json",
+      "destination": "/root/config/veba-bom.json"
+    },
+    {
+      "type": "shell",
       "environment_vars": [
         "VEBA_VERSION={{ user `VEBA_VERSION` }}",
         "VEBA_COMMIT={{ user `VEBA_COMMIT` }}"
@@ -60,11 +69,6 @@
         "scripts/photon-settings.sh",
         "scripts/photon-docker.sh"
       ]
-    },
-    {
-      "type": "file",
-      "source": "veba-bom.json",
-      "destination": "/root/config/veba-bom.json"
     },
     {
       "type": "shell",
