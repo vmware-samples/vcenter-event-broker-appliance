@@ -3,7 +3,7 @@ layout: docs
 toc_id: intro-about
 title: VMware Event Broker Appliance - Introduction
 description: VMware Event Broker Appliance - Introduction
-permalink: /kb
+permalink: /kb/
 cta:
  title: Getting Started
  description: Get started with VMware Event Broker Appliance and extend your vSphere SDDC in under 60 minutes

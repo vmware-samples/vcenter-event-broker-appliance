@@ -8,10 +8,10 @@ cta:
  title: Join our community 
  description: Earn a place amongst our top contributors [here](/community#contributors-veba)
  actions:
-    - text: Learn how you can contribute to our Appliance build process [here](/kb/contribute-appliance)
-    - text: Learn how you can contribute to our VMware Event Router [here](/kb/contribute-eventrouter)
-    - text: Learn how you can contribute to our Pre-built Functions [here](/kb/contribute-functions)
-    - text: Learn how you can contribute to our Website [here](/kb/contribute-site).
+    - text: Learn how you can contribute to our Appliance build process [here](contribute-appliance)
+    - text: Learn how you can contribute to our VMware Event Router [here](contribute-eventrouter)
+    - text: Learn how you can contribute to our Pre-built Functions [here](contribute-functions)
+    - text: Learn how you can contribute to our Website [here](contribute-site).
 ---
 
 # Contributing

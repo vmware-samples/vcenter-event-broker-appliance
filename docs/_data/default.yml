@@ -3,7 +3,7 @@ toc:
     subfolderitems:
       - page: About
         id: intro-about
-        url: /kb
+        url: /kb/
       - page: Architecture
         id: intro-architecture
         url: /kb/architecture
