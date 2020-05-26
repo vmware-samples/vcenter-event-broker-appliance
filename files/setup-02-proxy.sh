@@ -23,28 +23,42 @@ if [ -n "${HTTP_PROXY}" ] || [ -n "${HTTPS_PROXY}" ]; then
     fi
 
     if [ ! -z "${HTTP_PROXY}" ]; then
-        if [ $YES_CREDS -eq 1 ]; then
-            HTTP_PROXY_URL="http://${PROXY_USERNAME}:${PROXY_PASSWORD}@${HTTP_PROXY}"
-        else
-            HTTP_PROXY_URL="http://${HTTP_PROXY}"
-        fi
-        echo "HTTP_PROXY=\"${HTTP_PROXY_URL}\"" >> ${PROXY_CONF}
-        cat > ${DOCKER_PROXY}/http-proxy.conf << __HTTP_DOCKER_PROXY__
+        a=($(printf '%s\n' "${HTTP_PROXY//\:\/\//$'\n'}"))
+        if [ ${#a[*]} -eq 2 ]; then
+            HTTP_PROXY_PROTOCOL=${a[0]}
+            HTTP_PROXY_SERVER_PORT=${a[1]}
+            if [ $YES_CREDS -eq 1 ]; then
+                HTTP_PROXY_URL="${HTTP_PROXY_PROTOCOL}://${PROXY_USERNAME}:${PROXY_PASSWORD}@${HTTP_PROXY_SERVER_PORT}"
+            else
+                HTTP_PROXY_URL="${HTTP_PROXY_PROTOCOL}://${HTTP_PROXY_SERVER_PORT}"
+            fi
+            echo "HTTP_PROXY=\"${HTTP_PROXY_URL}\"" >> ${PROXY_CONF}
+            cat > ${DOCKER_PROXY}/http-proxy.conf << __HTTP_DOCKER_PROXY__
 [Service]
 Environment="HTTP_PROXY=${HTTP_PROXY_URL}" "NO_PROXY=${NO_PROXY}"
 __HTTP_DOCKER_PROXY__
+        else
+	    echo -e "\e[91mInvalid HTTP Proxy URL supplied" > /dev/console
+        fi
     fi
 
     if [ ! -z "${HTTPS_PROXY}" ]; then
-        if [ $YES_CREDS -eq 1 ]; then
-            HTTPS_PROXY_URL="https://${PROXY_USERNAME}:${PROXY_PASSWORD}@${HTTPS_PROXY}"
-        else
-            HTTPS_PROXY_URL="https://${HTTPS_PROXY}"
-        fi
-        echo "HTTPS_PROXY=\"${HTTPS_PROXY_URL}\"" >> ${PROXY_CONF}
-        cat > ${DOCKER_PROXY}/https-proxy.conf << __HTTPS_DOCKER_PROXY__
+        a=($(printf '%s\n' "${HTTPS_PROXY//\:\/\//$'\n'}"))
+        if [ ${#a[*]} -eq 2 ]; then
+            HTTPS_PROXY_PROTOCOL=${a[0]}
+            HTTPS_PROXY_SERVER_PORT=${a[1]}
+            if [ $YES_CREDS -eq 1 ]; then
+                HTTPS_PROXY_URL="${HTTPS_PROXY_PROTOCOL}://${PROXY_USERNAME}:${PROXY_PASSWORD}@${HTTPS_PROXY_SERVER_PORT}"
+            else
+                HTTPS_PROXY_URL="${HTTPS_PROXY_PROTOCOL}://${HTTPS_PROXY_SERVER_PORT}"
+            fi
+            echo "HTTPS_PROXY=\"${HTTPS_PROXY_URL}\"" >> ${PROXY_CONF}
+            cat > ${DOCKER_PROXY}/https-proxy.conf << __HTTPS_DOCKER_PROXY__
 [Service]
 Environment="HTTPS_PROXY=${HTTPS_PROXY_URL}" "NO_PROXY=${NO_PROXY}"
 __HTTPS_DOCKER_PROXY__
+        else
+	    echo -e "\e[91mInvalid HTTPS Proxy URL supplied" > /dev/console
+        fi
     fi
 fi
