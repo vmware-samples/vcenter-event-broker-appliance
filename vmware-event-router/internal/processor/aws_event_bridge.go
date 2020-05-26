@@ -178,7 +178,7 @@ func (awsEventBridge *awsEventBridgeProcessor) Process(moref types.ManagedObject
 	batchInput, err := awsEventBridge.createPutEventsInput(baseEvent)
 	if err != nil {
 		errMsg := fmt.Errorf("could not create PutEventsInput for event(s): %v", err)
-		awsEventBridge.Printf(errMsg.Error())
+		awsEventBridge.Println(errMsg)
 		return processorError(ProviderAWS, errMsg)
 	}
 
