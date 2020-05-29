@@ -6,7 +6,7 @@ ARG COMMIT
 WORKDIR /build
 
 # install linter into ./bin/
-RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.23.7
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.27.0
 
 COPY go.mod .
 COPY go.sum .
