@@ -1,8 +1,13 @@
 name: VMware Event Router Unit Tests
 
-# triggered on PRs but only when changes inside vmware-event-router (sub)dir(s)
+# triggered on every push and PRs but only when changes inside
+# vmware-event-router (sub)dir(s)
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'vmware-event-router/**'
+  push:
     paths:
       - 'vmware-event-router/**'
 
@@ -18,6 +23,5 @@ jobs:
     steps:
       - name: checkout source
         uses: actions/checkout@master
-      - name: run unit tests
-        run: make test
-          
+      - name: run unit tests and verify image build (w/out push)
+        run: make build
