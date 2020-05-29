@@ -13,7 +13,7 @@ const (
 	mapName = "vmware.event.router.stats"
 	// PushInterval defines the default interval event streams and processors
 	// push their metrics to the server
-	PushInterval = time.Second * 5
+	PushInterval = time.Second * 1
 )
 
 // EventStats are provided and continously updated by event streams and
@@ -23,7 +23,8 @@ type EventStats struct {
 	ProviderType string         `json:"provider_type"` // stream or processor
 	Name         string         `json:"name"`
 	Started      time.Time      `json:"started"`
-	EventsTotal  *int           `json:"events_total,omitempty"`   // only used by event streams
+	EventsTotal  *int           `json:"events_total,omitempty"`   // only used by event streams, total events received
+	EventsErr    *int           `json:"events_err,omitempty"`     // only used by event streams, events received which lead to error
 	EventsSec    *float64       `json:"events_per_sec,omitempty"` // only used by event streams
 	Invocations  map[string]int `json:"invocations,omitempty"`    // event.Category to invocations - only used by event processors
 }

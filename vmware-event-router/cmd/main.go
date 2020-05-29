@@ -90,7 +90,7 @@ func main() {
 			switch cfg.Provider {
 			case stream.ProviderVSphere:
 				logger.Printf("connecting to vCenter %s", cfg.Address)
-				streamer, err = stream.NewVCenterStream(ctx, cfg, metricsServer)
+				streamer, err = stream.NewVCenterStream(ctx, cfg, metricsServer, stream.WithVCenterVerbose(verbose))
 				if err != nil {
 					logger.Fatalf("could not connect to vCenter: %v", err)
 				}
@@ -107,13 +107,13 @@ func main() {
 					async = true
 				}
 				logger.Printf("connecting to OpenFaaS gateway %s (async mode: %v)", cfg.Address, async)
-				proc, err = processor.NewOpenFaaSProcessor(ctx, cfg, streamer.Source(), verbose, metricsServer)
+				proc, err = processor.NewOpenFaaSProcessor(ctx, cfg, metricsServer, processor.WithOpenFaaSVerbose(verbose))
 				if err != nil {
 					logger.Fatalf("could not connect to OpenFaaS: %v", err)
 				}
 			case processor.ProviderAWS:
 				logger.Printf("connecting to AWS EventBridge (arn: %s)", cfg.Options["aws_eventbridge_rule_arn"])
-				proc, err = processor.NewAWSEventBridgeProcessor(ctx, cfg, streamer.Source(), verbose, metricsServer)
+				proc, err = processor.NewAWSEventBridgeProcessor(ctx, cfg, metricsServer, processor.WithAWSVerbose(verbose))
 				if err != nil {
 					logger.Fatalf("could not connect to AWS EventBridge: %v", err)
 				}

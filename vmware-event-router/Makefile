@@ -1,5 +1,10 @@
 COMMIT := $(shell git rev-parse --short HEAD)
 VERSION := $(shell /bin/cat ../VERSION)
+
+# fail fast
+$(if $(value COMMIT),,$(error COMMIT must be set (.git project?)))
+$(if $(value VERSION),,$(error VERSION must be set))
+
 IMAGE_REPO=vmware
 IMAGE_NAME=$(IMAGE_REPO)/veba-event-router
 DIST_FOLDER=dist
@@ -12,11 +17,7 @@ GIT_BRANCH := $(shell git branch --show-current)
 GIT_NOT_CLEAN_CHECK := $(shell git status --porcelain)
 export GO111MODULE=on
 
-PKGS     = $(or $(PKG),$(shell env GO111MODULE=on go list ./...))
-TESTPKGS = $(shell env GO111MODULE=on go list -f \
-            '{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' \
-            $(PKGS))
-TIMEOUT  = 20
+TEST_TIMEOUT = 20
 
 .PHONY: release tidy build tag push output vendor test
 
@@ -34,11 +35,11 @@ tidy:
 	go mod tidy -v
 
 # intended for local dev use (won't check for unclean git)
-binary: test tidy
+binary: unit-test tidy
 	$(info Make: Building binary "$(DIST_FOLDER)/$(BINARY)".)
 	CGO_ENABLED=0 go build -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o $(DIST_FOLDER)/$(BINARY) cmd/main.go
 
-build: test tidy
+build: unit-test tidy
 	$(info Make: Building image "$(IMAGE_NAME)".)
 	$(if $(GIT_NOT_CLEAN_CHECK), $(error "Dirty Git repository!"))
 	docker build -t $(BUILD_TAG) --build-arg COMMIT=$(COMMIT) --build-arg VERSION=$(VERSION) .
@@ -47,8 +48,12 @@ gofmt:
 	$(info Make: Checking code is gofmted.)
 	@test -z "$(shell gofmt -s -l -d -e ./cmd | tee /dev/stderr)"
 
-test: gofmt
-	GORACE=history_size=5 go test -race -timeout $(TIMEOUT)s -cover $(TESTPKGS) 
+unit-test: gofmt
+	$(eval TAG=unit)
+	$(eval TEST_PKGS=$(shell go list -tags=${TAG} -f '{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' ./...))
+	@GORACE=history_size=5 go test -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover ${TEST_PKGS}
+
+test: unit-test
 
 tag: 
 	$(info Make: Tagging image "$(IMAGE_NAME)" with "$(BUILD_TAG)", "$(LATEST_TAG) and "$(VERSION_TAG)".)

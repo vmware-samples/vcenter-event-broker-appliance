@@ -2,13 +2,17 @@ package stream
 
 import (
 	"context"
+	"log"
 	"math"
 	"net/url"
+	"os"
 	"sync"
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/connection"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 	"github.com/vmware/govmomi"
@@ -28,17 +32,26 @@ const (
 type vCenterStream struct {
 	client govmomi.Client
 	stream event.Manager
+	*log.Logger
+	verbose bool
 
 	lock  sync.RWMutex
 	stats metrics.EventStats
 }
 
 // NewVCenterStream returns a vCenter event manager for a given configuration and metrics server
-func NewVCenterStream(ctx context.Context, cfg connection.Config, ms *metrics.Server) (Streamer, error) {
+func NewVCenterStream(ctx context.Context, cfg connection.Config, ms metrics.Receiver, opts ...VCenterOption) (Streamer, error) {
 	var vCenter vCenterStream
+	logger := log.New(os.Stdout, color.Magenta("[vCenter] "), log.LstdFlags)
+	vCenter.Logger = logger
 	parsedURL, err := soap.ParseURL(cfg.Address)
 	if err != nil {
 		return nil, errors.Wrap(err, "error parsing URL")
+	}
+
+	// apply options
+	for _, opt := range opts {
+		opt(&vCenter)
 	}
 
 	var username, password string
@@ -71,6 +84,7 @@ func NewVCenterStream(ctx context.Context, cfg connection.Config, ms *metrics.Se
 		Name:         client.URL().String(),
 		Started:      time.Now().UTC(),
 		EventsTotal:  new(int),
+		EventsErr:    new(int),
 		EventsSec:    new(float64),
 	}
 	go vCenter.PushMetrics(ctx, ms)
@@ -103,7 +117,7 @@ func (vcenter *vCenterStream) Source() string {
 	return vcenter.client.URL().String()
 }
 
-func (vcenter *vCenterStream) PushMetrics(ctx context.Context, ms *metrics.Server) {
+func (vcenter *vCenterStream) PushMetrics(ctx context.Context, ms metrics.Receiver) {
 	ticker := time.NewTicker(metrics.PushInterval)
 	defer ticker.Stop()
 	for {
@@ -124,12 +138,35 @@ func (vcenter *vCenterStream) PushMetrics(ctx context.Context, ms *metrics.Serve
 // processor
 func (vcenter *vCenterStream) streamCallbackFn(p processor.Processor) func(types.ManagedObjectReference, []types.BaseEvent) error {
 	return func(moref types.ManagedObjectReference, baseEvent []types.BaseEvent) error {
-		// update stats before invoking the processor
-		vcenter.lock.Lock()
-		total := *vcenter.stats.EventsTotal + len(baseEvent)
-		vcenter.stats.EventsTotal = &total
-		vcenter.lock.Unlock()
+		var errCount int
 
-		return p.Process(moref, baseEvent)
+		// update stats
+		defer func() {
+			vcenter.lock.Lock()
+			total := *vcenter.stats.EventsTotal + len(baseEvent)
+			vcenter.stats.EventsTotal = &total
+			errTotal := *vcenter.stats.EventsErr + errCount
+			vcenter.stats.EventsErr = &errTotal
+			vcenter.lock.Unlock()
+		}()
+
+		for idx := range baseEvent {
+			// process slice in reverse order to maintain Event.Key ordering
+			event := baseEvent[len(baseEvent)-1-idx]
+
+			ce, err := events.NewCloudEvent(event, vcenter.Source())
+			if err != nil {
+				vcenter.Logger.Printf("skipping event %v because it could not be converted to CloudEvent format: %v", event, err)
+				errCount++
+				continue
+			}
+
+			err = p.Process(*ce)
+			if err != nil {
+				vcenter.Logger.Printf("could not process event %v: %v", ce, err)
+				errCount++
+			}
+		}
+		return nil
 	}
 }
