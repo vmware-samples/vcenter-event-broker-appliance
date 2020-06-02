@@ -92,7 +92,10 @@
                 "name" : "nats-streaming",
                 "version" : "0.11.2"
             }
-        ]
+        ],
+        "faas-cli": {
+            "version": "0.12.4"
+        }
     },
     "tinywww" :{
         "version" : "latest",
