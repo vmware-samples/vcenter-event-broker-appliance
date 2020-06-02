@@ -11,3 +11,6 @@ secret*.json
 _site
 Gemfile.lock
 .tweet-cache
+*.coverprofile
+faas-cli*
+template

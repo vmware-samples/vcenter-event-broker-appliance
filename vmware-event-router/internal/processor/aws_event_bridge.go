@@ -14,30 +14,32 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/eventbridge"
 	"github.com/aws/aws-sdk-go/service/eventbridge/eventbridgeiface"
+	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/pkg/errors"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/connection"
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
-	"github.com/vmware/govmomi/vim25/types"
 )
 
 const (
-	// ProviderAWS is the name used to identify this provider in the
+	// ProviderAWS variable is the name used to identify this provider in the
 	// VMware Event Router configuration file
-	ProviderAWS    = "aws_event_bridge"
-	authMethodAWS  = "access_key"    // only this method is supported by the processor
-	resyncInterval = time.Minute * 5 // resync rule patterns after interval
-	pageLimit      = 50              // max 50 results per page for list operations
-	batchSize      = 10              // max 10 input events per batch sent to AWS
+	ProviderAWS           = "aws_event_bridge"
+	authMethodAWS         = "access_key"    // only this method is supported by the processor
+	defaultResyncInterval = time.Minute * 5 // resync rule patterns after interval
+	defaultPageLimit      = 50              // max 50 results per page for list operations
+	defaultBatchSize      = 10              // max 10 input events per batch sent to AWS
 )
 
 // awsEventBridgeProcessor implements the Processor interface
 type awsEventBridgeProcessor struct {
 	session session.Session
 	eventbridgeiface.EventBridgeAPI
-	source  string
-	verbose bool
+
+	// options
+	verbose        bool
+	resyncInterval time.Duration
+	batchSize      int
 	*log.Logger
 
 	mu         sync.RWMutex
@@ -53,13 +55,18 @@ type eventPattern struct {
 
 // NewAWSEventBridgeProcessor returns an AWS EventBridge processor for the given
 // stream source.
-func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, source string, verbose bool, ms *metrics.Server) (Processor, error) {
+func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, ms metrics.Receiver, opts ...AWSOption) (Processor, error) {
 	logger := log.New(os.Stdout, color.Yellow("[AWS EventBridge] "), log.LstdFlags)
 	eventBridge := awsEventBridgeProcessor{
-		source:     source,
-		verbose:    verbose,
-		Logger:     logger,
-		patternMap: make(map[string]string),
+		resyncInterval: defaultResyncInterval,
+		batchSize:      defaultBatchSize,
+		Logger:         logger,
+		patternMap:     make(map[string]string),
+	}
+
+	// apply options
+	for _, opt := range opts {
+		opt(&eventBridge)
 	}
 
 	var accessKey, secretKey, region, eventbus, ruleARN string
@@ -109,8 +116,8 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, sour
 	var nextToken *string
 	for !found {
 		rules, err := eventBridge.ListRulesWithContext(ctx, &eventbridge.ListRulesInput{
-			EventBusName: aws.String(eventbus), // explicitely passing eventbus name because list assumes "default" otherwise
-			Limit:        aws.Int64(pageLimit), // up to n results per page for requests.
+			EventBusName: aws.String(eventbus),        // explicitely passing eventbus name because list assumes "default" otherwise
+			Limit:        aws.Int64(defaultPageLimit), // up to n results per page for requests.
 			NextToken:    nextToken,
 		})
 		if err != nil {
@@ -171,89 +178,57 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, sour
 	return &eventBridge, nil
 }
 
-// Process implements the stream processor interface TODO: handle
-// throttling/batching
-// https://docs.aws.amazon.com/eventbridge/latest/userguide/cloudwatch-limits-eventbridge.html#putevents-limits
-func (awsEventBridge *awsEventBridgeProcessor) Process(moref types.ManagedObjectReference, baseEvent []types.BaseEvent) error {
-	batchInput, err := awsEventBridge.createPutEventsInput(baseEvent)
-	if err != nil {
-		errMsg := fmt.Errorf("could not create PutEventsInput for event(s): %v", err)
-		awsEventBridge.Println(errMsg)
-		return processorError(ProviderAWS, errMsg)
+// Process implements the stream processor interface
+func (awsEventBridge *awsEventBridgeProcessor) Process(ce cloudevents.Event) error {
+	if awsEventBridge.verbose {
+		awsEventBridge.Printf("processing event (ID %s): %v", ce.ID(), ce)
 	}
 
-	// nothing to send
-	if len(batchInput) == 0 {
+	awsEventBridge.mu.RLock()
+	defer awsEventBridge.mu.RUnlock()
+	if _, ok := awsEventBridge.patternMap[ce.Subject()]; !ok {
+		// no event bridge rule pattern (subscription) for event, skip
+		if awsEventBridge.verbose {
+			awsEventBridge.Printf("pattern rule does not match, skipping event (ID %s): %v", ce.ID(), ce)
+		}
 		return nil
 	}
 
-	for idx, input := range batchInput {
-		resp, err := awsEventBridge.PutEvents(&input)
-		if err != nil {
-			awsEventBridge.Printf("could not send event(s) for batch %d: %v", idx, err)
-			continue
-		}
-		if awsEventBridge.verbose {
-			awsEventBridge.Printf("successfully sent event(s) from source %s: %+v batch: %d",
-				awsEventBridge.source,
-				resp,
-				idx)
-		}
+	jsonBytes, err := json.Marshal(ce)
+	if err != nil {
+		msg := fmt.Errorf("could not marshal event %v: %v", ce, err)
+		awsEventBridge.Println(msg)
+		return processorError(ProviderAWS, msg)
+	}
+
+	jsonString := string(jsonBytes)
+	entry := eventbridge.PutEventsRequestEntry{
+		Detail:       aws.String(jsonString),
+		EventBusName: aws.String(awsEventBridge.patternMap[ce.Subject()]),
+		Source:       aws.String(ce.Source()),
+		DetailType:   aws.String(ce.Subject()),
+	}
+
+	// update metrics
+	awsEventBridge.stats.Invocations[ce.Subject()]++
+
+	input := eventbridge.PutEventsInput{
+		Entries: []*eventbridge.PutEventsRequestEntry{&entry},
+	}
+	awsEventBridge.Printf("sending event %s", ce.ID())
+	resp, err := awsEventBridge.PutEvents(&input)
+	if err != nil {
+		msg := fmt.Errorf("could not send event %v: %v", ce, err)
+		awsEventBridge.Println(msg)
+		return processorError(ProviderAWS, msg)
+	}
+
+	if awsEventBridge.verbose {
+		awsEventBridge.Printf("successfully sent event %v: %v", ce, resp)
+	} else {
+		awsEventBridge.Printf("successfully sent event %s", ce.ID())
 	}
 	return nil
-}
-
-func (awsEventBridge *awsEventBridgeProcessor) createPutEventsInput(baseEvent []types.BaseEvent) ([]eventbridge.PutEventsInput, error) {
-	awsEventBridge.mu.Lock()
-	defer awsEventBridge.mu.Unlock()
-
-	batch := []eventbridge.PutEventsInput{}
-
-	tmpInput := eventbridge.PutEventsInput{
-		Entries: []*eventbridge.PutEventsRequestEntry{},
-	}
-
-	for idx := range baseEvent {
-		// process slice in reverse order to maintain Event.Key ordering
-		event := baseEvent[len(baseEvent)-1-idx]
-
-		if awsEventBridge.verbose {
-			awsEventBridge.Printf("processing event [%d] of type %T from source %s: %+v", idx, event, awsEventBridge.source, event)
-		}
-		eventInfo := events.GetDetails(event)
-		if _, ok := awsEventBridge.patternMap[eventInfo.Name]; !ok {
-			// no event bridge rule pattern (subscription) for event, skip
-			continue
-		}
-		cloudEvent := events.NewCloudEvent(event, eventInfo, awsEventBridge.source)
-		jsonBytes, err := json.Marshal(cloudEvent)
-		if err != nil {
-			return nil, errors.Wrapf(err, "could not marshal cloud event for vSphere event %d from source %s", event.GetEvent().Key, awsEventBridge.source)
-		}
-		jsonString := string(jsonBytes)
-		entry := eventbridge.PutEventsRequestEntry{
-			Detail:       aws.String(jsonString),
-			EventBusName: aws.String(awsEventBridge.patternMap[eventInfo.Name]),
-			Source:       aws.String(cloudEvent.Source),
-			DetailType:   aws.String(cloudEvent.Subject),
-		}
-		tmpInput.Entries = append(tmpInput.Entries, &entry)
-
-		// update metrics
-		awsEventBridge.stats.Invocations[eventInfo.Name]++
-
-		if idx%batchSize == 0 && idx != 0 {
-			batch = append(batch, tmpInput)
-			tmpInput = eventbridge.PutEventsInput{
-				Entries: []*eventbridge.PutEventsRequestEntry{},
-			}
-		}
-	}
-	if len(tmpInput.Entries) > 0 {
-		batch = append(batch, tmpInput)
-	}
-
-	return batch, nil
 }
 
 func (awsEventBridge *awsEventBridgeProcessor) syncPatternMap(ctx context.Context, eventbus string, ruleARN string) {
@@ -261,12 +236,12 @@ func (awsEventBridge *awsEventBridgeProcessor) syncPatternMap(ctx context.Contex
 		select {
 		case <-ctx.Done():
 			return
-		case <-time.After(resyncInterval):
+		case <-time.After(awsEventBridge.resyncInterval):
 			awsEventBridge.Printf("syncing pattern map for rule ARN %s", ruleARN)
 			err := awsEventBridge.syncRules(ctx, eventbus, ruleARN)
 			if err != nil {
 				awsEventBridge.Printf("could not sync pattern map for rule ARN %s: %v", ruleARN, err)
-				awsEventBridge.Printf("retrying after %v", resyncInterval)
+				awsEventBridge.Printf("retrying after %v", awsEventBridge.resyncInterval)
 			}
 			awsEventBridge.Printf("successfully synced pattern map for rule ARN %s", ruleARN)
 		}
@@ -284,7 +259,7 @@ func (awsEventBridge *awsEventBridgeProcessor) syncRules(ctx context.Context, ev
 	for !found {
 		rules, err := awsEventBridge.ListRulesWithContext(ctx, &eventbridge.ListRulesInput{
 			EventBusName: aws.String(eventbus), // explicitely passing eventbus name because list assumes "default" otherwise
-			Limit:        aws.Int64(pageLimit),
+			Limit:        aws.Int64(defaultPageLimit),
 			NextToken:    nextToken,
 		})
 		if err != nil {
@@ -337,7 +312,7 @@ func (awsEventBridge *awsEventBridgeProcessor) syncRules(ctx context.Context, ev
 	return nil
 }
 
-func (awsEventBridge *awsEventBridgeProcessor) PushMetrics(ctx context.Context, ms *metrics.Server) {
+func (awsEventBridge *awsEventBridgeProcessor) PushMetrics(ctx context.Context, ms metrics.Receiver) {
 	ticker := time.NewTicker(metrics.PushInterval)
 	defer ticker.Stop()
 

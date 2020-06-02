@@ -26,6 +26,14 @@ var (
 	eventRouterStats = expvar.NewMap(mapName)
 )
 
+// Receiver receives metrics from metric providers
+type Receiver interface {
+	Receive(stats EventStats)
+}
+
+// verify that metrics server implements Receiver
+var _ Receiver = (*Server)(nil)
+
 // Server is the implementation of the metrics server
 type Server struct {
 	http *http.Server

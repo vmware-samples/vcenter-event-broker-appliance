@@ -3,15 +3,13 @@ package processor
 import (
 	"fmt"
 
-	"github.com/vmware/govmomi/vim25/types"
+	cloudevents "github.com/cloudevents/sdk-go/v2"
 )
 
-// Processor handles incoming vCenter events. This enables different FaaS
-// implementations for vCenter event processing. Note: in the case of processing
-// failure the current behavior is to log but return nil until at-least-once
-// semantics are implemented.
+// Processor handles incoming stream events to decouple event stream providers,
+// e.g. vCenter, from processors, e.g. OpenFaaS, knative, AWS EventBridge, etc.
 type Processor interface {
-	Process(types.ManagedObjectReference, []types.BaseEvent) error
+	Process(cloudevents.Event) error
 }
 
 // Error struct contains the generic error content used by the processors
