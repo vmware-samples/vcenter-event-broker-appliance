@@ -4,52 +4,43 @@
 
 echo '> Pre-Downloading Kubeadm Docker Containers'
 
-CONTAINERS=(
-k8s.gcr.io/kube-apiserver:v1.14.9
-k8s.gcr.io/kube-controller-manager:v1.14.9
-k8s.gcr.io/kube-scheduler:v1.14.9
-k8s.gcr.io/kube-proxy:v1.14.9
-k8s.gcr.io/pause:3.1
-k8s.gcr.io/etcd:3.3.10
-k8s.gcr.io/coredns:1.3.1
-antrea/antrea-ubuntu:v0.6.0
-embano1/tinywww:latest
-projectcontour/contour:v1.0.0-beta.1
-openfaas/faas-netes:0.9.0
-openfaas/gateway:0.17.4
-openfaas/basic-auth-plugin:0.17.0
-openfaas/queue-worker:0.8.0
-openfaas/faas-idler:0.2.1
-envoyproxy/envoy:v1.11.1
-prom/prometheus:v2.11.0
-prom/alertmanager:v0.18.0
-nats-streaming:0.11.2
-vmware/veba-event-router:${VEBA_VERSION}
-)
+VEBA_BOM_FILE=/root/config/veba-bom.json
 
-for i in ${CONTAINERS[@]};
+for component_name in $(jq '. | keys | .[]' ${VEBA_BOM_FILE});
 do
-	docker pull $i
+    HAS_CONTAINERS=$(jq ".$component_name | select(.containers != null)" ${VEBA_BOM_FILE})
+    if [ "${HAS_CONTAINERS}" != "" ]; then
+        for i in $(jq ".$component_name.containers | keys | .[]" ${VEBA_BOM_FILE}); do
+            value=$(jq -r ".$component_name.containers[$i]" ${VEBA_BOM_FILE});
+            container_name=$(jq -r '.name' <<< "$value");
+            container_version=$(jq -r '.version' <<< "$value");
+            docker pull "$container_name:$container_version"
+        done
+    fi
 done
 
 mkdir -p /root/download && cd /root/download
 
 echo '> Downloading FaaS-Netes...'
+OPENFAAS_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["openfaas"].version')
 git clone https://github.com/openfaas/faas-netes
 cd faas-netes
-git checkout 0.9.2
+git checkout ${OPENFAAS_VERSION}
 sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' yaml/*.yml
 cd ..
 
 echo '> Downloading Contour...'
+CONTOUR_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["contour"].version')
 git clone https://github.com/projectcontour/contour.git
 cd contour
-git checkout v1.0.0-beta.1
+git checkout ${CONTOUR_VERSION}
 sed -i '/^---/i \      dnsPolicy: ClusterFirstWithHostNet\n      hostNetwork: true' examples/contour/03-envoy.yaml
 sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' examples/contour/*.yaml
 cd ..
 
 echo '> Downloading Antrea...'
-wget https://github.com/vmware-tanzu/antrea/releases/download/v0.6.0/antrea.yml -O /root/download/antrea.yml
-sed -i 's/image: antrea\/antrea-ubuntu:.*/image: antrea\/antrea-ubuntu:v0.6.0/g' /root/download/antrea.yml
+ANTREA_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["antrea"].version')
+ANTREA_CONTAINER_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["antrea"].containers | .[] | select(.name | contains("antrea/antrea-ubuntu")).version')
+wget https://github.com/vmware-tanzu/antrea/releases/download/${ANTREA_VERSION}/antrea.yml -O /root/download/antrea.yml
+sed -i "s/image: antrea\/antrea-ubuntu:.*/image: antrea\/antrea-ubuntu:${ANTREA_CONTAINER_VERSION}/g" /root/download/antrea.yml
 sed -i '/image:.*/i \        imagePullPolicy: IfNotPresent' /root/download/antrea.yml
