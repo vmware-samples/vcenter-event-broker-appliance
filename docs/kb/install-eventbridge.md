@@ -50,7 +50,7 @@ Customers looking to seamlessly extend their vCenter through native AWS componen
   * Root Password - This is the OS root password for the VMware Event Broker Appliance
   * Enable SSH - Check the box to allow SSH to the Appliance (SSH to the appliance is disabled by default)
 
-#### vSphere* (**Required**)
+#### **vSphere** (**Required**)
 
   * vCenter Server - This FQDN or IP Address of your vCenter Server that you wish to associate this VMware Event Broker Appliance to for Event subscription
   * vCenter Username - The username to login to vCenter Server, as mentioned earlier, readOnly account is sufficient
