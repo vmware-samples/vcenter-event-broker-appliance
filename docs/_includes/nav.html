@@ -1,6 +1,13 @@
 <nav id="toc-nav" class="navigation">
   <!-- If new pages are added to the site and the TOC needs to be updated, it
   can be overridden, using toc-mapping.yml -->
+  <form action="/search/" class="nav-search-form">
+    <div class="tipue_search_box">
+      <img src="{{ '/assets/tipuesearch/search.png' | relative_url }}" class="tipue_search_icon">
+      <input type="text" name="q" id="tipue_search_input" pattern=".{3,}" title="At least 3 characters" required>
+    </div>
+  </form>
+
   {% assign tocTemplateName = site.data.toc-mapping[page.version] %}
   {% if tocTemplateName == null %}
     {% assign tocTemplateName = 'default' %}
