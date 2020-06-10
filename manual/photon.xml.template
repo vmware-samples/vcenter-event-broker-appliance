@@ -8,7 +8,7 @@
       <Category>Networking</Category>
         <Property ovf:key="guestinfo.hostname" ovf:type="string" ovf:userConfigurable="true">
             <Label>Hostname</Label>
-            <Description>Hostname of system</Description>
+            <Description>Hostname (FQDN) of system</Description>
         </Property>
         <Property ovf:key="guestinfo.ipaddress" ovf:type="string" ovf:userConfigurable="true">
             <Label>IP Address</Label>
@@ -37,11 +37,11 @@
       <Category>Proxy Settings (optional)</Category>
         <Property ovf:key="guestinfo.http_proxy" ovf:type="string" ovf:userConfigurable="true">
             <Label>HTTP Proxy</Label>
-            <Description>Enter HTTP Proxy Server followed by the port and without typing "http://" before. Example: "proxy.provider.com:3128"</Description>
+            <Description>Enter HTTP Proxy URL followed by the port. Example: "http://proxy.provider.com:3128"</Description>
         </Property>
         <Property ovf:key="guestinfo.https_proxy" ovf:type="string" ovf:userConfigurable="true">
             <Label>HTTPS Proxy</Label>
-            <Description>Enter HTTPS Proxy Server followed by the port and without typing "https://" before. Example: "proxy.provider.com:3128"</Description>
+            <Description>Enter HTTPS Proxy URL followed by the port. Example: "https://proxy.provider.com:3128"</Description>
         </Property>
         <Property ovf:key="guestinfo.proxy_username" ovf:type="string" ovf:userConfigurable="true">
             <Label>Proxy Username (optional)</Label>
@@ -53,12 +53,16 @@
         </Property>
         <Property ovf:key="guestinfo.no_proxy" ovf:type="string" ovf:userConfigurable="true">
             <Label>No Proxy</Label>
-            <Description>No Proxy for e.g. your internal domain suffix. Comma separated (localhost, 127.0.0.1, domain.local)</Description>
+            <Description>No Proxy for e.g. your internal domain suffix. Adding the appliance IP address is recommended. Comma separated (localhost, 127.0.0.1, domain.local)</Description>
         </Property>
       <Category>OS Credentials</Category>
         <Property ovf:key="guestinfo.root_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Root Password</Label>
             <Description>Password to login in as root. Please use a secure password</Description>
+        </Property>
+        <Property ovf:key="guestinfo.enable_ssh" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+            <Label>Enable SSH</Label>
+            <Description>Automatically start SSH daemon</Description>
         </Property>
      <Category>vSphere</Category>
         <Property ovf:key="guestinfo.vcenter_server" ovf:type="string" ovf:userConfigurable="true" ovf:value="">

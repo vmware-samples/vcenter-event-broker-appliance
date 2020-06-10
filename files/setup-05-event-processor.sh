@@ -27,7 +27,7 @@ if [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
 
 	ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY=$(echo -n ${AWS_EVENTBRIDGE_ACCESS_KEY} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
 	ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET=$(echo -n ${AWS_EVENTBRIDGE_ACCESS_SECRET} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
-	ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS=$(echo -n ${VCENTER_USEAWS_EVENTBRIDGE_EVENT_BUSNAME} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
+	ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS=$(echo -n ${AWS_EVENTBRIDGE_EVENT_BUS} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
 	ESCAPED_AWS_EVENTBRIDGE_RULE_ARN=$(echo -n ${AWS_EVENTBRIDGE_RULE_ARN} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
 
     cat > ${EVENT_ROUTER_CONFIG} << __AWS_EVENTBRIDGE_PROCESSOR__

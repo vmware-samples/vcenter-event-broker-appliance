@@ -11,13 +11,13 @@ cta:
 
 # Writing your own functions
 
-The VMware Event Broker Appliance uses OpenFaaS as a Function-as-a-Service (FaaS) platform. If you are looking to understand the basics of functions, start [here](kb/functions).
+The VMware Event Broker Appliance uses OpenFaaS as a Function-as-a-Service (FaaS) platform. If you are looking to understand the basics of functions, start [here](functions).
 
 You can also get started quickly with these quickstart [templates](https://github.com/pksrc/vebafn){:target="_blank"}.
 
 ## Instructions
 
-> **ASSUMPTION:** The following steps assume VMware Event Broker Appliance has been [installed (configured with OpenFaaS)](/kb/install-openfaas) and is running.
+> **ASSUMPTION:** The following steps assume VMware Event Broker Appliance has been [installed (configured with OpenFaaS)](install-openfaas) and is running.
 
 
 * Create a directory for your function and set up the secret config file

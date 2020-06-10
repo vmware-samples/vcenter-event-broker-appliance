@@ -3,7 +3,7 @@ toc:
     subfolderitems:
       - page: About
         id: intro-about
-        url: /kb 
+        url: /kb/
       - page: Architecture
         id: intro-architecture
         url: /kb/architecture
@@ -64,7 +64,10 @@ toc:
       - page: Using Harbor with VEBA
         id: site-resources
         external_url: https://rguske.github.io/post/using-harbor-with-the-vcenter-event-broker-appliance/
-  
+      - page: Monitoring VEBA with vROps
+        id: site-resources
+        external_url: https://rguske.github.io/post/monitoring-the-vmware-event-broker-appliance-with-vrealize-operations-manager/
+
   - title: Troubleshoot
     subfolderitems:
       - page: Troubleshooting Appliance

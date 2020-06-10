@@ -19,6 +19,7 @@ PROXY_USERNAME=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.pr
 PROXY_PASSWORD=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.proxy_password" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 NO_PROXY=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.no_proxy" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 ROOT_PASSWORD=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.root_password" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
+ENABLE_SSH=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.enable_ssh" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}' | tr '[:upper:]' '[:lower:]')
 VCENTER_SERVER=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.vcenter_server" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 VCENTER_USERNAME=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.vcenter_username" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')
 VCENTER_PASSWORD=$(vmtoolsd --cmd "info-get guestinfo.ovfEnv" | grep "guestinfo.vcenter_password" | awk -F 'oe:value="' '{print $2}' | awk -F '"' '{print $1}')

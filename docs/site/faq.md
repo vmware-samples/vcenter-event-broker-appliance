@@ -18,6 +18,10 @@ faqs:
     A: Instantaneous to a few seconds! The function execution itself is not considered in this answer since that is dependent on the logic that is being implemented.
   - Q: Can I setup the VMware Event Broker Appliance components on Kubernetes?
     A: Yes! Follow the steps provided [here](/kb/advanced-deploy-k8s).
+  - Q: Can I use a private registry like e.g. [Harbor](https://goharbor.io/) to have a source of truth for my functions (images)?
+    A: Yes! Follow the steps provided [here](https://rguske.github.io/post/using-harbor-with-the-vcenter-event-broker-appliance/).
+  - Q: How can I monitor the Appliance, the Kubernetes components as well as the functions (pods) in terms of utilization, performance and state?
+    A: vRealize Operations Manager provides these capabilities as described [here](https://rguske.github.io/post/monitoring-the-vmware-event-broker-appliance-with-vrealize-operations-manager/).
 - title: Common Questions - Functions
   id: function
   items: 

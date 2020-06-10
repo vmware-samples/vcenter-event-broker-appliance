@@ -1,0 +1,23 @@
+name: VMware Event Router Unit Tests
+
+# triggered on PRs but only when changes inside vmware-event-router (sub)dir(s)
+on:
+  pull_request:
+    paths:
+      - 'vmware-event-router/**'
+
+# run all jobs with these defaults, unless specified otherwise
+defaults:
+  run:
+    shell: bash
+    working-directory: ./vmware-event-router
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source
+        uses: actions/checkout@master
+      - name: run unit tests
+        run: make test
+          

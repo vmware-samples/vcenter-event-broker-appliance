@@ -44,7 +44,7 @@
         "ethernet0.virtualDev": "vmxnet3",
         "ethernet0.addressType": "generated",
         "ethernet0.wakeOnPcktRcv": "FALSE",
-        "annotation": "Version: {{ user `version` }}"
+        "annotation": "Version: {{ user `VEBA_VERSION` }}"
       }
     }
   ],

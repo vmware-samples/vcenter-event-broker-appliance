@@ -23,6 +23,7 @@ VEBA_DNS="192.168.30.1"
 VEBA_DNS_DOMAIN="primp-industries.com"
 VEBA_NTP="pool.ntp.org"
 VEBA_OS_PASSWORD="VMware1!"
+VEBA_ENABLE_SSH="False"
 VEBA_NETWORK="VM Network"
 VEBA_DATASTORE="sm-vsanDatastore"
 VEBA_DEBUG="True"
@@ -35,6 +36,12 @@ VEBA_AWS_EVENTBRIDGE_ACCESS_SECRET="FILL_ME_IN_PLEASE"
 VEBA_AWS_EVENTBRIDGE_EVENT_BUS="FILL_ME_IN_PLEASE"
 VEBA_AWS_EVENTBRIDGE_REGION="us-west-2"
 VEBA_AWS_EVENTBRIDGE_RULE_ARN="FILL_ME_IN_PLEASE"
+VEBA_HTTP_PROXY=""
+VEBA_HTTPS_PROXY=""
+VEBA_PROXY_USERNAME=""
+VEBA_PROXY_PASSWORD=""
+VEBA_NOPROXY=""
+
 
 ### DO NOT EDIT BEYOND HERE ###
 
@@ -54,7 +61,13 @@ VEBA_AWS_EVENTBRIDGE_RULE_ARN="FILL_ME_IN_PLEASE"
     --prop:guestinfo.dns=${VEBA_DNS} \
     --prop:guestinfo.domain=${VEBA_DNS_DOMAIN} \
     --prop:guestinfo.ntp=${VEBA_NTP} \
+    --prop:guestinfo.http_proxy=${VEBA_HTTP_PROXY} \
+    --prop:guestinfo.https_proxy=${VEBA_HTTPS_PROXY} \
+    --prop:guestinfo.proxy_username=${VEBA_PROXY_USERNAME} \
+    --prop:guestinfo.proxy_password=${VEBA_PROXY_PASSWORD} \
+    --prop:guestinfo.no_proxy=${VEBA_NOPROXY} \
     --prop:guestinfo.root_password=${VEBA_OS_PASSWORD} \
+    --prop:guestinfo.enable_ssh=${VEBA_ENABLE_SSH} \
     --prop:guestinfo.vcenter_server=${VEBA_VCENTER_SERVER} \
     --prop:guestinfo.vcenter_username=${VEBA_VCENTER_USER} \
     --prop:guestinfo.vcenter_password=${VEBA_VCENTER_PASS} \

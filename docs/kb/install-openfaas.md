@@ -38,14 +38,15 @@ Customers looking to seamlessly extend their vCenter by either deploying our pre
   * NTP Server - NTP Server(s) for proper time synchronization. If you have multiple NTP Servers, input needs to be **space separated**.
 
 #### **Proxy Settings** (Optional)
-  * HTTP Proxy Server - HTTP Proxy Server followed by the port and without typing http:// before (e.g. proxy.provider.com:3128)
-  * HTTPS Proxy - HTTPS Proxy Server followed by the port and without typing https:// before (e.g. proxy.provider.com:3128)
+  * HTTP Proxy Server - HTTP Proxy Server followed by the port (e.g. http://proxy.provider.com:3128)
+  * HTTPS Proxy - HTTPS Proxy Server followed by the port (e.g. http(s)://proxy.provider.com:3128)
   * Proxy Username - Optional Username for Proxy Server
   * Proxy Password - Optional Password for Proxy Server
   * No Proxy - Exclude internal domain suffix. Comma separated (localhost, 127.0.0.1, domain.local)
 
 #### **OS Credentials** (**Required**)
   * Root Password - This is the OS root password for the VMware Event Broker Appliance
+  * Enable SSH - Check the box to allow SSH to the Appliance (SSH to the appliance is disabled by default)
 
 #### **vSphere** (**Required**)
 

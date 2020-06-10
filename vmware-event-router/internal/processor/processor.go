@@ -1,6 +1,8 @@
 package processor
 
 import (
+	"fmt"
+
 	"github.com/vmware/govmomi/vim25/types"
 )
 
@@ -11,3 +13,20 @@ import (
 type Processor interface {
 	Process(types.ManagedObjectReference, []types.BaseEvent) error
 }
+
+// Error struct contains the generic error content used by the processors
+// it extends the simple error by providing context which processor gave
+// the error
+type Error struct {
+	processor string
+	err       error
+}
+
+func processorError(processor string, err error) error {
+	return &Error{
+		processor: processor,
+		err:       err,
+	}
+}
+
+func (e *Error) Error() string { return fmt.Sprintf("%s: %s", e.processor, e.err.Error()) }
