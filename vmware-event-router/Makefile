@@ -42,7 +42,7 @@ binary: unit-test tidy
 build: unit-test tidy
 	$(info Make: Building image "$(IMAGE_NAME)".)
 	$(if $(GIT_NOT_CLEAN_CHECK), $(error "Dirty Git repository!"))
-	docker build -t $(BUILD_TAG) --build-arg COMMIT=$(COMMIT) --build-arg VERSION=$(VERSION) .
+	docker build -t $(LATEST_TAG) --build-arg COMMIT=$(COMMIT) --build-arg VERSION=$(VERSION) .
 
 gofmt:
 	$(info Make: Checking code is gofmted.)
@@ -56,9 +56,9 @@ unit-test: gofmt
 test: unit-test
 
 tag: 
-	$(info Make: Tagging image "$(IMAGE_NAME)" with "$(BUILD_TAG)", "$(LATEST_TAG) and "$(VERSION_TAG)".)
-	@docker tag $(BUILD_TAG) $(LATEST_TAG)
-	@docker tag $(BUILD_TAG) $(VERSION_TAG)
+	$(info Make: Tagging image "$(LATEST_TAG)" with "$(BUILD_TAG)" and "$(VERSION_TAG)".)
+	@docker tag $(LATEST_TAG) $(BUILD_TAG) 
+	@docker tag $(LATEST_TAG) $(VERSION_TAG)
 
 push: tag
 	$(info Make: Pushing image "$(IMAGE_NAME)".)

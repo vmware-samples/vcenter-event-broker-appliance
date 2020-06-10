@@ -1,6 +1,6 @@
 {
     "veba": {
-        "version": "v0.4.0"
+        "version": "v0.4.1"
     },
     "antrea": {
         "version": "v0.6.0",
@@ -100,10 +100,10 @@
         }]
     },
     "vmware-event-router": {
-        "version": "v0.4.0",
+        "version": "v0.4.1",
         "containers": [{
             "name": "vmware/veba-event-router",
-            "version": "v0.4.0"
+            "version": "v0.4.1"
         }]
     }
 }
