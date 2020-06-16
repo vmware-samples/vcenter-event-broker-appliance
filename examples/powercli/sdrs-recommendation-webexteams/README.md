@@ -21,12 +21,12 @@ You can get the room ID by listing all the rooms on <https://developer.webex.com
 
 
 Step 3 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
-
 ```
 VEBA_GATEWAY=https://veba.primp-industries.com
 export OPENFAAS_URL=${VEBA_GATEWAY}
+PASSWORD="OpenFaaSPassword"
 
-faas-cli login --username admin --password-stdin --tls-no-verify
+echo $PASSWORD | faas-cli login --username admin --password-stdin --tls-no-verify
 ```
 
 Step 4 - Create function secret (only required once)
