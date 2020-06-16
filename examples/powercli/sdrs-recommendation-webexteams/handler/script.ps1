@@ -29,9 +29,26 @@ $bodytemp = @{
     markdown=$Body
 }
 $json = $bodytemp | ConvertTo-Json
-Invoke-RestMethod -Method Post `
+try 
+{
+    Invoke-RestMethod -Method Post `
     -Headers @{"Authorization"="Bearer $($VC_CONFIG.CISCO_BOT_TOKEN)"} `
     -ContentType "application/json" -Body $json `
     -Uri "https://api.ciscospark.com/v1/messages"
+}
+catch 
+{
+    if($_.Exception.Response.StatusCode -eq "Unauthorized")
+    {
+        Write-Host "Unauthorized to send messages to the WebEx API. Please verify the tokens in vc-sdrs-config.json and recreate the secret"
+        break
+    }
+    else
+    {
+        Write-Host $_.Exception.Message
+        break    
+    }
+}
+
 
 
