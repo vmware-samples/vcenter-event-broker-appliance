@@ -8,7 +8,7 @@
 * vCenter Server 6.x or greater
 * Account to login to vCenter Server (readOnly is sufficient)
 
-**Step 1** - Download the vCenter Event Broker Appliance (OVA) from the [VMware Fling site](https://flings.vmware.com/vcenter-event-broker-appliance).
+**Step 1** - Download the vCenter Event Broker Appliance (OVA) from the [VMware Fling site](https://flings.vmware.com/vmware-event-broker-appliance).
 
 **Step 2** - Deploy the vCenter Event Broker Appliance OVA to your vCenter Server using the vSphere HTML5 Client. As part of the deployment you will be prompted to provide the following input:
 

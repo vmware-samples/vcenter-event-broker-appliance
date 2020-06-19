@@ -46,7 +46,7 @@ footer_social_links:
 
 github:
   zip_url: https://github.com/vmware-samples/vcenter-event-broker-appliance/archive/master.zip
-  fling_url: https://flings.vmware.com/vcenter-event-broker-appliance
+  fling_url: https://flings.vmware.com/vmware-event-broker-appliance
     
 collections:
   - functions

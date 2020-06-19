@@ -25,7 +25,7 @@ Customers looking to seamlessly extend their vCenter through native AWS componen
 * Access credentials for AWS account
 * Details about the AWS EventBridge setup (Rules, Region etc) 
 
-### Step 1 - Download the VMware Event Broker Appliance (OVA) from the [VMware Fling site](https://flings.vmware.com/vcenter-event-broker-appliance){:target="_blank"}.
+### Step 1 - Download the VMware Event Broker Appliance (OVA) from the [VMware Fling site](https://flings.vmware.com/vmware-event-broker-appliance){:target="_blank"}.
 
 ### Step 2 - Deploy the VMware Event Broker Appliance OVA to your vCenter Server using the vSphere HTML5 Client. As part of the deployment you will be prompted to provide the following input:
 
