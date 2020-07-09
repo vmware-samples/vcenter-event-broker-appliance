@@ -130,6 +130,15 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/powershell/vmware-cloud-ngw-teams"
+
+  - title: vCenter Managed Object Pre-Filter  
+    usecases: 
+    - item: other
+    id: pre-filter
+    description: Function to limit the scope of other functions by allowing filtering of events by vCenter Inventory paths using standard regex.
+    links: 
+    - language: python
+      url: "/tree/master/examples/python/pre-filter" #relative path to the function
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 
