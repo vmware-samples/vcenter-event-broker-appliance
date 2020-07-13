@@ -1,0 +1,17 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: https://veba.abc.com
+functions:
+  powercli-ha-restarted-vms:
+    lang: powercli
+    handler: ./handler
+    image: vmware/veba-powercli-ha-restarted-vms:latest
+    environment:
+      write_debug: true
+      read_debug: true
+      function_debug: false
+    secrets:
+      - vcconfig-ha-restarted-vms
+    annotations:
+      topic: com.vmware.vc.HA.ClusterFailoverActionCompletedEvent

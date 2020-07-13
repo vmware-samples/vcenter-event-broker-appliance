@@ -103,6 +103,15 @@ examples:
     links: 
     - language: python
       url: "/tree/master/examples/python/invoke-rest-api"
+
+  - title: HA Restarted VMs Notification
+    usecases: 
+    - item: notification
+    id: ha-restarted-vms
+    description: Send an email listing all of the VMs which were restarted due to a host failure in an HA enabled cluster.
+    links: 
+    - language: powercli
+      url: "/tree/master/examples/powercli/ha-restarted-vms"
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 
