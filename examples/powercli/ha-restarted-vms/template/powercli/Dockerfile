@@ -1,5 +1,8 @@
 FROM vmware/powerclicore:latest
 
+# Add tzdata for timezones
+RUN tdnf install -y tzdata
+
 RUN mkdir -p /home/app
 USER root
 RUN echo "Pulling watchdog binary from Github." \

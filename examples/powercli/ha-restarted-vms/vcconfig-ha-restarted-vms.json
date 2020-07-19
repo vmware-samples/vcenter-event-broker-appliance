@@ -7,5 +7,6 @@
     "SMTP_USERNAME" : "",
     "SMTP_PASSWORD" : "",
     "EMAIL_TO": ["email_recipients@abc.com"],
-    "EMAIL_FROM" : "email_sender@abc.com"
+    "EMAIL_FROM" : "email_sender@abc.com",
+    "TIMEZONE" : "America/New_York"
 }

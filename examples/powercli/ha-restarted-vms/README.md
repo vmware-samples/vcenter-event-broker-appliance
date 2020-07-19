@@ -18,6 +18,8 @@ Step 2 - Update `stack.yml` and `vcconfig-ha-restarted-vms.json` with your envir
 
 <B>Note:</B> Be sure to configure all of the appropriate SMTP fields such as the SMTP_SERVER and SMTP_PORT for your particular SMTP server.  If authentication is not needed for your SMTP server, you can leave SMTP_USERNAME and SMTP_PASSWORD blank.
 
+TIMEZONE:  The time displayed in the report will be that of your vCenter (UTC by default).  If you would like the time to reflect your local timezone, enter it in this field.  Leave blank to use the vCenter time.  You can find timezone entries to enter in this field at https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
 Step 3 - Login to the OpenFaaS gateway on vCenter Event Broker Appliance
 
 ```

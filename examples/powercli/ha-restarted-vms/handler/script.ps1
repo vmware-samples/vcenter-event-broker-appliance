@@ -23,6 +23,11 @@ $eventnumber = 1000
 # get vCenter EventManager
 $si = get-view ServiceInstance
 $em = get-view $si.Content.EventManager
+# Create vmRestarted event begin/end times
+# End time = time of HA.ClusterFailoverActionCompletedEvent
+# Begin time = End time minus 10 minutes (arbitrary)
+$evtBeginTime = ([datetime]$json.data.CreatedTime).AddMinutes(-10)
+$evtEndTime = ([datetime]$json.data.CreatedTime)
 
 # Create Event Filter Spec
 $EventFilterSpec = New-Object VMware.Vim.EventFilterSpec
@@ -31,8 +36,8 @@ $tgtEvtTypeIDs = "com.vmware.vc.ha.VmRestartedByHAEvent", "com.vmware.vc.HA.DasH
 $EventFilterSpec.EventTypeId = $tgtEvtTypeIDs
 # Time range to look for specific IDs (current day specified) for EventFilterSpec
 $EventFilterSpecByTime = New-Object VMware.Vim.EventFilterSpecByTime
-$EventFilterSpecByTime.BeginTime = [datetime]::Today
-$EventFilterSpecByTime.EndTime = ([datetime]::Today).AddDays(+1)
+$EventFilterSpecByTime.BeginTime = $evtBeginTime
+$EventFilterSpecByTime.EndTime = $evtEndTime
 $EventFilterSpec.Time = $EventFilterSpecByTime
 # Create an Event Collector and loop through events storing them into an array
 $eCollector = Get-View ($em.CreateCollectorForEvents($EventFilterSpec))
@@ -54,9 +59,20 @@ if ($report | Where-Object{$_.EventTypeId -eq "com.vmware.vc.HA.DasHostFailedEve
     # Displays host FQDN
     #$vmHost = $report | Where-Object {$_.EventTypeId -eq "com.vmware.vc.HA.DasHostFailedEvent"} | Select-Object ObjectName -ExpandProperty ObjectName -First 1
 }
+# Function to validate $VC_CONFIG.TIMEZONE and adjust VM restart time in report if necessary
+function Check-Timezone {
+    param ($createdTime)
+    if ($VC_CONFIG.TIMEZONE.length -gt 0) {
+        [datetime]$convertedDate = $createdTime
+        $newTime = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId($convertedDate, $($VC_CONFIG.TIMEZONE))
+        return $newTime
+    } else {
+        return $createdTime
+    }
+}
 
 # Set up fields for email body and send email - only sending VMname, time VM restarted on another host, and VM description
-$output = $report | Where-Object {$_.ObjectType -eq "VirtualMachine" } | Select-Object ObjectName, @{N = "Date"; E = { $_.CreatedTime } }, @{N = "Description"; E = { (" - " + (Get-view -id $_.vm.vm).config.annotation | Out-String) } } | Sort-Object ObjectName
+$output = $report | Where-Object {$_.ObjectType -eq "VirtualMachine" } | Select-Object @{N = "VirtualMachine"; E = {$_.ObjectName}}, @{N = "Date"; E = { Check-Timezone $_.CreatedTime } }, @{N = "Description"; E = { (" - " + (Get-view -id $_.vm.vm).config.annotation | Out-String) } } | Sort-Object VirtualMachine
 $msgBody = $output | ConvertTo-Html | Out-String
 $subject = "** $vmHost Failure - VMs Restarted **"
 
