@@ -1,0 +1,14 @@
+provider:
+  name: openfaas
+  gateway: https://veba.primp-industries.com
+functions:
+  powershell-ngw-slack:
+    lang: powercli
+    handler: ./handler
+    image: vmware/veba-powershell-ngw-slack:latest
+    environment:
+      write_debug: true
+      read_debug: true
+      function_debug: true
+    secrets:
+      - ngw-slack-config

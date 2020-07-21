@@ -112,6 +112,24 @@ examples:
     links: 
     - language: powercli
       url: "/tree/master/examples/powercli/ha-restarted-vms"
+
+  - title: VMware Cloud on AWS SDDC Provisioned and Deletion Slack Notification
+    usecases:
+    - item: notification
+    id: vmware-cloud-ngw-slack
+    description: Send Slack message when a VMware Cloud on AWS SDDC is Provisioned or Deleted.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/powershell/vmware-cloud-ngw-slack"
+
+  - title: VMware Cloud on AWS SDDC Provisioned and Deletion Microsoft Teams Notification
+    usecases:
+    - item: notification
+    id: vmware-cloud-ngw-teams
+    description: Send Microsoft Team message when a VMware Cloud on AWS SDDC is Provisioned or Deleted.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/powershell/vmware-cloud-ngw-teams"
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 
