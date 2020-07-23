@@ -30,6 +30,7 @@ The VMware Event Router uses the [CloudEvents](https://cloudevents.io/) standard
     - [Assisted Deployment](#assisted-deployment)
     - [Manual Deployment](#manual-deployment)
 - [Build from Source](#build-from-source)
+- [Contribute](#contribute)
 - [Example Event Structure](#example-event-structure)
 
 ## Usage and Configuration
@@ -331,6 +332,43 @@ export GO111MODULE=on
 # defaults to build with Docker (use make binary for local executable instead)
 make 
 ```
+
+> **Note:** For `_test.go` files your editor (e.g. vscode) might show errors and
+> not be able to resolve symbols. This is due to the use of build tags which
+> `gopls` currently does [not support](https://github.com/golang/go/issues/29202#issuecomment-515170916). In vscode add this to your configuration:
+>
+> ```json
+> "go.toolsEnvVars": {
+>        "GOFLAGS": "-tags=integration,unit"
+> }
+> ``` 
+
+## Contribute
+
+If you would like to make modification/additions to this code base, please
+follow our [CONTRIBUTION](https://vmweventbroker.io/community) guidelines first.
+
+In the `Makefile` we provide `make` targets for building a binary, Docker image
+and validating changes via unit tests (`make unit-test`). These tests
+will run when a pull request is submitted, but in order to run them locally to
+verify your changes you need to have the following bits installed:
+
+`make unit-test`:
+
+- `go` tool chain
+- `make`
+- `gofmt`
+
+To run the integration tests without the need to create the testbed manually use
+the following script:
+
+`./hack/run_integration_tests.sh`:
+
+- `go` tool chain
+- `jq`
+- `kind`
+- `docker`
+
 
 ## Example Event Structure
 
