@@ -14,5 +14,4 @@ require (
 	github.com/vmware/govmomi v0.22.2
 	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
 	golang.org/x/sys v0.0.0-20200523222454-059865788121 // indirect
-	sigs.k8s.io/kind v0.8.1 // indirect
 )
