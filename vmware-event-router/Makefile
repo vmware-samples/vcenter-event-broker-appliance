@@ -1,5 +1,7 @@
+BOM_FILE='../veba-bom.json'
+JQBIN=jq -r
 COMMIT := $(shell git rev-parse --short HEAD)
-VERSION := $(shell /bin/cat ../VERSION)
+VERSION := $(shell $(JQBIN) ".veba.version" $(BOM_FILE))
 
 # fail fast
 $(if $(value COMMIT),,$(error COMMIT must be set (.git project?)))
@@ -51,9 +53,16 @@ gofmt:
 unit-test: gofmt
 	$(eval TAG=unit)
 	$(eval TEST_PKGS=$(shell go list -tags=${TAG} -f '{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' ./...))
-	@GORACE=history_size=5 go test -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover ${TEST_PKGS}
+	@GORACE=history_size=5 go test -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover ${TEST_PKGS} -v
 
-test: unit-test
+# requires running Kubernetes/OpenFaaS environment - or use
+# hack/run_integration_tests.sh (requires kind)
+integration-test: gofmt
+	$(eval TAG=integration,openfaas)
+	$(eval TEST_PKGS=$(shell go list -tags=${TAG} -f '{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' ./...))
+	@GORACE=history_size=5 go test -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover ${TEST_PKGS} -v -ginkgo.v
+
+test: unit-test integration-test
 
 tag: 
 	$(info Make: Tagging image "$(LATEST_TAG)" with "$(BUILD_TAG)" and "$(VERSION_TAG)".)

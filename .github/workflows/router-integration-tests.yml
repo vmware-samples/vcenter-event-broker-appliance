@@ -1,4 +1,4 @@
-name: VMware Event Router Unit Tests
+name: VMware Event Router Integration Tests
 
 # triggered on every push and PRs but only when changes inside
 # vmware-event-router (sub)dir(s)
@@ -18,10 +18,11 @@ defaults:
     working-directory: ./vmware-event-router
 
 jobs:
-  unit-tests:
+  integration-tests:
     runs-on: ubuntu-latest
     steps:
       - name: checkout source
         uses: actions/checkout@v2
-      - name: run unit tests and verify image build (w/out push)
-        run: make build
+      - name: run integration tests with OpenFaaS
+        run: hack/run_integration_tests.sh
+          
