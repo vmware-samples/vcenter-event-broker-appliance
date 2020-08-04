@@ -1,4 +1,4 @@
-name: Build and push VMware Event Router Pre-Release Image to Docker Hub
+name: Pre-Release VMware Event Router
 
 on:
   push:

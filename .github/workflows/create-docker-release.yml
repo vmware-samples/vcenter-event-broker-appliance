@@ -1,4 +1,4 @@
-name: Build and push VMware Event Router to Docker Hub
+name: Release VMware Event Router
 
 on:
   release:
