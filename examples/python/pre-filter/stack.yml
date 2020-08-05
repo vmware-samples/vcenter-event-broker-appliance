@@ -1,0 +1,19 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: https://VEBA_FQDN_OR_IP
+functions:
+  pre-filter:
+    lang: python3-flask
+    handler: ./pre-filter
+    image: vmware/veba-python-pre-filter:latest
+    environment:
+      write_debug: true
+      read_debug: true
+      insecure_ssl: true
+      call_function: veba-echo
+      filter_vm: '.*'
+    secrets:
+      - vcconfig
+    annotations:
+      topic: "DrsVmPoweredOnEvent,VmPoweredOnEvent"
