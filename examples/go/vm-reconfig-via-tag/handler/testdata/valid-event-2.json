@@ -1,0 +1,10 @@
+{
+    "data": {
+        "Vm": {
+            "Vm" :{
+                "Value": "vm-2",
+                "Type": "VirtualMachine"
+            }
+        }
+    }
+}
