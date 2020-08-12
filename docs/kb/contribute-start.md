@@ -80,7 +80,7 @@ You can then submit a pull request (PR) to the VEBA maintainers - a step-by-step
 
 # Changing or contributing new functions
 
-The git commands are the same, but in order to change code, you must reference your own Docker image. The example YAML below comes from the [datastore-usage-email](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/development/examples/powercli/datastore-usage-email){:target="_blank"} sample function. Note that the `image:` references the `vmware` docker account. You must change this to your own docker account. As always the `gateway:` must point to your own local VEBA appliance
+The git commands are the same, but in order to change code, you must reference your own Docker image. The example YAML below comes from the [datastore-usage-email](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/powercli/datastore-usage-email){:target="_blank"} sample function. Note that the `image:` references the `vmware` docker account. You must change this to your own docker account. As always the `gateway:` must point to your own local VEBA appliance
 
 
 ```yaml

@@ -16,7 +16,7 @@ git checkout master
 
 ## Deploy a secondary function
 The pre-filter function requires a secondary function to call, which must already be deployed to your VEBA appliance. This can be any valid function but __probably shouldn't__ have any topics defined in its `stack.yml` file. 
-If you are just getting started, see the [veba-echo](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/development/examples/python/echo) function for an example. 
+If you are just getting started, see the [veba-echo](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/python/echo) function for an example. 
 
 
 ## Customize the function

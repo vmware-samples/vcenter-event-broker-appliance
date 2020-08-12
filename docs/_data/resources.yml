@@ -3,74 +3,123 @@
 # Featured links with the below details populated. Current max limit of links set to 5
 # use the flag display: true/false to control if the link needs to show up on the site. Videos show up in the same order as below
 #
-linklimit: 5  #Avoid high number to reduce vertical scroll
+linklimit: 7  #Avoid high number to reduce vertical scroll
 videolimit: 3 #Optimal number, DONT CHANGE
 
 links:
-  - title: Integrating vCenter with PagerDuty
-    display: true
-    details: 
-      url_text: blog post
-      external_url: https://bit.ly/vebapagerduty
-      external_image: https://miro.medium.com/max/2000/1*I37x-vfp3ry3Y4O3f_Q-Kg.png
-      author_name: Partheeban Kandasamy (PK)
-      excerpt: Uptime and Reliability is more important now than ever during these times when Technology and Infrastructure is enabling us fight a global pandemic with work from home policies. It is no wonder that eyes lit up when you say PagerDuty and vCenter integration...
-  
-  - title: Monitoring the VMware Event Broker Appliance with vRealize Operations Manager
+  - title: VMware Event Broker (aka VEBA) on Kubernetes – First steps
     display: true
     details:
       url_text: blog post
-      external_url: https://rguske.github.io/post/monitoring-the-vmware-event-broker-appliance-with-vrealize-operations-manager/
-      external_image: https://rguske.github.io/img/posts/202005_vropsveba/CapturFiles-20200512_041624.jpg
-      author_name: Robert Guske
-      excerpt: ...Let me demonstrate you how we can prepare VEBA to send the desired data (metrics) to vROPs and how we import a custom dashboard that provides you with plenty of interesting and useful information...
+      external_url: https://vuptime.io/2020/11/02/vmware-event-broker-on-k8s-first-steps/
+      external_image: https://vuptime.io/images/veba-first-steps/veba_otto_the_orca_md.png
+      author_name: Ludovic Rivallain
+      excerpt: In the following post, we will discover how to deploy the VMware Event Broker services (VEBA) within an existing Kubernetes (K8S) cluster and use it to add/edit custom attributes information to virtual machines...
 
-  - title: vCenter Event Broker Appliance Updates – VMworld, Fling, Community & Open Source
+  - title: Spin up a local VEBA environment with KinD and vCenter simulator
+    display: true
+    details:
+      url_text: blog post
+      external_url: https://rguske.github.io/post/spin-up-a-local-veba-environment-with-kind-and-vcenter-simulator/
+      external_image: https://rguske.github.io/img/vebakindvcsim_cover.jpg
+      author_name: Robert Guske
+      excerpt: The lightweight alternative would be, to e.g. leverage VMware’s Fusion or Workstation to spin up a Kubernetes cluster locally and to deploy the Event Router, OpenFaaS as well as your function(s) on top of it. Asking yourself now- And what about the vCenter Server? Good question...
+
+  - title: Self Service for your DataCenter + Auto Remediation
     display: true
     details: 
       url_text: blog post
-      external_url: https://www.virtuallyghetto.com/2019/11/vcenter-event-broker-appliance-updates-vmworld-fling-community-open-source.html
-      external_image: https://i0.wp.com/www.virtuallyghetto.com/wp-content/uploads/2019/11/vcenter-event-broker-appliance-vmworld.png?resize=768%2C386&ssl=1 
+      external_url: https://bit.ly/vmselfservepk 
+      external_image: https://miro.medium.com/max/1506/1*l2CTz_sUAjRmWugTV_952A.png
+      author_name: Partheeban Kandasamy (PK) & Frankie Gold
+      excerpt: For the Command/User driven use case, What if IT enables Business Stakeholders to interact with vSphere SDDC through a Slack command...For the event-driven use case, what if certain crises are handled automatically thus increasing operational efficiency...
+
+  - title: Integrating VMware Cloud Notification Gateway with VMware Event Broker Appliance
+    display: true
+    details: 
+      url_text: blog post
+      external_url: https://www.virtuallyghetto.com/2020/07/integrating-vmware-cloud-notification-gateway-with-vmware-event-broker-appliance-veba.html
+      external_image: https://i2.wp.com/www.virtuallyghetto.com/wp-content/uploads/2020/07/vmware-cloud-notification-to-veba-diagram.png?ssl=1
       author_name: William Lam
-      excerpt: ...has been about a week now and we have had several customers who have successfully deploy VEBA and executed their first set of functions which was really exciting to hear given this was just released a little less than a week ago...
-    
-  - title: If This Then That for vSphere
-    display: true
-    details: 
-      url_text: article
-      external_url: https://octo.vmware.com/vsphere-power-event-driven-automation/
-      external_image: https://octo.vmware.com/wp-content/uploads/sites/18/2019/10/futuristic-plexus-1440x556.jpeg 
-      author_name: OCTO
-      excerpt: ...recent VMworld 2019 session, “If This Then That” for vSphere – The Power of Event-Driven Automation we explored this space in greater detail. We also demoed a prototype of a soon to be released Virtual Appliance (VMware Fling) which can get you started quickly...
+      excerpt: advantage of the NGW webhook capability but instead of forwarding the NGW notification to a cloud service that supports an incoming webhook, we are sending it to VEBA for processing. Once the notification has been received by VEBA, customers can apply...
 
-  - title: Audit VM configuration changes using the vCenter Event Broker
+  - title: Bursting to the Cloud with VEBA, AWS Lambda & VMC on AWS
     display: true
     details: 
       url_text: blog post
-      external_url: https://www.opvizor.com/audit-vm-configuration-changes-using-the-vcenter-event-broker
-      external_image: https://www.opvizor.com/wp-content/uploads/veba_slack_alert.png
-      author_name: Opvizor Blog
-      excerpt: ...think about acting based on reconfigure events and push VM config changes to Slack- Audit VM configuration! That way you have all changes documented and searchable using the Slack service...
-  
-  - title: Event-driven interactions with vSphere using Functions as a Service
-    display: false
+      external_url: https://nicovibert.com/2020/05/20/cloudbursting-vmwarecloud-veba-lambda-eventbridge/ 
+      external_image: https://nicovmc.files.wordpress.com/2020/05/screenshot-2020-05-20-at-12.17.07.png?w=1024
+      author_name: Nico Vibert
+      excerpt: We need an engine to trigger an action based on an event. For VMware events, the best way to do that would be to leverage the VMware Event Broker Appliance (VEBA). I will leverage EventBridge as it integrates easily with AWS Lambda...
+
+  - title: Deploying the VMware Event Broker Appliance (VEBA) using Cloud Assembly
+    display: true
     details: 
       url_text: blog post
-      external_url: https://rguske.github.io/post/event-driven-interactions-with-vsphere-using-functions-as-a-service/
-      external_image: https://rguske.github.io/img/posts/201902_vspheretagfn/CapturFiles-20190227_052627.jpg 
+      external_url: https://blogs.vmware.com/services-education-insights/2020/07/deploying-the-vmware-event-broker-appliance-veba-using-cloud-assembly.html
+      external_image: https://blogs.vmware.com/services-education-insights/files/2020/07/ovfScreenshot.png
+      author_name: VMware Blogs - James Wirth
+      excerpt: We need an engine to trigger an action based on an event. For VMware events, the best way to do that would be to leverage the VMware Event Broker Appliance (VEBA). I will leverage EventBridge as it integrates easily with AWS Lambda...
+
+  - title: Using the VEBA to Automatically Expand a Pure Storage FlashArray Datastore
+    display: true
+    details: 
+      url_text: blog post
+      external_url: https://davidstamen.com/using-veba-to-expand-pure-datastore/
+      external_image: https://davidstamen.com/images/veba05.png
+      author_name: David Stamen
+      excerpt: can we automatically expand a datastore when it gets full? The answer is yes! With all of the integrations with automation platformsm, Pure Storage Arrays have many options. This blog will cover how to handle this with the VMware Event Broker Appliance (VEBA)...
+
+  - title: VMware Event Broker Appliance - vSphere HA Event Notification Function
+    display: true
+    details: 
+      url_text: blog post
+      external_url: https://rguske.github.io/post/vsphere-ha-event-notification-function/
+      external_image: https://rguske.github.io/img/posts/202006_harestartfunction/CapturFiles-20200701_022720.jpg
       author_name: Robert Guske
-      excerpt: ...explain what a Function/ FaaS is all about, instead of it Michael and I thought that this post should serve as an introduction of a project Michael is working on as well as to demonstrate how 'just' two components are turning your vSphere environment into a Event driven construct based on your annotations...
+      excerpt: to send out a notification via Email after a vSphere HA event occurred. This Email will have the affected host mentioned as well as all affected VMs which has been restarted through vSphere HA. The problem was, that the execution of the script was a manual task every time a ESXi host outage took place…at least until he became aware of VEBA...
+  
 #
 # All other links with the below details populated.
 # use the flag display: true/false to control if the link needs to show up on the site. Videos show up in the same order as below
 #
 otherlinks:
-  - title: VMworld 2019 video - If This Then That for vSphere
-    url: https://videos.vmworld.com/global/2019?q=CODE1379E
+  - title: VMworld 2020 - VEBA and the Power of Event-Driven Automation – Reloaded
     display: true
-  - title: Listing all Events for vCenter Server
-    url: https://www.virtuallyghetto.com/2019/12/listing-all-events-for-vcenter-server.html
+    url: https://www.vmworld.com/en/video-library/video-landing.html?sessionid=1586353214997001Abo2
+  - title: VMworld 2020 - Arm Yourself with Event-Driven Functions and Reimagine SDDC Capabilities
     display: true
+    url: https://www.vmworld.com/en/video-library/video-landing.html?sessionid=15863800295950014HrA
+  - title: Automate Issue Remediation for VMs - handle CPU or Memory spike, Datastore saturation
+    display: true
+    url: https://bit.ly/vmselfservefg
+  - title: VMware Event Broker Appliance – Part XIII – Deploying Go Functions
+    display: true
+    url: http://www.patrickkremer.com/vmware-event-broker-appliance-part-xiii-deploying-go-functions
+  - title: VMware Event Broker Appliance - vSphere HA Event Notification Function
+    display: true
+    url: https://rguske.github.io/post/vsphere-ha-event-notification-function/
+  - title: Publicly trusted TLS for VMware Eventing Platform
+    display: true
+    url: http://bit.ly/letsencryptveba
+  - title: Monitoring the VMware Event Broker Appliance with vRealize Operations Manager
+    display: true
+    url: https://rguske.github.io/post/monitoring-the-vmware-event-broker-appliance-with-vrealize-operations-manager/
+  - title: vCenter Event Broker Appliance Updates – VMworld, Fling, Community & Open Source
+    display: true
+    url: https://www.virtuallyghetto.com/2019/11/vcenter-event-broker-appliance-updates-vmworld-fling-community-open-source.html
+  - title: If This Then That for vSphere
+    display: true
+    url: https://octo.vmware.com/vsphere-power-event-driven-automation/
+  - title: Audit VM configuration changes using the vCenter Event Broker
+    display: true
+    url: https://www.opvizor.com/audit-vm-configuration-changes-using-the-vcenter-event-broker
+  - title: Event-driven interactions with vSphere using Functions as a Service
+    display: false
+    url: https://rguske.github.io/post/event-driven-interactions-with-vsphere-using-functions-as-a-service/
+  - title: Integrating vCenter with PagerDuty
+    display: true
+    url: https://bit.ly/vebapagerduty
   - title: Blog post walkthrough of VEBA deployment
     url: https://www.patrickkremer.com/veba/
     display: true
@@ -86,23 +135,28 @@ otherlinks:
   - title: Writing your first Serverless function
     display: true
     url: https://medium.com/@pkblah/writing-your-first-serverless-function-23508cb4ea11?source=friends_link&sk=90cbed9b0dadb67578cebe54a88df494
+  - title: VMworld 2019 - If This Then That for vSphere
+    url: https://www.vmworld.com/en/video-library/video-landing.html?sessionid=15614121705290019EX2&region=EU
+    display: true
+  - title: Listing all Events for vCenter Server
+    url: https://www.virtuallyghetto.com/2019/12/listing-all-events-for-vcenter-server.html
+    display: true
+  - title: Video - Robert and Michael explore Event Driven Automation for vCenter
+    url: https://www.youtube.com/watch?v=X3usMlmyEoA&feature=emb_logo
+    display: true
 
 #
 # Using Tweet Collections rather than individual tweets for managability
 #
 tweet_collection:
-  user_handle: pkblah
+  user_handle: vmweventbroker
   collection_id: 1245100643565498368
-  url: https://twitter.com/pkblah/timelines/1245100643565498368
+  url: https://twitter.com/VMWEventBroker
 
 #
 # Current max limit of videos set to 3. Videos require the video_id
 #
-videos: 
-- title: Robert and Michael explore Event Driven Automation for vCenter
-  video_id: X3usMlmyEoA
-  url: https://www.youtube.com/watch?v=X3usMlmyEoA&feature=emb_logo
-
+videos:
 - title: VEBA team talk about Event Driven Automation, usecases and showcase a demo
   video_id: tOjp5_qn-Fg
   url: https://www.youtube.com/watch?v=tOjp5_qn-Fg&feature=emb_logo
@@ -110,3 +164,7 @@ videos:
 - title: Learn how to deploy VEBA and deploy your own functions
   video_id: /videoseries?list=PLQvw_QGg8w6qlcCxXnighoK780ElUrOFj
   url: https://www.youtube.com/playlist?list=PLQvw_QGg8w6qlcCxXnighoK780ElUrOFj
+
+- title: DEMO - Veeam VM Backup FaaS Function
+  video_id: OtAG9C8FM4U
+  url: https://www.youtube.com/watch?v=OtAG9C8FM4U&feature=emb_logo
