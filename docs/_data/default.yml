@@ -61,6 +61,9 @@ toc:
       - page: Deploy VEBA to Kubernetes
         id: advanced-deploy-k8s
         url: /kb/advanced-deploy-k8s
+      - page: Using vCenter Simulator for local function development
+        id: site-resources
+        external_url: https://rguske.github.io/post/spin-up-a-local-veba-environment-with-kind-and-vcenter-simulator/
       - page: Replace TLS Certificates on VEBA
         id: advanced-certificates
         url: /kb/advanced-certificates

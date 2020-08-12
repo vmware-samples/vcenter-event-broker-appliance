@@ -8,8 +8,7 @@ cta:
  title: Deploy a Function
  description: At this point, you have successfully deployed the VMware Event Broker Appliance and you are ready to start deploying your functions! 
  actions:
-  - text: Check the [pre-built Functions](/examples) to quickly get started
-  - text: Find the instruction to deploy a function - [here](use-functions).
+  - text: Check the [Knative Echo Function](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/python/kn-echo){:target="_blank"} to quickly get started
 ---
 # Deploy VMware Event Broker Appliance with Knative
 

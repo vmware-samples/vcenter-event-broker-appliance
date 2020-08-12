@@ -20,16 +20,21 @@ The VMware Event Broker Appliance follows a highly modular approach, using Kuber
 - VMware Event Router ([Github](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/vmware-event-router){:target="_blank"})
   - Supported Event Stream Sources:
     - VMware vCenter ([Website](https://www.vmware.com/products/vcenter-server.html){:target="_blank"})
-  - Supported Event Stream Processors: 
+  - Supported Event Stream Processors:
+    - Knative ([Website](https://www.knative.dev/){:target="_blank"})
     - OpenFaaS ([Website](https://www.openfaas.com/){:target="_blank"})
     - AWS EventBridge ([Website](https://aws.amazon.com/eventbridge/){:target="_blank"})
 - Contour ([Github](https://github.com/projectcontour/contour){:target="_blank"})
 - Kubernetes ([Github](https://github.com/kubernetes/kubernetes){:target="_blank"})
 - Photon OS ([Github](https://github.com/vmware/photon){:target="_blank"})
 
-<img src="./img/veba-architecture.png" height="400" align="center" class="border m-1 p-1"/>
+<img src="./img/veba-architecture.png" width="100%" align="center" class="border m-1 p-1"/>
 
 **[VMware Event Router](event-router)** implements the core functionality of the VMware Event Broker Appliance, that is connecting to event `streams` ("sources") and processing the events with a configurable event `processor` such as OpenFaaS or AWS EventBridge.
+
+**Knative** is a Kubernetes-based platform to deploy and manage modern serverless workloads. Knative has two core building blocks, that is Serving (Knative Service) and Eventing (Broker, Channel, etc.).
+The VMware Event Router can be configured to directly send events to any addressable Knative resource (“reference”), e.g. a Knative Broker or Service. Broker is the recommended deployment model for the VMware Event Router. Please see the Knative documentation on Eventing for details around brokers, triggers, event filtering, etc.
+Alternatively, the router can send events to a URI, e.g. an external HTTP endpoint accepting CloudEvents.
 
 **OpenFaaS&reg;** makes it easy for developers to deploy event-driven functions and microservices to Kubernetes without repetitive, boiler-plate coding. Package your code or an existing binary in a Docker image to get a highly scalable endpoint with auto-scaling and metrics. In the VMware Event Broker Appliance, OpenFaaS powers the appliance-integrated Function-as-a-Service framework to **trigger custom functions based on vCenter events**. The OpenFaaS user interface provides an easy to use dashboard to deploy and monitor functions. Functions can be authored and also deployed via an easy to use [CLI](https://github.com/openfaas/faas-cli){:target="_blank"}.
 
