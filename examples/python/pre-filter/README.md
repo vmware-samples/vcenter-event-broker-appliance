@@ -1,7 +1,7 @@
 # vCenter Managed Object Pre-Filter
 
 ## Description
-This function allows you to use regex filters to match against the inventory paths of any managed object references received from vCenter. If all the filters you define match, the function will trigger a definable [chained function](https://github.com/openfaas/workshop/blob/master/lab4.md#call-one-function-from-another). As such it can be used in front of any existing function to limit the scope of when that function is run - for example, if you only want to tag VMs within a specific folder or resource pool when they're powered on (rather than all VMs). 
+This function allows you to use regex filters to match against any cloud event data field, including the inventory paths of any managed object references received from vCenter. If the filters you define match, the function will trigger a definable [chained function](https://github.com/openfaas/workshop/blob/master/lab4.md#call-one-function-from-another). As such it can be used in front of any existing function to limit the scope of when that function is run - for example, if you only want to tag VMs within a specific folder or resource pool when they're powered on (rather than all VMs). 
 
 
 ## Get the example function
@@ -14,7 +14,7 @@ git checkout master
 ```
 
 
-## Deploy a main function
+## Deploy a secondary function
 The pre-filter function requires a secondary function to call, which must already be deployed to your VEBA appliance. This can be any valid function but __probably shouldn't__ have any topics defined in its `stack.yml` file. 
 If you are just getting started, see the [veba-echo](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/development/examples/python/echo) function for an example. 
 
@@ -55,6 +55,7 @@ Next, configure the function by defining your filter rules, the vCenter event wh
 - Change `gateway` and `topic` as per your environment/needs.
 - Set the `call_function` environment variable to the name of the function you want this pre-filter function to call.
 - Define one or more `filter_... ` environment variables using a regex expression (see [below](#defining-filters) for details and examples).
+- Set `match_all` to `true` to ensure that __all__ your defined `filter_...` environment variables are matched. If this is set to `false` then any defined `filter_...` environment variables that reference a parameter that is not present in the cloud event are ignored.
 
 > **Note:** A key-value annotation under `topic` defines which VM event should trigger the function. A list of VM events from vCenter can be found [here](https://code.vmware.com/doc/preview?id=4206#/doc/vim.event.VmEvent.html). Multiple topics can be specified using a `","` delimiter syntax, e.g. "`topic: "VmPoweredOnEvent,VmPoweredOffEvent"`".
 
@@ -70,8 +71,9 @@ functions:
     environment:
       write_debug: true
       read_debug: true
-      insecure_ssl: true
-      call_function: veba-echo
+      insecure_ssl: true # set to true to disable validation of vcenter ssl certificate
+      match_all: false # require that all filters be positively matched to event data
+      call_function: veba-echo # chained function to call
       filter_vm: '.*'
     secrets:
       - vcconfig
@@ -95,8 +97,9 @@ functions:
     environment:
       write_debug: true
       read_debug: true
-      insecure_ssl: true
-      call_function: veba-echo
+      insecure_ssl: true # set to true to disable validation of vcenter ssl certificate
+      match_all: false # require that all filters be positively matched to event data
+      call_function: veba-echo # chained function to call
       filter_vm: '\/Test VM 1$'
     secrets:
       - vcconfig
@@ -109,8 +112,9 @@ functions:
     environment:
       write_debug: true
       read_debug: true
-      insecure_ssl: true
-      call_function: veba-echo
+      insecure_ssl: true # set to true to disable validation of vcenter ssl certificate
+      match_all: false # require that all filters be positively matched to event data
+      call_function: veba-echo # chained function to call
       filter_vm: '\/Test VM 2$'
     secrets:
       - vcconfig
@@ -144,41 +148,88 @@ faas-cli logs pre-filter --tls-no-verify
 
 
 ## Defining Filters
-vCenter Object filtering is performed using a regex search against the full inventory path to the object - for example, for a VM this could be `/Datacenter/vm/Folder/Test VM`. 
+Filtering is performed using a regex search against the event data, or in the case of vCenter managed objects, the full inventory path to the object - for example, for a VM this could be `/Datacenter/vm/Folder/Test VM`. 
 
-Each event received by VEBA will usually contain several references to vCenter objects - for a VmPoweredOnEvent for example you would get (at least) a VirtualMachine object, a HostSystem object and a Datacenter object.
+Each event received by VEBA will usually contain several references to vCenter managed objects - for a VmPoweredOnEvent for example you would get (at least) a VirtualMachine object, a HostSystem object and a Datacenter object.
 
-Object Filters are defined as environment variables in the function's `stack.yml` file and must be named `filter_OBJECT` where OBJECT is the parameter name of the object from the event data passed to the function. For example `filter_vm` for VirtualMachine objects, or `filter_host` for HostSystem objects.
+Filters are defined as environment variables in the function's `stack.yml` file and must be named `filter_PARAM` where `PARAM` is the name of the parameter from the event data passed to the function. Parameter names can be specified using dot notation to traverse the event data structure. For example, take the following event data snippet:
+
+```json
+{
+  "CreatedTime": "2020-07-02T15:16:11.207727Z",
+  "UserName": "ro-user@vsphere.local",
+  "Vm": {
+    "Name": "Test VM",
+    "Vm": {
+      "Type": "VirtualMachine",
+      "Value": "vm-82"
+    }
+  },
+```
+
+For example you could specifiy:
+- `filter_username` to match against `ro-user@vsphere.local`
+- `filter_vm.name` to match against `Test VM`
+- `filter_vm` to match against the full inventory path to the vm object (e.g. `/My Datacenter/vm/Test VMs/Test VM`)
+
+Filter values use regex notation and should be enclosed in single quotes. For example:
 
 ```yaml
 # Object filter examples
-filter_vm: '\/Test VM 2$'
-filter_host: 'esxi[12]$'
+filter_vm: '\/Test\/'  # Match any VM in a folder called "Test"
+filter_host: 'esxi0[12]$'   # Match a host whose name ends with esxi01 or esxi02
 ```
 
-The filtering is performed using the Python `re.search()` function - see the [official documentation](https://docs.python.org/3/library/re.html#regular-expression-syntax) for details on writing regex patterns. 
+The filtering is performed using the Python `re.search()` function - see the [official documentation](https://docs.python.org/3/library/re.html#regular-expression-syntax) for details on writing regex patterns.
 
-To find out which vCenter objects are available to match against, monitor the function logs and look for lines starting `Apply Filter >`
+Finally, if `write_debug` is set to true in `stack.yml` then all available event data parameters are logged in the function logs with lines beginning `Event Data > `
 
-```bash
-Apply Filter > "datacenter" object (Datacenter): "filter_datacenter" = .*
-...
-Apply Filter > "computeresource" object (ClusterComputeResource): "filter_computeresource" = .*
-...
-Apply Filter > "host" object (HostSystem): "filter_host" = .*
-...
-Apply Filter > "vm" object (VirtualMachine): "filter_vm" = .*
-
-```
-Each `Apply Filter >` line details a vCenter object found in the event data and its matching `filter_...` environment variable name and current value. 
-
-> **Note:** If any specific `filter_... ` environment variable is not defined it defaults to `.*` - i.e. match anything
-
+> **Note:** It is best practice to set `write_debug` to false once you have finished configuring your filters to avoid excessive logging and speed up function execution
 
 ### Example filters
+- `filter_vm.name: '^prod-'` - Matches all VMs named with the 'prod-' prefix
 - `filter_vm: '\/DC01\/vm/Servers\/' ` - Matches all VMs in the Servers VM folder of the "DC01" datacenter
-- `filter_computeresource: 'Lab$'` - Matches events raised by objects within a cluster called "Lab"
+- `filter_computeresource: 'Lab$'` - Matches events raised by objects within a cluster whose name ends with "Lab"
 
+
+### Filtering on Event Data Arrays
+Some cloud events contain data parameters that are an array. Take the `Arguments` parameter in the following `vim.event.ResourceExhaustionStatusChangedEvent` snippet for example:
+```json
+{
+  "data": {
+    "Arguments": [
+      {
+        "Key": "resourceName",
+        "Value": "storage_util_filesystem_log"
+      },
+      {
+        "Key": "oldStatus",
+        "Value": "yellow"
+      },
+      {
+        "Key": "newStatus",
+        "Value": "green"
+      },
+      {
+        "Key": "reason",
+        "Value": " "
+      },
+      {
+        "Key": "nodeType",
+        "Value": "vcenter"
+      },
+      {
+        "Key": "_sourcehost_",
+        "Value": "vcsa.lab"
+      }
+    ],
+```
+There are two options to define filters for array parameters:
+1. Define a `filter_...` environment variable using the numeric index. e.g. `filter_arguments.2.value = 'green'` would match element 2 in the above.
+2. Replace one or more numeric indicies with a single `n`. This will cause the filter to essentially search all elements of the array. e.g. `filter_arguments.n.value = 'vcenter'` would match element 4 in the above.
+
+## Faas Stack
+Just before your chained function is called, an array called `faasstack` is inserted/updated as an extension attribute in the cloud event containing the name of your pre-filter function. This can then be used and/or appended to in the chained function as a way of tracking what called your function.
 
 ## Troubleshooting
 If your chained function did not run, verify:
@@ -192,26 +243,37 @@ If your chained function did not run, verify:
 faas-cli logs pre-filter --follow --tls-no-verify 
 
 # Successful log message in the OpenFaaS pre-filter function
-2020/08/02 20:44:13 stderr: Validation passed! Applying object filters:
-2020/08/02 20:44:13 stderr: Managed object > datacenter-2 has name Pilue and type Datacenter
-2020/08/02 20:44:13 stderr: Apply Filter > "datacenter" object (Datacenter): "filter_datacenter" = .*
-2020/08/02 20:44:13 stderr: Datacenter Path > /Pilue
-2020/08/02 20:44:13 stderr: Match > Filter matched Datacenter path
-2020/08/02 20:44:13 stderr: Managed object > domain-c47 has name Lab and type ClusterComputeResource
-2020/08/02 20:44:13 stderr: Apply Filter > "computeresource" object (ClusterComputeResource): "filter_computeresource" = .*
-2020/08/02 20:44:13 stderr: ClusterComputeResource Path > /Pilue/host/Lab
-2020/08/02 20:44:13 stderr: Match > Filter matched ClusterComputeResource path
-2020/08/02 20:44:13 stderr: Managed object > host-3605 has name esxi01.lab.core.pilue.co.uk and type HostSystem
-2020/08/02 20:44:13 stderr: Apply Filter > "host" object (HostSystem): "filter_host" = .*
-2020/08/02 20:44:13 stderr: HostSystem Path > /Pilue/host/Lab/esxi01.lab.core.pilue.co.uk
-2020/08/02 20:44:13 stderr: Match > Filter matched HostSystem path
-2020/08/02 20:44:13 stderr: Managed object > vm-82 has name sexigraf and type VirtualMachine
-2020/08/02 20:44:13 stderr: Apply Filter > "vm" object (VirtualMachine): "filter_vm" = .*
-
-2020/08/02 20:44:13 stderr: VirtualMachine Path > /Pilue/vm/Infrastructure/Other/sexigraf
-2020/08/02 20:44:13 stderr: Match > Filter matched VirtualMachine path
-2020/08/02 20:44:13 stderr: All filters matched. Calling chained function veba-echo
-2020/08/02 20:44:13 POST / - 200 OK - ContentLength: 884
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Validation passed! Applying object filters:
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > Key = 661858
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > ChainId = 661856
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > CreatedTime = 2020-10-19T20:37:39.445544Z
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > UserName = CORE\david
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > datacenter.name = Pilue
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > datacenter.datacenter.type = Datacenter
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > datacenter.datacenter.value = datacenter-2
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > computeresource.name = Lab
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > computeresource.computeresource.type = ClusterComputeResource
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > computeresource.computeresource.value = domain-c47
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > host.name = esxi01.lab.core.pilue.co.uk
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > host.host.type = HostSystem
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > host.host.value = host-36331
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > vm.name = gps unit
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > vm.vm.type = VirtualMachine
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > vm.vm.value = vm-23311
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > Ds = None
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > Net = None
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > Dvs = None
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > FullFormattedMessage = gps unit on esxi01.lab.core.pilue.co.uk in Pilue has powered on
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > ChangeTag =
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Event Data > Template = False
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Key > use
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Value not found for key 'use'
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Key > vm
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Found Managed object > vm-23311 has name gps unit and type VirtualMachine
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: VirtualMachine Path > /Pilue/vm/Testing/gps unit
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: Match > Filter ".*" matched "/Pilue/vm/Testing/gps unit"
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 stderr: All filters matched. Calling chained function veba-echo
+2020-10-19T20:37:40Z 2020/10/19 20:37:40 POST / - 200 OK - ContentLength: 0
 ```
 
 Filters that fail to match will cause the function to exit early. [Regexr](https://regexr.com/) is a good tool for testing and debugging regex searches. 

@@ -7,16 +7,22 @@ import toml
 import atexit
 import re
 import traceback
+import socket
 from pyVim import connect
 from pyVmomi import vim
 from pyVmomi import vmodl
+from requests.structures import CaseInsensitiveDict
 
 
 # GLOBAL_VARS
+service_instance = None
+filters = {}
 DEBUG = False
+MATCH_ALL = os.getenv("match_all", default='false').lower() == 'true'
+INSECURE_SSL = os.getenv("insecure_ssl", default='false').lower() == 'true'
+
 # CONFIG
 VC_CONFIG = '/var/openfaas/secrets/vcconfig'
-service_instance = None
 
 
 class bgc:
@@ -30,20 +36,47 @@ class bgc:
     UNDERLINE = '\033[4m'
 
 
-if(os.getenv("write_debug")):
+if(os.getenv("write_debug", default='false').lower() == 'true'):
     sys.stderr.write(f"{bgc.WARNING}WARNING!! DEBUG has been enabled for this function. Sensitive information could be printed to sysout{bgc.ENDC} \n")
     DEBUG = True
 
 
 def debug(s):
     if DEBUG:
-        sys.stderr.write(s + " \n")  # Syserr only get logged on the console logs
+        sys.stderr.write(s + " \n")  # stderr only get logged on the console logs
         sys.stderr.flush()
+
+
+def typeName(obj):
+    """
+    Gets the object name of the passed instance as a string
+
+    Args:
+        obj (object): Instance of object to get the type name of
+
+    Returns:
+        str: name of the passed objects type
+    """
+    return obj.__class__.__name__
+
+
+def faasFunctionName():
+    """
+    Gets the name of this FaaS function by parsing the k8s pod name
+
+    Returns:
+        str: The name of the the FaaS function
+    """
+    return "-".join(socket.gethostname().split("-")[:-2])
 
 
 def init():
     """
-    Load the config and set up a connection to vc
+    Loads the function config and sets up a connection to vCenter
+
+    Returns:
+        A tuple in the format of (reason, error_code) is returned on error,
+        otherwise resturns None
     """
     global service_instance
 
@@ -69,7 +102,7 @@ def init():
         debug(f'{bgc.WARNING}Init VC Connection...{bgc.ENDC}')
 
     sslContext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-    if(os.getenv("insecure_ssl")):
+    if(INSECURE_SSL):
         sslContext.verify_mode = ssl.CERT_NONE
 
     debug(f'{bgc.OKBLUE}Initialising vCenter connection...{bgc.ENDC}')
@@ -89,19 +122,27 @@ def init():
 
 def getManagedObjectTypeName(mo):
     """
-    Returns the short type name of the passed managed object
+    Gets the short type name of the passed managed object
     e.g. VirtualMachine
+
     Args:
-        mo (vim.ManagedEntity)
+        mo (vim.ManagedEntity): The vCenter Managed Object
+
+    Returns:
+        str: The type name of the passed managed object
     """
-    return mo.__class__.__name__.rpartition(".")[2]
+    return typeName(mo).rpartition(".")[2]
 
 
 def getManagedObject(obj):
     """
-    Convert an object as received from the event router in to a pyvmomi managed object
+    Converts an object as received from the event router in to a pyvmomi managed object
+
     Args:
         obj (object): object received from the event router
+
+    Returns:
+        vim.ManagedEntity: The vCenter Managed Object
     """
     mo = None
     try:
@@ -116,7 +157,7 @@ def getManagedObject(obj):
         mo = typeClass(moref)
         mo._stub = service_instance._stub
         try:
-            debug(f'{bgc.OKBLUE}Managed object > {bgc.ENDC}{moref} has name {mo.name} and type {getManagedObjectTypeName(mo)}')
+            debug(f'Found Managed object > {moref} has name {mo.name} and type {getManagedObjectTypeName(mo)}')
             return mo
         except vmodl.fault.ManagedObjectNotFound as err:
             debug(f'{bgc.FAIL}{err.msg}{bgc.ENDC}')
@@ -126,8 +167,12 @@ def getManagedObject(obj):
 def getViObjectPath(obj):
     """
     Gets the full path to the passed managed object
+
     Args:
         obj (vim.ManagedObject): VC managed object
+
+    Returns:
+        str: The inventory path to the object
     """
     path = ""
     while obj != service_instance.content.rootFolder:
@@ -138,37 +183,177 @@ def getViObjectPath(obj):
 
 def filterVcObject(obj, filter):
     """
-    Takes a VC managed object and tests it against a filter
-    If it doesn't match, a tuple (reason, code) describing why
-    is returned, otherwise returns true.
+    Takes a VC managed object and tests its inventory path against a regex filter
+
     Args:
         obj (vim.ManagedObject): VC managed Object
         filter (str): Regex filter string
-    """
 
+    Returns:
+        Returns a boolean on a successful match. If no match then returns
+        a tuple in the format of (reason, result_code)
+    """
     if obj and filter:
         moType = getManagedObjectTypeName(obj)
         objPath = getViObjectPath(obj)
         debug(f'{bgc.OKBLUE}{moType} Path > {bgc.ENDC}{objPath}')
-        try:
-            if not re.search(filter, objPath):
-                debug(f'{bgc.WARNING}Filter "{filter}" does not match {moType} path "{objPath}". Exiting{bgc.ENDC}')
-                return f'Filter "{filter}" does not match {moType} path "{objPath}"', 200
-            else:
-                debug(f'{bgc.OKBLUE}Match > {bgc.ENDC}Filter matched {moType} path')
-        except re.error as err:
-            debug(f'{bgc.FAIL}Invalid regex pattern specified - {err.msg} at pos {err.pos}{bgc.ENDC}')
-            return f'Invalid regex pattern specified - {err.msg} at pos {err.pos}', 500
+        return applyFilter(objPath, filter)
+    else:
+        debug(f'{bgc.WARNING}Object or filter not specified, skipping > Obj: {obj}, Filter: {filter}{bgc.ENDC}')
+    return True
 
-    debug(f'{bgc.WARNING}Object or filter not specified, skipping > Obj: {obj}, Filter: {filter}{bgc.ENDC}')
+
+def applyFilter(value, filter):
+    """
+    Applies the regex filter to the passed value
+
+    Args:
+        value (str): data to apply filter to
+        filter (str): Regex filter string
+
+    Returns:
+        Returns a boolean on a successful match. If no match then returns
+        a tuple in the format of (reason, result_code)
+    """
+    try:
+        if not re.search(filter, value):
+            debug(f'{bgc.WARNING}Filter "{filter}" does not match\n{bgc.OKBLUE}Value >{bgc.ENDC} "{value}".')
+            return f'Filter "{filter}" does not match "{value}"', 200
+        else:
+            debug(f'{bgc.OKBLUE}Match > {bgc.ENDC}Filter "{filter}" matched "{value}"')
+            return True
+    except re.error as err:
+        debug(f'{bgc.FAIL}Invalid regex pattern specified - {err.msg} at pos {err.pos}{bgc.ENDC}')
+        return f'Invalid regex pattern specified - {err.msg} at pos {err.pos}', 500
+    except TypeError:
+        debug(f'{bgc.FAIL}Cannot apply filter against non-string object. Type is: {typeName(value)}{bgc.ENDC}')
+        return f'Cannot apply filter against non-string object. Type is: {typeName(value)}', 200
+
+
+def filterItem(key, filter, data):
+    """
+    Tries to filter against the passed value
+
+    Args:
+        key (str): key name of the filter
+        filter (str): the regex filter to use
+        data (object): event data to filter
+
+    Returns:
+        Returns true on a successful match, or false if the key isn't found
+        On error, retuns a tuple in the format of (reason, result_code)
+    """
+    # Split the key on the first . and capture both oarts
+    thisKey, _, remainingKey = key.partition('.')
+
+    # If there is more key to pricess then recurse in
+    if remainingKey is not '':
+        if type(data) == dict:
+            try:
+                return filterItem(remainingKey, filter, CaseInsensitiveDict(data)[thisKey])
+            except KeyError as err:
+                debug(f'{bgc.WARNING}Value not found for key {err}{bgc.ENDC}')
+                return False
+        elif type(data) == list:
+            # If 'n' is passed then loop through the list
+            if thisKey is 'n':
+                for item in data:
+                    res = filterItem(remainingKey, filter, item)
+                    if res is True:
+                        return True
+                return f'Filter "{filter}" does not match any value', 200
+            # Otherwise get the passed item by index
+            elif thisKey.isnumeric():
+                try:
+                    return filterItem(remainingKey, filter, data[int(thisKey)])
+                except IndexError:
+                    debug(f'{bgc.WARNING}Index out of range{bgc.ENDC}')
+                    return "Index out of range", 400
+            # If we git here there is a key error
+            else:
+                debug(f'{bgc.WARNING}Invalid array key specified: {thisKey}{bgc.ENDC}')
+                return False
+    # There's no more key to process so apply the filter
+    else:
+        try:
+            if type(data) == dict:
+                value = CaseInsensitiveDict(data)[thisKey]
+            elif type(data) == list:
+                value = data[int(thisKey)]
+            else:
+                value = data
+        except KeyError as err:
+            debug(f'{bgc.WARNING}Value not found for key {err}{bgc.ENDC}')
+            return False
+        if type(value) == dict:
+            mo = getManagedObject(CaseInsensitiveDict(value)[thisKey])
+            return filterVcObject(mo, filter)
+        else:
+            res = applyFilter(value, filter)
+            return res
+
+
+def _getKeys(name, value):
+    """
+    Recurses in to the passed value building up a list of keys and related values
+
+    Args:
+        name (str): key name in dot notation
+        value (value): value to recurse in to
+
+    Returns:
+        list: list of strings describing event data params and values
+    """
+    keys = []
+    if type(value) == dict:  # for a dict, traverse in to it first...
+        for subName, subValue in value.items():
+            subName = f'{name}.{subName}'.lower()
+            keys.extend(_getKeys(subName, subValue))
+        # and if it's a MoRef then get the object's path too
+        if len(value.keys()) == 2 and 'Type' in value.keys() and 'Value' in value.keys():
+            mo = getManagedObject(CaseInsensitiveDict(value))
+            if isinstance(mo, vim.ManagedEntity):
+                keys.append(f"{name.rpartition('.')[2]} = {getViObjectPath(mo)}")
+            else:  # No object found
+                keys.append(f"{name.rpartition('.')[2]} = {bgc.FAIL}<object not found in vCenter>{bgc.ENDC}")
+    elif type(value) == list:  # for a list, loop through the contained items using a numeric index
+        i = 0
+        for subValue in value:
+            subName = f'{name}.{i}'.lower()
+            keys.extend(_getKeys(subName, subValue))
+            i = i + 1
+    else:  # for non-iterable items append the name and value
+        keys.append(f"{name} = {value}")
+    return keys
+
+
+def getEventKeys(data):
+    """
+    Builds and returns a list of all available params in the event data and their values
+
+    Args:
+        data (object): The CloudEvent data object
+
+    Returns:
+        list: list of strings describing event data params and values
+    """
+    keys = []
+    for name, value in data.items():
+        keys.extend(_getKeys(name, value))
+    return keys
 
 
 def handle(req):
     """
-    Handle a request to the function
+    Handles a request to the function
+
     Args:
         req (str): request body
+
+    Returns:
+        tuple: Result of function in the format of (result_message, result_code)
     """
+    global filters
 
     # Initialise a connection to vCenter
     res = init()
@@ -190,37 +375,56 @@ def handle(req):
     try:
         # CloudEvent - simple validation
         event = cevent['data']
+        _ = event['Key']
     except KeyError as err:
         traceback.print_exc(limit=1, file=sys.stderr)  # providing traceback since it helps debug the exact key that failed
         return f'Invalid JSON, required key not found > KeyError: {err}', 500
-    except AttributeError as err:
+    except TypeError as err:
         traceback.print_exc(limit=1, file=sys.stderr)  # providing traceback since it helps debug the exact key that failed
-        return f'Invalid JSON, data not iterable > AttributeError: {err}', 500
+        return f'Invalid JSON, data not iterable > TypeError: {err}', 500
 
     debug(f'{bgc.HEADER}Validation passed! Applying object filters:{bgc.ENDC}')
-    # Loop through the event data parameters and find managed objects
-    for name, value in event.items():
-        if type(value) == dict:  # a dict is probably a VC managed object reference
-            for moName, moRef in value.items():
-                # Search the items of the dict and look for contained dicts with a 'Type' property
-                if type(moRef) == dict and 'Type' in moRef:
-                    # Get the relevant filter_... environment variable
-                    objFilter = eval(f'os.getenv("filter_{name.lower()}", default=".*")')
-                    # Get a vc managed object
-                    mo = getManagedObject(moRef)
-                    # Test the filter
-                    moType = getManagedObjectTypeName(mo)
-                    debug(f'{bgc.OKBLUE}Apply Filter > {bgc.ENDC}"{name.lower()}" object ({moType}): "filter_{name.lower()}" = {objFilter}')
-                    res = filterVcObject(mo, objFilter)
-                    if isinstance(res, tuple):  # Tuple is returned if the object didn't match the filter
-                        return res
 
-    func = os.getenv("call_function", False)
-    if func:
+    # Load filter_... environment variables and strip prefix
+    filters = {}
+    for k, v in os.environ.items():
+        if k.startswith("filter_"):
+            filters[k[7:]] = v
+
+    # Log all available event keys
+    if DEBUG:
+        for key in getEventKeys(event):
+            debug(f"Event Data > {key}")
+
+    # Loop through each defined filter and apply it if possible
+    for key, filter in filters.copy().items():
+        debug(f'Key > {key}')
+        res = filterItem(key, filter, event)
+        if isinstance(res, tuple):  # Tuple is returned if the object didn't match the filter
+            return res
+        if res is True:
+            filters.pop(key)
+
+    # Test if all filters have passed or not
+    if len(filters) > 0 and MATCH_ALL is True:
+        debug(f'{bgc.WARNING}Some filters not matched when match_all is true - "{", ".join(filters.keys())}". Exiting{bgc.ENDC}')
+        return 'some filters not matched', 400
+
+    # All filters matched succesfully so lets call the chained function
+    func = os.getenv("call_function", default="")
+    if func is not "":
         debug(f'{bgc.HEADER}All filters matched. Calling chained function {func}{bgc.ENDC}')
 
+        # Add this function's name to a faasstack array in the cloud event data
+        # This allows the chained function to know who called it
+        if 'faasstack' in cevent:
+            cevent['faasstack'].append(faasFunctionName())
+        else:
+            cevent['faasstack'] = [faasFunctionName()]
+
+        # Send a post request to the chained function with the original event data
         try:
-            res = requests.post(f'http://gateway.openfaas:8080/function/{func}', req)
+            res = requests.post(f'http://gateway.openfaas:8080/function/{func}', json.dumps(cevent))
             return res.text, res.status_code
         except Exception as err:
             traceback.print_exc(limit=1, file=sys.stderr)  # providing traceback since it helps debug the exact key that failed
@@ -229,45 +433,3 @@ def handle(req):
 
     debug(f'{bgc.FAIL}call_function must be specified!{bgc.ENDC}')
     return "call_function must be specified", 400
-
-
-#
-# Unit Test - helps testing the function locally
-# Uncomment r=handle('...') to test the function with the event samples provided below test without deploying to OpenFaaS
-#
-if __name__ == '__main__':
-    VC_CONFIG = 'vc-secrets.toml'
-    DEBUG = True
-    os.environ['insecure_ssl'] = 'true'
-    os.environ['filter_vm'] = '/\w*/vm/Infrastructure/'
-    os.environ['call_function'] = 'veba-echo'
-    #
-    # FAILURE CASES :Invalid Inputs
-    #
-    # handle('')
-    # handle('"test":"ok"')
-    # handle('{"test":"ok"}')
-    # handle('{"data":"ok"}')
-
-    #
-    # SUCCESS CASES :Invalid vc objects
-    #
-    # handle('{"id":"c7a6c420-f25d-4e6d-95b5-e273202e1164","source":"https://vcsa01.lab/sdk","specversion":"1.0","type":"com.vmware.event.router/event","subject":"DrsVmPoweredOnEvent","time":"2020-07-02T15:16:13.533866543Z","data":{"Key":130278,"ChainId":130273,"CreatedTime":"2020-07-02T15:16:11.213467Z","UserName":"Administrator","Datacenter":{"Name":"Lab","Datacenter":{"Type":"Datacenter","Value":"datacenter-2"}},"ComputeResource":{"Name":"Lab","ComputeResource":{"Type":"ClusterComputeResource","Value":"domain-c47"}},"Host":{"Name":"esxi03.lab","Host":{"Type":"HostSystem","Value":"host-9999"}},"Vm":{"Name":"Bad VM","Vm":{"Type":"VirtualMachine","Value":"vm-9999"}},"Ds":null,"Net":null,"Dvs":null,"FullFormattedMessage":"DRS powered on Bad VM on esxi01.lab in Lab","ChangeTag":"","Template":false},"datacontenttype":"application/json"}')
-
-    #
-    # SUCCESS CASES
-    #
-    # Standard : UserLogoutSessionEvent
-    # handle('{"id":"17e1027a-c865-4354-9c21-e8da3df4bff9","source":"https://vcsa01.lab/sdk","specversion":"1.0","type":"com.vmware.event.router/event","subject":"UserLogoutSessionEvent","time":"2020-04-14T00:28:36.455112549Z","data":{"Key":7775,"ChainId":7775,"CreatedTime":"2020-04-14T00:28:35.221698Z","UserName":"machine-b8eb9a7f","Datacenter":null,"ComputeResource":null,"Host":null,"Vm":null,"Ds":null,"Net":null,"Dvs":null,"FullFormattedMessage":"User machine-b8ebe7eb9a7f@127.0.0.1 logged out (login time: Tuesday, 14 April, 2020 12:28:35 AM, number of API invocations: 34, user agent: pyvmomi Python/3.7.5 (Linux; 4.19.84-1.ph3; x86_64))","ChangeTag":"","IpAddress":"127.0.0.1","UserAgent":"pyvmomi Python/3.7.5 (Linux; 4.19.84-1.ph3; x86_64)","CallCount":34,"SessionId":"52edf160927","LoginTime":"2020-04-14T00:28:35.071817Z"},"datacontenttype":"application/json"}')
-    # Eventex : vim.event.ResourceExhaustionStatusChangedEvent
-    # handle('{"id":"0707d7e0-269f-42e7-ae1c-18458ecabf3d","source":"https://vcsa01.lab/sdk","specversion":"1.0","type":"com.vmware.event.router/eventex","subject":"vim.event.ResourceExhaustionStatusChangedEvent","time":"2020-04-14T00:20:15.100325334Z","data":{"Key":7715,"ChainId":7715,"CreatedTime":"2020-04-14T00:20:13.76967Z","UserName":"machine-bb9a7f","Datacenter":null,"ComputeResource":null,"Host":null,"Vm":null,"Ds":null,"Net":null,"Dvs":null,"FullFormattedMessage":"vCenter Log File System Resource status changed from Yellow to Green on vcsa.lab ","ChangeTag":"","EventTypeId":"vim.event.ResourceExhaustionStatusChangedEvent","Severity":"info","Message":"","Arguments":[{"Key":"resourceName","Value":"storage_util_filesystem_log"},{"Key":"oldStatus","Value":"yellow"},{"Key":"newStatus","Value":"green"},{"Key":"reason","Value":" "},{"Key":"nodeType","Value":"vcenter"},{"Key":"_sourcehost_","Value":"vcsa.lab"}],"ObjectId":"","ObjectType":"","ObjectName":"","Fault":null},"datacontenttype":"application/json"}')
-    # Standard : DrsVmPoweredOnEvent
-    handle('{"id":"c7a6c420-f25d-4e6d-95b5-e273202e1164","source":"https://vcsa01.lab/sdk","specversion":"1.0","type":"com.vmware.event.router/event","subject":"DrsVmPoweredOnEvent","time":"2020-07-02T15:16:13.533866543Z","data":{"Key":130278,"ChainId":130273,"CreatedTime":"2020-07-02T15:16:11.213467Z","UserName":"Administrator","Datacenter":{"Name":"Lab","Datacenter":{"Type":"Datacenter","Value":"datacenter-2"}},"ComputeResource":{"Name":"Lab","ComputeResource":{"Type":"ClusterComputeResource","Value":"domain-c47"}},"Host":{"Name":"esxi03.lab","Host":{"Type":"HostSystem","Value":"host-3523"}},"Vm":{"Name":"Test VM","Vm":{"Type":"VirtualMachine","Value":"vm-82"}},"Ds":null,"Net":null,"Dvs":null,"FullFormattedMessage":"DRS powered on Test VM on esxi03.lab in Lab","ChangeTag":"","Template":false},"datacontenttype":"application/json"}')
-    # Standard : VmPoweredOffEvent
-    # handle('{"id":"d77a3767-1727-49a3-ac33-ddbdef294150","source":"https://vcsa01.lab/sdk","specversion":"1.0","type":"com.vmware.event.router/event","subject":"VmPoweredOffEvent","time":"2020-04-14T00:33:30.838669841Z","data":{"Key":7825,"ChainId":7821,"CreatedTime":"2020-04-14T00:33:30.252792Z","UserName":"Administrator","Datacenter":{"Name":"PKLAB","Datacenter":{"Type":"Datacenter","Value":"datacenter-3"}},"ComputeResource":{"Name":"esxi01.lab","ComputeResource":{"Type":"ComputeResource","Value":"domain-s29"}},"Host":{"Name":"esxi01.lab","Host":{"Type":"HostSystem","Value":"host-31"}},"Vm":{"Name":"Test VM","Vm":{"Type":"VirtualMachine","Value":"vm-33"}},"Ds":null,"Net":null,"Dvs":null,"FullFormattedMessage":"Test VM on  esxi01.lab in PKLAB is powered off","ChangeTag":"","Template":false},"datacontenttype":"application/json"}')
-    # Standard : DvsPortLinkUpEvent
-    # handle('{"id":"a10f8571-fc2a-40db-8df6-8284cecf5720","source":"https://vcsa01.lab/sdk","specversion":"1.0","type":"com.vmware.event.router/event","subject":"DvsPortLinkUpEvent","time":"2020-07-02T15:16:13.43892986Z","data":{"Key":130277,"ChainId":130277,"CreatedTime":"2020-07-02T15:16:11.207727Z","UserName":"","Datacenter":{"Name":"Lab","Datacenter":{"Type":"Datacenter","Value":"datacenter-2"}},"ComputeResource":null,"Host":null,"Vm":null,"Ds":null,"Net":null,"Dvs":{"Name":"Lab Switch","Dvs":{"Type":"VmwareDistributedVirtualSwitch","Value":"dvs-22"}},"FullFormattedMessage":"The dvPort 2 link was up in the vSphere Distributed Switch Lab Switch in Lab","ChangeTag":"","PortKey":"2","RuntimeInfo":null},"datacontenttype":"application/json"}')
-    # Standard : DatastoreRenamedEvent
-    # handle('{"id":"369b403a-6729-4b0b-893e-01383c8307ba","source":"https://vcsa01.lab/sdk","specversion":"1.0","type":"com.vmware.event.router/event","subject":"DatastoreRenamedEvent","time":"2020-07-02T21:44:11.09338265Z","data":{"Key":130669,"ChainId":130669,"CreatedTime":"2020-07-02T21:44:08.578289Z","UserName":"","Datacenter":{"Name":"Lab","Datacenter":{"Type":"Datacenter","Value":"datacenter-2"}},"ComputeResource":null,"Host":null,"Vm":null,"Ds":null,"Net":null,"Dvs":null,"FullFormattedMessage":"Renamed datastore from esxi04-local to esxi04-localZ in Lab","ChangeTag":"","Datastore":{"Name":"esxi04-localZ","Datastore":{"Type":"Datastore","Value":"datastore-3313"}},"OldName":"esxi04-local","NewName":"esxi04-localZ"},"datacontenttype":"application/json"}')
-    # Standard : DVPortgroupRenamedEvent
-    # handle('{"id":"aab77fd1-41ed-4b51-89d3-ef3924b09de1","source":"https://vcsa01.lab/sdk","specversion":"1.0","type":"com.vmware.event.router/event","subject":"DVPortgroupRenamedEvent","time":"2020-07-03T19:36:38.474640186Z","data":{"Key":132376,"ChainId":132375,"CreatedTime":"2020-07-03T19:36:32.525906Z","UserName":"Administrator","Datacenter":{"Name":"Lab","Datacenter":{"Type":"Datacenter","Value":"datacenter-2"}},"ComputeResource":null,"Host":null,"Vm":null,"Ds":null,"Net":{"Name":"vMotion AZ","Network":{"Type":"DistributedVirtualPortgroup","Value":"dvportgroup-3357"}},"Dvs":{"Name":"10G Switch A","Dvs":{"Type":"VmwareDistributedVirtualSwitch","Value":"dvs-3355"}},"FullFormattedMessage":"dvPort group vMotion A in Lab was renamed to vMotion AZ","ChangeTag":"","OldName":"vMotion A","NewName":"vMotion AZ"},"datacontenttype":"application/json"}')

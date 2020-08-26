@@ -10,8 +10,9 @@ functions:
     environment:
       write_debug: true
       read_debug: true
-      insecure_ssl: true
-      call_function: veba-echo
+      insecure_ssl: false # set to true to disable validation of vcenter ssl certificate
+      match_all: false # require that all filters be positively matched to event data
+      call_function: veba-echo # chained function to call
       filter_vm: '.*'
     secrets:
       - vcconfig
