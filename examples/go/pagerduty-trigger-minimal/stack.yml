@@ -1,0 +1,13 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: https://veba.corp.local
+functions:
+  go-pd-trigger-min-fn:
+    lang: golang-http
+    handler: ./handler
+    image: fgold/veba-go-pagerduty-trigger-min:1
+    secrets:
+      - pdconfig
+    annotations:
+      topic: VmReconfiguredEvent
