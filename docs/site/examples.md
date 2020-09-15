@@ -103,6 +103,42 @@ examples:
     links: 
     - language: python
       url: "/tree/master/examples/python/invoke-rest-api"
+
+  - title: HA Restarted VMs Notification
+    usecases: 
+    - item: notification
+    id: ha-restarted-vms
+    description: Send an email listing all of the VMs which were restarted due to a host failure in an HA enabled cluster.
+    links: 
+    - language: powercli
+      url: "/tree/master/examples/powercli/ha-restarted-vms"
+
+  - title: VMware Cloud on AWS SDDC Provisioned and Deletion Slack Notification
+    usecases:
+    - item: notification
+    id: vmware-cloud-ngw-slack
+    description: Send Slack message when a VMware Cloud on AWS SDDC is Provisioned or Deleted.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/powershell/vmware-cloud-ngw-slack"
+
+  - title: VMware Cloud on AWS SDDC Provisioned and Deletion Microsoft Teams Notification
+    usecases:
+    - item: notification
+    id: vmware-cloud-ngw-teams
+    description: Send Microsoft Team message when a VMware Cloud on AWS SDDC is Provisioned or Deleted.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/powershell/vmware-cloud-ngw-teams"
+
+  - title: vCenter Managed Object Pre-Filter  
+    usecases: 
+    - item: other
+    id: pre-filter
+    description: Function to limit the scope of other functions by allowing filtering of events by vCenter Inventory paths using standard regex.
+    links: 
+    - language: python
+      url: "/tree/master/examples/python/pre-filter" #relative path to the function
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 

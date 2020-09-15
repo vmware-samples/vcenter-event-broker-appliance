@@ -6,6 +6,8 @@
 
 set -euo pipefail
 
+VEBA_BOM_FILE=/root/config/veba-bom.json
+
 echo -e "\e[92mStarting Docker ..." > /dev/console
 systemctl daemon-reload
 systemctl start docker.service
@@ -20,14 +22,19 @@ if [ -z "${POD_NETWORK_CIDR}" ]; then
     POD_NETWORK_CIDR="10.16.0.0/16"
 fi
 
-cat >> /root/config/kubeconfig.yml << EOF
-
-networking:
-  podSubnet: ${POD_NETWORK_CIDR}
-EOF
-
 # Setup k8s
 echo -e "\e[92mSetting up k8s ..." > /dev/console
+K8S_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["kubernetes"].version')
+cat > /root/config/kubeconfig.yml << __EOF__
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: InitConfiguration
+---
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+kubernetesVersion: ${K8S_VERSION}
+networking:
+  podSubnet: ${POD_NETWORK_CIDR}
+__EOF__
 
 echo -e "\e[92mDeloying kubeadm ..." > /dev/console
 HOME=/root

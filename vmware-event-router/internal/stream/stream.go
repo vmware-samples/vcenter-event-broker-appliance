@@ -10,8 +10,7 @@ import (
 // Streamer establishes a connection to a stream provider and invokes a stream
 // processor.
 type Streamer interface {
-	PushMetrics(context.Context, *metrics.Server)
+	PushMetrics(context.Context, metrics.Receiver)
 	Stream(context.Context, processor.Processor) error
 	Shutdown(context.Context) error
-	Source() string
 }

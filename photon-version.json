@@ -1,5 +1,4 @@
 {
-  "version": "0.4.0",
   "description": "Photon Build for vCenter Event Broker Appliance",
   "vm_name": "vCenter_Event_Broker_Appliance",
   "iso_checksum": "f6619bcff94cef63d0d6d7ead7dd3878816ebfa6a1ef5717175bb0d08d4ccc719e4ec7daa7db3c5dc07ea3547fc24412b4dc6827a4ac332ada9d5bfc842c4229",

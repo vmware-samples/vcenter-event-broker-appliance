@@ -3,37 +3,51 @@ package processor
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"sync"
 	"time"
 
-	sdk "github.com/openfaas-incubator/connector-sdk/types"
+	cloudevents "github.com/cloudevents/sdk-go/v2"
+	ofsdk "github.com/openfaas-incubator/connector-sdk/types"
 	"github.com/openfaas/faas-provider/auth"
 	"github.com/pkg/errors"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/connection"
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
-
-	"github.com/vmware/govmomi/vim25/types"
 )
 
 const (
-	// ProviderOpenFaaS is the name used to identify this provider in the
-	// VMware Event Router configuration file
-	ProviderOpenFaaS   = "openfaas"
-	topicDelimiter     = ","
-	rebuildInterval    = time.Second * 10
-	timeout            = time.Second * 15
-	authMethodOpenFaaS = "basic_auth" // only this method is supported by the processor
+	// ProviderOpenFaaS variable is the name used to identify this provider in
+	// the VMware Event Router configuration file
+	ProviderOpenFaaS       = "openfaas"
+	authMethodOpenFaaS     = "basic_auth" // only this method is supported by the processor
+	defaultTopicDelimiter  = ","
+	defaultRebuildInterval = time.Second * 10
+	defaultTimeout         = time.Second * 15
 )
+
+// responseFunc implements ResponseSubscriber and is used to configure the
+// default response handler for the OpenFaaS processor
+type responseFunc func(ofsdk.InvokerResponse)
+
+func (r responseFunc) Response(res ofsdk.InvokerResponse) {
+	r(res)
+}
 
 // openfaasProcessor implements the Processor interface
 type openfaasProcessor struct {
-	controller sdk.Controller
-	source     string
-	verbose    bool
+	controller ofsdk.Controller
+	ofsdk.ResponseSubscriber
+
+	// options
+	verbose         bool
+	topicDelimiter  string
+	rebuildInterval time.Duration
+	gatewayTimeout  time.Duration
+	// TODO (@embano1): make log interface for all processors/streams
 	*log.Logger
 
 	lock  sync.RWMutex
@@ -43,12 +57,20 @@ type openfaasProcessor struct {
 // NewOpenFaaSProcessor returns an OpenFaaS processor for the given stream
 // source. Asynchronous function invokation can be configured for
 // high-throughput (non-blocking) requirements.
-func NewOpenFaaSProcessor(ctx context.Context, cfg connection.Config, source string, verbose bool, ms *metrics.Server) (Processor, error) {
+func NewOpenFaaSProcessor(ctx context.Context, cfg connection.Config, ms metrics.Receiver, opts ...OpenFaaSOption) (Processor, error) {
+	// defaults
 	logger := log.New(os.Stdout, color.Purple("[OpenFaaS] "), log.LstdFlags)
-	openfaas := openfaasProcessor{
-		source:  source,
-		verbose: verbose,
-		Logger:  logger,
+	ofProcessor := openfaasProcessor{
+		topicDelimiter:  defaultTopicDelimiter,
+		rebuildInterval: defaultRebuildInterval,
+		gatewayTimeout:  defaultTimeout,
+		Logger:          logger,
+	}
+	ofProcessor.ResponseSubscriber = defaultResponseHandler(&ofProcessor)
+
+	// apply options
+	for _, opt := range opts {
+		opt(&ofProcessor)
 	}
 
 	var creds auth.BasicAuthCredentials
@@ -64,94 +86,83 @@ func NewOpenFaaSProcessor(ctx context.Context, cfg connection.Config, source str
 	if cfg.Options["async"] == "true" {
 		async = true
 	}
-	ofconfig := sdk.ControllerConfig{
+	ofconfig := ofsdk.ControllerConfig{
 		GatewayURL:               cfg.Address,
-		TopicAnnotationDelimiter: topicDelimiter,
-		RebuildInterval:          rebuildInterval,
-		UpstreamTimeout:          timeout,
+		TopicAnnotationDelimiter: ofProcessor.topicDelimiter,
+		RebuildInterval:          ofProcessor.rebuildInterval,
+		UpstreamTimeout:          ofProcessor.gatewayTimeout,
 		AsyncFunctionInvocation:  async,
-		PrintSync:                verbose,
+		PrintSync:                ofProcessor.verbose,
 	}
-	ofcontroller := sdk.NewController(&creds, &ofconfig)
-
-	openfaas.controller = ofcontroller
-	openfaas.controller.Subscribe(&openfaas)
-	openfaas.controller.BeginMapBuilder()
+	ofcontroller := ofsdk.NewController(&creds, &ofconfig)
+	ofProcessor.controller = ofcontroller
+	ofProcessor.controller.Subscribe(&ofProcessor)
+	ofProcessor.controller.BeginMapBuilder()
 
 	// prepopulate the metrics stats
-	openfaas.stats = metrics.EventStats{
+	ofProcessor.stats = metrics.EventStats{
 		Provider:     ProviderOpenFaaS,
 		ProviderType: cfg.Type,
 		Name:         cfg.Address,
 		Started:      time.Now().UTC(),
 		Invocations:  make(map[string]int),
 	}
-	go openfaas.PushMetrics(ctx, ms)
+	go ofProcessor.PushMetrics(ctx, ms)
 
-	return &openfaas, nil
+	return &ofProcessor, nil
 }
 
-// Response prints status information for each function invokation
-func (openfaas *openfaasProcessor) Response(res sdk.InvokerResponse) {
-	// update stats
-	// TODO: currently we only support metrics when in sync invokation mode
-	// because we don't have a callback for async invocations
-	openfaas.lock.Lock()
-	openfaas.stats.Invocations[res.Topic]++
-	openfaas.lock.Unlock()
+// defaultResponseHandler prints status information for each function invokation
+func defaultResponseHandler(openfaas *openfaasProcessor) responseFunc {
+	return func(res ofsdk.InvokerResponse) {
+		// update stats
+		// TODO: currently we only support metrics when in sync invokation mode
+		// because we don't have a callback for async invocations
+		openfaas.lock.Lock()
+		openfaas.stats.Invocations[res.Topic]++
+		openfaas.lock.Unlock()
 
-	if res.Error != nil {
-		openfaas.Printf("function %s for topic %s returned status %d with error: %v", res.Function, res.Topic, res.Status, res.Error)
-		return
+		if res.Error != nil || res.Status != http.StatusOK {
+			openfaas.Printf("function %s for topic %s returned status %d with error: %v", res.Function, res.Topic, res.Status, res.Error)
+			return
+		}
+		openfaas.Printf("successfully invoked function %s for topic %s", res.Function, res.Topic)
 	}
-	openfaas.Printf("successfully invoked function %s for topic %s", res.Function, res.Topic)
 }
 
 // Process implements the stream processor interface
-func (openfaas *openfaasProcessor) Process(moref types.ManagedObjectReference, baseEvent []types.BaseEvent) error {
-	for idx := range baseEvent {
-		// process slice in reverse order to maintain Event.Key ordering
-		event := baseEvent[len(baseEvent)-1-idx]
-
-		if openfaas.verbose {
-			openfaas.Printf("processing event [%d] of type %T from source %s: %+v", idx, event, openfaas.source, event)
-		}
-
-		topic, message, err := handleEvent(event, openfaas.source)
-		if err != nil {
-			openfaas.Printf("error handling event: %v", err)
-			continue
-		}
-
-		if openfaas.verbose {
-			openfaas.Printf("created new outbound cloud event for subscribers: %s", string(message))
-		}
-
-		openfaas.Printf("invoking function(s) on topic: %s", topic)
-		openfaas.controller.Invoke(topic, &message)
+func (openfaas *openfaasProcessor) Process(ce cloudevents.Event) error {
+	if openfaas.verbose {
+		openfaas.Printf("processing event (ID %s): %v", ce.ID(), ce)
 	}
+
+	topic, message, err := handleEvent(ce)
+	if err != nil {
+		msg := fmt.Errorf("error handling event %v: %v", ce, err)
+		openfaas.Println(msg)
+		return processorError(ProviderOpenFaaS, msg)
+	}
+
+	if openfaas.verbose {
+		openfaas.Printf("created new outbound event for subscribers: %s", string(message))
+	}
+
+	openfaas.Printf("invoking function(s) for event %s on topic: %s", ce.ID(), topic)
+	openfaas.controller.Invoke(topic, &message)
 	return nil
 }
 
 // handleEvent returns the OpenFaaS subscription topic, e.g. VmPoweredOnEvent,
-// and outbound event message for the given BaseEvent and source
-func handleEvent(event types.BaseEvent, source string) (string, []byte, error) {
-	// Sanity check to avoid nil pointer exception
-	if event == nil {
-		return "", nil, errors.New("source event must not be nil")
-	}
-
-	// Get the category and name of the event used for subscribed topic matching
-	eventInfo := events.GetDetails(event)
-	cloudEvent := events.NewCloudEvent(event, eventInfo, source)
-	message, err := json.Marshal(cloudEvent)
+// and outbound event message ([]byte(CloudEvent) for the given CloudEvent
+func handleEvent(event cloudevents.Event) (string, []byte, error) {
+	message, err := json.Marshal(event)
 	if err != nil {
-		return "", nil, errors.Wrapf(err, "could not marshal cloud event for vSphere event %d from source %s", event.GetEvent().Key, source)
+		return "", nil, errors.Wrapf(err, "could not JSON-encode CloudEvent %v", event)
 	}
-	return eventInfo.Name, message, nil
+	return event.Subject(), message, nil
 }
 
-func (openfaas *openfaasProcessor) PushMetrics(ctx context.Context, ms *metrics.Server) {
+func (openfaas *openfaasProcessor) PushMetrics(ctx context.Context, ms metrics.Receiver) {
 	ticker := time.NewTicker(metrics.PushInterval)
 	defer ticker.Stop()
 	for {

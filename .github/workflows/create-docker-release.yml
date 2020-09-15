@@ -1,4 +1,4 @@
-name: Build and push VMware Event Router to Docker Hub
+name: Release VMware Event Router
 
 on:
   release:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout source (master branch)
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
         with:
           ref: 'master'
       - name: log in to Docker

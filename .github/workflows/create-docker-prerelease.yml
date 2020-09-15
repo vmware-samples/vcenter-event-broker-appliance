@@ -1,4 +1,4 @@
-name: Build and push VMware Event Router Pre-Release Image to Docker Hub
+name: Pre-Release VMware Event Router
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout source (this.release branch)
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
       - name: get the version from ref without prefixes
         id: get_version
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
