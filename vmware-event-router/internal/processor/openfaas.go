@@ -15,15 +15,11 @@ import (
 	"github.com/openfaas/faas-provider/auth"
 	"github.com/pkg/errors"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/connection"
+	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 )
 
 const (
-	// ProviderOpenFaaS variable is the name used to identify this provider in
-	// the VMware Event Router configuration file
-	ProviderOpenFaaS       = "openfaas"
-	authMethodOpenFaaS     = "basic_auth" // only this method is supported by the processor
 	defaultTopicDelimiter  = ","
 	defaultRebuildInterval = time.Second * 10
 	defaultTimeout         = time.Second * 15
@@ -57,7 +53,7 @@ type openfaasProcessor struct {
 // NewOpenFaaSProcessor returns an OpenFaaS processor for the given stream
 // source. Asynchronous function invokation can be configured for
 // high-throughput (non-blocking) requirements.
-func NewOpenFaaSProcessor(ctx context.Context, cfg connection.Config, ms metrics.Receiver, opts ...OpenFaaSOption) (Processor, error) {
+func NewOpenFaaSProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFaaS, ms metrics.Receiver, opts ...OpenFaaSOption) (Processor, error) {
 	// defaults
 	logger := log.New(os.Stdout, color.Purple("[OpenFaaS] "), log.LstdFlags)
 	ofProcessor := openfaasProcessor{
@@ -73,27 +69,38 @@ func NewOpenFaaSProcessor(ctx context.Context, cfg connection.Config, ms metrics
 		opt(&ofProcessor)
 	}
 
-	var creds auth.BasicAuthCredentials
-	switch cfg.Auth.Method {
-	case authMethodOpenFaaS:
-		creds.User = cfg.Auth.Secret["username"]
-		creds.Password = cfg.Auth.Secret["password"]
-	default:
-		return nil, errors.Errorf("unsupported authentication method for processor openfaas: %s", cfg.Auth.Method)
+	if cfg == nil {
+		return nil, errors.New("no OpenFaaS configuration found")
 	}
 
-	var async bool
-	if cfg.Options["async"] == "true" {
-		async = true
+	// it's ok to pass empty creds to OpenFaaS if basic_auth is not used
+	var creds auth.BasicAuthCredentials
+
+	switch cfg.Auth {
+	case nil:
+		logger.Println("no authentication data provided, disabling basic auth")
+	default:
+		if cfg.Auth.Type != config.BasicAuth {
+			return nil, fmt.Errorf("unsupported authentication method %q specified for this processor", cfg.Auth.Type)
+		}
+
+		if cfg.Auth.BasicAuth == nil {
+			return nil, errors.New("basic auth credentials must be specified")
+		}
+
+		creds.User = cfg.Auth.BasicAuth.Username
+		creds.Password = cfg.Auth.BasicAuth.Password
 	}
+
 	ofconfig := ofsdk.ControllerConfig{
 		GatewayURL:               cfg.Address,
 		TopicAnnotationDelimiter: ofProcessor.topicDelimiter,
 		RebuildInterval:          ofProcessor.rebuildInterval,
 		UpstreamTimeout:          ofProcessor.gatewayTimeout,
-		AsyncFunctionInvocation:  async,
+		AsyncFunctionInvocation:  cfg.Async,
 		PrintSync:                ofProcessor.verbose,
 	}
+
 	ofcontroller := ofsdk.NewController(&creds, &ofconfig)
 	ofProcessor.controller = ofcontroller
 	ofProcessor.controller.Subscribe(&ofProcessor)
@@ -101,11 +108,11 @@ func NewOpenFaaSProcessor(ctx context.Context, cfg connection.Config, ms metrics
 
 	// prepopulate the metrics stats
 	ofProcessor.stats = metrics.EventStats{
-		Provider:     ProviderOpenFaaS,
-		ProviderType: cfg.Type,
-		Name:         cfg.Address,
-		Started:      time.Now().UTC(),
-		Invocations:  make(map[string]int),
+		Provider:    string(config.ProcessorOpenFaaS),
+		Type:        config.EventProcessor,
+		Address:     cfg.Address,
+		Started:     time.Now().UTC(),
+		Invocations: make(map[string]int),
 	}
 	go ofProcessor.PushMetrics(ctx, ms)
 
@@ -126,6 +133,7 @@ func defaultResponseHandler(openfaas *openfaasProcessor) responseFunc {
 			openfaas.Printf("function %s for topic %s returned status %d with error: %v", res.Function, res.Topic, res.Status, res.Error)
 			return
 		}
+
 		openfaas.Printf("successfully invoked function %s for topic %s", res.Function, res.Topic)
 	}
 }
@@ -140,7 +148,7 @@ func (openfaas *openfaasProcessor) Process(ce cloudevents.Event) error {
 	if err != nil {
 		msg := fmt.Errorf("error handling event %v: %v", ce, err)
 		openfaas.Println(msg)
-		return processorError(ProviderOpenFaaS, msg)
+		return processorError(config.ProcessorOpenFaaS, msg)
 	}
 
 	if openfaas.verbose {
@@ -165,13 +173,14 @@ func handleEvent(event cloudevents.Event) (string, []byte, error) {
 func (openfaas *openfaasProcessor) PushMetrics(ctx context.Context, ms metrics.Receiver) {
 	ticker := time.NewTicker(metrics.PushInterval)
 	defer ticker.Stop()
+
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
 			openfaas.lock.RLock()
-			ms.Receive(openfaas.stats)
+			ms.Receive(&openfaas.stats)
 			openfaas.lock.RUnlock()
 		}
 	}

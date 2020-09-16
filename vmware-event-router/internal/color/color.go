@@ -24,5 +24,6 @@ func Color(colorString string) func(...interface{}) string {
 		return fmt.Sprintf(colorString,
 			fmt.Sprint(args...))
 	}
+
 	return sprint
 }

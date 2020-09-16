@@ -1,7 +1,8 @@
-package stream
+package provider
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math"
 	"net/url"
@@ -11,7 +12,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/connection"
+	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
@@ -19,13 +20,6 @@ import (
 	"github.com/vmware/govmomi/event"
 	"github.com/vmware/govmomi/vim25/soap"
 	"github.com/vmware/govmomi/vim25/types"
-)
-
-const (
-	// ProviderVSphere is the name used to identify this provider in the
-	// VMware Event Router configuration file
-	ProviderVSphere   = "vmware_vcenter"
-	authMethodvSphere = "user_password"
 )
 
 // vCenterStream handles the connection to vCenterStream to retrieve an event stream
@@ -40,13 +34,15 @@ type vCenterStream struct {
 }
 
 // NewVCenterStream returns a vCenter event manager for a given configuration and metrics server
-func NewVCenterStream(ctx context.Context, cfg connection.Config, ms metrics.Receiver, opts ...VCenterOption) (Streamer, error) {
+func NewVCenterStream(ctx context.Context, cfg *config.ProviderConfigVCenter, ms metrics.Receiver, opts ...VCenterOption) (Provider, error) {
 	var vCenter vCenterStream
+
 	logger := log.New(os.Stdout, color.Magenta("[vCenter] "), log.LstdFlags)
 	vCenter.Logger = logger
 	parsedURL, err := soap.ParseURL(cfg.Address)
+
 	if err != nil {
-		return nil, errors.Wrap(err, "error parsing URL")
+		return nil, errors.Wrap(err, "error parsing vCenter URL")
 	}
 
 	// apply options
@@ -54,22 +50,20 @@ func NewVCenterStream(ctx context.Context, cfg connection.Config, ms metrics.Rec
 		opt(&vCenter)
 	}
 
-	var username, password string
-	switch cfg.Auth.Method {
-	case authMethodvSphere:
-		username = cfg.Auth.Secret["username"]
-		password = cfg.Auth.Secret["password"]
-	default:
-		return nil, errors.Errorf("unsupported authentication method for stream vCenter: %s", cfg.Auth.Method)
+	if cfg == nil {
+		return nil, errors.New("no vCenter configuration found")
 	}
+
+	// TODO: only supporting basic auth against vCenter for now
+	if cfg.Auth == nil || cfg.Auth.BasicAuth == nil {
+		return nil, fmt.Errorf("invalid %s credentials: username and password must be set", config.BasicAuth)
+	}
+
+	username := cfg.Auth.BasicAuth.Username
+	password := cfg.Auth.BasicAuth.Password
 	parsedURL.User = url.UserPassword(username, password)
 
-	var insecure bool
-	if cfg.Options["insecure"] == "true" {
-		insecure = true
-	}
-
-	client, err := govmomi.NewClient(ctx, parsedURL, insecure)
+	client, err := govmomi.NewClient(ctx, parsedURL, cfg.InsecureSSL)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create vCenter client")
 	}
@@ -79,13 +73,13 @@ func NewVCenterStream(ctx context.Context, cfg connection.Config, ms metrics.Rec
 
 	// prepopulate the metrics stats
 	vCenter.stats = metrics.EventStats{
-		Provider:     ProviderVSphere,
-		ProviderType: cfg.Type,
-		Name:         client.URL().String(),
-		Started:      time.Now().UTC(),
-		EventsTotal:  new(int),
-		EventsErr:    new(int),
-		EventsSec:    new(float64),
+		Provider:    string(config.ProviderVCenter),
+		Type:        config.EventProvider,
+		Address:     cfg.Address,
+		Started:     time.Now().UTC(),
+		EventsTotal: new(int),
+		EventsErr:   new(int),
+		EventsSec:   new(float64),
 	}
 	go vCenter.PushMetrics(ctx, ms)
 	return &vCenter, nil
@@ -106,7 +100,7 @@ func (vcenter *vCenterStream) Stream(ctx context.Context, p processor.Processor)
 	return nil
 }
 
-func (vcenter *vCenterStream) Shutdown(ctx context.Context) error {
+func (vcenter *vCenterStream) Shutdown(_ context.Context) error {
 	// need to pass new context explicitly to avoid
 	// "*url.Error: POST ... context cancelled"
 	err := vcenter.client.Logout(context.Background())
@@ -120,6 +114,7 @@ func (vcenter *vCenterStream) Source() string {
 func (vcenter *vCenterStream) PushMetrics(ctx context.Context, ms metrics.Receiver) {
 	ticker := time.NewTicker(metrics.PushInterval)
 	defer ticker.Stop()
+
 	for {
 		select {
 		case <-ctx.Done():
@@ -128,7 +123,7 @@ func (vcenter *vCenterStream) PushMetrics(ctx context.Context, ms metrics.Receiv
 			vcenter.lock.RLock()
 			eventsSec := math.Round((float64(*vcenter.stats.EventsTotal)/time.Since(vcenter.stats.Started).Seconds())*100) / 100 // 0.2f syntax
 			vcenter.stats.EventsSec = &eventsSec
-			ms.Receive(vcenter.stats)
+			ms.Receive(&vcenter.stats)
 			vcenter.lock.RUnlock()
 		}
 	}
@@ -152,18 +147,19 @@ func (vcenter *vCenterStream) streamCallbackFn(p processor.Processor) func(types
 
 		for idx := range baseEvent {
 			// process slice in reverse order to maintain Event.Key ordering
-			event := baseEvent[len(baseEvent)-1-idx]
+			e := baseEvent[len(baseEvent)-1-idx]
 
-			ce, err := events.NewCloudEvent(event, vcenter.Source())
+			ce, err := events.NewCloudEvent(e, vcenter.Source())
 			if err != nil {
-				vcenter.Logger.Printf("skipping event %v because it could not be converted to CloudEvent format: %v", event, err)
+				vcenter.Logger.Printf("skipping e %v because it could not be converted to CloudEvent format: %v", e, err)
 				errCount++
+
 				continue
 			}
 
 			err = p.Process(*ce)
 			if err != nil {
-				vcenter.Logger.Printf("could not process event %v: %v", ce, err)
+				vcenter.Logger.Printf("could not process e %v: %v", ce, err)
 				errCount++
 			}
 		}
