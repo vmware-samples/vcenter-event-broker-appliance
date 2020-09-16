@@ -5,6 +5,7 @@ dist/
 username
 password
 secret*.json
+secret*.yml
 .jekyll-metadata
 .sass-cache
 .jekyll-cache
