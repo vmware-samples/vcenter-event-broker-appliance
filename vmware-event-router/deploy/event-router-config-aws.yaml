@@ -1,0 +1,40 @@
+apiVersion: event-router.vmware.com/v1alpha1
+kind: RouterConfig
+metadata:
+  name: router-config-aws
+  labels:
+    key: value
+eventProvider:
+  type: vcenter
+  name: veba-demo-vc-01
+  vcenter:
+    address: https://my-vcenter01.domain.local/sdk
+    insecureSSL: false
+    auth:
+      type: basic_auth
+      basicAuth:
+        username: administrator@vsphere.local
+        password: ReplaceMe
+eventProcessor:
+  type: awsEventBridge
+  name: veba-demo-aws
+  awsEventBridge:
+    eventBus: default
+    region: us-west-1
+    ruleARN: arn:aws:events:us-west-1:1234567890:rule/vmware-event-router
+    auth:
+      type: aws_access_key
+      awsAccessKeyAuth:
+        accessKey: ABCDEFGHIJK
+        secretKey: ZYXWVUTSRQPO
+metricsProvider:
+  type: default
+  name: veba-demo-metrics
+  default:
+    bindAddress: "0.0.0.0:8082"
+# disabling auth for the metrics endpoint
+#    auth:
+#      type: basic_auth
+#      basicAuth:
+#        username: admin
+#        password: ReplaceMe

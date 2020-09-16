@@ -1,7 +1,11 @@
 <!-- omit in toc -->
 # VMware Event Router
 
-The VMware Event Router is used to connect to various VMware event `streams` (i.e. "sources") and forward these events to different `processors` (i.e. "sinks"). This project is currently used by the [*VMware Event Broker Appliance*](https://www.vmweventbroker.io/) as the core logic to forward vCenter events to configurable event `processors` (see below).
+The VMware Event Router is used to connect to various VMware event `providers`
+(i.e. "sources") and forward these events to different event `processors` (i.e.
+"sinks"). This project is currently used by the [*VMware Event Broker
+Appliance*](https://www.vmweventbroker.io/) as the core logic to forward vCenter
+events to configurable event `processors` (see below).
 
 **Supported event sources:**
 - [VMware vCenter Server](https://www.vmware.com/products/vcenter-server.html)
@@ -10,32 +14,50 @@ The VMware Event Router is used to connect to various VMware event `streams` (i.
 - [OpenFaaS](https://www.openfaas.com/)
 - [AWS EventBridge](https://aws.amazon.com/eventbridge/?nc1=h_ls)
 
-The VMware Event Router uses the [CloudEvents](https://cloudevents.io/) standard to format events from the supported `stream` providers in JSON. See [below](#example-event-structure) for an example.
+The VMware Event Router uses the [CloudEvents](https://cloudevents.io/) standard
+to normalize events from the supported event `providers`. See
+[below](#example-event-structure) for an example.
 
 **Current limitations:**
 
-- Only one event `stream` and one event `processor` can be configured at a time
-  - It is possible though to run **multiple instances** of the event router
-- At-most-once delivery semantics are provided
+- Only one event `provider` and one event `processor` can be configured at a
+  time
+- **At-most-once** event delivery semantics
+
+> **Note:** It is possible though to run **multiple instances** of the event
+> router with different configurations to address multi-vCenter scenarios
 
 <!-- omit in toc -->
 ## Table of Contents
-- [Usage and Configuration](#usage-and-configuration)
-  - [Event Stream Provider and Processor Configuration Options](#event-stream-provider-and-processor-configuration-options)
-  - [Stream Provider: Configuration Details for VMware vCenter Server](#stream-provider-configuration-details-for-vmware-vcenter-server)
-  - [Stream Processor: Configuration Details for OpenFaaS](#stream-processor-configuration-details-for-openfaas)
-  - [Stream Processor: Configuration Details for AWS EventBridge](#stream-processor-configuration-details-for-aws-eventbridge)
-  - [Metrics Server: Configuration Details](#metrics-server-configuration-details)
-  - [Deployment](#deployment)
-    - [Assisted Deployment](#assisted-deployment)
-    - [Manual Deployment](#manual-deployment)
+- [Configuration](#configuration)
+  - [Overview: Configuration File Structure
+    (YAML)](#overview-configuration-file-structure-yaml)
+  - [JSON Schema Validation](#json-schema-validation)
+  - [API Version, Kind and Metadata](#api-version-kind-and-metadata)
+  - [The `eventProvider` section](#the-eventprovider-section)
+    - [Provider Type `vcenter`](#provider-type-vcenter)
+  - [The `eventProcessor` section](#the-eventprocessor-section)
+    - [Processor Type `openfaas`](#processor-type-openfaas)
+    - [Processor Type `aws_event_bridge`](#processor-type-aws_event_bridge)
+  - [The `auth` section](#the-auth-section)
+    - [Type `basic_auth`](#type-basic_auth)
+    - [Type `aws_access_key`](#type-aws_access_key)
+  - [The `metricsProvider` section](#the-metricsprovider-section)
+    - [Provider Type `default`](#provider-type-default)
+- [Deployment](#deployment)
+  - [Assisted Deployment](#assisted-deployment)
+  - [Manual Deployment](#manual-deployment)
 - [Build from Source](#build-from-source)
 - [Contribute](#contribute)
 - [Example Event Structure](#example-event-structure)
 
-## Usage and Configuration
+## Configuration
 
-The VMware Event Router can be run standalone (statically linked binary) or deployed as a Docker container, e.g. in a Kubernetes environment. See [deployment](#deployment) for further instructions. The configuration of event `stream` providers and `processors` and other internal components (such as metrics) is done via a JSON file passed in via the `"-config"` command line flag.
+The VMware Event Router can be run standalone (statically linked binary) or
+deployed as a Docker container, e.g. in a Kubernetes environment. See
+[deployment](#deployment) for further instructions. The configuration of event
+`providers` and `processors` and other internal components (such as metrics) is
+done via a YAML file passed in via the `-config` command line flag.
 
 ```
  _    ____  ___                            ______                 __     ____              __
@@ -48,118 +70,175 @@ The VMware Event Router can be run standalone (statically linked binary) or depl
 Usage of ./vmware-event-router:
 
   -config string
-        path to configuration file for metrics, stream source and processor (default "/etc/vmware-event-router/config")
+        path to configuration file (default "/etc/vmware-event-router/config")
   -verbose
-        print event handling information
+        verbose log output (default false)
 
 commit: <git_commit_sha>
-version: <release_tag:master>
+version: <release_tag>
 ```
 
-The following sections describe the layout of the configuration file (JSON) and specific options for the event `stream` provider, `processor` and `metrics` server. A correct configuration file requires `stream`, `processor` and `metrics` to be defined. Configuration examples are provided [here](deploy/).
+The following sections describe the layout of the configuration file (YAML) and
+specific options for the supported event `providers`, `processors` and `metrics`
+endpoint. Configuration examples are provided [here](deploy/).
 
-> **Note:** Currently only one event `stream` (i.e. one vCenter Server) and one event `processor` can be configured at a time, e.g. one vCenter Server instance streaming events to OpenFaaS **or** AWS EventBridge. Specifying multiple instances of the same provider will lead to unintended behavior.
+> **Note:** Currently only one event `provider` and one event `processor` can be
+> configured at a time, e.g. one vCenter Server instance streaming events to
+> OpenFaaS **or** AWS EventBridge. It is possible to run multiple instances of
+> the event router with different configurations to address
+> multi-provider/processor scenarios.
 
-### Event Stream Provider and Processor Configuration Options
+### Overview: Configuration File Structure (YAML)
 
-The following table lists allowed fields with their respective value types in the JSON configuration file. Detailed instructions for the specific event `stream` providers, `processors` and `metrics` are described in dedicated sections further below.
+The following file, using `vcenter` as the event `provider` and `openfaas` as
+the `processor` shows an example of the configuration file syntax:
 
-| Field    | Value             | Description                                    | Example                                                                                           |
-|----------|-------------------|------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| type     | string            | event stream, processor or internal            | "type": "stream"                                                                                  |
-| provider | string            | identifier of stream, processor or metrics     | "provider": "vmware_vcenter"                                                                      |
-| address  | string            | URI of the provider (when required)            | "address": "https://10.0.0.1:443/sdk"                                                             |
-| auth     | map[string]string | authentication options for the type provider   | "auth": { "method":"user_password","secret": {...}} **Note: see provider specific options below** |
-| options  | map[string]string | provider specific options (see sections below) | "options":{"insecure": "true"}                                                                    |
-
-> **Note:** Besides event `stream` providers and `processors` the configuration file is also used for router-internal components, such as metrics (and likely others in the future). The `type: internal` is reserved for these use cases.
-
-### Stream Provider: Configuration Details for VMware vCenter Server
-
-The following table lists allowed and optional fields for using VMware vCenter Server as an event `stream` provider.
-
-| Field                | Value                         | Description                                                                                                                    |
-|----------------------|-------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| type                 | "stream"                      | VMware vCenter is an event **stream** provider.                                                                                |
-| provider             | "vmware_vcenter"              | Use this exact value to use VMware vCenter Server as a provider.                                                               |
-| address              | "https://10.0.0.1:443/sdk"    | URI of the VMware vCenter Server (IP or FQDN incl. "<:PORT>/sdk").                                                             |
-| auth.method          | "user_password"               | Use this exact value. Only username/password are supported to authenticate against VMware vCenter Server.                      |
-| auth.secret.username | "administrator@vsphere.local" | Replace with user/service account to use for connecting to this vCenter event stream.                                          |
-| auth.secret.password | "REPLACE_ME"                  | Replace with password for the given user/service account to use for connecting to this vCenter event stream.                   |
-| options.insecure     | "true"                        | Ignore TLS certificate warnings. **Note:** must use quotes around this value (is of type string). Default: "false". (optional) |
-
-Example of the configuration section for VMware vCenter Server: 
-
-```json
-{
-  "type": "stream",
-  "provider": "vmware_vcenter",
-  "address": "https://10.0.0.1:443/sdk",
-  "auth": {
-    "method": "user_password",
-    "secret": {
-      "username": "administrator@vsphere.local",
-      "password": "REPLACE_ME"
-    }
-  },
-  "options": {
-    "insecure": "true"
-  }
-}
+```yaml
+apiVersion: event-router.vmware.com/v1alpha1
+kind: RouterConfig
+metadata:
+  name: router-config-openfaas
+  labels:
+    key: value
+eventProvider:
+  type: vcenter
+  name: veba-demo-vc-01
+  vcenter:
+    address: https://my-vcenter01.domain.local/sdk
+    insecureSSL: false
+    auth:
+      type: basic_auth
+      basicAuth:
+        username: administrator@vsphere.local
+        password: ReplaceMe
+eventProcessor:
+  type: openfaas
+  name: veba-demo-openfaas
+  openfaas:
+    address: http://gateway.openfaas:8080
+    async: false
+    # assuming basic_auth enabled for OpenFaaS
+    auth:
+      type: basic_auth
+      basicAuth:
+        username: admin
+        password: ReplaceMe
+metricsProvider:
+  type: default
+  name: veba-demo-metrics
+  default:
+    bindAddress: "0.0.0.0:8082"
 ```
 
-> **Note:** The JSON configuration file is an array of maps, ie. "[{<stream_provider>},{<stream_processor>}]". The snippet above is trimmed for readability. The examples provided [here](deploy/) are properly formatted.
+### JSON Schema Validation
 
-### Stream Processor: Configuration Details for OpenFaaS
+In order to simplify the configuration and validation of the YAML configuration
+file a JSON schema [file](README.MD) is provided. Many editors/IDEs offer
+support for registering a schema file, e.g.
+[Jetbrains](https://www.jetbrains.com/help/rider/Settings_Languages_JSON_Schema.html)
+and [VS
+Code](https://code.visualstudio.com/docs/languages/json#_json-schemas-and-settings).
 
-OpenFaaS functions can subscribe to the event stream via function `"topic"` annotations in the function stack configuration (see OpenFaaS documentation for details on authoring functions), e.g.:
+> **Note:** The schema file can be downloaded and provided via a local file
+> location or (recommended) via a direct URL, e.g. Github
+> [raw](https://help.data.world/hc/en-us/articles/115006300048-GitHub-how-to-find-the-sharable-download-URL-for-files-on-GitHub)
+> URL pointing to the aforementioned JSON schema file.
+
+
+### API Version, Kind and Metadata
+
+The following table lists allowed and required fields with their respective type
+values and examples for these fields.
+
+| Field             | Type              | Description                                     | Required | Example                            |
+| ----------------- | ----------------- | ----------------------------------------------- | -------- | ---------------------------------- |
+| `apiVersion`      | String            | API Version used for this configuration file    | true     | `event-router.vmware.com/v1alpha1` |
+| `kind`            | String            | Type of this API resource                       | true     | `RouterConfig`                     |
+| `metadata`        | Object            | Additional metadata for this configuration file | true     |                                    |
+| `metadata.name`   | String            | Name of this configuration file                 | true     | `config-vc-openfaas-PROD`          |
+| `metadata.labels` | map[String]String | Optional key/value pairs                        | false    | `env: PROD`                        |
+
+
+### The `eventProvider` section
+
+The following table lists allowed and required fields with their respective type
+values and examples for these fields.
+
+| Field             | Type   | Description                            | Required | Example                      |
+| ----------------- | ------ | -------------------------------------- | -------- | ---------------------------- |
+| `type`            | String | Type of the event provider             | true     | `vcenter`                    |
+| `name`            | String | Name identifier for the event provider | true     | `vc-01-PROD`                 |
+| `<provider_type>` | Object | Provider specific configuration        | true     | (see provider section below) |
+
+
+#### Provider Type `vcenter`
+
+The following table lists allowed and required fields for connecting to a
+vCenter Server and the respective type values and examples for these fields.
+
+| Field         | Type    | Description                      | Required | Example                          |
+| ------------- | ------- | -------------------------------- | -------- | -------------------------------- |
+| `address`     | String  | URI of the VMware vCenter Server | true     | `https://10.0.0.1:443/sdk`       |
+| `insecureSSL` | Boolean | Skip TSL verification            | false    | `true` (i.e. ignore errors)      |
+| `<auth>`      | Object  | vCenter credentials              | true     | (see `basic_auth` example below) |
+
+### The `eventProcessor` section
+
+The following table lists allowed and required fields with their respective type
+values and examples for these fields.
+
+| Field              | Type   | Description                             | Required | Example                          |
+| ------------------ | ------ | --------------------------------------- | -------- | -------------------------------- |
+| `type`             | String | Type of the event processor             | true     | `openfaas` or `aws_event_bridge` |
+| `name`             | String | Name identifier for the event processor | true     | `openfaas-01-PROD`               |
+| `<processor_type>` | Object | Processor specific configuration        | true     | (see processor section below)    |
+
+#### Processor Type `openfaas`
+
+OpenFaaS functions can subscribe to the event stream via function `"topic"`
+annotations in the function stack configuration (see OpenFaaS documentation for
+details on authoring functions), e.g.:
 
 ```yaml
 annotations:
-      topic: "VmPoweredOnEvent,VmPoweredOffEvent"
+  topic: "VmPoweredOnEvent,VmPoweredOffEvent"
 ```
 
-> **Note:** One or more event categories can be specified, delimited via `","`. A list of event names (categories) and how to retrieve them can be found [here](https://github.com/lamw/vcenter-event-mapping/blob/master/vsphere-6.7-update-3.md). A simple "echo" function useful for testing is provided [here](https://github.com/embano1/of-echo/blob/master/echo.yml).
+> **Note:** One or more event categories can be specified, delimited via `","`.
+> A list of event names (categories) and how to retrieve them can be found
+> [here](https://github.com/lamw/vcenter-event-mapping/blob/master/vsphere-6.7-update-3.md).
+> A simple "echo" function useful for testing is provided
+> [here](https://github.com/embano1/of-echo/blob/master/echo.yml).
 
-The following table lists allowed and optional fields for using OpenFaaS as an event stream `processor`.
+The following table lists allowed and optional fields for using OpenFaaS as an
+event `processor`.
 
-| Field                | Value                          | Description                                                                                                                                                 |
-|----------------------|--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| type                 | "processor"                    | OpenFaaS is an event stream **processor**.                                                                                                                  |
-| provider             | "openfaas"                     | Use this exact value to use OpenFaaS as a provider.                                                                                                         |
-| address              | "http://gateway.openfaas:8080" | URI of the OpenFaaS gateway (IP or FQDN incl. "<:PORT>").                                                                                                   |
-| auth.method          | "basic_auth"                   | Use this exact value. Only `"basic_auth"` is supported to authenticate against OpenFaaS (must use authentication).                                             |
-| auth.secret.username | "admin"                        | Replace with OpenFaaS gateway admin user name (is "admin" unless changed during gateway deployment).                                                        |
-| auth.secret.password | "REPLACE_ME"                   | Replace with password for the given admin account to use for connecting to the OpenFaaS gateway.                                                            |
-| options.async        | "true"                         | Use `"async"` function invocation against the OpenFaaS gateway. **Note:** must use quotes around this value (is of type string). Default: "false". (optional) |
+| Field     | Type    | Description                                                                                       | Required | Example                                          |
+| --------- | ------- | ------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------ |
+| `address` | String  | URI of the OpenFaaS gateway                                                                       | true     | `http://gateway.openfaas:8080`                   |
+| `async`   | Boolean | Specify how to invoke functions (synchronously or asynchronously)                                 | false    | `false` (i.e. use sync function invocation mode) |
+| `<auth>`  | Object  | **Optional:** authentication data (see auth section below). Omit section if auth is not required. | false    | (see `basic_auth` example below)                 |
 
-Example of the configuration section for OpenFaaS: 
+#### Processor Type `aws_event_bridge`
 
-```json
-{
-  "type": "processor",
-  "provider": "openfaas",
-  "address": "http://gateway.openfaas:8080",
-  "auth": {
-    "method": "basic_auth",
-    "secret": {
-      "username": "admin",
-      "password": "REPLACE_ME"
-    }
-  },
-  "options": {
-    "async": "false"
-  }
-}
-```
+Amazon EventBridge is a serverless event bus that makes it easy to connect
+applications together using data from your own applications, integrated
+Software-as-a-Service (SaaS) applications, and AWS services. In order to reduce
+bandwidth and costs (number of events ingested, see
+[pricing](https://aws.amazon.com/eventbridge/pricing/)), VMware Event Router
+only forwards events configured in the associated `rule` of an event bus. Rules
+in AWS EventBridge use pattern matching
+([docs](https://docs.aws.amazon.com/eventbridge/latest/userguide/filtering-examples-structure.html)).
+Upon start, VMware Event Router contacts EventBridge (using the given IAM role)
+to parse and extract event categories from the configured rule ARN (see
+configuration option below).  
 
-> **Note:** The JSON configuration file is an array of maps, ie. "[{<stream_provider>},{<stream_processor>}]". The snippet above is trimmed for readability. The examples provided [here](deploy/) are properly formatted.
-
-### Stream Processor: Configuration Details for AWS EventBridge
-
-Amazon EventBridge is a serverless event bus that makes it easy to connect applications together using data from your own applications, integrated Software-as-a-Service (SaaS) applications, and AWS services. In order to reduce bandwidth and costs (number of events ingested, see [pricing](https://aws.amazon.com/eventbridge/pricing/)), VMware Event Router only forwards events configured in the associated `rule` of an event bus. Rules in AWS EventBridge use pattern matching ([docs](https://docs.aws.amazon.com/eventbridge/latest/userguide/filtering-examples-structure.html)). Upon start, VMware Event Router contacts EventBridge (using the given IAM role) to parse and extract event categories from the configured rule ARN (see configuration option below). 
-
-The VMware Event Router uses the `"subject"` field in the event payload to store the event category, e.g. `"VmPoweredOnEvent"`. Thus it is required that you use a **specific pattern match** (`"detail->subject"`) that the VMware Event Router can parse to retrieve the desired event (forwarding) categories. For example, the following AWS EventBridge event pattern rule matches power on/off events (including DRS-enabled clusters):
+The VMware Event Router uses the `"subject"` field in the event payload to store
+the event category, e.g. `"VmPoweredOnEvent"`. Thus it is required that you use
+a **specific pattern match** (`"detail->subject"`) that the VMware Event Router
+can parse to retrieve the desired event (forwarding) categories. For example,
+the following AWS EventBridge event pattern rule matches power on/off events
+(including DRS-enabled clusters):
 
 ```json
 {
@@ -173,26 +252,73 @@ The VMware Event Router uses the `"subject"` field in the event payload to store
 }
 ```
 
-`"subject"` can contain one or more event categories. Wildcards (`"*"`) are not supported. If one wants to modify the event pattern match rule **after** deploying the VMware Event Router, its internal rules cache is periodically synchronized with AWS EventBridge at a fixed interval of 5 minutes.
+`"subject"` can contain one or more event categories. Wildcards (`"*"`) are not
+supported. If one wants to modify the event pattern match rule **after**
+deploying the VMware Event Router, its internal rules cache is periodically
+synchronized with AWS EventBridge at a fixed interval of 5 minutes.
 
-> **Note:** A list of event names (categories) and how to retrieve them can be found [here](https://github.com/lamw/vcenter-event-mapping/blob/master/vsphere-6.7-update-3.md).
+> **Note:** A list of event names (categories) and how to retrieve them can be
+> found
+> [here](https://github.com/lamw/vcenter-event-mapping/blob/master/vsphere-6.7-update-3.md).
 
-The following table lists allowed and optional fields for using AWS EventBridge as an event stream `processor`.
+The following table lists allowed and optional fields for using AWS EventBridge
+as an event `processor`.
 
-| Field                             | Value                                                             | Description                                                                                                                                |
-|-----------------------------------|-------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| type                              | "processor"                                                       | AWS EventBridge is an event stream **processor**.                                                                                          |
-| provider                          | "aws_event_bridge"                                                | Use this exact value to use AWS EventBridge as a provider.                                                                                 |
-| auth.method                       | "access_key"                                                      | Use this exact value. Only `"access_key"` is supported to authenticate against AWS EventBridge.                                            |
-| auth.secret.aws_access_key_id     | "ABCDEFGHIJK"                                                     | Access Key ID for the IAM role used.                                                                                                       |
-| auth.secret.aws_secret_access_key | "ZYXWVUTSRQPO"                                                    | Secret Access Key for the IAM role used.                                                                                                   |
-| options.aws_region                | "eu-central-1"                                                    | AWS region to use, see region [overview](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html) |
-| options.aws_eventbridge_event_bus | "default"                                                         | Name of the event bus to use. Default: "default" (optional)                                                                                |
-| options.aws_eventbridge_rule_arn  | "arn:aws:events:eu-central-1:1234567890:rule/vmware-event-router" | Rule ARN to use for event pattern matching.                                                                                                |
+| Field      | Type   | Description                                                                                                                             | Required | Example                                                                |
+| ---------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
+| `region`   | String | AWS region to use, see [regions doc](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html). | true     | `us-west-1`                                                            |
+| `eventBus` | String | Name of the event bus to use                                                                                                            | true     | `default` or `arn:aws:events:us-west-1:1234567890:event-bus/customBus` |
+| `ruleARN`  | String | Rule ARN to use for event pattern matching                                                                                              | true     | `arn:aws:events:us-west-1:1234567890:rule/vmware-event-router`         |
+| `<auth>`   | Object | AWS IAM role credentials                                                                                                                |          | (see `aws_access_key` example below)                                   |
 
-> **Note:** Currently only IAM user accounts with access key/secret are supported to authenticate against AWS EventBridge. Please follow the [user guide](https://docs.aws.amazon.com/eventbridge/latest/userguide/getting-set-up-eventbridge.html) before deploying the event router. Further information can also be found in the [authentication](https://docs.aws.amazon.com/eventbridge/latest/userguide/auth-and-access-control-eventbridge.html#authentication-eventbridge) section. 
+### The `auth` section
 
-In addition to the recommendation in the AWS EventBridge user guide you might want to lock down the IAM role for the VMware Event Router and scope it to these permissions ("Action"):
+The following table lists allowed and required fields with their respective type
+values and examples for these fields. Since the various `processors` and
+`providers` use different authentication mechanisms (or none at all) this
+section describes the various options.
+
+#### Type `basic_auth`
+
+Supported providers/processors:
+
+- `vcenter` (required: `true`)
+- `openfaas` (required: `false`, i.e. optional)
+- `default` metrics server (see below) (required: `false`, i.e. optional)
+
+
+| Field                | Type   | Description                             | Required | Example      |
+| -------------------- | ------ | --------------------------------------- | -------- | ------------ |
+| `type`               | String | Authentication method to use            | true     | `basic_auth` |
+| `basicAuth`          | Object | Use when `basic_auth` type is specified | true     |              |
+| `basicAuth.username` | String | Username                                | true     | `admin`      |
+| `basicAuth.password` | String | Password                                | true     | `P@ssw0rd`   |
+
+#### Type `aws_access_key`
+
+Supported providers/processors:
+
+- `aws_event_bridge`
+
+| Field                        | Type   | Description                                 | Required | Example          |
+| ---------------------------- | ------ | ------------------------------------------- | -------- | ---------------- |
+| `type`                       | String | Authentication method to use                | true     | `aws_access_key` |
+| `awsAccessKeyAuth`           | Object | Use when `aws_access_key` type is specified | true     |                  |
+| `awsAccessKeyAuth.accessKey` | String | Access Key ID for the IAM role used         | true     | `ABCDEFGHIJK`    |
+| `awsAccessKeyAuth.secretKey` | String | Secret Access Key for the IAM role used     | true     | `ZYXWVUTSRQPO`   |
+
+
+> **Note:** Currently only IAM user accounts with access key/secret are
+> supported to authenticate against AWS EventBridge. Please follow the [user
+> guide](https://docs.aws.amazon.com/eventbridge/latest/userguide/getting-set-up-eventbridge.html)
+> before deploying the event router. Further information can also be found in
+> the
+> [authentication](https://docs.aws.amazon.com/eventbridge/latest/userguide/auth-and-access-control-eventbridge.html#authentication-eventbridge)
+> section. 
+
+In addition to the recommendation in the AWS EventBridge user guide you might
+want to lock down the IAM role for the VMware Event Router and scope it to these
+permissions ("Action"):
 
 ```json
 {
@@ -212,65 +338,47 @@ In addition to the recommendation in the AWS EventBridge user guide you might wa
 }
 ```
 
-Example of the configuration section for AWS EventBridge: 
+### The `metricsProvider` section
 
-```json
-{
-  "type": "processor",
-  "provider": "aws_event_bridge",
-  "auth": {
-    "method": "access_key",
-    "secret": {
-      "aws_access_key_id": "ABCDEFGHIJK",
-      "aws_secret_access_key": "ZYXWVUTSRQPO"
-    }
-  },
-  "options": {
-    "aws_region": "eu-central-1",
-    "aws_eventbridge_event_bus": "default",
-    "aws_eventbridge_rule_arn": "arn:aws:events:eu-central-1:1234567890:rule/vmware-event-router"
-  }
-}
-```
+The VMware Event Router currently only exposes a default ("internal" or "embedded") metrics
+endpoint. In the future, support for more providers is planned, e.g. Wavefront,
+Prometheus, etc.
 
-> **Note:** The JSON configuration file is an array of maps, ie. "[{<stream_provider>},{<stream_processor>}]". The snippet above is trimmed for readability. The examples provided [here](deploy/) are properly formatted.
+| Field             | Type   | Description                     | Required | Example                                 |
+| ----------------- | ------ | ------------------------------- | -------- | --------------------------------------- |
+| `type`            | String | Type of the metrics provider    | true     | `default`                               |
+| `name`            | String | Name of the metrics provider    | true     | `metrics-server-veba`                   |
+| `<provider_type>` | Object | Provider specific configuration | true     | See metrics provider type section below |
 
-### Metrics Server: Configuration Details
+#### Provider Type `default`
 
-The VMware Event Router exposes metrics (JSON format) on the (currently hardcoded) HTTP endpoint `"http://IP:PORT/stats". The following table lists allowed and optional fields for configuring the metrics server.
+The VMware Event Router exposes metrics in JSON format on a configurable HTTP
+listener, e.g. `http://<bindAddress>/stats`. The following table lists allowed
+and optional fields for configuring the `default` metrics server.
 
-| Field                | Value          | Description                                                                                                     |
-|----------------------|----------------|-----------------------------------------------------------------------------------------------------------------|
-| type                 | "internal"     | Metrics server is of type `"internal"`                                                                          |
-| provider             | "metrics"      | Use this exact value to configure the metrics server.                                                           |
-| address              | "0.0.0.0:8080" | Bind address for the http server to listen on.                                                                  |
-| auth.method          | "basic_auth"   | `"basic_auth"` or `"none"` (disabled) is supported to configure authentication of the  metrics server endpoint. |
-| auth.secret.username | "admin"        | Only required when `"basic_auth"` is configured.                                                                |
-| auth.secret.password | "REPLACE_ME"   | Only required when `"basic_auth"` is configured.                                                                |
+| Field         | Type   | Description                                                                                       | Required | Example                          |
+| ------------- | ------ | ------------------------------------------------------------------------------------------------- | -------- | -------------------------------- |
+| `bindAddress` | String | TCP/IP socket and port to listen on (**do not** add any URI scheme or slashes)                    | true     | `"0.0.0.0:8082"`                 |
+| `<auth>`      | Object | **Optional:** authentication data (see auth section above). Omit section if auth is not required. | false    | (see `basic_auth` example below) |
 
-Example of the configuration section for the metrics server: 
+## Deployment
+VMware Event Router can be deployed and run as standalone binary (see
+[below](#build-from-source)). However, it is designed (and recommended) to be
+run in a Kubernetes cluster for increased availability and ease of scaling out.
+The following steps describe the deployment of the VMware Event Router in **a
+Kubernetes cluster** for an **existing** OpenFaaS ("faas-netes") environment,
+respectively AWS EventBridge.
 
-```json
-{
-  "type": "metrics",
-  "provider": "internal",
-  "address": "0.0.0.0:8080",
-  "auth": {
-      "method": "none"
-  }
-}
-```
+> **Note:** Docker images are available
+> [here](https://hub.docker.com/r/vmware/veba-event-router).
 
-### Deployment
-VMware Event Router can be deployed and run as standalone binary (see [below](#build-from-source)). However, it is designed to be run in a Kubernetes cluster for increased availability and ease of scaling out. The following steps describe the deployment of the VMware Event Router in **a Kubernetes cluster** for an existing OpenFaaS ("faas-netes") environment, respectively AWS EventBridge.
+### Assisted Deployment
 
-> **Note:** Docker images are available [here](https://hub.docker.com/r/vmware/veba-event-router).
+For your convenience we provide an install script [here](hack/README.md) and a
+Helm Chart is WIP
+[#186](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/186).
 
-#### Assisted Deployment
-
-For your convenience we provide an install script [here](hack/README.md).
-
-#### Manual Deployment
+### Manual Deployment
 
 Create a namespace where the VMware Event Router will be deployed to:
 
@@ -278,21 +386,31 @@ Create a namespace where the VMware Event Router will be deployed to:
 kubectl create namespace vmware
 ```
 
-Use one of the configuration files provided [here](deploy/) to configure the router for **one** VMware vCenter Server event `stream` and **one** OpenFaaS **or** AWS EventBridge event stream `processor`. Change the values to match your environment. The following example will use the OpenFaaS config sample.
+Use one of the configuration files provided [here](deploy/) to configure the
+router with **one** VMware vCenter Server `eventProvider` and **one** OpenFaaS
+**or** AWS EventBridge `eventProcessor`. Change the values to match your
+environment. The following example will use the OpenFaaS config sample.
 
-> **Note:** Make sure your environment is up and running, i.e. Kubernetes and OpenFaaS (incl. a function for testing) up and running or AWS EventBridge correctly configured (IAM Role, event bus and pattern rule).
+> **Note:** Before continuing, make sure your environment is up and running,
+> including Kubernetes and OpenFaaS.
 
-After you made your changes to the configuration file, save it as `"event-router-config.json` in your current Git working directory. 
+After you made your changes to the configuration file, save it as
+`"event-router-config.yaml` in your current Git working directory. 
 
-> **Note:** If you have changed the port of the metrics server in the configuration file (default: 8080) make sure to also change that value in the YAML manifest (under the Kubernetes service entry).
+> **Note:** If you have changed the port of the metrics server in the
+> configuration file (default: 8080) make sure to also change that value in the
+> YAML manifest (under the Kubernetes service entry).
 
-Now, from your current Git working directory create a Kubernetes [secret](https://kubernetes.io/docs/concepts/configuration/secret/) from the configuration file:
+Now, from your current Git working directory create a Kubernetes
+[secret](https://kubernetes.io/docs/concepts/configuration/secret/) with the
+configuration file as input:
 
 ```bash
-kubectl -n vmware create secret generic event-router-config --from-file=event-router-config.json
+kubectl -n vmware create secret generic event-router-config --from-file=event-router-config.yaml
 ```
 
-> **Note:** You might want to delete the (local) configuration file to not leave behind sensitive information on your local machine.
+> **Note:** You might want to delete the (local) configuration file to not leave
+> behind sensitive information on your local machine.
 
 Now we can deploy the VMware Event Router:
 
@@ -309,10 +427,14 @@ kubectl -n vmware logs deploy/vmware-event-router -f
 If you run into issues, the logs should give you a hint, e.g.:
 
 - configuration file not found -> file naming issue
-- connection to vCenter/OpenFaaS cannot be established -> check values in the configuration file
-- deployment/pod will not even come up -> check for resource issues, docker pull issues and other potential causes using the standard kubectl troubleshooting ways
+- connection to vCenter/OpenFaaS cannot be established -> check values,
+  credentials (if any) in the configuration file
+- deployment/pod will not even come up -> check for resource issues, docker pull
+  issues and other potential causes using the standard kubectl troubleshooting
+  ways
 
-To delete the deployment and secret simply delete the namespace we created earlier:
+To delete the deployment and secret simply delete the namespace we created
+earlier:
 
 ```bash
 kubectl delete namespace vmware
@@ -320,7 +442,10 @@ kubectl delete namespace vmware
 
 ## Build from Source
 
-Requirements: This project uses [Golang](https://golang.org/dl/) and Go [modules](https://blog.golang.org/using-go-modules). For convenience a Makefile and Dockerfile are provided requiring `make` and [Docker](https://www.docker.com/) to be installed as well.
+Requirements: This project uses [Golang](https://golang.org/dl/) and Go
+[modules](https://blog.golang.org/using-go-modules). For convenience a Makefile
+and Dockerfile are provided requiring `make` and
+[Docker](https://www.docker.com/) to be installed as well.
 
 ```bash
 git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
@@ -329,13 +454,15 @@ cd vcenter-event-broker-appliance/vmware-event-router
 # for Go versions before v1.13
 export GO111MODULE=on 
 
-# defaults to build with Docker (use make binary for local executable instead)
+# defaults to build with Docker (use "make binary" for local executable instead)
 make 
 ```
 
 > **Note:** For `_test.go` files your editor (e.g. vscode) might show errors and
 > not be able to resolve symbols. This is due to the use of build tags which
-> `gopls` currently does [not support](https://github.com/golang/go/issues/29202#issuecomment-515170916). In vscode add this to your configuration:
+> `gopls` currently does [not
+> support](https://github.com/golang/go/issues/29202#issuecomment-515170916). In
+> vscode add this to your configuration:
 >
 > ```json
 > "go.toolsEnvVars": {
@@ -349,9 +476,9 @@ If you would like to make modification/additions to this code base, please
 follow our [CONTRIBUTION](https://vmweventbroker.io/community) guidelines first.
 
 In the `Makefile` we provide `make` targets for building a binary, Docker image
-and validating changes via unit tests (`make unit-test`). These tests
-will run when a pull request is submitted, but in order to run them locally to
-verify your changes you need to have the following bits installed:
+and validating changes via unit tests (`make unit-test`). These tests will run
+when a pull request is submitted, but in order to run them locally to verify
+your changes you need to have the following bits installed:
 
 `make unit-test`:
 
@@ -372,7 +499,8 @@ the following script:
 
 ## Example Event Structure
 
-The following example for a `VmPoweredOnEvent` shows the event structure and payload:
+The following example for a `VmPoweredOnEvent` shows the event structure and
+payload:
 
 ```json
 {
@@ -426,4 +554,5 @@ The following example for a `VmPoweredOnEvent` shows the event structure and pay
 }
 ```
 
-> **Note:** If you use the AWS EventBridge stream `processor` the event is wrapped and accessible under `""detail": {}"` as a JSON-formatted string.
+> **Note:** If you use the AWS EventBridge stream `processor` the event is
+> wrapped and accessible under `""detail": {}"` as a JSON-formatted string.
