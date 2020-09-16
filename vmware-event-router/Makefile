@@ -26,7 +26,7 @@ TEST_TIMEOUT = 20
 default: build
 
 release: build tag push output
-	$(info Make: Making new release for image "$(IMAGE_NAME)" based on commit "$(COMMIT).)
+	$(info Make: Making new release for image "$(IMAGE_NAME)" based on commit "$(COMMIT)".)
 
 vendor:
 	$(info Make: syncing Go dependencies with vendor folder.)
@@ -39,7 +39,7 @@ tidy:
 # intended for local dev use (won't check for unclean git)
 binary: unit-test tidy
 	$(info Make: Building binary "$(DIST_FOLDER)/$(BINARY)".)
-	CGO_ENABLED=0 go build -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o $(DIST_FOLDER)/$(BINARY) cmd/main.go
+	CGO_ENABLED=0 go build -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o $(DIST_FOLDER)/$(BINARY) cmd/router/main.go
 
 build: unit-test tidy
 	$(info Make: Building image "$(IMAGE_NAME)".)
@@ -50,9 +50,14 @@ gofmt:
 	$(info Make: Checking code is gofmted.)
 	@test -z "$(shell gofmt -s -l -d -e ./cmd | tee /dev/stderr)"
 
+lint:
+	$(info Make: Running linter.)
+	@golangci-lint run -v
+
 unit-test: gofmt
 	$(eval TAG=unit)
 	$(eval TEST_PKGS=$(shell go list -tags=${TAG} -f '{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' ./...))
+	$(info Make: Running unit tests.)
 	@GORACE=history_size=5 go test -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover ${TEST_PKGS} -v
 
 # requires running Kubernetes/OpenFaaS environment - or use
