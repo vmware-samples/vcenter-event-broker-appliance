@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
+	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 )
 
 // Processor handles incoming stream events to decouple event stream providers,
@@ -16,15 +17,17 @@ type Processor interface {
 // it extends the simple error by providing context which processor gave
 // the error
 type Error struct {
-	processor string
+	processor config.ProcessorType
 	err       error
 }
 
-func processorError(processor string, err error) error {
+func processorError(processor config.ProcessorType, err error) error {
 	return &Error{
 		processor: processor,
 		err:       err,
 	}
 }
 
-func (e *Error) Error() string { return fmt.Sprintf("%s: %s", e.processor, e.err.Error()) }
+func (e *Error) Error() string {
+	return fmt.Sprintf("%s: %s", e.processor, e.err.Error())
+}

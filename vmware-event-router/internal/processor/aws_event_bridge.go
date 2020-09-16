@@ -17,15 +17,11 @@ import (
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/pkg/errors"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/connection"
+	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 )
 
 const (
-	// ProviderAWS variable is the name used to identify this provider in the
-	// VMware Event Router configuration file
-	ProviderAWS           = "aws_event_bridge"
-	authMethodAWS         = "access_key"    // only this method is supported by the processor
 	defaultResyncInterval = time.Minute * 5 // resync rule patterns after interval
 	defaultPageLimit      = 50              // max 50 results per page for list operations
 	defaultBatchSize      = 10              // max 10 input events per batch sent to AWS
@@ -55,7 +51,7 @@ type eventPattern struct {
 
 // NewAWSEventBridgeProcessor returns an AWS EventBridge processor for the given
 // stream source.
-func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, ms metrics.Receiver, opts ...AWSOption) (Processor, error) {
+func NewAWSEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEventBridge, ms metrics.Receiver, opts ...AWSOption) (Processor, error) {
 	logger := log.New(os.Stdout, color.Yellow("[AWS EventBridge] "), log.LstdFlags)
 	eventBridge := awsEventBridgeProcessor{
 		resyncInterval: defaultResyncInterval,
@@ -69,33 +65,31 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, ms m
 		opt(&eventBridge)
 	}
 
-	var accessKey, secretKey, region, eventbus, ruleARN string
-	switch cfg.Auth.Method {
-	case authMethodAWS:
-		accessKey = cfg.Auth.Secret["aws_access_key_id"]
-		secretKey = cfg.Auth.Secret["aws_secret_access_key"]
-	default:
-		return nil, errors.Errorf("unsupported authentication method for processor aws_event_bridge: %s", cfg.Auth.Method)
+	if cfg == nil {
+		return nil, errors.New("no AWS EventBridge configuration found")
 	}
 
-	if cfg.Options["aws_region"] == "" {
-		return nil, errors.Errorf("config option %q must be specified", "aws_region")
+	if cfg.Auth == nil || cfg.Auth.AWSAccessKeyAuth == nil {
+		return nil, fmt.Errorf("invalid %s credentials: accessKey and secretKey must be set", config.AWSAccessKeyAuth)
 	}
-	region = cfg.Options["aws_region"]
 
-	if cfg.Options["aws_eventbridge_rule_arn"] == "" {
-		return nil, errors.Errorf("config option %q for this processor must be specified", "aws_eventbridge_rule_arn")
-	}
-	ruleARN = cfg.Options["aws_eventbridge_rule_arn"]
+	accessKey := cfg.Auth.AWSAccessKeyAuth.AccessKey
+	secretKey := cfg.Auth.AWSAccessKeyAuth.SecretKey
 
-	if cfg.Options["aws_eventbridge_event_bus"] == "" {
-		eventBridge.Printf("config option %q not specified, assuming %q eventbus", "aws_eventbridge_event_bus", "default")
-		cfg.Options["aws_eventbridge_event_bus"] = "default"
+	if cfg.Region == "" {
+		return nil, errors.New("region must be specified")
 	}
-	eventbus = cfg.Options["aws_eventbridge_event_bus"]
+
+	if cfg.RuleARN == "" {
+		return nil, errors.New("rule ARN must be specified")
+	}
+
+	if cfg.EventBus == "" {
+		return nil, errors.New("event bus must be specified")
+	}
 
 	awsSession, err := session.NewSession(&aws.Config{
-		Region: aws.String(region),
+		Region: aws.String(cfg.Region),
 		Credentials: credentials.NewStaticCredentials(
 			accessKey,
 			secretKey,
@@ -105,18 +99,24 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, ms m
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create AWS session")
 	}
+
 	eventBridge.session = *awsSession
 	ebSession := eventbridge.New(awsSession)
+
 	if ebSession == nil {
 		return nil, errors.Errorf("could not create AWS event bridge session")
 	}
+
 	eventBridge.EventBridgeAPI = ebSession
 
-	var found bool
-	var nextToken *string
+	var (
+		found     bool
+		nextToken *string
+	)
+
 	for !found {
 		rules, err := eventBridge.ListRulesWithContext(ctx, &eventbridge.ListRulesInput{
-			EventBusName: aws.String(eventbus),        // explicitely passing eventbus name because list assumes "default" otherwise
+			EventBusName: aws.String(cfg.EventBus),    // explicitly passing eventbus name because list assumes "default" otherwise
 			Limit:        aws.Int64(defaultPageLimit), // up to n results per page for requests.
 			NextToken:    nextToken,
 		})
@@ -127,7 +127,7 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, ms m
 	arnLoop:
 		for _, rule := range rules.Rules {
 			switch {
-			case *rule.Arn == ruleARN:
+			case *rule.Arn == cfg.RuleARN:
 				if rule.EventPattern == nil {
 					return nil, errors.Errorf("rule event pattern must not be empty")
 				}
@@ -160,21 +160,22 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg connection.Config, ms m
 			nextToken = rules.NextToken
 			continue
 		default: // nothing found
-			return nil, errors.Errorf("rule %s not found for configured AWS event bridge account", ruleARN)
+			return nil, errors.Errorf("rule %s not found for configured AWS event bridge account", cfg.RuleARN)
 		}
 	}
 
 	// prepopulate the metrics stats
 	eventBridge.stats = metrics.EventStats{
-		Provider:     ProviderAWS,
-		ProviderType: cfg.Type,
-		Name:         ruleARN, // Using Rule ARN to uniquely identify and represent this processor
-		Started:      time.Now().UTC(),
-		Invocations:  make(map[string]int),
+		Provider:    string(config.ProcessorEventBridge),
+		Type:        config.EventProcessor,
+		Address:     cfg.RuleARN, // Using Rule ARN to uniquely identify and represent this processor
+		Started:     time.Now().UTC(),
+		Invocations: make(map[string]int),
 	}
 
 	go eventBridge.PushMetrics(ctx, ms)
-	go eventBridge.syncPatternMap(ctx, eventbus, ruleARN) // periodically sync rules
+	go eventBridge.syncPatternMap(ctx, cfg.EventBus, cfg.RuleARN) // periodically sync rules
+
 	return &eventBridge, nil
 }
 
@@ -186,11 +187,13 @@ func (awsEventBridge *awsEventBridgeProcessor) Process(ce cloudevents.Event) err
 
 	awsEventBridge.mu.RLock()
 	defer awsEventBridge.mu.RUnlock()
+
 	if _, ok := awsEventBridge.patternMap[ce.Subject()]; !ok {
 		// no event bridge rule pattern (subscription) for event, skip
 		if awsEventBridge.verbose {
 			awsEventBridge.Printf("pattern rule does not match, skipping event (ID %s): %v", ce.ID(), ce)
 		}
+
 		return nil
 	}
 
@@ -198,7 +201,7 @@ func (awsEventBridge *awsEventBridgeProcessor) Process(ce cloudevents.Event) err
 	if err != nil {
 		msg := fmt.Errorf("could not marshal event %v: %v", ce, err)
 		awsEventBridge.Println(msg)
-		return processorError(ProviderAWS, msg)
+		return processorError(config.ProcessorEventBridge, msg)
 	}
 
 	jsonString := string(jsonBytes)
@@ -215,12 +218,14 @@ func (awsEventBridge *awsEventBridgeProcessor) Process(ce cloudevents.Event) err
 	input := eventbridge.PutEventsInput{
 		Entries: []*eventbridge.PutEventsRequestEntry{&entry},
 	}
+
 	awsEventBridge.Printf("sending event %s", ce.ID())
 	resp, err := awsEventBridge.PutEvents(&input)
+
 	if err != nil {
 		msg := fmt.Errorf("could not send event %v: %v", ce, err)
 		awsEventBridge.Println(msg)
-		return processorError(ProviderAWS, msg)
+		return processorError(config.ProcessorEventBridge, msg)
 	}
 
 	if awsEventBridge.verbose {
@@ -231,18 +236,20 @@ func (awsEventBridge *awsEventBridgeProcessor) Process(ce cloudevents.Event) err
 	return nil
 }
 
-func (awsEventBridge *awsEventBridgeProcessor) syncPatternMap(ctx context.Context, eventbus string, ruleARN string) {
+func (awsEventBridge *awsEventBridgeProcessor) syncPatternMap(ctx context.Context, eventbus, ruleARN string) {
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		case <-time.After(awsEventBridge.resyncInterval):
 			awsEventBridge.Printf("syncing pattern map for rule ARN %s", ruleARN)
+
 			err := awsEventBridge.syncRules(ctx, eventbus, ruleARN)
 			if err != nil {
 				awsEventBridge.Printf("could not sync pattern map for rule ARN %s: %v", ruleARN, err)
 				awsEventBridge.Printf("retrying after %v", awsEventBridge.resyncInterval)
 			}
+
 			awsEventBridge.Printf("successfully synced pattern map for rule ARN %s", ruleARN)
 		}
 	}
@@ -254,11 +261,14 @@ func (awsEventBridge *awsEventBridgeProcessor) syncRules(ctx context.Context, ev
 	awsEventBridge.patternMap = make(map[string]string)
 	awsEventBridge.mu.Unlock()
 
-	var found bool
-	var nextToken *string
+	var (
+		found     bool
+		nextToken *string
+	)
+
 	for !found {
 		rules, err := awsEventBridge.ListRulesWithContext(ctx, &eventbridge.ListRulesInput{
-			EventBusName: aws.String(eventbus), // explicitely passing eventbus name because list assumes "default" otherwise
+			EventBusName: aws.String(eventbus), // explicitly passing eventbus name because list assumes "default" otherwise
 			Limit:        aws.Int64(defaultPageLimit),
 			NextToken:    nextToken,
 		})
@@ -322,7 +332,7 @@ func (awsEventBridge *awsEventBridgeProcessor) PushMetrics(ctx context.Context, 
 			return
 		case <-ticker.C:
 			awsEventBridge.mu.RLock()
-			ms.Receive(awsEventBridge.stats)
+			ms.Receive(&awsEventBridge.stats)
 			awsEventBridge.mu.RUnlock()
 		}
 	}

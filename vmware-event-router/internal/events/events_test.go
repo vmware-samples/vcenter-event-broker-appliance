@@ -36,7 +36,7 @@ func Test_GetEventDetails(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// TODO: handle error
-			if got, _ := getDetails(tt.args.event); got != tt.want {
+			if got := getDetails(tt.args.event); got != tt.want {
 				t.Errorf("getEventDetails() = %v, want %v", got, tt.want)
 			}
 		})

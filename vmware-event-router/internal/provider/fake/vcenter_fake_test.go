@@ -96,7 +96,7 @@ func TestFakeVCenter_Stream(t *testing.T) {
 			got := tt.args.p.invokations
 			want := tt.wantEvents
 			if got != want {
-				t.Errorf("FakeVCenter.Stream() invokations = %d, wanted %d", got, want)
+				t.Errorf("VCenter.Stream() invokations = %d, wanted %d", got, want)
 			}
 		})
 	}
