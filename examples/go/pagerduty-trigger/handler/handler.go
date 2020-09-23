@@ -16,8 +16,9 @@ import (
 )
 
 const (
-	pdApiPath    = "https://events.pagerduty.com/v2/enqueue"
-	pdConfigPath = "/var/openfaas/secrets/pdconfig"
+	pdApiPath         = "https://events.pagerduty.com/v2/enqueue"
+	pdConfigPath      = "/var/openfaas/secrets/pdconfig"
+	httpClientTimeout = 10 * time.Second
 )
 
 // Handle a function invocation.
@@ -161,7 +162,9 @@ func validateEvent(event cloudEvent) error {
 }
 
 func pdSendRequest(ctx context.Context, path string, pdp pdPayload) ([]byte, error) {
-	clt := &http.Client{}
+	clt := &http.Client{
+		Timeout: httpClientTimeout,
+	}
 
 	reqBody, err := json.Marshal(pdp)
 	if err != nil {
@@ -182,7 +185,7 @@ func pdSendRequest(ctx context.Context, path string, pdp pdPayload) ([]byte, err
 		return []byte{}, fmt.Errorf("read http response body: %w", err)
 	}
 
-	if res.StatusCode < 200 || res.StatusCode >= 300 {
+	if res.StatusCode < 200 || res.StatusCode >= 400 {
 		return []byte{}, fmt.Errorf("http response: %d, %+v", res.StatusCode, string(body))
 	}
 
