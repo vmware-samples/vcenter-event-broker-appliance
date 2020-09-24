@@ -1,0 +1,3 @@
+[pagerduty]
+routingKey = "amadeuptestroutingkey"
+eventAction = "trigger"

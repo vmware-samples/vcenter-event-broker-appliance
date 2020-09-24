@@ -99,6 +99,8 @@ examples:
     links: 
     - language: python
       url: "/tree/master/examples/python/trigger-pagerduty-incident"
+    - language: go
+      url: "/tree/master/examples/go/pagerduty-trigger"
 
   - title: POST to any REST API
     usecases: 
