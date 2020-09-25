@@ -1,0 +1,49 @@
+{
+    "id": "9f284e17-f688-408f-a439-e5e06f564c82",
+    "source": "https://10.10.10.1/sdk",
+    "specversion": "1.0",
+    "type": "com.vmware.event.router/event",
+    "subject": "VmPoweredOffEvent",
+    "time": "2020-03-13T21:11:53.867231Z",
+    "data": {
+      "Key": 14011,
+      "ChainId": 14010,
+      "CreatedTime": "2020-03-13T21:09:40.984999Z",
+      "UserName": "VSPHERE.LOCAL\\Administrator",
+      "Datacenter": {
+        "Name": "vcqaDC",
+        "Datacenter": {
+          "Type": "Datacenter",
+          "Value": "datacenter-2"
+        }
+      },
+      "ComputeResource": {
+        "Name": "cls",
+        "ComputeResource": {
+          "Type": "ClusterComputeResource",
+          "Value": "domain-c7"
+        }
+      },
+      "Host": {
+        "Name": "10.10.10.1",
+        "Host": {
+          "Type": "HostSystem",
+          "Value": "host-33"
+        }
+      },
+      "Vm": {
+        "Name": "standalone-8296aaf45-esx.3-vm.1",
+        "Vm": {
+          "Type": "VirtualMachine",
+          "Value": "vm-10000"
+        }
+      },
+      "Ds": null,
+      "Net": null,
+      "Dvs": null,
+      "FullFormattedMessage": "standalone-8296aaf45-esx.3-vm.1 on host 10.10.10.1 in vcqaDC is starting",
+      "ChangeTag": "",
+      "Template": false
+    },
+    "datacontenttype": "application/json"
+  }

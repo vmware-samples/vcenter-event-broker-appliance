@@ -1,0 +1,117 @@
+{
+    "id": "cd554bf6-12c3-4252-98ea-336c36a76211",
+    "source": "https://veba.yourdomain.com/sdk",
+    "specversion": "1.0",
+    "type": "com.vmware.event.router/event",
+    "subject": "VmReconfiguredEvent",
+    "time": "2020-09-15T21:03:03.279291772Z",
+    "data": {
+      "Key": 22273,
+      "ChainId": 22272,
+      "CreatedTime": "2020-09-15T21:03:03.183048Z",
+      "UserName": "VSPHERE.LOCAL\\Administrator",
+      "Datacenter": {
+        "Name": "RegionA01",
+        "Datacenter": {
+          "Type": "Datacenter",
+          "Value": "datacenter-1001"
+        }
+      },
+      "ComputeResource": {
+        "Name": "RegionA01-COMP01",
+        "ComputeResource": {
+          "Type": "ClusterComputeResource",
+          "Value": "domain-c1006"
+        }
+      },
+      "Host": {
+        "Name": "esx-01a.yourdomain.com",
+        "Host": {
+          "Type": "HostSystem",
+          "Value": "host-1009"
+        }
+      },
+      "Vm": {
+        "Name": "core-A",
+        "Vm": {
+          "Type": "VirtualMachine",
+          "Value": "vm-1047"
+        }
+      },
+      "Ds": null,
+      "Net": null,
+      "Dvs": null,
+      "FullFormattedMessage": "Reconfigured core-A on esx-01a.yourdomain.com in RegionA01.  \n \nModified:  \n \nconfig.memoryHotAddEnabled: true -> false; \n\n Added:  \n \n Deleted:  \n \n",
+      "ChangeTag": "",
+      "Template": false,
+      "ConfigSpec": {
+        "ChangeVersion": "",
+        "Name": "",
+        "Version": "",
+        "CreateDate": "1970-01-01T00:00:00Z",
+        "Uuid": "",
+        "InstanceUuid": "",
+        "NpivNodeWorldWideName": null,
+        "NpivPortWorldWideName": null,
+        "NpivWorldWideNameType": "",
+        "NpivDesiredNodeWwns": 0,
+        "NpivDesiredPortWwns": 0,
+        "NpivTemporaryDisabled": null,
+        "NpivOnNonRdmDisks": null,
+        "NpivWorldWideNameOp": "",
+        "LocationId": "",
+        "GuestId": "",
+        "AlternateGuestName": "",
+        "Annotation": "",
+        "Files": null,
+        "Tools": null,
+        "Flags": null,
+        "ConsolePreferences": null,
+        "PowerOpInfo": null,
+        "NumCPUs": 0,
+        "NumCoresPerSocket": 0,
+        "MemoryMB": 0,
+        "MemoryHotAddEnabled": false,
+        "CpuHotAddEnabled": null,
+        "CpuHotRemoveEnabled": null,
+        "VirtualICH7MPresent": null,
+        "VirtualSMCPresent": null,
+        "DeviceChange": null,
+        "CpuAllocation": null,
+        "MemoryAllocation": null,
+        "LatencySensitivity": null,
+        "CpuAffinity": null,
+        "MemoryAffinity": null,
+        "NetworkShaper": null,
+        "CpuFeatureMask": null,
+        "ExtraConfig": null,
+        "SwapPlacement": "",
+        "BootOptions": null,
+        "VAppConfig": null,
+        "FtInfo": null,
+        "RepConfig": null,
+        "VAppConfigRemoved": null,
+        "VAssertsEnabled": null,
+        "ChangeTrackingEnabled": null,
+        "Firmware": "",
+        "MaxMksConnections": 0,
+        "GuestAutoLockEnabled": null,
+        "ManagedBy": null,
+        "MemoryReservationLockedToMax": null,
+        "NestedHVEnabled": null,
+        "VPMCEnabled": null,
+        "ScheduledHardwareUpgradeInfo": null,
+        "VmProfile": null,
+        "MessageBusTunnelEnabled": null,
+        "Crypto": null,
+        "MigrateEncryption": ""
+      },
+      "ConfigChanges": {
+        "Modified": "config.memoryHotAddEnabled: true -> false; \n\n",
+        "Added": "",
+        "Deleted": ""
+      }
+    },
+    "datacontenttype": "application/json"
+  }
+  

@@ -10,6 +10,14 @@ images:
   go: /assets/img/languages/go.png
   powershell: /assets/img/languages/powershell.png
 examples:
+  - title: Virtual Machine Reconfiguration Via Tags
+    usecases:
+    - item: automation
+    description: Many configurations such as enabling memory/cpu hot add, changing the number of CPUs, or changing amount of memory can be set only when a VM is powered off (if the hot plug/hot add settings are not yet enabled). Attach tags containing desired configuration settings to a VM and have it automatically reconfigure the next time it powers down.
+    links:
+    - language: go
+      url: "tree/master/examples/go/vm-reconfig-via-tag"
+
   - title: vSphere Tagging
     usecases: 
     - item: automation
@@ -21,7 +29,7 @@ examples:
        url: "/tree/master/examples/python/tagging"
      - language: powercli
        url: "/tree/master/examples/powercli/tagging"
-     - language: golang
+     - language: go
        url: "/tree/master/examples/go/tagging"
 
   - title: Send VM Configuration Changes to Slack
@@ -91,6 +99,8 @@ examples:
     links: 
     - language: python
       url: "/tree/master/examples/python/trigger-pagerduty-incident"
+    - language: go
+      url: "/tree/master/examples/go/pagerduty-trigger"
 
   - title: POST to any REST API
     usecases: 
