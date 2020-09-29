@@ -10,6 +10,7 @@ eventProvider:
   vcenter:
     address: https://my-vcenter01.domain.local/sdk
     insecureSSL: false
+    checkpoint: false
     auth:
       type: basic_auth
       basicAuth:
