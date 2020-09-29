@@ -107,7 +107,6 @@ func validateAddress(address string) error {
 
 	if h == "" {
 		return errors.New("no IP listen address specified")
-
 	}
 
 	if p == "" {
