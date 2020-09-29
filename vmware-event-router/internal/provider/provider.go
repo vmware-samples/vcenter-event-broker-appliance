@@ -1,4 +1,4 @@
-package stream
+package provider
 
 import (
 	"context"
@@ -7,9 +7,9 @@ import (
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 )
 
-// Streamer establishes a connection to a stream provider and invokes a stream
+// Provider manages the connection to an event provider and streams events to a stream
 // processor.
-type Streamer interface {
+type Provider interface {
 	PushMetrics(context.Context, metrics.Receiver)
 	Stream(context.Context, processor.Processor) error
 	Shutdown(context.Context) error

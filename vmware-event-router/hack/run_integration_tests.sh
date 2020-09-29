@@ -120,11 +120,11 @@ make integration-test
 if [ "${CI:-false}" = false ]; then
     if [ "${TEST_AWS:-false}" = true ]; then
         cecho "---> Running AWS integration tests" ${GREEN}
-        AWS_ACCESS_KEY=$(${JQBIN} '.[1].auth.secret.aws_access_key_id' ${AWS_SECRET}) \
-        AWS_SECRET_KEY=$(${JQBIN} '.[1].auth.secret.aws_secret_access_key' ${AWS_SECRET}) \
-        AWS_REGION=$(${JQBIN} '.[1].options.aws_region' ${AWS_SECRET}) \
-        AWS_EVENT_BUS=$(${JQBIN} '.[1].options.aws_eventbridge_event_bus' ${AWS_SECRET}) \
-        AWS_RULE_ARN=$(${JQBIN} '.[1].options.aws_eventbridge_rule_arn' ${AWS_SECRET}) \
-            go test -count 1 -race -v --tags=integration,aws ./internal/integration/...
+        AWS_ACCESS_KEY=$(${JQBIN} '.aws_access_key_id' ${AWS_SECRET}) \
+        AWS_SECRET_KEY=$(${JQBIN} '.aws_secret_access_key' ${AWS_SECRET}) \
+        AWS_REGION=$(${JQBIN} '.aws_region' ${AWS_SECRET}) \
+        AWS_EVENT_BUS=$(${JQBIN} '.aws_eventbridge_event_bus' ${AWS_SECRET}) \
+        AWS_RULE_ARN=$(${JQBIN} '.aws_eventbridge_rule_arn' ${AWS_SECRET}) \
+            go test ./internal/integration/... -count 1 -race --tags=integration,aws -v -ginkgo.v
     fi
 fi

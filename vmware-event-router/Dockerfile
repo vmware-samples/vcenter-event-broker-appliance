@@ -16,7 +16,7 @@ COPY cmd cmd
 COPY internal internal
 
 RUN ./bin/golangci-lint run ./...
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o vmware-event-router cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o vmware-event-router cmd/router/main.go
 
 # debian:stable-slim amd64
 FROM debian@sha256:aa1db351593d2849034c0395bc604dd65aa80ae4471da4a37a0c38e30aed3ab8

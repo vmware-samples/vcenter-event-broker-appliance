@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/connection"
+	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 
@@ -35,7 +35,7 @@ type fakeReceiver struct {
 	responseMap map[bool]int
 }
 
-func (f *fakeReceiver) Receive(stats metrics.EventStats) {
+func (f *fakeReceiver) Receive(_ *metrics.EventStats) {
 	f.Lock()
 	defer f.Unlock()
 	f.invocations++
@@ -72,21 +72,18 @@ var _ = BeforeSuite(func() {
 	ofPass := os.Getenv("OF_PASSWORD")
 	Expect(ofPass).ToNot(BeEmpty(), "env var OF_PASSWORD for basic_auth against OpenFaaS gateway must be set")
 
-	cfg := connection.Config{
-		Type:    "processor",
+	cfg := &config.ProcessorConfigOpenFaaS{
 		Address: "http://localhost:8080",
-		Options: map[string]string{
-			"async": "false",
-		},
-		Provider: "openfaas",
-		Auth: connection.Authentication{
-			Method: "basic_auth",
-			Secret: map[string]string{
-				"username": "admin",
-				"password": ofPass,
+		Async:   false,
+		Auth: &config.AuthMethod{
+			Type: config.BasicAuth,
+			BasicAuth: &config.BasicAuthMethod{
+				Username: "admin",
+				Password: ofPass,
 			},
 		},
 	}
+
 	op, err := processor.NewOpenFaaSProcessor(ctx,
 		cfg,
 		receiver,
