@@ -7,8 +7,7 @@ import (
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 )
 
-// Processor handles incoming stream events to decouple event stream providers,
-// e.g. vCenter, from processors, e.g. OpenFaaS, knative, AWS EventBridge, etc.
+// Processor processes incoming events
 type Processor interface {
 	Process(cloudevents.Event) error
 }

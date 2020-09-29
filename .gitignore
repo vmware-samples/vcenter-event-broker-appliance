@@ -16,3 +16,4 @@ Gemfile.lock
 *.coverprofile
 faas-cli*
 template
+checkpoints/
