@@ -16,6 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/eventbridge/eventbridgeiface"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/pkg/errors"
+
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
@@ -27,8 +28,8 @@ const (
 	defaultBatchSize      = 10              // max 10 input events per batch sent to AWS
 )
 
-// awsEventBridgeProcessor implements the Processor interface
-type awsEventBridgeProcessor struct {
+// EventBridgeProcessor implements the Processor interface
+type EventBridgeProcessor struct {
 	session session.Session
 	eventbridgeiface.EventBridgeAPI
 
@@ -49,11 +50,11 @@ type eventPattern struct {
 	} `json:"detail,omitempty"`
 }
 
-// NewAWSEventBridgeProcessor returns an AWS EventBridge processor for the given
-// stream source.
-func NewAWSEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEventBridge, ms metrics.Receiver, opts ...AWSOption) (Processor, error) {
+// NewEventBridgeProcessor returns an AWS EventBridge processor for the given
+// stream source
+func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEventBridge, ms metrics.Receiver, opts ...AWSOption) (*EventBridgeProcessor, error) {
 	logger := log.New(os.Stdout, color.Yellow("[AWS EventBridge] "), log.LstdFlags)
-	eventBridge := awsEventBridgeProcessor{
+	eventBridge := EventBridgeProcessor{
 		resyncInterval: defaultResyncInterval,
 		batchSize:      defaultBatchSize,
 		Logger:         logger,
@@ -180,18 +181,18 @@ func NewAWSEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfig
 }
 
 // Process implements the stream processor interface
-func (awsEventBridge *awsEventBridgeProcessor) Process(ce cloudevents.Event) error {
-	if awsEventBridge.verbose {
-		awsEventBridge.Printf("processing event (ID %s): %v", ce.ID(), ce)
+func (eb *EventBridgeProcessor) Process(ce cloudevents.Event) error {
+	if eb.verbose {
+		eb.Printf("processing event (ID %s): %v", ce.ID(), ce)
 	}
 
-	awsEventBridge.mu.RLock()
-	defer awsEventBridge.mu.RUnlock()
+	eb.mu.RLock()
+	defer eb.mu.RUnlock()
 
-	if _, ok := awsEventBridge.patternMap[ce.Subject()]; !ok {
+	if _, ok := eb.patternMap[ce.Subject()]; !ok {
 		// no event bridge rule pattern (subscription) for event, skip
-		if awsEventBridge.verbose {
-			awsEventBridge.Printf("pattern rule does not match, skipping event (ID %s): %v", ce.ID(), ce)
+		if eb.verbose {
+			eb.Printf("pattern rule does not match, skipping event (ID %s): %v", ce.ID(), ce)
 		}
 
 		return nil
@@ -200,66 +201,66 @@ func (awsEventBridge *awsEventBridgeProcessor) Process(ce cloudevents.Event) err
 	jsonBytes, err := json.Marshal(ce)
 	if err != nil {
 		msg := fmt.Errorf("could not marshal event %v: %v", ce, err)
-		awsEventBridge.Println(msg)
+		eb.Println(msg)
 		return processorError(config.ProcessorEventBridge, msg)
 	}
 
 	jsonString := string(jsonBytes)
 	entry := eventbridge.PutEventsRequestEntry{
 		Detail:       aws.String(jsonString),
-		EventBusName: aws.String(awsEventBridge.patternMap[ce.Subject()]),
+		EventBusName: aws.String(eb.patternMap[ce.Subject()]),
 		Source:       aws.String(ce.Source()),
 		DetailType:   aws.String(ce.Subject()),
 	}
 
 	// update metrics
-	awsEventBridge.stats.Invocations[ce.Subject()]++
+	eb.stats.Invocations[ce.Subject()]++
 
 	input := eventbridge.PutEventsInput{
 		Entries: []*eventbridge.PutEventsRequestEntry{&entry},
 	}
 
-	awsEventBridge.Printf("sending event %s", ce.ID())
-	resp, err := awsEventBridge.PutEvents(&input)
+	eb.Printf("sending event %s", ce.ID())
+	resp, err := eb.PutEvents(&input)
 
 	if err != nil {
 		msg := fmt.Errorf("could not send event %v: %v", ce, err)
-		awsEventBridge.Println(msg)
+		eb.Println(msg)
 		return processorError(config.ProcessorEventBridge, msg)
 	}
 
-	if awsEventBridge.verbose {
-		awsEventBridge.Printf("successfully sent event %v: %v", ce, resp)
+	if eb.verbose {
+		eb.Printf("successfully sent event %v: %v", ce, resp)
 	} else {
-		awsEventBridge.Printf("successfully sent event %s", ce.ID())
+		eb.Printf("successfully sent event %s", ce.ID())
 	}
 	return nil
 }
 
-func (awsEventBridge *awsEventBridgeProcessor) syncPatternMap(ctx context.Context, eventbus, ruleARN string) {
+func (eb *EventBridgeProcessor) syncPatternMap(ctx context.Context, eventbus, ruleARN string) {
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case <-time.After(awsEventBridge.resyncInterval):
-			awsEventBridge.Printf("syncing pattern map for rule ARN %s", ruleARN)
+		case <-time.After(eb.resyncInterval):
+			eb.Printf("syncing pattern map for rule ARN %s", ruleARN)
 
-			err := awsEventBridge.syncRules(ctx, eventbus, ruleARN)
+			err := eb.syncRules(ctx, eventbus, ruleARN)
 			if err != nil {
-				awsEventBridge.Printf("could not sync pattern map for rule ARN %s: %v", ruleARN, err)
-				awsEventBridge.Printf("retrying after %v", awsEventBridge.resyncInterval)
+				eb.Printf("could not sync pattern map for rule ARN %s: %v", ruleARN, err)
+				eb.Printf("retrying after %v", eb.resyncInterval)
 			}
 
-			awsEventBridge.Printf("successfully synced pattern map for rule ARN %s", ruleARN)
+			eb.Printf("successfully synced pattern map for rule ARN %s", ruleARN)
 		}
 	}
 }
 
-func (awsEventBridge *awsEventBridgeProcessor) syncRules(ctx context.Context, eventbus, ruleARN string) error {
-	awsEventBridge.mu.Lock()
+func (eb *EventBridgeProcessor) syncRules(ctx context.Context, eventbus, ruleARN string) error {
+	eb.mu.Lock()
 	// clear pattern map
-	awsEventBridge.patternMap = make(map[string]string)
-	awsEventBridge.mu.Unlock()
+	eb.patternMap = make(map[string]string)
+	eb.mu.Unlock()
 
 	var (
 		found     bool
@@ -267,7 +268,7 @@ func (awsEventBridge *awsEventBridgeProcessor) syncRules(ctx context.Context, ev
 	)
 
 	for !found {
-		rules, err := awsEventBridge.ListRulesWithContext(ctx, &eventbridge.ListRulesInput{
+		rules, err := eb.ListRulesWithContext(ctx, &eventbridge.ListRulesInput{
 			EventBusName: aws.String(eventbus), // explicitly passing eventbus name because list assumes "default" otherwise
 			Limit:        aws.Int64(defaultPageLimit),
 			NextToken:    nextToken,
@@ -291,15 +292,15 @@ func (awsEventBridge *awsEventBridgeProcessor) syncRules(ctx context.Context, ev
 				}
 
 				if len(e.Detail.Subject) == 0 { // might be a valid scenario, emit warning
-					awsEventBridge.Println("warning: rule event pattern does not contain any subjects")
+					eb.Println("warning: rule event pattern does not contain any subjects")
 				}
 
-				awsEventBridge.mu.Lock()
+				eb.mu.Lock()
 				for _, s := range e.Detail.Subject {
-					awsEventBridge.Printf("adding rule event forwarding pattern %q to processor", s)
-					awsEventBridge.patternMap[s] = *rule.EventBusName
+					eb.Printf("adding rule event forwarding pattern %q to processor", s)
+					eb.patternMap[s] = *rule.EventBusName
 				}
-				awsEventBridge.mu.Unlock()
+				eb.mu.Unlock()
 
 				found = true
 				break arnLoop
@@ -322,7 +323,7 @@ func (awsEventBridge *awsEventBridgeProcessor) syncRules(ctx context.Context, ev
 	return nil
 }
 
-func (awsEventBridge *awsEventBridgeProcessor) PushMetrics(ctx context.Context, ms metrics.Receiver) {
+func (eb *EventBridgeProcessor) PushMetrics(ctx context.Context, ms metrics.Receiver) {
 	ticker := time.NewTicker(metrics.PushInterval)
 	defer ticker.Stop()
 
@@ -331,9 +332,9 @@ func (awsEventBridge *awsEventBridgeProcessor) PushMetrics(ctx context.Context, 
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
-			awsEventBridge.mu.RLock()
-			ms.Receive(&awsEventBridge.stats)
-			awsEventBridge.mu.RUnlock()
+			eb.mu.RLock()
+			ms.Receive(&eb.stats)
+			eb.mu.RUnlock()
 		}
 	}
 }

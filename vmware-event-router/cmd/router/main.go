@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -10,12 +11,13 @@ import (
 	"syscall"
 	"time"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider"
-	"golang.org/x/sync/errgroup"
 )
 
 var (
@@ -117,7 +119,7 @@ func main() {
 		logger.Printf("connected to OpenFaaS gateway %q (async mode: %t)", cfg.EventProcessor.OpenFaaS.Address, cfg.EventProcessor.OpenFaaS.Async)
 
 	case config.ProcessorEventBridge:
-		proc, err = processor.NewAWSEventBridgeProcessor(ctx, cfg.EventProcessor.EventBridge, ms, processor.WithAWSVerbose(verbose))
+		proc, err = processor.NewEventBridgeProcessor(ctx, cfg.EventProcessor.EventBridge, ms, processor.WithAWSVerbose(verbose))
 		if err != nil {
 			logger.Fatalf("could not connect to AWS EventBridge: %v", err)
 		}
@@ -170,7 +172,9 @@ func main() {
 	// blocks
 	err = eg.Wait()
 	if err != nil {
-		logger.Fatal(err)
+		if !errors.Is(err, context.Canceled) {
+			logger.Fatal(err)
+		}
 	}
 
 	logger.Println("shutdown successful")

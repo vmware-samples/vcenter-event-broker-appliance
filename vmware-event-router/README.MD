@@ -216,7 +216,7 @@ event `processor`.
 | Field     | Type    | Description                                                                                       | Required | Example                                          |
 | --------- | ------- | ------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------ |
 | `address` | String  | URI of the OpenFaaS gateway                                                                       | true     | `http://gateway.openfaas:8080`                   |
-| `async`   | Boolean | Specify how to invoke functions (synchronously or asynchronously)                                 | false    | `false` (i.e. use sync function invocation mode) |
+| `async`   | Boolean | Specify how to invoke functions (synchronously or asynchronously)                                 | true     | `false` (i.e. use sync function invocation mode) |
 | `<auth>`  | Object  | **Optional:** authentication data (see auth section below). Omit section if auth is not required. | false    | (see `basic_auth` example below)                 |
 
 #### Processor Type `aws_event_bridge`
@@ -269,7 +269,7 @@ as an event `processor`.
 | `region`   | String | AWS region to use, see [regions doc](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html). | true     | `us-west-1`                                                            |
 | `eventBus` | String | Name of the event bus to use                                                                                                            | true     | `default` or `arn:aws:events:us-west-1:1234567890:event-bus/customBus` |
 | `ruleARN`  | String | Rule ARN to use for event pattern matching                                                                                              | true     | `arn:aws:events:us-west-1:1234567890:rule/vmware-event-router`         |
-| `<auth>`   | Object | AWS IAM role credentials                                                                                                                |          | (see `aws_access_key` example below)                                   |
+| `<auth>`   | Object | AWS IAM role credentials                                                                                                                | true     | (see `aws_access_key` example below)                                   |
 
 ### The `auth` section
 
@@ -356,10 +356,10 @@ The VMware Event Router exposes metrics in JSON format on a configurable HTTP
 listener, e.g. `http://<bindAddress>/stats`. The following table lists allowed
 and optional fields for configuring the `default` metrics server.
 
-| Field         | Type   | Description                                                                                       | Required | Example                          |
-| ------------- | ------ | ------------------------------------------------------------------------------------------------- | -------- | -------------------------------- |
-| `bindAddress` | String | TCP/IP socket and port to listen on (**do not** add any URI scheme or slashes)                    | true     | `"0.0.0.0:8082"`                 |
-| `<auth>`      | Object | **Optional:** authentication data (see auth section above). Omit section if auth is not required. | false    | (see `basic_auth` example below) |
+| Field         | Type   | Description                                                                                 | Required | Example                    |
+| ------------- | ------ | ------------------------------------------------------------------------------------------- | -------- | -------------------------- |
+| `bindAddress` | String | TCP/IP socket and port to listen on (**do not** add any URI scheme or slashes)              | true     | `"0.0.0.0:8082"`           |
+| `<auth>`      | Object | **Optional:** authentication data (see auth section). Omit section if auth is not required. | false    | (see `basic_auth` example) |
 
 ## Deployment
 VMware Event Router can be deployed and run as standalone binary (see

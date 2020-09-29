@@ -37,7 +37,7 @@ type ProcessorConfigOpenFaaS struct {
 	Async bool `yaml:"async" json:"async" jsonschema:"required,description=Use async function invocation mode,default=false"`
 	// Auth sets the OpenFaaS authentication credentials (optional)
 	// +optional
-	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"oneof_required=auth,description=Authentication configuration for this section"`
+	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"description=Authentication configuration for this section"`
 }
 
 // ProcessorConfigEventBridge configures the AWS Event Bridge event processor
@@ -46,8 +46,8 @@ type ProcessorConfigEventBridge struct {
 	Region string `yaml:"region" json:"region" jsonschema:"required,default=us-west-1"`
 	// EventBus is the name of the event bus (or "default" for the default event bus)
 	EventBus string `yaml:"eventBus" json:"eventBus" jsonschema:"required,default=default"`
-	// TODO (@mgasch): deprecate and support 1..n rules per given eventbus
 	// RuleARN is the ARN of the rule to use for configuring pattern matching and event forwarding
+	// TODO (@mgasch): deprecate and support 1..n rules per given eventbus
 	RuleARN string `yaml:"ruleARN" json:"ruleARN" jsonschema:"required,default=arn:aws:events:us-west-1:1234567890:rule/vmware-event-router"`
 	// Auth sets the AWS authentication credentials
 	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"oneof_required=auth,description=Authentication configuration for this section"`

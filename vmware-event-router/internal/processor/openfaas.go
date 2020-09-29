@@ -14,6 +14,7 @@ import (
 	ofsdk "github.com/openfaas-incubator/connector-sdk/types"
 	"github.com/openfaas/faas-provider/auth"
 	"github.com/pkg/errors"
+
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
@@ -33,8 +34,8 @@ func (r responseFunc) Response(res ofsdk.InvokerResponse) {
 	r(res)
 }
 
-// openfaasProcessor implements the Processor interface
-type openfaasProcessor struct {
+// OpenfaasProcessor implements the Processor interface
+type OpenfaasProcessor struct {
 	controller ofsdk.Controller
 	ofsdk.ResponseSubscriber
 
@@ -51,12 +52,12 @@ type openfaasProcessor struct {
 }
 
 // NewOpenFaaSProcessor returns an OpenFaaS processor for the given stream
-// source. Asynchronous function invokation can be configured for
+// source. Asynchronous function invocation can be configured for
 // high-throughput (non-blocking) requirements.
-func NewOpenFaaSProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFaaS, ms metrics.Receiver, opts ...OpenFaaSOption) (Processor, error) {
+func NewOpenFaaSProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFaaS, ms metrics.Receiver, opts ...OpenFaaSOption) (*OpenfaasProcessor, error) {
 	// defaults
 	logger := log.New(os.Stdout, color.Purple("[OpenFaaS] "), log.LstdFlags)
-	ofProcessor := openfaasProcessor{
+	ofProcessor := OpenfaasProcessor{
 		topicDelimiter:  defaultTopicDelimiter,
 		rebuildInterval: defaultRebuildInterval,
 		gatewayTimeout:  defaultTimeout,
@@ -106,7 +107,7 @@ func NewOpenFaaSProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFa
 	ofProcessor.controller.Subscribe(&ofProcessor)
 	ofProcessor.controller.BeginMapBuilder()
 
-	// prepopulate the metrics stats
+	// pre-populate the metrics stats
 	ofProcessor.stats = metrics.EventStats{
 		Provider:    string(config.ProcessorOpenFaaS),
 		Type:        config.EventProcessor,
@@ -119,44 +120,44 @@ func NewOpenFaaSProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFa
 	return &ofProcessor, nil
 }
 
-// defaultResponseHandler prints status information for each function invokation
-func defaultResponseHandler(openfaas *openfaasProcessor) responseFunc {
+// defaultResponseHandler prints status information for each function invocation
+func defaultResponseHandler(of *OpenfaasProcessor) responseFunc {
 	return func(res ofsdk.InvokerResponse) {
 		// update stats
-		// TODO: currently we only support metrics when in sync invokation mode
+		// TODO: currently we only support metrics when in sync invocation mode
 		// because we don't have a callback for async invocations
-		openfaas.lock.Lock()
-		openfaas.stats.Invocations[res.Topic]++
-		openfaas.lock.Unlock()
+		of.lock.Lock()
+		of.stats.Invocations[res.Topic]++
+		of.lock.Unlock()
 
 		if res.Error != nil || res.Status != http.StatusOK {
-			openfaas.Printf("function %s for topic %s returned status %d with error: %v", res.Function, res.Topic, res.Status, res.Error)
+			of.Printf("function %s for topic %s returned status %d with error: %v", res.Function, res.Topic, res.Status, res.Error)
 			return
 		}
 
-		openfaas.Printf("successfully invoked function %s for topic %s", res.Function, res.Topic)
+		of.Printf("successfully invoked function %s for topic %s", res.Function, res.Topic)
 	}
 }
 
 // Process implements the stream processor interface
-func (openfaas *openfaasProcessor) Process(ce cloudevents.Event) error {
-	if openfaas.verbose {
-		openfaas.Printf("processing event (ID %s): %v", ce.ID(), ce)
+func (of *OpenfaasProcessor) Process(ce cloudevents.Event) error {
+	if of.verbose {
+		of.Printf("processing event (ID %s): %v", ce.ID(), ce)
 	}
 
 	topic, message, err := handleEvent(ce)
 	if err != nil {
 		msg := fmt.Errorf("error handling event %v: %v", ce, err)
-		openfaas.Println(msg)
+		of.Println(msg)
 		return processorError(config.ProcessorOpenFaaS, msg)
 	}
 
-	if openfaas.verbose {
-		openfaas.Printf("created new outbound event for subscribers: %s", string(message))
+	if of.verbose {
+		of.Printf("created new outbound event for subscribers: %s", string(message))
 	}
 
-	openfaas.Printf("invoking function(s) for event %s on topic: %s", ce.ID(), topic)
-	openfaas.controller.Invoke(topic, &message)
+	of.Printf("invoking function(s) for event %s on topic: %s", ce.ID(), topic)
+	of.controller.Invoke(topic, &message)
 	return nil
 }
 
@@ -170,7 +171,7 @@ func handleEvent(event cloudevents.Event) (string, []byte, error) {
 	return event.Subject(), message, nil
 }
 
-func (openfaas *openfaasProcessor) PushMetrics(ctx context.Context, ms metrics.Receiver) {
+func (of *OpenfaasProcessor) PushMetrics(ctx context.Context, ms metrics.Receiver) {
 	ticker := time.NewTicker(metrics.PushInterval)
 	defer ticker.Stop()
 
@@ -179,9 +180,9 @@ func (openfaas *openfaasProcessor) PushMetrics(ctx context.Context, ms metrics.R
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
-			openfaas.lock.RLock()
-			ms.Receive(&openfaas.stats)
-			openfaas.lock.RUnlock()
+			of.lock.RLock()
+			ms.Receive(&of.stats)
+			of.lock.RUnlock()
 		}
 	}
 }
