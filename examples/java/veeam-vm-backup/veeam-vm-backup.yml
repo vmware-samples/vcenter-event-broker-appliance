@@ -1,0 +1,14 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: https://VEBA_FQDN_OR_IP
+functions:
+  veeam-vm-backup:
+    lang: java11
+    handler: ./veeam-vm-backup
+    image: vmware/veba-java-veeam-vm-backup:latest
+    secrets:
+      - veeamconfig
+    annotations:
+      topic: VmPoweredOffEvent
+
