@@ -2,6 +2,7 @@ packer_cache/
 output-vmware-iso/
 dist/
 .vscode
+.idea
 username
 password
 secret*.json

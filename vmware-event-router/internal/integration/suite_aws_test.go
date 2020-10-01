@@ -67,7 +67,7 @@ var _ = BeforeSuite(func() {
 	}
 
 	receiver = &fakeReceiver{}
-	p, err := processor.NewAWSEventBridgeProcessor(ctx, cfg, receiver, processor.WithAWSVerbose(true))
+	p, err := processor.NewEventBridgeProcessor(ctx, cfg, receiver, processor.WithAWSVerbose(true))
 	Expect(err).NotTo(HaveOccurred())
 	awsProcessor = p
 })

@@ -1,33 +1,36 @@
-# golang:1.14.4-stretch amd64
-FROM golang@sha256:8b6b86e45c7847fea9cf401da52e41747cfb18bbfb4aebe924b4ef13a3366521 AS builder
+# golang:1.15.2-buster linux/amd64
+FROM golang@sha256:0978cc067eb3f53901c00b70a024f182baa371bdfe7f35f3d64e56cab2471c4d AS builder
 ARG VERSION
 ARG COMMIT
 
 WORKDIR /build
 
-# install linter into ./bin/
-RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.27.0
-
+# modules
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
 
+# code
 COPY cmd cmd
 COPY internal internal
 
-RUN ./bin/golangci-lint run ./...
+# install linter into ./bin/
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.27.0
+COPY .golangci.yml .golangci.yml
+RUN ./bin/golangci-lint run -v ./...
+
+# build
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o vmware-event-router cmd/router/main.go
 
-# debian:stable-slim amd64
-FROM debian@sha256:aa1db351593d2849034c0395bc604dd65aa80ae4471da4a37a0c38e30aed3ab8
+# ubuntu:bionic-20200921 linux/amd64
+FROM ubuntu@sha256:45c6f8f1b2fe15adaa72305616d69a6cd641169bc8b16886756919e7c01fa48b
 ARG VERSION
 ARG COMMIT
 LABEL maintainer="mgasch@vmware.com" \
       commit="${COMMIT}"
 
 RUN apt-get update && apt-get install -y \
-    ca-certificates=20190110 \
-    procps=2:3.3.15-2 \
+    ca-certificates=20190110~18.04.1 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -g 61000 events
