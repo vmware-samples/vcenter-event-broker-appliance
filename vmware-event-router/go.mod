@@ -10,7 +10,7 @@ require (
 	github.com/jpillora/backoff v1.0.0
 	github.com/onsi/ginkgo v1.12.2
 	github.com/onsi/gomega v1.10.1
-	github.com/openfaas-incubator/connector-sdk v0.0.0-20191214130609-df5d76475412
+	github.com/openfaas-incubator/connector-sdk v0.0.0-20200902074656-7f648543d4aa
 	github.com/openfaas/faas-provider v0.15.1
 	github.com/pkg/errors v0.9.1
 	github.com/vmware/govmomi v0.22.2
@@ -18,3 +18,5 @@ require (
 	golang.org/x/sys v0.0.0-20200523222454-059865788121 // indirect
 	gopkg.in/yaml.v2 v2.3.0
 )
+
+replace github.com/openfaas-incubator/connector-sdk => github.com/embano1/connector-sdk v0.0.0-20201005194225-2a76f5b4d502

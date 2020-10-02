@@ -38,6 +38,7 @@ func (r responseFunc) Response(res ofsdk.InvokerResponse) {
 type OpenfaasProcessor struct {
 	controller ofsdk.Controller
 	ofsdk.ResponseSubscriber
+	respChan chan ofsdk.InvokerResponse // retrieve errors from sync fn invocation
 
 	// options
 	verbose         bool
@@ -62,6 +63,7 @@ func NewOpenFaaSProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFa
 		rebuildInterval: defaultRebuildInterval,
 		gatewayTimeout:  defaultTimeout,
 		Logger:          logger,
+		respChan:        make(chan ofsdk.InvokerResponse),
 	}
 	ofProcessor.ResponseSubscriber = defaultResponseHandler(&ofProcessor)
 
@@ -120,22 +122,17 @@ func NewOpenFaaSProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFa
 	return &ofProcessor, nil
 }
 
-// defaultResponseHandler prints status information for each function invocation
+// defaultResponseHandler captures errors caused by invoking or returned by
+// functions and prints status information for each function invocation
 func defaultResponseHandler(of *OpenfaasProcessor) responseFunc {
 	return func(res ofsdk.InvokerResponse) {
-		// update stats
 		// TODO: currently we only support metrics when in sync invocation mode
 		// because we don't have a callback for async invocations
 		of.lock.Lock()
 		of.stats.Invocations[res.Topic]++
 		of.lock.Unlock()
 
-		if res.Error != nil || res.Status != http.StatusOK {
-			of.Printf("function %s for topic %s returned status %d with error: %v", res.Function, res.Topic, res.Status, res.Error)
-			return
-		}
-
-		of.Printf("successfully invoked function %s for topic %s", res.Function, res.Topic)
+		of.respChan <- res
 	}
 }
 
@@ -153,11 +150,40 @@ func (of *OpenfaasProcessor) Process(ce cloudevents.Event) error {
 	}
 
 	if of.verbose {
-		of.Printf("created new outbound event for subscribers: %s", string(message))
+		of.Printf("created new outbound event for subscribers: %q", string(message))
 	}
 
-	of.Printf("invoking function(s) for event %s on topic: %s", ce.ID(), topic)
-	of.controller.Invoke(topic, &message)
+	of.Printf("invoking function(s) for event %q on topic: %q", ce.ID(), topic)
+
+	m, err := of.controller.Invoke(topic, &message)
+	if err != nil {
+		return errors.Wrap(err, "openfaas invoke function")
+	}
+
+	if m == 0 {
+		of.Printf("no functions matched for event %q on topic: %q", ce.ID(), topic)
+		return nil
+	}
+
+	// expect m callbacks
+	for i := 0; i < m; i++ {
+		res := <-of.respChan
+
+		// 	no retry
+		if err := res.Error; err != nil {
+			of.Printf("could not invoke function %q on topic %q: %v", res.Function, topic, err)
+			continue
+		}
+
+		if res.Status < http.StatusOK || res.Status > 299 {
+			// 	maybe retry
+			of.Printf("function %q on topic %q returned non successful status code %d: %q", res.Function, res.Topic, res.Status, string(*res.Body))
+			continue
+		}
+
+		of.Printf("successfully invoked function %q for topic %q", res.Function, res.Topic)
+	}
+
 	return nil
 }
 

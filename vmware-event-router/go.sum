@@ -52,6 +52,8 @@ github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZm
 github.com/eapache/go-resiliency v1.1.0/go.mod h1:kFI+JgMyC7bLPUVY133qvEBtVayf5mFgVsvEsIPBvNs=
 github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21/go.mod h1:+020luEh2TKB4/GOp8oxxtq0Daoen/Cii55CzbTV6DU=
 github.com/eapache/queue v1.1.0/go.mod h1:6eCeP0CKFpHLu8blIFXhExK/dRa7WDZfr6jVFPTqq+I=
+github.com/embano1/connector-sdk v0.0.0-20201005194225-2a76f5b4d502 h1:IaKbAtLRlYbqS+wGLHRvTdauP67xZ18uSyugFVW2jVY=
+github.com/embano1/connector-sdk v0.0.0-20201005194225-2a76f5b4d502/go.mod h1:xQK4clyPbZ1MfdIk3cU212TiS8VUwuX8RZvwtFBtacA=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
 github.com/fortytw2/leaktest v1.3.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
@@ -173,8 +175,7 @@ github.com/onsi/gomega v1.4.3/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1Cpa
 github.com/onsi/gomega v1.7.1/go.mod h1:XdKZgCCFLUoM/7CFJVPcG8C1xQ1AJ0vpAezJrB7JYyY=
 github.com/onsi/gomega v1.10.1 h1:o0+MgICZLuZ7xjH7Vx6zS/zcu93/BEp1VwkIW1mEXCE=
 github.com/onsi/gomega v1.10.1/go.mod h1:iN09h71vgCQne3DLsj+A5owkum+a2tYe+TOCB1ybHNo=
-github.com/openfaas-incubator/connector-sdk v0.0.0-20191214130609-df5d76475412 h1:9xbx42wa4TtNE7QuWhhQnbpCBclrI4fC6O9Q0oty/9I=
-github.com/openfaas-incubator/connector-sdk v0.0.0-20191214130609-df5d76475412/go.mod h1:jHCtd1HCZwhuwdPy4OB8CQU7ZqzxBdWNhIhH/khCJqQ=
+github.com/openfaas/faas-provider v0.0.0-20191014125556-8699aa7d3999/go.mod h1:W4OIp33RUOpR7wW+omJB/7GhIydRmYXvKf/VqUKI4yM=
 github.com/openfaas/faas-provider v0.15.1 h1:5M+DrGbuKlZxhN3/otFgLgBUnPQcYm6XosQDSbKXh30=
 github.com/openfaas/faas-provider v0.15.1/go.mod h1:ChVioeB3snmfYxBTu7SrWGYLoYN9fZkQlnuEQ86a6l0=
 github.com/openzipkin/zipkin-go v0.1.6/go.mod h1:QgAqvLzwWbR/WpD4A3cGpPtJrZXNIiJc5AZX7/PBEpw=

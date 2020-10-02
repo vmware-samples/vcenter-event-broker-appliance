@@ -7,7 +7,7 @@ The VMware Event Router is used to connect to various VMware event `providers`
 Appliance*](https://www.vmweventbroker.io/) as the core logic to forward vCenter
 events to configurable event `processors` (see below).
 
-**Supported event sources:**
+**Supported event providers ("sources"):**
 - [VMware vCenter Server](https://www.vmware.com/products/vcenter-server.html)
 
 **Supported event processors:**
@@ -29,11 +29,11 @@ to normalize events from the supported event `providers`. See
 - At-least-once event delivery semantics cannot be guaranteed if the event
   router crashes **within seconds** right after having received some events but before creating the
   first valid checkpoint
-- At-least-once event delivery semantics are only supported for the vCenter
-  event provider
-- At-least-once event delivery semantics currently only guard against crashes of
-  the event router. If an event cannot be delivered to an event processor,
-  currently no retries are performed/dead letter queues are not supported
+- At-least-once event delivery semantics are only supported for the following 
+  routing topologies:
+  - `vcenter` (with `checkpoint: true`) -> `aws_event_bridge` (using `DefaultRetryer`)
+- If an event cannot be successfully delivered by the event `processor` it is
+  logged and discarded, i.e. no support for dead letter queues
 
 > **Note:** It is possible though to run **multiple instances** of the event
 > router with different configurations to address multi-vCenter scenarios
