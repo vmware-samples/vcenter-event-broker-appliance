@@ -14,6 +14,9 @@ else
     systemctl stop sshd
 fi
 
+# Ensure docker is stopped to allow config of network/proxies
+systemctl stop docker
+
 echo -e "\e[92mConfiguring OS Root password ..." > /dev/console
 echo "root:${ROOT_PASSWORD}" | /usr/sbin/chpasswd
 
@@ -24,7 +27,6 @@ if [ "${DOCKER_NETWORK_CIDR}" != "172.17.0.1/16" ]; then
     "bip": "${DOCKER_NETWORK_CIDR}"
 }
 EOF
-systemctl restart docker
 fi
 
 echo -e "\e[92mConfiguring IP Tables for Antrea ..." > /dev/console
