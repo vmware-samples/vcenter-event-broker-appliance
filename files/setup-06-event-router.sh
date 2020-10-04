@@ -34,7 +34,7 @@ spec:
       containers:
       - image: ${EVENT_ROUTER_IMAGE}:${EVENT_ROUTER_VERSION}
         imagePullPolicy: IfNotPresent
-        args: ["-config", "/etc/vmware-event-router/event-router-config.json", "-verbose"]
+        args: ["-config", "/etc/vmware-event-router/event-router-config.yaml"]
         name: vmware-event-router
         resources:
           requests:
