@@ -8,18 +8,18 @@ import (
 )
 
 // OpenFaaSOption configures the OpenFaaS processor
-type OpenFaaSOption func(*openfaasProcessor)
+type OpenFaaSOption func(*OpenfaasProcessor)
 
 // WithOpenFaaSVerbose enables verbose logging for the OpenFaaS processor
 func WithOpenFaaSVerbose(verbose bool) OpenFaaSOption {
-	return func(o *openfaasProcessor) {
+	return func(o *OpenfaasProcessor) {
 		o.verbose = verbose
 	}
 }
 
 // WithOpenFaaSLogger sets an alternative logger for the OpenFaaS processor
 func WithOpenFaaSLogger(logger *log.Logger) OpenFaaSOption {
-	return func(o *openfaasProcessor) {
+	return func(o *OpenfaasProcessor) {
 		o.Logger = logger
 	}
 }
@@ -27,7 +27,7 @@ func WithOpenFaaSLogger(logger *log.Logger) OpenFaaSOption {
 // WithOpenFaaSDelimiter changes the default topic delimiter (comma-separated
 // strings) for the OpenFaaS processor
 func WithOpenFaaSDelimiter(delim string) OpenFaaSOption {
-	return func(o *openfaasProcessor) {
+	return func(o *OpenfaasProcessor) {
 		o.topicDelimiter = delim
 	}
 }
@@ -35,7 +35,7 @@ func WithOpenFaaSDelimiter(delim string) OpenFaaSOption {
 // WithOpenFaaSTimeout changes the default gateway timeout for the OpenFaaS
 // processor
 func WithOpenFaaSTimeout(timeout time.Duration) OpenFaaSOption {
-	return func(o *openfaasProcessor) {
+	return func(o *OpenfaasProcessor) {
 		o.gatewayTimeout = timeout
 	}
 }
@@ -43,7 +43,7 @@ func WithOpenFaaSTimeout(timeout time.Duration) OpenFaaSOption {
 // WithOpenFaaSRebuildInterval changes the default gateway topic synchronization
 // interval for the OpenFaaS processor
 func WithOpenFaaSRebuildInterval(interval time.Duration) OpenFaaSOption {
-	return func(o *openfaasProcessor) {
+	return func(o *OpenfaasProcessor) {
 		o.rebuildInterval = interval
 	}
 }
@@ -51,7 +51,7 @@ func WithOpenFaaSRebuildInterval(interval time.Duration) OpenFaaSOption {
 // WithOpenFaaSResponseHandler sets an alternative response handler for the
 // OpenFaaS processor
 func WithOpenFaaSResponseHandler(handler ofsdk.ResponseSubscriber) OpenFaaSOption {
-	return func(o *openfaasProcessor) {
+	return func(o *OpenfaasProcessor) {
 		o.ResponseSubscriber = handler
 	}
 }

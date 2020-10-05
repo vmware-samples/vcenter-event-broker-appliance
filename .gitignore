@@ -2,9 +2,11 @@ packer_cache/
 output-vmware-iso/
 dist/
 .vscode
+.idea
 username
 password
 secret*.json
+secret*.yml
 .jekyll-metadata
 .sass-cache
 .jekyll-cache

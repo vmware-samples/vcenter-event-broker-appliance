@@ -30,7 +30,7 @@ type VCenterEventInfo struct {
 // GetDetails retrieves the underlying vSphere event category and name for
 // the given BaseEvent, e.g. VmPoweredOnEvent (event) or
 // com.vmware.applmgmt.backup.job.failed.event (extendedevent)
-func getDetails(event types.BaseEvent) (VCenterEventInfo, error) {
+func getDetails(event types.BaseEvent) VCenterEventInfo {
 	eventInfo := VCenterEventInfo{}
 
 	switch e := event.(type) {
@@ -47,16 +47,14 @@ func getDetails(event types.BaseEvent) (VCenterEventInfo, error) {
 		eventInfo.Category = "event"
 		eventInfo.Name = eType
 	}
-	return eventInfo, nil
+
+	return eventInfo
 }
 
 // NewCloudEvent returns a compliant CloudEvent
 // TODO: make agnostic to just vCenter event types
 func NewCloudEvent(event types.BaseEvent, source string) (*cloudevents.Event, error) {
-	eventInfo, err := getDetails(event)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not retrieve event information")
-	}
+	eventInfo := getDetails(event)
 
 	ce := cloudevents.NewEvent(eventSpecVersion)
 
@@ -77,7 +75,7 @@ func NewCloudEvent(event types.BaseEvent, source string) (*cloudevents.Event, er
 
 	// set data - Event payload as received from processor (includes event
 	// creation timestamp, e.g. as set by vcenter).
-	err = ce.SetData(eventContentType, event)
+	err := ce.SetData(eventContentType, event)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create CloudEvent")
 	}

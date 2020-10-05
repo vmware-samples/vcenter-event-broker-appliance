@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/connection"
+	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 
@@ -24,7 +24,7 @@ const (
 type fakeReceiver struct {
 }
 
-func (f *fakeReceiver) Receive(stats metrics.EventStats) {
+func (f *fakeReceiver) Receive(_ *metrics.EventStats) {
 }
 
 var (
@@ -53,25 +53,21 @@ var _ = BeforeSuite(func() {
 	Expect(awsBus).ToNot(BeEmpty(), "env var AWS_EVENT_BUS for AWS EventBridge must be set")
 	Expect(awsRule).ToNot(BeEmpty(), "env var AWS_RULE_ARN for AWS EventBridge must be set")
 
-	cfg := connection.Config{
-		Type: "processor",
-		Options: map[string]string{
-			"aws_region":                awsRegion,
-			"aws_eventbridge_event_bus": awsBus,
-			"aws_eventbridge_rule_arn":  awsRule,
-		},
-		Provider: "aws_event_bridge",
-		Auth: connection.Authentication{
-			Method: "access_key",
-			Secret: map[string]string{
-				"aws_access_key_id":     awsAccessKey,
-				"aws_secret_access_key": awsSecret,
+	cfg := &config.ProcessorConfigEventBridge{
+		EventBus: awsBus,
+		Region:   awsRegion,
+		RuleARN:  awsRule,
+		Auth: &config.AuthMethod{
+			Type: config.AWSAccessKeyAuth,
+			AWSAccessKeyAuth: &config.AWSAccessKeyAuthMethod{
+				AccessKey: awsAccessKey,
+				SecretKey: awsSecret,
 			},
 		},
 	}
 
 	receiver = &fakeReceiver{}
-	p, err := processor.NewAWSEventBridgeProcessor(ctx, cfg, receiver, processor.WithAWSVerbose(true))
+	p, err := processor.NewEventBridgeProcessor(ctx, cfg, receiver, processor.WithAWSVerbose(true))
 	Expect(err).NotTo(HaveOccurred())
 	awsProcessor = p
 })
