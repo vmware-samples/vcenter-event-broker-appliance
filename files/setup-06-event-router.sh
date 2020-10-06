@@ -9,8 +9,10 @@ set -euo pipefail
 echo -e "\e[92mDeploying VMware Event Router ..." > /dev/console
 kubectl --kubeconfig /root/.kube/config -n vmware create secret generic event-router-config --from-file=${EVENT_ROUTER_CONFIG}
 
-# Retrieve the version tag for VMware Event Router image
-EVENT_ROUTER_VERSION=$(awk '/Version:/ {print $2}' /etc/veba-release)
+# Retrieve the VMware Event Router image
+VEBA_BOM_FILE=/root/config/veba-bom.json
+EVENT_ROUTER_IMAGE=$(jq -r < ${VEBA_BOM_FILE} '.["vmware-event-router"].containers[0].name')
+EVENT_ROUTER_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["vmware-event-router"].containers[0].version')
 
 cat > /root/config/event-router-k8s.yaml << __EVENT_ROUTER_CONFIG
 apiVersion: apps/v1
@@ -30,7 +32,7 @@ spec:
         app: vmware-event-router
     spec:
       containers:
-      - image: vmware/veba-event-router:${EVENT_ROUTER_VERSION}
+      - image: ${EVENT_ROUTER_IMAGE}:${EVENT_ROUTER_VERSION}
         imagePullPolicy: IfNotPresent
         args: ["-config", "/etc/vmware-event-router/event-router-config.json", "-verbose"]
         name: vmware-event-router
@@ -55,9 +57,9 @@ metadata:
   name: vmware-event-router
 spec:
   ports:
-  - port: 8080
+  - port: 8082
     protocol: TCP
-    targetPort: 8080
+    targetPort: 8082
   selector:
     app: vmware-event-router
   sessionAffinity: None

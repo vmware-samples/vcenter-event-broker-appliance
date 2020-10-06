@@ -34,7 +34,11 @@ CONTOUR_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["contour"].version')
 git clone https://github.com/projectcontour/contour.git
 cd contour
 git checkout ${CONTOUR_VERSION}
-sed -i '/^---/i \      dnsPolicy: ClusterFirstWithHostNet\n      hostNetwork: true' examples/contour/03-envoy.yaml
+sed -i "s/latest/${CONTOUR_VERSION}/g" examples/contour/02-job-certgen.yaml
+cat >> examples/contour/03-envoy.yaml << EOF
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
+EOF
 sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' examples/contour/*.yaml
 cd ..
 
