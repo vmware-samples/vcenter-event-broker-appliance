@@ -23,83 +23,111 @@ kubectl --kubeconfig /root/.kube/config -n vmware create secret tls ${CERT_NAME}
 
 if [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
   cat << EOF > /root/config/ingressroute-gateway.yaml
-apiVersion: contour.heptio.com/v1beta1
-kind: IngressRoute
+---
+
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
 metadata:
   labels:
     app: vmware
   name: event-router
   namespace: vmware
 spec:
+  routes:
+  - conditions:
+    - prefix: /status
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /status
+    services:
+    - name: tinywww
+      port: 8100
+  - conditions:
+    - prefix: /bootstrap
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /bootstrap
+    services:
+    - name: tinywww
+      port: 8100
+  - conditions:
+    - prefix: /stats
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /stats
+    services:
+    - name: vmware-event-router
+      port: 8082
   virtualhost:
     fqdn: ${HOSTNAME}
     tls:
-      secretName: ${CERT_NAME}
       minimumProtocolVersion: "1.2"
-  routes:
-    - match: /status
-      prefixRewrite: /status
-      services:
-      - name: tinywww
-        port: 8100
-    - match: /bootstrap
-      prefixRewrite: /bootstrap
-      services:
-      - name: tinywww
-        port: 8100
-    - match: /stats
-      prefixRewrite: /stats
-      services:
-      - name: vmware-event-router
-        port: 8080
+      secretName: ${CERT_NAME}
+status: {}
 EOF
 else
   cat << EOF > /root/config/ingressroute-gateway.yaml
-apiVersion: contour.heptio.com/v1beta1
-kind: IngressRoute
+---
+
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
 metadata:
   labels:
     app: vmware
   name: event-router
   namespace: vmware
 spec:
+  includes:
+  - conditions:
+    - prefix: /
+    name: gateway
+    namespace: openfaas
+  routes:
+  - conditions:
+    - prefix: /status
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /status
+    services:
+    - name: tinywww
+      port: 8100
+  - conditions:
+    - prefix: /bootstrap
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /bootstrap
+    services:
+    - name: tinywww
+      port: 8100
+  - conditions:
+    - prefix: /stats
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /stats
+    services:
+    - name: vmware-event-router
+      port: 8082
   virtualhost:
     fqdn: ${HOSTNAME}
     tls:
-      secretName: ${CERT_NAME}
       minimumProtocolVersion: "1.2"
-  routes:
-    - match: /status
-      prefixRewrite: /status
-      services:
-      - name: tinywww
-        port: 8100
-    - match: /bootstrap
-      prefixRewrite: /bootstrap
-      services:
-      - name: tinywww
-        port: 8100
-    - match: /stats
-      prefixRewrite: /stats
-      services:
-      - name: vmware-event-router
-        port: 8080
-    - match: /
-      delegate:
-        name: gateway
-        namespace: openfaas
+      secretName: ${CERT_NAME}
+status: {}
 ---
-apiVersion: contour.heptio.com/v1beta1
-kind: IngressRoute
+
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
 metadata:
   name: gateway
   namespace: openfaas
 spec:
   routes:
-    - match: /
-      services:
-      - name: gateway
-        port: 8080
+  - conditions:
+    - prefix: /
+    services:
+    - name: gateway
+      port: 8080
+status: {}
 EOF
 fi
 
