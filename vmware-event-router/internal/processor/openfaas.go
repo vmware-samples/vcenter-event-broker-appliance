@@ -2,11 +2,14 @@ package processor
 
 import (
 	"context"
+	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"regexp"
 	"sync"
 	"time"
 
@@ -14,6 +17,7 @@ import (
 	ofsdk "github.com/openfaas-incubator/connector-sdk/types"
 	"github.com/openfaas/faas-provider/auth"
 	"github.com/pkg/errors"
+	"golang.org/x/sync/errgroup"
 
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
@@ -138,15 +142,16 @@ func defaultResponseHandler(of *OpenfaasProcessor) responseFunc {
 
 // Process implements the stream processor interface
 func (of *OpenfaasProcessor) Process(ce cloudevents.Event) error {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	if of.verbose {
 		of.Printf("processing event (ID %s): %v", ce.ID(), ce)
 	}
 
 	topic, message, err := handleEvent(ce)
 	if err != nil {
-		msg := fmt.Errorf("error handling event %v: %v", ce, err)
-		of.Println(msg)
-		return processorError(config.ProcessorOpenFaaS, msg)
+		return processorError(config.ProcessorOpenFaaS, errors.Wrapf(err, "handle event %v", ce))
 	}
 
 	if of.verbose {
@@ -155,9 +160,9 @@ func (of *OpenfaasProcessor) Process(ce cloudevents.Event) error {
 
 	of.Printf("invoking function(s) for event %q on topic: %q", ce.ID(), topic)
 
-	m, err := of.controller.Invoke(topic, &message)
+	m, err := of.controller.InvokeWithContext(ctx, topic, &message)
 	if err != nil {
-		return errors.Wrap(err, "openfaas invoke function")
+		return processorError(config.ProcessorOpenFaaS, errors.Wrap(err, "invoke function"))
 	}
 
 	if m == 0 {
@@ -165,26 +170,33 @@ func (of *OpenfaasProcessor) Process(ce cloudevents.Event) error {
 		return nil
 	}
 
+	eg, egCtx := errgroup.WithContext(ctx)
+
 	// expect m callbacks
 	for i := 0; i < m; i++ {
 		res := <-of.respChan
 
-		// 	no retry
-		if err := res.Error; err != nil {
-			of.Printf("could not invoke function %q on topic %q: %v", res.Function, topic, err)
-			continue
-		}
+		eg.Go(func() error {
+			retry, err := isRetryable(egCtx, res.Status, res.Error)
+			if err != nil {
+				of.Printf("could not invoke function %q on topic %q: %v", res.Function, topic, err)
+				// 	no retry
+				return nil
+			}
 
-		if res.Status < http.StatusOK || res.Status > 299 {
-			// 	maybe retry
-			of.Printf("function %q on topic %q returned non successful status code %d: %q", res.Function, res.Topic, res.Status, string(*res.Body))
-			continue
-		}
+			if retry {
+				of.Printf("function %q on topic %q returned non successful status code %d: %q", res.Function, res.Topic, res.Status, string(*res.Body))
+				// 	TODO: retry logic
+				return nil
+			}
 
-		of.Printf("successfully invoked function %q for topic %q", res.Function, res.Topic)
+			of.Printf("successfully invoked function %q for topic %q", res.Function, res.Topic)
+			return nil
+		})
+
 	}
 
-	return nil
+	return eg.Wait()
 }
 
 // handleEvent returns the OpenFaaS subscription topic, e.g. VmPoweredOnEvent,
@@ -211,4 +223,63 @@ func (of *OpenfaasProcessor) PushMetrics(ctx context.Context, ms metrics.Receive
 			of.lock.RUnlock()
 		}
 	}
+}
+
+// isRetryable provides a default callback for Client.CheckRetry, which
+// will retry on connection errors and server errors.
+func isRetryable(ctx context.Context, code int, err error) (bool, error) {
+	// source: https://github.com/hashicorp/go-retryablehttp/blob/master/client.go
+	// A regular expression to match the error returned by net/http when the
+	// configured number of redirects is exhausted. This error isn't typed
+	// specifically so we resort to matching on the error string.
+	redirectsErrorRe := regexp.MustCompile(`stopped after \d+ redirects\z`)
+
+	// A regular expression to match the error returned by net/http when the
+	// scheme specified in the URL is invalid. This error isn't typed
+	// specifically so we resort to matching on the error string.
+	schemeErrorRe := regexp.MustCompile(`unsupported protocol scheme`)
+
+	// do not retry on context.Canceled or context.DeadlineExceeded
+	if ctx.Err() != nil {
+		return false, ctx.Err()
+	}
+
+	if err != nil {
+		if v, ok := err.(*url.Error); ok {
+			// Don't retry if the error was due to too many redirects.
+			if redirectsErrorRe.MatchString(v.Error()) {
+				return false, nil
+			}
+
+			// Don't retry if the error was due to an invalid protocol scheme.
+			if schemeErrorRe.MatchString(v.Error()) {
+				return false, nil
+			}
+
+			// Don't retry if the error was due to TLS cert verification failure.
+			if _, ok := v.Err.(x509.UnknownAuthorityError); ok {
+				return false, nil
+			}
+		}
+
+		// The error is likely recoverable so retry.
+		return true, nil
+	}
+
+	// 429 Too Many Requests is recoverable. Sometimes the server puts
+	// a Retry-After response header to indicate when the server is
+	// available to start processing request from client.
+	if code == http.StatusTooManyRequests {
+		return true, nil
+	}
+
+	// Check the response code. We retry on 500-range responses to allow
+	// the server time to recover, as 500's are typically not permanent
+	// errors and may relate to outages on the server side. This will catch
+	// invalid response codes as well, like 0 and 999.
+	if code == 0 || (code >= 500 && code != 501) {
+		return true, nil
+	}
+
+	return false, nil
 }
