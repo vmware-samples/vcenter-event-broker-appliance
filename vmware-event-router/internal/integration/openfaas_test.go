@@ -8,8 +8,9 @@ import (
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
 	"github.com/vmware/govmomi/vim25/types"
+
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
 )
 
 const (
@@ -48,7 +49,7 @@ var _ = Describe("OpenFaaS Processor", func() {
 
 			// process and give response time to get back from OpenFaaS gateway
 			BeforeEach(func() {
-				err = ofProcessor.Process(*ce)
+				err = ofProcessor.Process(ctx, *ce)
 				time.Sleep(waitDelay)
 			})
 
@@ -84,7 +85,7 @@ var _ = Describe("OpenFaaS Processor", func() {
 
 			// process and give response time to get back from OpenFaaS gateway
 			BeforeEach(func() {
-				err = ofProcessor.Process(*ce)
+				err = ofProcessor.Process(ctx, *ce)
 				time.Sleep(waitDelay)
 			})
 
@@ -123,7 +124,7 @@ var _ = Describe("OpenFaaS Processor", func() {
 			// (note: we don't expect response, just making sure nothing gets
 			// through)
 			BeforeEach(func() {
-				err = ofProcessor.Process(*ce)
+				err = ofProcessor.Process(ctx, *ce)
 				time.Sleep(waitDelay)
 			})
 

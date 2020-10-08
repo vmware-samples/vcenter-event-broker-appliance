@@ -129,7 +129,7 @@ func NewProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFaaS, ms m
 		Type:        config.EventProcessor,
 		Address:     cfg.Address,
 		Started:     time.Now().UTC(),
-		Invocations: make(map[string]int),
+		Invocations: make(map[string]*metrics.InvocationDetails),
 	}
 	go ofProcessor.PushMetrics(ctx, ms)
 
@@ -139,10 +139,22 @@ func NewProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFaaS, ms m
 // defaultResponseHandler records metrics and handles invoker responses
 func defaultResponseHandler(of *Processor) responseFunc {
 	return func(res ofsdk.InvokerResponse) {
-		// TODO: currently we only support metrics when in sync invocation mode
-		// because we don't have a callback for async invocations
+		// TODO: currently we only support metrics when in sync invocation mode because
+		// we don't have a callback for async invocations
 		of.lock.Lock()
-		of.stats.Invocations[res.Topic]++
+
+		// check for existing topic entry
+		if _, ok := of.stats.Invocations[res.Topic]; !ok {
+			of.stats.Invocations[res.Topic] = &metrics.InvocationDetails{}
+		}
+
+		// record metrics
+		// note: only first invocation result is captured (no retries)
+		if isSuccessful(res.Status, res.Error) {
+			of.stats.Invocations[res.Topic].Success()
+		} else {
+			of.stats.Invocations[res.Topic].Failure()
+		}
 		of.lock.Unlock()
 
 		of.respChan <- res
@@ -211,20 +223,22 @@ func waitFor(ctx context.Context, res ofsdk.InvokerResponse, invoker invokeFn, r
 	}
 
 	return func() error {
+		var retryCount int32
+
 		// return early
 		if isSuccessful(res.Status, res.Error) {
-			log.Printf("successfully invoked function %q for topic %q", res.Function, res.Topic)
+			log.Printf("successfully invoked function %q for topic %q (retries: %d)", res.Function, res.Topic, retryCount)
 			return nil
 		}
 
 		// retries unless error is nil or of type retry.Unrecoverable
-		err := retry.Do(retryFunc(ctx, res, invoker, retryMsg), retryOps...)
+		err := retry.Do(retryFunc(ctx, res, invoker, retryMsg, &retryCount), retryOps...)
 		if err != nil {
-			log.Printf("could not invoke function %q for topic %q: %v", res.Function, res.Topic, err)
+			log.Printf("could not invoke function %q for topic %q (retries: %d): %v", res.Function, res.Topic, retryCount, err)
 			return nil
 		}
 
-		log.Printf("successfully invoked function %q for topic %q", res.Function, res.Topic)
+		log.Printf("successfully invoked function %q for topic %q (retries: %d)", res.Function, res.Topic, retryCount)
 		return nil
 	}
 }

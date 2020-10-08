@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"sync/atomic"
 
 	"github.com/avast/retry-go"
 	"github.com/openfaas-incubator/connector-sdk/types"
@@ -75,7 +76,7 @@ func isRetryable(ctx context.Context, code int, err error) (bool, error) {
 // retryFunc returns a function with internal retry logic based on the given
 // initial response. Retries, if any, will be performed with invoker and message
 // (to perform retries)
-func retryFunc(ctx context.Context, res types.InvokerResponse, invoker invokeFn, msg []byte) func() error {
+func retryFunc(ctx context.Context, res types.InvokerResponse, invoker invokeFn, msg []byte, counter *int32) func() error {
 	var (
 		resStatus = res.Status
 		resError  = res.Error
@@ -89,6 +90,7 @@ func retryFunc(ctx context.Context, res types.InvokerResponse, invoker invokeFn,
 		}
 
 		// retry
+		atomic.AddInt32(counter, 1)
 		resMsg, resStatus, _, resError = invoker(ctx, res.Function, msg)
 		if !isSuccessful(resStatus, resError) {
 			return fmt.Errorf("function %q on topic %q returned non successful status code %d: %q", res.Function, res.Topic, resStatus, string(resMsg))

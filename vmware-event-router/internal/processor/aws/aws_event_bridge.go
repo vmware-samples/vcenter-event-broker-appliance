@@ -166,13 +166,13 @@ func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEve
 		}
 	}
 
-	// prepopulate the metrics stats
+	// pre-populate the metrics stats
 	eventBridge.stats = metrics.EventStats{
 		Provider:    string(config.ProcessorEventBridge),
 		Type:        config.EventProcessor,
 		Address:     cfg.RuleARN, // Using Rule ARN to uniquely identify and represent this processor
 		Started:     time.Now().UTC(),
-		Invocations: make(map[string]int),
+		Invocations: make(map[string]*metrics.InvocationDetails),
 	}
 
 	go eventBridge.PushMetrics(ctx, ms)
@@ -187,8 +187,8 @@ func (eb *EventBridgeProcessor) Process(ctx context.Context, ce cloudevents.Even
 		eb.Printf("processing event (ID %s): %v", ce.ID(), ce)
 	}
 
-	eb.mu.RLock()
-	defer eb.mu.RUnlock()
+	eb.mu.Lock()
+	defer eb.mu.Unlock()
 
 	if _, ok := eb.patternMap[ce.Subject()]; !ok {
 		// no event bridge rule pattern (subscription) for event, skip
@@ -214,19 +214,23 @@ func (eb *EventBridgeProcessor) Process(ctx context.Context, ce cloudevents.Even
 		DetailType:   aws.String(ce.Subject()),
 	}
 
-	// update metrics
-	eb.stats.Invocations[ce.Subject()]++
+	// check for existing topic entry in metrics
+	if _, ok := eb.stats.Invocations[ce.Subject()]; !ok {
+		eb.stats.Invocations[ce.Subject()] = &metrics.InvocationDetails{}
+	}
 
+	// TODO: add batching (metrics stats currently assume single item)
 	input := eventbridge.PutEventsInput{
 		Entries: []*eventbridge.PutEventsRequestEntry{&entry},
 	}
 
 	eb.Printf("sending event %s", ce.ID())
-	resp, err := eb.PutEvents(&input)
+	resp, err := eb.PutEventsWithContext(ctx, &input)
 
 	if err != nil {
 		msg := fmt.Errorf("could not send event %v: %v", ce, err)
 		eb.Println(msg)
+		eb.stats.Invocations[ce.Subject()].Failure()
 		return processor.NewError(config.ProcessorEventBridge, msg)
 	}
 
@@ -235,6 +239,8 @@ func (eb *EventBridgeProcessor) Process(ctx context.Context, ce cloudevents.Even
 	} else {
 		eb.Printf("successfully sent event %s", ce.ID())
 	}
+
+	eb.stats.Invocations[ce.Subject()].Success()
 	return nil
 }
 
