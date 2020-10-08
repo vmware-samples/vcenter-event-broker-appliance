@@ -11,8 +11,7 @@ if [ ! -e ${VEBA_BOM_FILE} ]; then
     exit 1
 fi
 
-#command -v jqw > /dev/null 2>&1
-if [ ! -e /usr/local/bin/jq ]; then
+if ! hash jq 2>/dev/null; then
     echo "jq utility is not installed on this system"
     exit 1
 fi

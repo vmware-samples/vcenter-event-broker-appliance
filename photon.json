@@ -1,4 +1,5 @@
 {
+  "min_packer_version": "1.6.3",
   "variables": {
     "veba_ovf_template": "photon.xml.template",
     "ovftool_deploy_vcenter": "192.168.30.200",
@@ -20,9 +21,10 @@
       "boot_wait": "10s",
       "headless": false,
       "vnc_disable_password": true,
+      "vnc_over_websocket": true,
+      "insecure_connection": true,
       "iso_url": "{{ user `iso_url` }}",
       "iso_checksum": "{{ user `iso_checksum` }}",
-      "iso_checksum_type": "{{ user `iso_checksum_type` }}",
       "http_directory": "http",
       "remote_type": "esx5",
       "remote_host": "{{ user `builder_host` }}",
