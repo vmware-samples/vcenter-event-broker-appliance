@@ -272,7 +272,7 @@ func (vc *EventStream) stream(ctx context.Context, p processor.Processor, collec
 // processEvents processes events from vcenter serially, i.e. in order, invoking
 // the supplied processor. Errors are logged and tracked in the metric stats.
 // The last event processed, including those returning with error, is returned.
-func (vc *EventStream) processEvents(_ context.Context, baseEvents []types.BaseEvent, p processor.Processor) types.BaseEvent {
+func (vc *EventStream) processEvents(ctx context.Context, baseEvents []types.BaseEvent, p processor.Processor) types.BaseEvent {
 	var (
 		errCount  int
 		lastEvent types.BaseEvent
@@ -288,10 +288,9 @@ func (vc *EventStream) processEvents(_ context.Context, baseEvents []types.BaseE
 			continue
 		}
 
-		// TODO: error handling logic to support at-least-once delivery in case of
-		// processor failure
-		err = p.Process(*ce)
+		err = p.Process(ctx, *ce)
 		if err != nil {
+			// retry logic handled inside processor
 			vc.Logger.Printf("could not process event %v: %v", ce, err)
 			errCount++
 		}

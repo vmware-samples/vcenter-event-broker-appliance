@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/alecthomas/jsonschema v0.0.0-20200530073317-71f438968921
+	github.com/avast/retry-go v2.6.1+incompatible
 	github.com/aws/aws-sdk-go v1.33.12
 	github.com/cloudevents/sdk-go/v2 v2.0.0-RC2
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
@@ -28,4 +29,4 @@ require (
 	honnef.co/go/tools v0.0.1-2020.1.3 // indirect
 )
 
-replace github.com/openfaas-incubator/connector-sdk => github.com/embano1/connector-sdk v0.0.0-20201005194225-2a76f5b4d502
+replace github.com/openfaas-incubator/connector-sdk => github.com/embano1/connector-sdk v0.0.0-20201008104104-a16827d0ead1

@@ -1,4 +1,4 @@
-package processor
+package aws
 
 import (
 	"context"
@@ -20,6 +20,7 @@ import (
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 )
 
 const (
@@ -52,7 +53,7 @@ type eventPattern struct {
 
 // NewEventBridgeProcessor returns an AWS EventBridge processor for the given
 // stream source
-func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEventBridge, ms metrics.Receiver, opts ...AWSOption) (*EventBridgeProcessor, error) {
+func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEventBridge, ms metrics.Receiver, opts ...Option) (*EventBridgeProcessor, error) {
 	logger := log.New(os.Stdout, color.Yellow("[AWS EventBridge] "), log.LstdFlags)
 	eventBridge := EventBridgeProcessor{
 		resyncInterval: defaultResyncInterval,
@@ -181,7 +182,7 @@ func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEve
 }
 
 // Process implements the stream processor interface
-func (eb *EventBridgeProcessor) Process(ce cloudevents.Event) error {
+func (eb *EventBridgeProcessor) Process(ctx context.Context, ce cloudevents.Event) error {
 	if eb.verbose {
 		eb.Printf("processing event (ID %s): %v", ce.ID(), ce)
 	}
@@ -202,7 +203,7 @@ func (eb *EventBridgeProcessor) Process(ce cloudevents.Event) error {
 	if err != nil {
 		msg := fmt.Errorf("could not marshal event %v: %v", ce, err)
 		eb.Println(msg)
-		return processorError(config.ProcessorEventBridge, msg)
+		return processor.NewError(config.ProcessorEventBridge, msg)
 	}
 
 	jsonString := string(jsonBytes)
@@ -226,7 +227,7 @@ func (eb *EventBridgeProcessor) Process(ce cloudevents.Event) error {
 	if err != nil {
 		msg := fmt.Errorf("could not send event %v: %v", ce, err)
 		eb.Println(msg)
-		return processorError(config.ProcessorEventBridge, msg)
+		return processor.NewError(config.ProcessorEventBridge, msg)
 	}
 
 	if eb.verbose {

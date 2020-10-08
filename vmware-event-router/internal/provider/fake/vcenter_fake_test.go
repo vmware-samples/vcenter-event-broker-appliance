@@ -15,7 +15,7 @@ type noOpProcessor struct {
 	invokations int
 }
 
-func (n *noOpProcessor) Process(event cloudevents.Event) error {
+func (n *noOpProcessor) Process(ctx context.Context, ce cloudevents.Event) error {
 	n.invokations++
 	return nil
 }

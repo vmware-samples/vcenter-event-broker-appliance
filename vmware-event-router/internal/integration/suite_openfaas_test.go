@@ -14,6 +14,7 @@ import (
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor/openfaas"
 
 	ofsdk "github.com/openfaas-incubator/connector-sdk/types"
 
@@ -84,11 +85,11 @@ var _ = BeforeSuite(func() {
 		},
 	}
 
-	op, err := processor.NewOpenFaaSProcessor(ctx,
+	op, err := openfaas.NewProcessor(ctx,
 		cfg,
 		receiver,
-		processor.WithOpenFaaSRebuildInterval(100*time.Millisecond),
-		processor.WithOpenFaaSResponseHandler(receiver),
+		openfaas.WithRebuildInterval(100*time.Millisecond),
+		openfaas.WithResponseHandler(receiver),
 	)
 	Expect(err).ShouldNot(HaveOccurred())
 	ofProcessor = op
