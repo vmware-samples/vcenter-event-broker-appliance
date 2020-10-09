@@ -36,8 +36,10 @@ jobs:
           echo "Building pre-release of vmware-event-router with commit $COMMIT"        
           make
           docker tag vmware/veba-event-router:latest vmware/veba-event-router:$COMMIT
+          docker tag vmware/veba-event-router:latest vmware/veba-event-router:development
       - name: push just the pre-release image
         env: 
           COMMIT: ${{ steps.get_short_commit.outputs.COMMIT }}        
         run: |
           docker push vmware/veba-event-router:$COMMIT
+          docker push vmware/veba-event-router:development
