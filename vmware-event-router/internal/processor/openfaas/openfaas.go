@@ -52,7 +52,7 @@ func (r responseFunc) Response(res ofsdk.InvokerResponse) {
 type Processor struct {
 	controller ofsdk.Controller
 	ofsdk.ResponseSubscriber
-	respChan chan ofsdk.InvokerResponse // retrieve errors from sync fn invocation
+	respChan chan ofsdk.InvokerResponse // responses from sync fn invocation
 
 	// options
 	verbose         bool

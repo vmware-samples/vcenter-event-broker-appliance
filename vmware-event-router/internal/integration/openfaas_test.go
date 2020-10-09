@@ -140,7 +140,7 @@ var _ = Describe("OpenFaaS Processor", func() {
 				Expect(successCount).To(Equal(0))
 			})
 
-			It("should receive a failed invocation response", func() {
+			It("should not receive a failed invocation response", func() {
 				Expect(failCount).To(Equal(0))
 			})
 

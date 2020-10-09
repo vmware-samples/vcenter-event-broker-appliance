@@ -17,6 +17,13 @@ func WithVerbose(verbose bool) Option {
 	}
 }
 
+// WithResponseChan sets a custom response channel to use for returning invocation responses
+func WithResponseChan(resCh chan ofsdk.InvokerResponse) Option {
+	return func(o *Processor) {
+		o.respChan = resCh
+	}
+}
+
 // WithLogger sets an alternative logger for the OpenFaaS processor
 func WithLogger(logger *log.Logger) Option {
 	return func(o *Processor) {

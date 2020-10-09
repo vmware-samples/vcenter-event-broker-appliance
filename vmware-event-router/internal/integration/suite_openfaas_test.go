@@ -4,7 +4,6 @@ package integration_test
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"sync"
@@ -45,12 +44,20 @@ func (f *fakeReceiver) Receive(_ *metrics.EventStats) {
 func (f *fakeReceiver) Response(res ofsdk.InvokerResponse) {
 	f.Lock()
 	defer f.Unlock()
+
+	// when finished send response to unblock and return from Process() in the
+	// processor
+	defer func() {
+		resCh <- res
+	}()
+
 	if res.Error != nil || res.Status != http.StatusOK {
-		fmt.Fprintf(GinkgoWriter, "function %s for topic %s returned status %d with error: %v", res.Function, res.Topic, res.Status, res.Error)
+		// fmt.Fprintf(GinkgoWriter, "function %s for topic %s returned status %d with error: %v", res.Function, res.Topic, res.Status, res.Error)
 		f.responseMap[fail]++
 		return
 	}
-	fmt.Fprintf(GinkgoWriter, "successfully invoked function %s for topic %s", res.Function, res.Topic)
+
+	// fmt.Fprintf(GinkgoWriter, "successfully invoked function %s for topic %s", res.Function, res.Topic)
 	f.responseMap[success]++
 }
 
@@ -58,6 +65,7 @@ var (
 	ctx         context.Context
 	ofProcessor processor.Processor
 	receiver    *fakeReceiver
+	resCh       chan ofsdk.InvokerResponse
 )
 
 func TestOpenfaas(t *testing.T) {
@@ -85,14 +93,18 @@ var _ = BeforeSuite(func() {
 		},
 	}
 
+	resCh = make(chan ofsdk.InvokerResponse)
 	op, err := openfaas.NewProcessor(ctx,
 		cfg,
 		receiver,
 		openfaas.WithRebuildInterval(100*time.Millisecond),
 		openfaas.WithResponseHandler(receiver),
+		openfaas.WithResponseChan(resCh),
 	)
 	Expect(err).ShouldNot(HaveOccurred())
 	ofProcessor = op
 })
 
-var _ = AfterSuite(func() {})
+var _ = AfterSuite(func() {
+	close(resCh)
+})
