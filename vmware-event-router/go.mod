@@ -7,6 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.27.3
 	github.com/cloudevents/sdk-go/v2 v2.0.0-RC2
 	github.com/google/uuid v1.1.1
+	github.com/jpillora/backoff v1.0.0
 	github.com/onsi/ginkgo v1.12.2
 	github.com/onsi/gomega v1.10.1
 	github.com/openfaas-incubator/connector-sdk v0.0.0-20191214130609-df5d76475412

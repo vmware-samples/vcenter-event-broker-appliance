@@ -18,11 +18,22 @@ The VMware Event Router uses the [CloudEvents](https://cloudevents.io/) standard
 to normalize events from the supported event `providers`. See
 [below](#example-event-structure) for an example.
 
+**Event Delivery Guarantees:**
+- At-least-once event delivery for the [vCenter event provider](#provider-type-vcenter) (using checkpoints)
+- At-most-once event delivery ("stateless" mode)
+
 **Current limitations:**
 
 - Only one event `provider` and one event `processor` can be configured at a
   time
-- **At-most-once** event delivery semantics
+- At-least-once event delivery semantics cannot be guaranteed if the event
+  router crashes **within seconds** right after having received some events but before creating the
+  first valid checkpoint
+- At-least-once event delivery semantics are only supported for the vCenter
+  event provider
+- At-least-once event delivery semantics currently only guard against crashes of
+  the event router. If an event cannot be delivered to an event processor,
+  currently no retries are performed/dead letter queues are not supported
 
 > **Note:** It is possible though to run **multiple instances** of the event
 > router with different configurations to address multi-vCenter scenarios
@@ -106,6 +117,7 @@ eventProvider:
   vcenter:
     address: https://my-vcenter01.domain.local/sdk
     insecureSSL: false
+    checkpoint: true
     auth:
       type: basic_auth
       basicAuth:
@@ -176,11 +188,13 @@ values and examples for these fields.
 The following table lists allowed and required fields for connecting to a
 vCenter Server and the respective type values and examples for these fields.
 
-| Field         | Type    | Description                      | Required | Example                          |
-| ------------- | ------- | -------------------------------- | -------- | -------------------------------- |
-| `address`     | String  | URI of the VMware vCenter Server | true     | `https://10.0.0.1:443/sdk`       |
-| `insecureSSL` | Boolean | Skip TSL verification            | false    | `true` (i.e. ignore errors)      |
-| `<auth>`      | Object  | vCenter credentials              | true     | (see `basic_auth` example below) |
+| Field           | Type    | Description                                                                                           | Required | Example                          |
+| --------------- | ------- | ----------------------------------------------------------------------------------------------------- | -------- | -------------------------------- |
+| `address`       | String  | URI of the VMware vCenter Server                                                                      | true     | `https://10.0.0.1:443/sdk`       |
+| `insecureSSL`   | Boolean | Skip TSL verification                                                                                 | true     | `true` (i.e. ignore errors)      |
+| `checkpoint`    | Boolean | Configure checkpointing via checkpoint file for event recovery/replay purposes                        | true     | `true`                           |
+| `checkpointDir` | Boolean | **Optional:** Configure an alternative location for persisting checkpoints (default: `./checkpoints`) | false    | `/var/local/checkpoints`         |
+| `<auth>`        | Object  | vCenter credentials                                                                                   | true     | (see `basic_auth` example below) |
 
 ### The `eventProcessor` section
 
@@ -213,11 +227,11 @@ annotations:
 The following table lists allowed and optional fields for using OpenFaaS as an
 event `processor`.
 
-| Field     | Type    | Description                                                                                       | Required | Example                                          |
-| --------- | ------- | ------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------ |
-| `address` | String  | URI of the OpenFaaS gateway                                                                       | true     | `http://gateway.openfaas:8080`                   |
-| `async`   | Boolean | Specify how to invoke functions (synchronously or asynchronously)                                 | true     | `false` (i.e. use sync function invocation mode) |
-| `<auth>`  | Object  | **Optional:** authentication data (see auth section below). Omit section if auth is not required. | false    | (see `basic_auth` example below)                 |
+| Field     | Type    | Description                                                                                                       | Required | Example                                          |
+| --------- | ------- | ----------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------ |
+| `address` | String  | URI of the OpenFaaS gateway                                                                                       | true     | `http://gateway.openfaas:8080`                   |
+| `async`   | Boolean | Specify how to invoke functions (synchronously or asynchronously)                                                 | true     | `false` (i.e. use sync function invocation mode) |
+| `<auth>`  | Object  | **Optional:** authentication data (see auth section below). Omit section if OpenFaaS gateway auth is not enabled. | false    | (see `basic_auth` example below)                 |
 
 #### Processor Type `aws_event_bridge`
 

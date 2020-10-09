@@ -35,6 +35,10 @@ type ProviderConfigVCenter struct {
 	Address string `yaml:"address" json:"address" jsonschema:"required,default=https://my-vcenter01.domain.local/sdk"`
 	// InsecureSSL enables/disables TLS certificate validation
 	InsecureSSL bool `yaml:"insecureSSL" json:"insecureSSL" jsonschema:"required,default=true"`
+	// Checkpoint enables/disables event replay from a checkpoint file
+	Checkpoint bool `yaml:"checkpoint" json:"checkpoint" jsonschema:"description=Enable checkpointing via checkpoint file for event recovery and replay purposes"`
+	// CheckpointDir sets the directory for persisting checkpoints (optional)
+	CheckpointDir string `yaml:"checkpointDir,omitempty" json:"checkpointDir,omitempty" jsonschema:"description=Directory where to persist checkpoints if enabled,default=./checkpoints"`
 	// Auth sets the vCenter authentication credentials
 	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"oneof_required=auth,description=Authentication configuration for this section"`
 }
