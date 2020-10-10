@@ -20,7 +20,6 @@
       ],
       "boot_wait": "10s",
       "headless": false,
-      "vnc_disable_password": true,
       "vnc_over_websocket": true,
       "insecure_connection": true,
       "iso_url": "{{ user `iso_url` }}",
