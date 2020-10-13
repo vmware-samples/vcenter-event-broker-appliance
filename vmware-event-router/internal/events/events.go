@@ -31,7 +31,7 @@ type VCenterEventInfo struct {
 // the given BaseEvent, e.g. VmPoweredOnEvent (event) or
 // com.vmware.applmgmt.backup.job.failed.event (extendedevent)
 func GetDetails(event types.BaseEvent) VCenterEventInfo {
-	eventInfo := VCenterEventInfo{}
+	var eventInfo VCenterEventInfo
 
 	switch e := event.(type) {
 	case *types.EventEx:
