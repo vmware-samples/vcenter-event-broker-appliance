@@ -1,12 +1,12 @@
 {
     "veba": {
-        "version": "v0.4.1"
+        "version": "development"
     },
     "vmware-event-router": {
-        "gitRepoTag": "v0.4.1",
+        "gitRepoTag": "development",
         "containers": [{
             "name": "vmware/veba-event-router",
-            "version": "v0.4.1"
+            "version": "development"
         }]
     },
     "antrea": {
@@ -100,7 +100,7 @@
         }
     },
     "tinywww": {
-        "gitRepoTag": "latest",
+        "gitRepoTag": "master",
         "containers": [{
             "name": "embano1/tinywww",
             "version": "latest"

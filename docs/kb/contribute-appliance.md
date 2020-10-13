@@ -47,10 +47,32 @@ Step 2 - Edit the `photon-builder.json` file to configure the vSphere endpoint f
 
 > **Note:** If you need to change the default root password on the VMware Event Broker Appliance, take a look at `photon-version.json`
 
-Step 3 - Start the build by running the build script
+Step 3 - The `veba-bom.json` will need to be updated to specify the branch you wish to build the vCenter Event Broker Appliance code from whether that is from master, a release- branch or from development. Below are two examples of how to correctly set the versions needed prior to building.
+
+> **Note:** The default BOM version in development will be the development branch. No changes will be necessary unless you wish to build from a release or master branch.
+
+Example 1 (build from master branch):
+```
+".veba.version" => "v0.5.0"
+"vmware-event-router.version" => "v0.5.0"
+"vmware-event-router.containers[0].version" => "v0.5.0"
+```
+
+Example 2 (build from development branch):
+```
+".veba.version" => "development"
+"vmware-event-router.version" => "development"
+"vmware-event-router.containers[0].version" => "development"
+```
+
+* master branch will be reflected using a stable tag, e.g. v0.5.0
+* Any release- branch will be reflected using release-<version> omitting v for backwards-compat reasons, e.g. release-0.5.0
+* Router image tags, based on the branch where changes are pushed to, will use <image>:v0.5.0 for master, <image>:release-0.5.0 for release-<version> and <image>:development on every push to development branch. In addition, the master and development container images will also be tagged with the corresponding COMMIT_ID of the pushed commit.
+
+Step 4 - Start the build by running the build script
 
 ```
-./build.sh master
+./build.sh
 ````
 
 If you wish to automatically deploy the VMware Event Broker Appliance after successfully building the OVA, please take a look at the script samples located in the test directory.
