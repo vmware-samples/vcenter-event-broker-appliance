@@ -2,6 +2,13 @@
     "veba": {
         "version": "v0.4.1"
     },
+    "vmware-event-router": {
+        "gitRepoTag": "v0.4.1",
+        "containers": [{
+            "name": "vmware/veba-event-router",
+            "version": "v0.4.1"
+        }]
+    },
     "antrea": {
         "gitRepoTag": "v0.6.0",
         "containers": [{
@@ -97,13 +104,6 @@
         "containers": [{
             "name": "embano1/tinywww",
             "version": "latest"
-        }]
-    },
-    "vmware-event-router": {
-        "gitRepoTag": "v0.4.1",
-        "containers": [{
-            "name": "vmware/veba-event-router",
-            "version": "v0.4.1"
         }]
     }
 }
