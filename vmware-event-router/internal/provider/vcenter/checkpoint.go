@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/vmware/govmomi/vim25/types"
 
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
 )
@@ -30,6 +29,8 @@ var (
 type checkpoint struct {
 	// checkpoint to vc mapping
 	VCenter string `json:"vCenter"`
+	// last event UUID
+	LastEventUUID string `json:"lastEventUUID"`
 	// last vCenter event key successfully processed
 	LastEventKey int32 `json:"lastEventKey"`
 	// last event type, e.g. VmPoweredOffEvent useful for debugging
@@ -126,19 +127,21 @@ func lastCheckpoint(_ context.Context, file io.Reader) (*checkpoint, error) {
 // createCheckpoint creates a checkpoint using the given file, vcenter host name
 // and checkpoint timestamp returning the created checkpoint. If lastEvent is
 // nil an errInvalidEvent will be returned.
-func createCheckpoint(_ context.Context, file io.Writer, vcHost string, lastEvent types.BaseEvent, timestamp time.Time) (*checkpoint, error) {
-	// won't catch the case when the value is not pointer
-	if lastEvent == nil || reflect.ValueOf(lastEvent).IsNil() {
+func createCheckpoint(_ context.Context, file io.Writer, vcHost string, last lastEvent, timestamp time.Time) (*checkpoint, error) {
+	be := last.baseEvent
+
+	// will panic when the baseEvent value is not pointer
+	if be == nil || reflect.ValueOf(be).IsNil() {
 		return nil, errInvalidEvent
 	}
 
-	key := lastEvent.GetEvent().Key
-	createdTime := lastEvent.GetEvent().CreatedTime
-	eventDetails := events.GetDetails(lastEvent)
+	createdTime := be.GetEvent().CreatedTime
+	eventDetails := events.GetDetails(be)
 
 	cp := checkpoint{
 		VCenter:               vcHost,
-		LastEventKey:          key,
+		LastEventUUID:         last.uuid,
+		LastEventKey:          last.key,
 		LastEventType:         eventDetails.Name,
 		LastEventKeyTimestamp: createdTime,
 		CreatedTimestamp:      timestamp,

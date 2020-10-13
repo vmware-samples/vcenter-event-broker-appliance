@@ -25,6 +25,7 @@ import (
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider"
 )
 
 const (
@@ -45,6 +46,15 @@ type EventStream struct {
 	sync.RWMutex
 	stats metrics.EventStats
 }
+
+type lastEvent struct {
+	baseEvent types.BaseEvent
+	uuid      string
+	key       int32
+}
+
+// assert we implement Provider interface
+var _ provider.Provider = (*EventStream)(nil)
 
 // NewEventStream returns a vCenter event stream manager for a given
 // configuration and metrics server
@@ -188,8 +198,8 @@ func (vc *EventStream) stream(ctx context.Context, p processor.Processor, collec
 	}
 
 	var (
-		lastEvent types.BaseEvent
-		lastKey   int32
+		last      *lastEvent // last processed event
+		lastCpKey int32      // last event key in checkpoint
 		bOff      = backoff.Backoff{
 			Factor: 2,
 			Jitter: false,
@@ -208,9 +218,18 @@ func (vc *EventStream) stream(ctx context.Context, p processor.Processor, collec
 		// 	would be violated because we come back with an empty initialized checkpoint.
 		// 	we could force a checkpoint after the first event to reduce the likelihood
 		case <-tickerChan:
+
 			// skip if checkpoint channel fires before first event or no new events received
 			// since last checkpoint
-			if lastEvent == nil || lastEvent.GetEvent().Key == lastKey {
+			if last == nil {
+				if vc.verbose {
+					vc.Logger.Println("no new events, skipping checkpoint")
+				}
+				continue
+			}
+
+			// no new events since last checkpoint
+			if last.key == lastCpKey {
 				if vc.verbose {
 					vc.Logger.Println("no new events, skipping checkpoint")
 				}
@@ -232,11 +251,11 @@ func (vc *EventStream) stream(ctx context.Context, p processor.Processor, collec
 				return errors.Wrap(err, "could not create checkpoint file")
 			}
 
-			cp, err := createCheckpoint(ctx, file, host, lastEvent, time.Now().UTC())
+			cp, err := createCheckpoint(ctx, file, host, *last, time.Now().UTC())
 			if err != nil {
 				return errors.Wrap(err, "could not create checkpoint")
 			}
-			lastKey = cp.LastEventKey
+			lastCpKey = cp.LastEventKey
 
 			err = file.Close()
 			if err != nil {
@@ -244,7 +263,7 @@ func (vc *EventStream) stream(ctx context.Context, p processor.Processor, collec
 			}
 
 			if vc.verbose {
-				vc.Logger.Printf("created checkpoint %q at event key %d", path, lastKey)
+				vc.Logger.Printf("created checkpoint %q at event key %d", path, lastCpKey)
 			}
 
 		case <-epTicker.C:
@@ -263,7 +282,7 @@ func (vc *EventStream) stream(ctx context.Context, p processor.Processor, collec
 				continue
 			}
 
-			lastEvent = vc.processEvents(ctx, baseEvents, p)
+			last = vc.processEvents(ctx, baseEvents, p)
 			bOff.Reset()
 		}
 	}
@@ -272,10 +291,10 @@ func (vc *EventStream) stream(ctx context.Context, p processor.Processor, collec
 // processEvents processes events from vcenter serially, i.e. in order, invoking
 // the supplied processor. Errors are logged and tracked in the metric stats.
 // The last event processed, including those returning with error, is returned.
-func (vc *EventStream) processEvents(_ context.Context, baseEvents []types.BaseEvent, p processor.Processor) types.BaseEvent {
+func (vc *EventStream) processEvents(_ context.Context, baseEvents []types.BaseEvent, p processor.Processor) *lastEvent {
 	var (
-		errCount  int
-		lastEvent types.BaseEvent
+		errCount int
+		last     *lastEvent
 	)
 
 	host := vc.client.URL().String()
@@ -292,10 +311,15 @@ func (vc *EventStream) processEvents(_ context.Context, baseEvents []types.BaseE
 		// processor failure
 		err = p.Process(*ce)
 		if err != nil {
+			// retry logic handled inside processor
 			vc.Logger.Printf("could not process event %v: %v", ce, err)
 			errCount++
 		}
-		lastEvent = e
+		last = &lastEvent{
+			baseEvent: e,
+			uuid:      ce.ID(),
+			key:       e.GetEvent().Key,
+		}
 	}
 
 	// update metrics
@@ -306,7 +330,7 @@ func (vc *EventStream) processEvents(_ context.Context, baseEvents []types.BaseE
 	vc.stats.EventsErr = &errTotal
 	vc.Unlock()
 
-	return lastEvent
+	return last
 }
 
 // Shutdown closes the underlying connection to vCenter

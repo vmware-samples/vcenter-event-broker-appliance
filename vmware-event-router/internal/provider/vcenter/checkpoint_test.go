@@ -23,11 +23,13 @@ const (
 
 var (
 	now              = time.Now().UTC()
+	lastEventUUID    = "e5b89c60-d292-44cb-b5f0-7fef6d0e5fb4"
 	lastEventKey     = int32(1234)
 	lastEventType    = "VmPoweredOffEvent"
 	lastEventKeyTime = now.Add(time.Minute * -30) // 30min in past
 	validCheckpoint  = checkpoint{
 		VCenter:               vcHost,
+		LastEventUUID:         lastEventUUID,
 		LastEventKey:          lastEventKey,
 		LastEventType:         lastEventType,
 		LastEventKeyTimestamp: lastEventKeyTime,
@@ -101,7 +103,7 @@ func Test_checkpoint(t *testing.T) {
 	type args struct {
 		ctx       context.Context
 		vcHost    string
-		lastEvent types.BaseEvent
+		lastEvent lastEvent
 	}
 	tests := []struct {
 		name     string
@@ -116,12 +118,16 @@ func Test_checkpoint(t *testing.T) {
 			args: args{
 				ctx:    ctx,
 				vcHost: vcHost,
-				lastEvent: &types.VmPoweredOffEvent{
-					VmEvent: types.VmEvent{
-						Event: types.Event{
-							Key:         lastEventKey,
-							CreatedTime: lastEventKeyTime},
+				lastEvent: lastEvent{
+					baseEvent: &types.VmPoweredOffEvent{
+						VmEvent: types.VmEvent{
+							Event: types.Event{
+								Key:         lastEventKey,
+								CreatedTime: lastEventKeyTime},
+						},
 					},
+					uuid: lastEventUUID,
+					key:  lastEventKey,
 				},
 			},
 			wantFile: string(jsonValid),
@@ -134,7 +140,7 @@ func Test_checkpoint(t *testing.T) {
 			args: args{
 				ctx:       ctx,
 				vcHost:    vcHost,
-				lastEvent: nil,
+				lastEvent: lastEvent{baseEvent: nil},
 			},
 			wantFile: "",
 			wantCP:   nil,
