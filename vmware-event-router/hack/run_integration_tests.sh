@@ -70,7 +70,7 @@ export OF_PASSWORD=$(head -c 12 /dev/urandom | shasum | cut -d' ' -f1)
 
 # if running as Github Actions make it available to other steps
 if [ "${CI:-no}" = true ]; then
-    echo "::set-env name=OF_PASSWORD::$OF_PASSWORD"
+    echo "OF_PASSWORD=$OF_PASSWORD" >> $GITHUB_ENV
 fi
 
 # deploy faas-netes
