@@ -1,16 +1,23 @@
 {
     "veba": {
-        "version": "v0.4.1"
+        "version": "development"
+    },
+    "vmware-event-router": {
+        "gitRepoTag": "development",
+        "containers": [{
+            "name": "vmware/veba-event-router",
+            "version": "development"
+        }]
     },
     "antrea": {
-        "version": "v0.6.0",
+        "gitRepoTag": "v0.6.0",
         "containers": [{
             "name": "antrea/antrea-ubuntu",
             "version": "v0.6.0"
         }]
     },
     "contour": {
-        "version": "v1.4.0",
+        "gitRepoTag": "v1.4.0",
         "containers": [{
                 "name": "projectcontour/contour",
                 "version": "v1.9.0"
@@ -22,7 +29,7 @@
         ]
     },
     "kubernetes": {
-        "version": "v1.18.3",
+        "gitRepoTag": "v1.18.3",
         "containers": [{
                 "name": "k8s.gcr.io/kube-apiserver",
                 "version": "v1.18.3"
@@ -54,7 +61,7 @@
         ]
     },
     "openfaas": {
-        "version": "0.10.5",
+        "gitRepoTag": "0.10.5",
         "containers": [{
                 "name": "openfaas/faas-netes",
                 "version": "0.10.3"
@@ -93,17 +100,10 @@
         }
     },
     "tinywww": {
-        "version": "latest",
+        "gitRepoTag": "master",
         "containers": [{
             "name": "embano1/tinywww",
             "version": "latest"
-        }]
-    },
-    "vmware-event-router": {
-        "version": "v0.4.1",
-        "containers": [{
-            "name": "vmware/veba-event-router",
-            "version": "v0.4.1"
         }]
     }
 }

@@ -16,11 +16,6 @@ if ! hash jq 2>/dev/null; then
     exit 1
 fi
 
-if [ $# -ne 1 ]; then
-    echo -e "\n\tUsage: $0 [master|release]\n"
-    exit 1
-fi
-
 if [[ ! -z $(git status -s) ]]; then
     echo "Dirty Git repository, please clean up any untracked files or commit them before building"
     exit
@@ -29,13 +24,8 @@ fi
 rm -f output-vmware-iso/*.ova
 
 VEBA_VERSION_FROM_BOM=$(jq -r < ${VEBA_BOM_FILE} '.veba.version')
+VEBA_COMMIT=$(git rev-parse --short HEAD)
 
-if [ "$1" == "release" ]; then
-    echo "Building VEBA OVA release ..."
-    packer build -var "VEBA_VERSION=${VEBA_VERSION_FROM_BOM}-release" -var "VEBA_COMMIT=$(git rev-parse --short HEAD)" -var-file=photon-builder.json -var-file=photon-version.json photon.json
-elif [ "$1" == "master" ]; then
-    echo "Building VEBA OVA master ..."
-    packer build -var "VEBA_VERSION=${VEBA_VERSION_FROM_BOM}" -var "VEBA_COMMIT=$(git rev-parse --short HEAD)" -var-file=photon-builder.json -var-file=photon-version.json photon.json
-else
-    echo -e "\nPlease specify release or master to build ...\n"
-fi
+echo "Building VEBA OVA from ${VEBA_VERSION_FROM_BOM} ..."
+packer build -var "VEBA_VERSION=${VEBA_VERSION_FROM_BOM}" -var "VEBA_COMMIT=${VEBA_COMMIT}" -var-file=photon-builder.json -var-file=photon-version.json photon.json
+
