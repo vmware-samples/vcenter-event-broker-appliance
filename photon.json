@@ -89,6 +89,11 @@
     },
     {
       "type": "file",
+      "source": "files/getOvfProperty.py",
+      "destination": "/root/setup/getOvfProperty.py"
+    },
+    {
+      "type": "file",
       "source": "files/setup.sh",
       "destination": "/root/setup/setup.sh"
     },
