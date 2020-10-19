@@ -34,6 +34,9 @@ type EventStream struct {
 	stats metrics.EventStats
 }
 
+// eventHandlerFunc is a callback passed to the event manager
+type eventHandlerFunc func(moRef types.ManagedObjectReference, baseEvents []types.BaseEvent) error
+
 // assert we implement the provider interface
 var _ provider.Provider = (*EventStream)(nil)
 
@@ -111,7 +114,7 @@ func (vcsim *EventStream) Stream(ctx context.Context, processor processor.Proces
 	return mgr.Events(ctx, []types.ManagedObjectReference{ref}, pageSize, tail, force, handler)
 }
 
-func eventHandler(_ context.Context, vcsim *EventStream, proc processor.Processor) func(moRef types.ManagedObjectReference, baseEvents []types.BaseEvent) error {
+func eventHandler(_ context.Context, vcsim *EventStream, proc processor.Processor) eventHandlerFunc {
 	var (
 		errCount int
 		source   = vcsim.client.URL().String()
@@ -152,7 +155,7 @@ func eventHandler(_ context.Context, vcsim *EventStream, proc processor.Processo
 	}
 }
 
-// reverse reverses the given slide
+// reverse reverses the order of the given slice
 func reverse(events []types.BaseEvent) {
 	for i := len(events)/2 - 1; i >= 0; i-- {
 		opp := len(events) - 1 - i
