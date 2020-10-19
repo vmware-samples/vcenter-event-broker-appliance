@@ -19,6 +19,7 @@ import (
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider/vcenter"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider/vcsim"
 )
 
 var (
@@ -101,6 +102,14 @@ func main() {
 		}
 
 		logger.Printf("connecting to vCenter %q", cfg.EventProvider.VCenter.Address)
+
+	case config.ProviderVCSIM:
+		prov, err = vcsim.NewEventStream(ctx, cfg.EventProvider.VCSIM, ms, vcsim.WithVerbose(verbose))
+		if err != nil {
+			logger.Fatalf("could not connect to vCenter simulator: %v", err)
+		}
+
+		logger.Printf("connecting to vCenter simulator %q", cfg.EventProvider.VCSIM.Address)
 
 	// TODO: implement
 	// case config.ProviderVCD:
