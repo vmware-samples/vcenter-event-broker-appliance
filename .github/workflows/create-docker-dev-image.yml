@@ -19,7 +19,7 @@ jobs:
   build-push:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout source (this.release branch)
+      - name: checkout source (this.development branch)
         uses: actions/checkout@v2
       - name: get the short commit ID
         id: get_short_commit
@@ -29,15 +29,15 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_SECRET: ${{ secrets.DOCKER_SECRET }}
         run: echo "${DOCKER_SECRET}" | docker login -u "${DOCKER_USER}" --password-stdin
-      - name: test and build pre-release image
+      - name: test and build development image
         env: 
           COMMIT: ${{ steps.get_short_commit.outputs.COMMIT }}        
         run: |
-          echo "Building pre-release of vmware-event-router with commit $COMMIT"        
+          echo "Building development image for vmware-event-router with commit $COMMIT"        
           make
           docker tag vmware/veba-event-router:latest vmware/veba-event-router:$COMMIT
           docker tag vmware/veba-event-router:latest vmware/veba-event-router:development
-      - name: push just the pre-release image
+      - name: push the development image
         env: 
           COMMIT: ${{ steps.get_short_commit.outputs.COMMIT }}        
         run: |
