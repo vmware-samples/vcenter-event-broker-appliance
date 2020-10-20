@@ -1,4 +1,4 @@
-package processor
+package aws
 
 import (
 	"context"
@@ -20,6 +20,7 @@ import (
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 )
 
 const (
@@ -44,6 +45,9 @@ type EventBridgeProcessor struct {
 	stats      metrics.EventStats
 }
 
+// assert we implement Processor interface
+var _ processor.Processor = (*EventBridgeProcessor)(nil)
+
 type eventPattern struct {
 	Detail struct {
 		Subject []string `json:"subject,omitempty"`
@@ -52,7 +56,7 @@ type eventPattern struct {
 
 // NewEventBridgeProcessor returns an AWS EventBridge processor for the given
 // stream source
-func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEventBridge, ms metrics.Receiver, opts ...AWSOption) (*EventBridgeProcessor, error) {
+func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEventBridge, ms metrics.Receiver, opts ...Option) (*EventBridgeProcessor, error) {
 	logger := log.New(os.Stdout, color.Yellow("[AWS EventBridge] "), log.LstdFlags)
 	eventBridge := EventBridgeProcessor{
 		resyncInterval: defaultResyncInterval,
@@ -165,13 +169,13 @@ func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEve
 		}
 	}
 
-	// prepopulate the metrics stats
+	// pre-populate the metrics stats
 	eventBridge.stats = metrics.EventStats{
 		Provider:    string(config.ProcessorEventBridge),
 		Type:        config.EventProcessor,
 		Address:     cfg.RuleARN, // Using Rule ARN to uniquely identify and represent this processor
 		Started:     time.Now().UTC(),
-		Invocations: make(map[string]int),
+		Invocations: make(map[string]*metrics.InvocationDetails),
 	}
 
 	go eventBridge.PushMetrics(ctx, ms)
@@ -181,13 +185,13 @@ func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEve
 }
 
 // Process implements the stream processor interface
-func (eb *EventBridgeProcessor) Process(ce cloudevents.Event) error {
+func (eb *EventBridgeProcessor) Process(ctx context.Context, ce cloudevents.Event) error {
 	if eb.verbose {
 		eb.Printf("processing event (ID %s): %v", ce.ID(), ce)
 	}
 
-	eb.mu.RLock()
-	defer eb.mu.RUnlock()
+	eb.mu.Lock()
+	defer eb.mu.Unlock()
 
 	if _, ok := eb.patternMap[ce.Subject()]; !ok {
 		// no event bridge rule pattern (subscription) for event, skip
@@ -202,7 +206,7 @@ func (eb *EventBridgeProcessor) Process(ce cloudevents.Event) error {
 	if err != nil {
 		msg := fmt.Errorf("could not marshal event %v: %v", ce, err)
 		eb.Println(msg)
-		return processorError(config.ProcessorEventBridge, msg)
+		return processor.NewError(config.ProcessorEventBridge, msg)
 	}
 
 	jsonString := string(jsonBytes)
@@ -213,20 +217,24 @@ func (eb *EventBridgeProcessor) Process(ce cloudevents.Event) error {
 		DetailType:   aws.String(ce.Subject()),
 	}
 
-	// update metrics
-	eb.stats.Invocations[ce.Subject()]++
+	// check for existing topic entry in metrics
+	if _, ok := eb.stats.Invocations[ce.Subject()]; !ok {
+		eb.stats.Invocations[ce.Subject()] = &metrics.InvocationDetails{}
+	}
 
+	// TODO: add batching (metrics stats currently assume single item)
 	input := eventbridge.PutEventsInput{
 		Entries: []*eventbridge.PutEventsRequestEntry{&entry},
 	}
 
 	eb.Printf("sending event %s", ce.ID())
-	resp, err := eb.PutEvents(&input)
+	resp, err := eb.PutEventsWithContext(ctx, &input)
 
 	if err != nil {
 		msg := fmt.Errorf("could not send event %v: %v", ce, err)
 		eb.Println(msg)
-		return processorError(config.ProcessorEventBridge, msg)
+		eb.stats.Invocations[ce.Subject()].Failure()
+		return processor.NewError(config.ProcessorEventBridge, msg)
 	}
 
 	if eb.verbose {
@@ -234,6 +242,8 @@ func (eb *EventBridgeProcessor) Process(ce cloudevents.Event) error {
 	} else {
 		eb.Printf("successfully sent event %s", ce.ID())
 	}
+
+	eb.stats.Invocations[ce.Subject()].Success()
 	return nil
 }
 
@@ -323,6 +333,7 @@ func (eb *EventBridgeProcessor) syncRules(ctx context.Context, eventbus, ruleARN
 	return nil
 }
 
+// PushMetrics pushes metrics to the specified metrics receiver
 func (eb *EventBridgeProcessor) PushMetrics(ctx context.Context, ms metrics.Receiver) {
 	ticker := time.NewTicker(metrics.PushInterval)
 	defer ticker.Stop()
@@ -337,4 +348,10 @@ func (eb *EventBridgeProcessor) PushMetrics(ctx context.Context, ms metrics.Rece
 			eb.mu.RUnlock()
 		}
 	}
+}
+
+// Shutdown attempts a clean shutdown of the AWS EventBridge processor
+// TODO: check if we need to perform anything here
+func (eb *EventBridgeProcessor) Shutdown(_ context.Context) error {
+	return nil
 }

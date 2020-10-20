@@ -10,6 +10,7 @@ import (
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor/aws"
 
 	. "github.com/onsi/ginkgo"
 
@@ -67,7 +68,7 @@ var _ = BeforeSuite(func() {
 	}
 
 	receiver = &fakeReceiver{}
-	p, err := processor.NewEventBridgeProcessor(ctx, cfg, receiver, processor.WithAWSVerbose(true))
+	p, err := aws.NewEventBridgeProcessor(ctx, cfg, receiver, aws.WithVerbose(true))
 	Expect(err).NotTo(HaveOccurred())
 	awsProcessor = p
 })
