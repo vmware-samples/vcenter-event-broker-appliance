@@ -24,21 +24,24 @@ to normalize events from the supported event `providers`. See
 
 **Event Delivery Guarantees:**
 
-- At-least-once event delivery for the [vCenter event provider](#provider-type-vcenter) (using checkpoints)
-- At-most-once event delivery ("stateless" mode)
+- At-least-once event delivery
+  -  with the [vCenter event provider](#provider-type-vcenter) option `checkpoint: true`
+- At-most-once event delivery
+  - with the [vCenter event provider](#provider-type-vcenter) option `checkpoint: false`
+  - with the [vcsim event provider](#provider-type-vcsim)
 
 **Current limitations:**
 
 - Only one event `provider` and one event `processor` can be configured at a
-  time
-- At-least-once event delivery semantics cannot be guaranteed if the event
-  router crashes **within seconds** right after having received some events but before creating the
-  first valid checkpoint
-- At-least-once event delivery semantics are only supported for the vCenter
-  event provider
-- At-least-once event delivery semantics currently only guard against crashes of
-  the event router. If an event cannot be delivered to an event processor,
-  currently no retries are performed/dead letter queues are not supported
+  time (see note below)
+- At-least-once event delivery semantics are not guaranteed if the event
+  router crashes **within seconds** right after startup and having received *n* events but before creating the
+  first valid checkpoint (current checkpoint interval is 5s)
+- If an event cannot be successfully delivered (retried) by an event `processor` it is
+  logged and discarded, i.e. there is currently no support for dead letter queues
+- Retries in the [OpenFaaS event processor](#processor-type-openfaas) are only
+  supported when running in synchronous mode, i.e. `async: false` (see this
+  OpenFaaS [issue](https://github.com/openfaas/nats-queue-worker/issues/84))
 
 > **Note:** It is possible though to run **multiple instances** of the event
 > router with different configurations to address multi-vCenter scenarios
@@ -524,6 +527,7 @@ the following script:
 - `jq`
 - `kind`
 - `docker`
+
 
 ## Example Event Structure
 
