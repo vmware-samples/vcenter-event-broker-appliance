@@ -114,7 +114,7 @@ func (vcsim *EventStream) Stream(ctx context.Context, processor processor.Proces
 	return mgr.Events(ctx, []types.ManagedObjectReference{ref}, pageSize, tail, force, handler)
 }
 
-func eventHandler(_ context.Context, vcsim *EventStream, proc processor.Processor) eventHandlerFunc {
+func eventHandler(ctx context.Context, vcsim *EventStream, proc processor.Processor) eventHandlerFunc {
 	var (
 		errCount int
 		source   = vcsim.client.URL().String()
@@ -135,7 +135,7 @@ func eventHandler(_ context.Context, vcsim *EventStream, proc processor.Processo
 				continue
 			}
 
-			err = proc.Process(*ce)
+			err = proc.Process(ctx, *ce)
 			if err != nil {
 				vcsim.Printf("could not process event %v: %v", ce, err)
 				errCount++

@@ -141,9 +141,17 @@ func Test_eventHandler(t *testing.T) {
 type fakeProcessor struct {
 }
 
+func (f fakeProcessor) PushMetrics(_ context.Context, _ metrics.Receiver) {
+	return
+}
+
+func (f fakeProcessor) Shutdown(_ context.Context) error {
+	return nil
+}
+
 // Process processes an event and returns an error if it is type
 // VmPoweredOnEvent
-func (f fakeProcessor) Process(event cloudevents.Event) error {
+func (f fakeProcessor) Process(_ context.Context, event cloudevents.Event) error {
 	switch event.Subject() {
 	case "VmPoweredOnEvent":
 		return errors.New("failed")

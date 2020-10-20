@@ -1,15 +1,20 @@
 package processor
 
 import (
+	"context"
 	"fmt"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
+
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 )
 
 // Processor processes incoming events
 type Processor interface {
-	Process(cloudevents.Event) error
+	Process(ctx context.Context, ce cloudevents.Event) error
+	PushMetrics(ctx context.Context, ms metrics.Receiver)
+	Shutdown(ctx context.Context) error
 }
 
 // Error struct contains the generic error content used by the processors
@@ -20,7 +25,8 @@ type Error struct {
 	err       error
 }
 
-func processorError(processor config.ProcessorType, err error) error {
+// NewError creates an error for the given processor and error
+func NewError(processor config.ProcessorType, err error) error {
 	return &Error{
 		processor: processor,
 		err:       err,
