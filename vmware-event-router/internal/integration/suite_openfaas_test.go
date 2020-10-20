@@ -4,7 +4,6 @@ package integration_test
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"sync"
@@ -14,6 +13,7 @@ import (
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor/openfaas"
 
 	ofsdk "github.com/openfaas-incubator/connector-sdk/types"
 
@@ -44,12 +44,20 @@ func (f *fakeReceiver) Receive(_ *metrics.EventStats) {
 func (f *fakeReceiver) Response(res ofsdk.InvokerResponse) {
 	f.Lock()
 	defer f.Unlock()
+
+	// when finished send response to unblock and return from Process() in the
+	// processor
+	defer func() {
+		resCh <- res
+	}()
+
 	if res.Error != nil || res.Status != http.StatusOK {
-		fmt.Fprintf(GinkgoWriter, "function %s for topic %s returned status %d with error: %v", res.Function, res.Topic, res.Status, res.Error)
+		// fmt.Fprintf(GinkgoWriter, "function %s for topic %s returned status %d with error: %v", res.Function, res.Topic, res.Status, res.Error)
 		f.responseMap[fail]++
 		return
 	}
-	fmt.Fprintf(GinkgoWriter, "successfully invoked function %s for topic %s", res.Function, res.Topic)
+
+	// fmt.Fprintf(GinkgoWriter, "successfully invoked function %s for topic %s", res.Function, res.Topic)
 	f.responseMap[success]++
 }
 
@@ -57,6 +65,7 @@ var (
 	ctx         context.Context
 	ofProcessor processor.Processor
 	receiver    *fakeReceiver
+	resCh       chan ofsdk.InvokerResponse
 )
 
 func TestOpenfaas(t *testing.T) {
@@ -84,14 +93,18 @@ var _ = BeforeSuite(func() {
 		},
 	}
 
-	op, err := processor.NewOpenFaaSProcessor(ctx,
+	resCh = make(chan ofsdk.InvokerResponse)
+	op, err := openfaas.NewProcessor(ctx,
 		cfg,
 		receiver,
-		processor.WithOpenFaaSRebuildInterval(100*time.Millisecond),
-		processor.WithOpenFaaSResponseHandler(receiver),
+		openfaas.WithRebuildInterval(100*time.Millisecond),
+		openfaas.WithResponseHandler(receiver),
+		openfaas.WithResponseChan(resCh),
 	)
 	Expect(err).ShouldNot(HaveOccurred())
 	ofProcessor = op
 })
 
-var _ = AfterSuite(func() {})
+var _ = AfterSuite(func() {
+	close(resCh)
+})
