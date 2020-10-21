@@ -48,7 +48,7 @@ build: unit-test tidy
 
 gofmt:
 	$(info Make: Checking code is gofmted.)
-	@test -z "$(shell gofmt -s -l -d -e ./cmd | tee /dev/stderr)"
+	@test -z "$(shell gofmt -s -l -d -e . | tee /dev/stderr)"
 
 lint:
 	$(info Make: Running linter.)

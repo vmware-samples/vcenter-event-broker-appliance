@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	// how long to wait for gatway response/topic map sync
+	// how long to wait for gateway response/topic map sync
 	waitDelay = 1 * time.Second
 )
 
@@ -37,6 +37,7 @@ var _ = Describe("OpenFaaS Processor", func() {
 			failCount    int
 		)
 
+		// assumes only of-echo is subscribed to this event
 		Context("when one function in OpenFaaS is subscribed to that event type (VmPoweredOnEvent)", func() {
 			// create VMPoweredOnEvent and marshal to CloudEvent
 			BeforeEach(func() {
@@ -59,11 +60,11 @@ var _ = Describe("OpenFaaS Processor", func() {
 				failCount = receiver.responseMap[fail]
 			})
 
-			It("should receive a successful invokation response", func() {
+			It("should receive a successful invocation response", func() {
 				Expect(successCount).To(Equal(1))
 			})
 
-			It("should not receive a failed invokation response", func() {
+			It("should not receive a failed invocation response", func() {
 				Expect(failCount).To(Equal(0))
 			})
 
@@ -72,6 +73,7 @@ var _ = Describe("OpenFaaS Processor", func() {
 			})
 		})
 
+		// assumes only of-fail is subscribed to this event
 		Context("when a subscribed function in OpenFaaS returns an error (ClusterCreatedEvent)", func() {
 			// create ClusterCreatedEvent and marshal to CloudEvent
 			BeforeEach(func() {
@@ -94,16 +96,16 @@ var _ = Describe("OpenFaaS Processor", func() {
 				failCount = receiver.responseMap[fail]
 			})
 
-			It("should not receive a successful invokation response", func() {
+			It("should not receive a successful invocation response", func() {
 				Expect(successCount).To(Equal(0))
 			})
 
-			It("should receive a failed invokation response", func() {
+			It("should receive a failed invocation response", func() {
 				Expect(failCount).To(Equal(1))
 			})
 
 			// OpenFaaS processor does not return error directly, only in case
-			// of JSON marhalling issues which we don't expect for this test case
+			// of JSON marshaling issues which we don't expect for this test case
 			It("should not error", func() {
 				Expect(err).NotTo(HaveOccurred())
 			})
@@ -133,11 +135,11 @@ var _ = Describe("OpenFaaS Processor", func() {
 				failCount = receiver.responseMap[fail]
 			})
 
-			It("should not receive a successful invokation response", func() {
+			It("should not receive a successful invocation response", func() {
 				Expect(successCount).To(Equal(0))
 			})
 
-			It("should receive a failed invokation response", func() {
+			It("should receive a failed invocation response", func() {
 				Expect(failCount).To(Equal(0))
 			})
 

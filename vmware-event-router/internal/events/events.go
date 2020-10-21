@@ -30,8 +30,8 @@ type VCenterEventInfo struct {
 // GetDetails retrieves the underlying vSphere event category and name for
 // the given BaseEvent, e.g. VmPoweredOnEvent (event) or
 // com.vmware.applmgmt.backup.job.failed.event (extendedevent)
-func getDetails(event types.BaseEvent) VCenterEventInfo {
-	eventInfo := VCenterEventInfo{}
+func GetDetails(event types.BaseEvent) VCenterEventInfo {
+	var eventInfo VCenterEventInfo
 
 	switch e := event.(type) {
 	case *types.EventEx:
@@ -54,7 +54,7 @@ func getDetails(event types.BaseEvent) VCenterEventInfo {
 // NewCloudEvent returns a compliant CloudEvent
 // TODO: make agnostic to just vCenter event types
 func NewCloudEvent(event types.BaseEvent, source string) (*cloudevents.Event, error) {
-	eventInfo := getDetails(event)
+	eventInfo := GetDetails(event)
 
 	ce := cloudevents.NewEvent(eventSpecVersion)
 

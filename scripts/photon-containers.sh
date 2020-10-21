@@ -22,7 +22,7 @@ done
 mkdir -p /root/download && cd /root/download
 
 echo '> Downloading FaaS-Netes...'
-OPENFAAS_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["openfaas"].version')
+OPENFAAS_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["openfaas"].gitRepoTag')
 git clone https://github.com/openfaas/faas-netes
 cd faas-netes
 git checkout ${OPENFAAS_VERSION}
@@ -30,16 +30,20 @@ sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' yaml/*.yml
 cd ..
 
 echo '> Downloading Contour...'
-CONTOUR_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["contour"].version')
+CONTOUR_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["contour"].gitRepoTag')
 git clone https://github.com/projectcontour/contour.git
 cd contour
 git checkout ${CONTOUR_VERSION}
-sed -i '/^---/i \      dnsPolicy: ClusterFirstWithHostNet\n      hostNetwork: true' examples/contour/03-envoy.yaml
+sed -i "s/latest/${CONTOUR_VERSION}/g" examples/contour/02-job-certgen.yaml
+cat >> examples/contour/03-envoy.yaml << EOF
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
+EOF
 sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' examples/contour/*.yaml
 cd ..
 
 echo '> Downloading Antrea...'
-ANTREA_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["antrea"].version')
+ANTREA_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["antrea"].gitRepoTag')
 ANTREA_CONTAINER_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["antrea"].containers | .[] | select(.name | contains("antrea/antrea-ubuntu")).version')
 wget https://github.com/vmware-tanzu/antrea/releases/download/${ANTREA_VERSION}/antrea.yml -O /root/download/antrea.yml
 sed -i "s/image: antrea\/antrea-ubuntu:.*/image: antrea\/antrea-ubuntu:${ANTREA_CONTAINER_VERSION}/g" /root/download/antrea.yml

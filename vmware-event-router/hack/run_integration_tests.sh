@@ -16,7 +16,7 @@ GREEN='\033[32m'
 RESET='\033[0m'
 
 # OpenFaaS
-OF_VERSION=$(${JQBIN} '.openfaas.version' ${BOM_FILE})                # faas-netes version to use
+OF_VERSION=$(${JQBIN} '.openfaas.gitRepoTag' ${BOM_FILE})                # faas-netes version to use
 OF_TIMEOUT=3m                                                         # exit if OpenFaaS is not ready within this time
 CLI_VERSION=$(${JQBIN} '.openfaas."faas-cli"["version"]' ${BOM_FILE}) # faas-cli version
 PORT_FWD="deploy/gateway 8080:8080"                                   # local/remote ports to use for port-forwarding to OpenFaaS gateway
@@ -28,7 +28,7 @@ FN_TIMEOUT=1m                                                         # exit if 
 AWS_SECRET=secret_aws.json # when running AWS integration tests, secret file holding AWS config at index [1]
 
 # Kubernetes (kind)
-K8S_VERSION=$(${JQBIN} '.kubernetes.version' ${BOM_FILE})
+K8S_VERSION=$(${JQBIN} '.kubernetes.gitRepoTag' ${BOM_FILE})
 KINDBIN="kind"
 KIND_TIMEOUT=5m # exit if kind cluster creation does not complete within this time
 KIND_WAIT=2m    # wait for control plane to show ready
@@ -70,7 +70,7 @@ export OF_PASSWORD=$(head -c 12 /dev/urandom | shasum | cut -d' ' -f1)
 
 # if running as Github Actions make it available to other steps
 if [ "${CI:-no}" = true ]; then
-    echo "::set-env name=OF_PASSWORD::$OF_PASSWORD"
+    echo "OF_PASSWORD=$OF_PASSWORD" >> $GITHUB_ENV
 fi
 
 # deploy faas-netes

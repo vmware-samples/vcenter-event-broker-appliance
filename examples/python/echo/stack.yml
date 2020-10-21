@@ -4,11 +4,11 @@ provider:
   gateway: http://veba.primp-industries.com
 functions:
   veba-echo:
-    lang: python
-    handler: ./handler
+    lang: python3-http
+    handler: ./echo
     image: vmware/veba-python-echo:latest
     environment:
       write_debug: true
       read_debug: true
     annotations:
-      topic: "VmPoweredOnEvent,VmPoweredOffEvent"
+      topic: "DrsVmPoweredOnEvent,VmPoweredOnEvent,VmPoweredOffEvent"

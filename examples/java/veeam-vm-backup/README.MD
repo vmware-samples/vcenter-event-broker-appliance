@@ -4,7 +4,7 @@
 
 Veeam-vm-backup function uses 3rd party solution Veeam to provide automatic backup for any virtual machine when when the VM state changes. 
 
-The function is written in Java - Java 11 by default, but Java 8 is supported, too. It gets called on a VM state changed event. Then it [logs on](https://helpcenter.veeam.com/docs/backup/rest/post_sessionmngr.html?ver=100) to the Veeam's server, finds the hierarchyRoot ([per Veeam documentation](https://helpcenter.veeam.com/docs/backup/rest/get_hierarchyroots.html?ver=100)) and constructs the VM reference per Veeam format `urn:VMware:vm:VEEAM_HOST_ID:VM_VALUE`. For example: urn:VMware:vm:3f3fe831-79b8-4123-9ff9-3d5df7e89c9f.vm-28, which is different from the VMware one, so that the actual [backup](https://helpcenter.veeam.com/docs/backup/rest/post_backupservers_id_quickbackup.html?ver=100) succeeds.
+The function is written in Java - Java 11 by default, but Java 8 is supported, too. It gets called on a VM state changed event. Then it [logs on](https://helpcenter.veeam.com/docs/backup/rest/post_sessionmngr.html?ver=100) to the Veeam's server, finds the hierarchyRoot ([per Veeam documentation](https://helpcenter.veeam.com/docs/backup/rest/get_hierarchyroots.html?ver=100)) and constructs the VM reference per Veeam format `urn:VMware:vm:VEEAM_HOST_ID:VM_VALUE`. For example: `urn:VMware:vm:3f3fe831-79b8-4123-9ff9-3d5df7e89c9f.vm-28`, which is different from the VMware one, so that the actual [backup](https://helpcenter.veeam.com/docs/backup/rest/post_backupservers_id_quickbackup.html?ver=100) succeeds.
 
 ## Prerequisites
 
@@ -165,6 +165,6 @@ faas-cli build -f veeam-vm-backup.yml
 faas-cli push -f veeam-vm-backup.yml
 ```
 
-When the image is ready, you must [deploy](#deploy) your function.
+When the image is ready, you must [deploy](#deploy-the-function) your function.
 
 
