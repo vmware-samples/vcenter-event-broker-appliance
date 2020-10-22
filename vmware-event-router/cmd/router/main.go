@@ -137,7 +137,7 @@ func main() {
 		logger.Printf("connected to AWS EventBridge using rule ARN %q", cfg.EventProcessor.EventBridge.RuleARN)
 
 	case config.ProcessorKnative:
-		proc, err = processor.NewKnativeProcessor(ctx, cfg.EventProcessor.Knative, ms, processor.WithKnativeVerbose(verbose), processor.WithKnativeRetry(cfg.EventProcessor.Knative.Retry))
+		proc, err = processor.NewKnativeProcessor(ctx, cfg.EventProcessor.Knative, ms, processor.WithKnativeVerbose(verbose))
 		if err != nil {
 			logger.Fatalf("could not connect to Knative Broker: %v", err)
 		}

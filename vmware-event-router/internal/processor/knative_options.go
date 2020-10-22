@@ -9,10 +9,3 @@ func WithKnativeVerbose(verbose bool) KnativeOption {
 		knative.verbose = verbose
 	}
 }
-
-// WithKnativeRetry enables Knative processor to Send events, retrying in case of a failure.
-func WithKnativeRetry(retry bool) KnativeOption {
-	return func(knative *knativeProcessor) {
-		knative.retry = retry
-	}
-}

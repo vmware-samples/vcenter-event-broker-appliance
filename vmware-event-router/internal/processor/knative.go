@@ -22,10 +22,8 @@ const (
 
 // knativeProcessor implements the Processor interface
 type knativeProcessor struct {
-	address string
-	verbose bool
-	retry   bool
-
+	address       string
+	verbose       bool
 	retryInterval time.Duration
 	maxReTries    int
 	client        client.Client
@@ -77,9 +75,7 @@ func (kProcessor *knativeProcessor) Process(ce cloudevents.Event) error {
 	// Set a target.
 	ctx := cloudevents.ContextWithTarget(context.Background(), kProcessor.address)
 	//Send events, retrying in case of a failure.
-	if kProcessor.retry {
-		ctx = cloudevents.ContextWithRetriesLinearBackoff(ctx, kProcessor.retryInterval, kProcessor.maxReTries)
-	}
+	ctx = cloudevents.ContextWithRetriesLinearBackoff(ctx, kProcessor.retryInterval, kProcessor.maxReTries)
 
 	// Send that Event.
 	if result := kProcessor.client.Send(ctx, ce); cloudevents.IsACK(result) {
