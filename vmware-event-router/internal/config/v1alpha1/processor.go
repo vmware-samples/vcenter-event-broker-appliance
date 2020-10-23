@@ -48,8 +48,6 @@ type ProcessorConfigOpenFaaS struct {
 type ProcessorConfigKnative struct {
 	// Address is the connection address to the knative broker
 	Address string `yaml:"address" json:"address" jsonschema:"required,description=knative broker address,default=http://broker-ingress.knative-eventing.svc.cluster.local/default/default"`
-	// Retry enables/disables retries incase of failures sending events to knative broker
-	Retry bool `yaml:"retry" json:"retry,omitempty" jsonschema:"description=Use retry incase of failure coummunicating knative broker,default=false"`
 }
 
 type ProcessorConfigEventBridge struct {
