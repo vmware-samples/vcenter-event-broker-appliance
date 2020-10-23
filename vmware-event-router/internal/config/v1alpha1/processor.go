@@ -48,6 +48,8 @@ type ProcessorConfigOpenFaaS struct {
 type ProcessorConfigKnative struct {
 	// Address is the connection address to the knative broker
 	Address string `yaml:"address" json:"address" jsonschema:"required,description=knative broker address,default=http://broker-ingress.knative-eventing.svc.cluster.local/default/default"`
+	// InsecureSSL enables/disables TLS certificate validation
+	InsecureSSL bool `yaml:"insecureSSL" json:"insecureSSL" jsonschema:"required,default=false"`
 }
 
 type ProcessorConfigEventBridge struct {

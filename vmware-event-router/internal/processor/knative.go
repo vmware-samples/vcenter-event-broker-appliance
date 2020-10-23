@@ -2,7 +2,9 @@ package processor
 
 import (
 	"context"
+	"crypto/tls"
 	"log"
+	"net/http"
 	"os"
 	"sync"
 	"time"
@@ -50,12 +52,27 @@ func NewKnativeProcessor(ctx context.Context, cfg *config.ProcessorConfigKnative
 		kProcessor.address = cfg.Address
 	}
 
-	c, err := cloudevents.NewDefaultClient()
+	tlsConfig := &tls.Config{
+		//Certificates:       []tls.Certificate{cert},
+		//RootCAs:            clientCertPool,
+		InsecureSkipVerify: cfg.InsecureSSL,
+	}
 
+	httpTransport := &http.Transport{TLSClientConfig: tlsConfig}
+
+	// Create protocol and client
+	p, err := cloudevents.NewHTTP(cloudevents.WithRoundTripper(httpTransport))
+	if err != nil {
+		logger.Printf("failed to create protocol for knative client, %v\n", err)
+		return nil, errors.New("failed to create protocol for knative client")
+	}
+
+	c, err := cloudevents.NewClient(p, cloudevents.WithTimeNow())
 	if err != nil {
 		logger.Printf("failed to create knative client, %v\n", err)
 		return nil, errors.New("failed to create knative client")
 	}
+
 	kProcessor.client = c
 
 	if cfg == nil {
