@@ -29,16 +29,17 @@ type knativeProcessor struct {
 	retryInterval time.Duration
 	maxReTries    int
 	client        client.Client
-	*log.Logger
-	lock  sync.RWMutex
-	stats metrics.EventStats
+	log           *log.Logger
+	lock          sync.RWMutex
+	stats         metrics.EventStats
 }
 
+// NewKnativeProcessor method creates a Knative Processor
 func NewKnativeProcessor(ctx context.Context, cfg *config.ProcessorConfigKnative, ms metrics.Receiver, opts ...KnativeOption) (Processor, error) {
 
 	logger := log.New(os.Stdout, color.Purple("[Knative] "), log.LstdFlags)
 	kProcessor := knativeProcessor{
-		Logger:        logger,
+		log:           logger,
 		retryInterval: knativeDefaultRetryInterval,
 		maxReTries:    knativeDefaultMaxRetries,
 	}
@@ -102,7 +103,7 @@ func (kProcessor *knativeProcessor) Process(ce cloudevents.Event) error {
 		kProcessor.stats.EventsTotal = &total
 		kProcessor.lock.Unlock()
 
-		kProcessor.Printf("Sent: %s", ce.ID())
+		kProcessor.log.Printf("Sent: %s", ce.ID())
 	} else if cloudevents.IsNACK(result) {
 
 		kProcessor.lock.Lock()
@@ -110,7 +111,7 @@ func (kProcessor *knativeProcessor) Process(ce cloudevents.Event) error {
 		kProcessor.stats.EventsErr = &errTotal
 		kProcessor.lock.Unlock()
 
-		kProcessor.Printf("Sent but not accepted: %s", result.Error())
+		kProcessor.log.Printf("Sent but not accepted: %s", result.Error())
 	}
 
 	return nil
