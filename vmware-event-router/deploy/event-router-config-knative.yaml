@@ -21,7 +21,7 @@ eventProcessor:
   name: veba-demo-knative
   knative:
     address: http://broker-ingress.knative-eventing.svc.cluster.local/default/default
-    retry: false
+    insecureSSL: false
 metricsProvider:
   type: default
   name: veba-demo-metrics
