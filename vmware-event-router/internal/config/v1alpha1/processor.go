@@ -45,6 +45,7 @@ type ProcessorConfigOpenFaaS struct {
 	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"description=Authentication configuration for this section"`
 }
 
+// ProcessorConfigKnative configures the Knative event processor
 type ProcessorConfigKnative struct {
 	// Address is the connection address to the knative broker
 	Address string `yaml:"address" json:"address" jsonschema:"required,description=knative broker address,default=http://broker-ingress.knative-eventing.svc.cluster.local/default/default"`
@@ -52,6 +53,7 @@ type ProcessorConfigKnative struct {
 	InsecureSSL bool `yaml:"insecureSSL" json:"insecureSSL" jsonschema:"required,default=false"`
 }
 
+// ProcessorConfigEventBridge configures the AWS Event Bridge event processor
 type ProcessorConfigEventBridge struct {
 	// Region is the AWS Region of this AWS Event Bridge instance
 	Region string `yaml:"region" json:"region" jsonschema:"required,default=us-west-1"`
