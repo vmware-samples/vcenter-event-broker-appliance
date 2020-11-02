@@ -13,6 +13,8 @@ const (
 	ProcessorOpenFaaS ProcessorType = "openfaas"
 	// ProcessorEventBridge represents the AWS Event Bridge event processor
 	ProcessorEventBridge ProcessorType = "aws_event_bridge"
+	// ProcessorKnative represents the Knative event processor
+	ProcessorKnative ProcessorType = "knative"
 )
 
 // Processor configures the event processor
@@ -27,6 +29,9 @@ type Processor struct {
 	// EventBridge configuration settings
 	// +optional
 	EventBridge *ProcessorConfigEventBridge `yaml:"awsEventBridge,omitempty" json:"awsEventBridge,omitempty" jsonschema:"oneof_required=awsEventBridge"`
+	// knative configuration settings
+	// +optional
+	Knative *ProcessorConfigKnative `yaml:"knative,omitempty" json:"knative,omitempty" jsonschema:"oneof_required=knative"`
 }
 
 // ProcessorConfigOpenFaaS configures the OpenFaaS event processor
@@ -38,6 +43,14 @@ type ProcessorConfigOpenFaaS struct {
 	// Auth sets the OpenFaaS authentication credentials (optional)
 	// +optional
 	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"description=Authentication configuration for this section"`
+}
+
+// ProcessorConfigKnative configures the Knative event processor
+type ProcessorConfigKnative struct {
+	// Address is the connection address to the knative broker
+	Address string `yaml:"address" json:"address" jsonschema:"required,description=knative broker address,default=http://broker-ingress.knative-eventing.svc.cluster.local/default/default"`
+	// InsecureSSL enables/disables TLS certificate validation
+	InsecureSSL bool `yaml:"insecureSSL" json:"insecureSSL" jsonschema:"required,default=false"`
 }
 
 // ProcessorConfigEventBridge configures the AWS Event Bridge event processor

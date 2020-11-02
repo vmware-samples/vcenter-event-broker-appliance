@@ -17,6 +17,8 @@ events to configurable event `processors` (see below).
 
 - [OpenFaaS](https://www.openfaas.com/)
 - [AWS EventBridge](https://aws.amazon.com/eventbridge/?nc1=h_ls)
+- [Knative](https://knative.dev/)
+
 
 The VMware Event Router uses the [CloudEvents](https://cloudevents.io/) standard
 to normalize events from the supported event `providers`. See
@@ -56,6 +58,7 @@ to normalize events from the supported event `providers`. See
   - [The `eventProcessor` section](#the-eventprocessor-section)
     - [Processor Type `openfaas`](#processor-type-openfaas)
     - [Processor Type `aws_event_bridge`](#processor-type-aws_event_bridge)
+	- [Processor Type `knative`](#processor-type-knative)
   - [The `auth` section](#the-auth-section)
     - [Type `basic_auth`](#type-basic_auth)
     - [Type `aws_access_key`](#type-aws_access_key)
@@ -298,7 +301,22 @@ as an event `processor`.
 | `region`   | String | AWS region to use, see [regions doc](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html). | true     | `us-west-1`                                                            |
 | `eventBus` | String | Name of the event bus to use                                                                                                            | true     | `default` or `arn:aws:events:us-west-1:1234567890:event-bus/customBus` |
 | `ruleARN`  | String | Rule ARN to use for event pattern matching                                                                                              | true     | `arn:aws:events:us-west-1:1234567890:rule/vmware-event-router`         |
-| `<auth>`   | Object | AWS IAM role credentials                                                                                                                | true     | (see `aws_access_key` example below)                                   |
+| `<auth>`   | Object | AWS IAM role credentials                                                                                                                | true     | (see `aws_access_key` example below)
+
+
+                                   |
+
+### processor-type-knative
+Knative is a Kubernetes-based platform to deploy and manage modern serverless workloads. Knative eventing supports late-binding event sources and event consumers, to enable delivery to multiple services. It also supports brokers and triggers to make it easy to filter events based on event attributes.
+
+The following table lists allowed and optional fields for using knative
+as an event `processor`.
+
+| Field      | Type   | Description                                                                                                                             | Required | Example                                                                |
+| ---------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
+| `address`   | String | Knative Event Broker to use. | true     | `http://broker-ingress.knative-eventing.svc.cluster.local/default/default`                                                            |
+| `insecureSSL` | Boolean | Skip TSL verification           | false     | `false` or `true` |
+
 
 ### The `auth` section
 
