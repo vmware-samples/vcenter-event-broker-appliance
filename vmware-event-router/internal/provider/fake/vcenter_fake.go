@@ -56,7 +56,7 @@ func (f *VCenter) Stream(ctx context.Context, p processor.Processor) error {
 					continue
 				}
 
-				err = p.Process(*ce)
+				err = p.Process(ctx, *ce)
 				if err != nil {
 					f.Logger.Printf("could not process event %v: %v", ce, err)
 				}

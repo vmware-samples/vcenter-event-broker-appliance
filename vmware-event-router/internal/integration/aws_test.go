@@ -8,8 +8,9 @@ import (
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
 	"github.com/vmware/govmomi/vim25/types"
+
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
 )
 
 const (
@@ -40,7 +41,7 @@ var _ = Describe("AWS Processor", func() {
 
 			// process
 			BeforeEach(func() {
-				err = awsProcessor.Process(*ce)
+				err = awsProcessor.Process(ctx, *ce)
 			})
 
 			It("should not error", func() {
@@ -58,7 +59,7 @@ var _ = Describe("AWS Processor", func() {
 
 			// process
 			BeforeEach(func() {
-				err = awsProcessor.Process(*ce)
+				err = awsProcessor.Process(ctx, *ce)
 			})
 
 			It("should not error", func() {

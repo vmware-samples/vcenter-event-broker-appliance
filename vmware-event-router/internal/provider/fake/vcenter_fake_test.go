@@ -9,14 +9,27 @@ import (
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/vmware/govmomi/vim25/types"
+
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 )
 
 type noOpProcessor struct {
-	invokations int
+	invocations int
 }
 
-func (n *noOpProcessor) Process(event cloudevents.Event) error {
-	n.invokations++
+func (n *noOpProcessor) PushMetrics(_ context.Context, _ metrics.Receiver) {
+	return
+}
+
+func (n *noOpProcessor) Shutdown(_ context.Context) error {
+	return nil
+}
+
+var _ processor.Processor = (*noOpProcessor)(nil)
+
+func (n *noOpProcessor) Process(_ context.Context, _ cloudevents.Event) error {
+	n.invocations++
 	return nil
 }
 
@@ -93,10 +106,10 @@ func TestFakeVCenter_Stream(t *testing.T) {
 			f := NewFakeVCenter(eventCh)
 			_ = f.Stream(ctx, tt.args.p) // ignore errors
 
-			got := tt.args.p.invokations
+			got := tt.args.p.invocations
 			want := tt.wantEvents
 			if got != want {
-				t.Errorf("VCenter.Stream() invokations = %d, wanted %d", got, want)
+				t.Errorf("VCenter.Stream() invocations = %d, wanted %d", got, want)
 			}
 		})
 	}

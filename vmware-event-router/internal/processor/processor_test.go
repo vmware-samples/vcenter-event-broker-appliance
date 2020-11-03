@@ -9,7 +9,7 @@ import (
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 )
 
-func Test_processor_error(t *testing.T) {
+func TestNewError(t *testing.T) {
 	tests := []struct {
 		title       string
 		provider    config.ProcessorType
@@ -31,7 +31,7 @@ func Test_processor_error(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.title, func(t *testing.T) {
-			actualErr := processorError(test.provider, test.errMessage)
+			actualErr := NewError(test.provider, test.errMessage)
 			if actualErr.Error() != test.expectedErr {
 				t.Errorf("Expected error: %s got: %s", test.expectedErr, actualErr.Error())
 			}

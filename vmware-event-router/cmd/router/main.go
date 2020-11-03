@@ -17,6 +17,8 @@ import (
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor/aws"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor/openfaas"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider/vcenter"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider/vcsim"
@@ -121,7 +123,7 @@ func main() {
 	// set up event processor
 	switch cfg.EventProcessor.Type {
 	case config.ProcessorOpenFaaS:
-		proc, err = processor.NewOpenFaaSProcessor(ctx, cfg.EventProcessor.OpenFaaS, ms, processor.WithOpenFaaSVerbose(verbose))
+		proc, err = openfaas.NewProcessor(ctx, cfg.EventProcessor.OpenFaaS, ms, openfaas.WithVerbose(verbose))
 		if err != nil {
 			logger.Fatalf("could not connect to OpenFaaS: %v", err)
 		}
@@ -129,7 +131,7 @@ func main() {
 		logger.Printf("connected to OpenFaaS gateway %q (async mode: %t)", cfg.EventProcessor.OpenFaaS.Address, cfg.EventProcessor.OpenFaaS.Async)
 
 	case config.ProcessorEventBridge:
-		proc, err = processor.NewEventBridgeProcessor(ctx, cfg.EventProcessor.EventBridge, ms, processor.WithAWSVerbose(verbose))
+		proc, err = aws.NewEventBridgeProcessor(ctx, cfg.EventProcessor.EventBridge, ms, aws.WithVerbose(verbose))
 		if err != nil {
 			logger.Fatalf("could not connect to AWS EventBridge: %v", err)
 		}
@@ -175,6 +177,7 @@ func main() {
 	eg.Go(func() error {
 		defer func() {
 			_ = prov.Shutdown(egCtx)
+			_ = proc.Shutdown(egCtx)
 		}()
 		return prov.Stream(egCtx, proc)
 	})
