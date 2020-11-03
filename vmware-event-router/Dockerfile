@@ -30,7 +30,7 @@ LABEL maintainer="mgasch@vmware.com" \
       commit="${COMMIT}"
 
 RUN apt-get update && apt-get install -y \
-    ca-certificates=20190110~18.04.1 \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -g 61000 events
