@@ -1,26 +1,12 @@
 package aws
 
 import (
-	"log"
 	"time"
 )
 
 // Option configures the AWS processor
+// TODO: change signature to return errors
 type Option func(*EventBridgeProcessor)
-
-// WithVerbose enables verbose logging for the AWS processor
-func WithVerbose(verbose bool) Option {
-	return func(aws *EventBridgeProcessor) {
-		aws.verbose = verbose
-	}
-}
-
-// WithLogger sets an alternative logger for the AWS processor
-func WithLogger(logger *log.Logger) Option {
-	return func(aws *EventBridgeProcessor) {
-		aws.Logger = logger
-	}
-}
 
 // WithResyncInterval configures the interval to sync AWS EventBridge event
 // pattern rules

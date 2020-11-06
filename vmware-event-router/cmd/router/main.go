@@ -5,15 +5,15 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
@@ -47,14 +47,14 @@ func main() {
 	fmt.Print(banner)
 
 	var (
-		logger     = log.New(os.Stdout, color.Green("[VMware Event Router] "), log.LstdFlags)
 		configPath string
-		verbose    bool
-		err        error
+		logLevel   string
+		logJSON    bool
 	)
 
 	flag.StringVar(&configPath, "config", defaultConfigPath, "path to configuration file")
-	flag.BoolVar(&verbose, "verbose", false, "verbose log output (default false)")
+	flag.StringVar(&logLevel, "log-level", "info", "set log level (debug,info,warn,error)")
+	flag.BoolVar(&logJSON, "log-json", false, "print JSON-formatted logs")
 	flag.Usage = func() {
 		fmt.Printf("Usage of %s:\n\n", os.Args[0])
 		flag.PrintDefaults()
@@ -62,6 +62,27 @@ func main() {
 		fmt.Printf("version: %s\n", version)
 	}
 	flag.Parse()
+
+	var lvl zapcore.Level
+	err := lvl.Set(logLevel)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// configure logger using defaults from the zap prod config
+	zapCfg := zap.NewProductionConfig()
+	zapCfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	zapCfg.Level = zap.NewAtomicLevelAt(lvl)
+	if !logJSON {
+		zapCfg.Encoding = "console"
+		zapCfg.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	}
+
+	logger, err := zapCfg.Build(zap.AddStacktrace(zap.ErrorLevel)) // stack traces only error and above
+	if err != nil {
+		panic(err.Error())
+	}
+	log := logger.Named("[MAIN]").Sugar()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -72,7 +93,7 @@ func main() {
 		signal.Notify(sigCh, syscall.SIGTERM, os.Interrupt)
 
 		sig := <-sigCh
-		logger.Printf("got signal: %v, cleaning up...", sig)
+		log.Infow("got signal, cleaning up...", "signal", sig)
 
 		cancel()
 		// give goroutines some grace time to clean up
@@ -81,12 +102,12 @@ func main() {
 
 	f, err := os.Open(configPath)
 	if err != nil {
-		logger.Fatalf("could not open configuration file: %v", err)
+		log.Fatalf("could not open configuration file: %v", err)
 	}
 
 	cfg, err := config.Parse(f)
 	if err != nil {
-		logger.Fatalf("could not parse configuration file: %v", err)
+		log.Fatalf("could not parse configuration file: %v", err)
 	}
 
 	var (
@@ -98,72 +119,67 @@ func main() {
 	// set up event provider
 	switch cfg.EventProvider.Type {
 	case config.ProviderVCenter:
-		prov, err = vcenter.NewEventStream(ctx, cfg.EventProvider.VCenter, ms, vcenter.WithVerbose(verbose))
+		prov, err = vcenter.NewEventStream(ctx, cfg.EventProvider.VCenter, ms, logger.Sugar())
 		if err != nil {
-			logger.Fatalf("could not connect to vCenter: %v", err)
+			log.Fatalf("could not connect to vCenter: %v", err)
 		}
 
-		logger.Printf("connecting to vCenter %q", cfg.EventProvider.VCenter.Address)
+		log.Infow("connecting to vCenter", "address", cfg.EventProvider.VCenter.Address)
 
 	case config.ProviderVCSIM:
-		prov, err = vcsim.NewEventStream(ctx, cfg.EventProvider.VCSIM, ms, vcsim.WithVerbose(verbose))
+		prov, err = vcsim.NewEventStream(ctx, cfg.EventProvider.VCSIM, ms, logger.Sugar())
 		if err != nil {
-			logger.Fatalf("could not connect to vCenter simulator: %v", err)
+			log.Fatalf("could not connect to vCenter simulator: %v", err)
 		}
 
-		logger.Printf("connecting to vCenter simulator %q", cfg.EventProvider.VCSIM.Address)
-
-	// TODO: implement
-	// case config.ProviderVCD:
+		log.Infow("connecting to vCenter simulator", "address", cfg.EventProvider.VCSIM.Address)
 
 	default:
-		logger.Fatalf("invalid type specified: %q", cfg.EventProvider.Type)
+		log.Fatalf("invalid type specified: %q", cfg.EventProvider.Type)
 	}
 
 	// set up event processor
 	switch cfg.EventProcessor.Type {
 	case config.ProcessorOpenFaaS:
-		proc, err = openfaas.NewProcessor(ctx, cfg.EventProcessor.OpenFaaS, ms, openfaas.WithVerbose(verbose))
+		proc, err = openfaas.NewProcessor(ctx, cfg.EventProcessor.OpenFaaS, ms, logger.Sugar())
 		if err != nil {
-			logger.Fatalf("could not connect to OpenFaaS: %v", err)
+			log.Fatalf("could not connect to OpenFaaS: %v", err)
 		}
 
-		logger.Printf("connected to OpenFaaS gateway %q (async mode: %t)", cfg.EventProcessor.OpenFaaS.Address, cfg.EventProcessor.OpenFaaS.Async)
+		log.Infow("connected to OpenFaaS gateway", "address", cfg.EventProcessor.OpenFaaS.Address, "async", cfg.EventProcessor.OpenFaaS.Async)
 
 	case config.ProcessorEventBridge:
-		proc, err = aws.NewEventBridgeProcessor(ctx, cfg.EventProcessor.EventBridge, ms, aws.WithVerbose(verbose))
+		proc, err = aws.NewEventBridgeProcessor(ctx, cfg.EventProcessor.EventBridge, ms, logger.Sugar())
 		if err != nil {
-			logger.Fatalf("could not connect to AWS EventBridge: %v", err)
+			log.Fatalf("could not connect to AWS EventBridge: %v", err)
 		}
 
-		logger.Printf("connected to AWS EventBridge using rule ARN %q", cfg.EventProcessor.EventBridge.RuleARN)
+		log.Infow("connected to AWS EventBridge", "ruleARN", cfg.EventProcessor.EventBridge.RuleARN)
 
 	default:
-		logger.Fatalf("invalid type specified: %q", cfg.EventProcessor.Type)
+		log.Fatalf("invalid type specified: %q", cfg.EventProcessor.Type)
 	}
 
 	// set up metrics provider (only supporting default for now)
 	switch cfg.MetricsProvider.Type {
 	case config.MetricsProviderDefault:
-		ms, err = metrics.NewServer(cfg.MetricsProvider.Default)
+		ms, err = metrics.NewServer(cfg.MetricsProvider.Default, logger.Sugar())
 		if err != nil {
-			logger.Fatalf("could not initialize metrics server: %v", err)
+			log.Fatalf("could not initialize metrics server: %v", err)
 		}
 
-		logger.Printf("exposing metrics server on %s", cfg.MetricsProvider.Default.BindAddress)
-
 	default:
-		logger.Fatalf("invalid type specified: %q", cfg.MetricsProvider.Type)
+		log.Fatalf("invalid type specified: %q", cfg.MetricsProvider.Type)
 	}
 
 	// validate if the configuration provided is complete
 	switch {
 	case prov == nil:
-		logger.Fatal("no valid configuration for event provider found")
+		log.Fatal("no valid configuration for event provider found")
 	case proc == nil:
-		logger.Fatal("no valid configuration for event processor found")
+		log.Fatal("no valid configuration for event processor found")
 	case ms == nil:
-		logger.Fatal("no valid configuration for metrics server found")
+		log.Fatal("no valid configuration for metrics server found")
 	}
 
 	eg, egCtx := errgroup.WithContext(ctx)
@@ -186,9 +202,9 @@ func main() {
 	err = eg.Wait()
 	if err != nil {
 		if !errors.Is(err, context.Canceled) {
-			logger.Fatal(err)
+			log.Fatal(err)
 		}
 	}
 
-	logger.Println("shutdown successful")
+	log.Info("shutdown successful")
 }

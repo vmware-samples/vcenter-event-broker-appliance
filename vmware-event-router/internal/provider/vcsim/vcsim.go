@@ -3,10 +3,9 @@ package vcsim
 import (
 	"context"
 	"fmt"
-	"log"
 	"math"
 	"net/url"
-	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -15,10 +14,11 @@ import (
 	"github.com/vmware/govmomi/event"
 	"github.com/vmware/govmomi/vim25/soap"
 	"github.com/vmware/govmomi/vim25/types"
+	"go.uber.org/zap"
 
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/logger"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider"
@@ -27,8 +27,7 @@ import (
 // EventStream handles the connection to the vCenter events API
 type EventStream struct {
 	client govmomi.Client
-	*log.Logger
-	verbose bool
+	logger.Logger
 
 	sync.Mutex
 	stats metrics.EventStats
@@ -42,7 +41,7 @@ var _ provider.Provider = (*EventStream)(nil)
 
 // NewEventStream returns a vCenter simulator event stream manager for a given
 // configuration and metrics server
-func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCSIM, ms metrics.Receiver, opts ...Option) (*EventStream, error) {
+func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCSIM, ms metrics.Receiver, log logger.Logger, opts ...Option) (*EventStream, error) {
 	if cfg == nil {
 		return nil, errors.New("vCenter simulator configuration must be provided")
 	}
@@ -51,7 +50,7 @@ func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCSIM, ms met
 
 	parsedURL, err := soap.ParseURL(cfg.Address)
 	if err != nil {
-		return nil, errors.Wrap(err, "error parsing vCenter simulator URL")
+		return nil, errors.Wrap(err, "parsing vCenter simulator URL")
 	}
 
 	// TODO: only supporting basic auth against vCenter simulator for now
@@ -68,8 +67,13 @@ func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCSIM, ms met
 		return nil, errors.Wrap(err, "create vCenter simulator client")
 	}
 
-	l := log.New(os.Stdout, color.Fata("[VCSIM] "), log.LstdFlags)
-	vcsim.Logger = l
+	vcLog := log
+	if zapSugared, ok := log.(*zap.SugaredLogger); ok {
+		prov := strings.ToUpper(string(config.ProviderVCSIM))
+		vcLog = zapSugared.Named(fmt.Sprintf("[%s]", prov))
+	}
+
+	vcsim.Logger = vcLog
 	vcsim.client = *client
 
 	// apply options (overwrite any defaults)
@@ -130,14 +134,14 @@ func eventHandler(ctx context.Context, vcsim *EventStream, proc processor.Proces
 		for _, e := range baseEvents {
 			ce, err := events.NewCloudEvent(e, source)
 			if err != nil {
-				vcsim.Printf("skipping event %v because it could not be converted to CloudEvent format: %v", e, err)
+				vcsim.Errorw("skipping event because it could not be converted to CloudEvent format", "event", e, "error", err)
 				errCount++
 				continue
 			}
 
 			err = proc.Process(ctx, *ce)
 			if err != nil {
-				vcsim.Printf("could not process event %v: %v", ce, err)
+				vcsim.Errorw("could not process event", "event", ce, "error", err)
 				errCount++
 				continue
 			}
@@ -166,7 +170,7 @@ func reverse(events []types.BaseEvent) {
 // Shutdown closes the underlying connection to vCenter simulator
 func (vcsim *EventStream) Shutdown(_ context.Context) error {
 	// EventManager:EventManager does not implement: Destroy_Task
-	vcsim.Println("provider shutdown successful")
+	vcsim.Info("provider shutdown successful")
 	return nil
 }
 

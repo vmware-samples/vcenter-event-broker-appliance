@@ -4,7 +4,6 @@ import (
 	"context"
 	"expvar"
 	"fmt"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -12,9 +11,10 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/logger"
 )
 
 const (
@@ -39,20 +39,24 @@ var _ Receiver = (*Server)(nil)
 // Server is the implementation of the metrics server
 type Server struct {
 	http *http.Server
-	*log.Logger
+	logger.Logger
 }
 
 // NewServer returns an initialized metrics server binding to addr
-func NewServer(cfg *config.MetricsProviderConfigDefault) (*Server, error) {
+func NewServer(cfg *config.MetricsProviderConfigDefault, log logger.Logger) (*Server, error) {
 	if cfg == nil {
 		return nil, errors.New("no metrics server configuration found")
 	}
 
-	logger := log.New(os.Stdout, color.Teal("[Metrics Server] "), log.LstdFlags)
+	metricLog := log
+	if zapSugared, ok := log.(*zap.SugaredLogger); ok {
+		metricLog = zapSugared.Named("[METRICS]")
+	}
+
 	basicAuth := true
 
 	if cfg.Auth == nil || cfg.Auth.BasicAuth == nil {
-		logger.Print("no credentials found, disabling authentication for metrics server")
+		metricLog.Warnf("no credentials found, disabling authentication for metrics server")
 		basicAuth = false
 	}
 
@@ -60,7 +64,7 @@ func NewServer(cfg *config.MetricsProviderConfigDefault) (*Server, error) {
 
 	switch basicAuth {
 	case true:
-		mux.Handle(endpoint, withBasicAuth(logger, expvar.Handler(), cfg.Auth.BasicAuth.Username, cfg.Auth.BasicAuth.Password))
+		mux.Handle(endpoint, withBasicAuth(metricLog, expvar.Handler(), cfg.Auth.BasicAuth.Username, cfg.Auth.BasicAuth.Password))
 	default:
 		mux.Handle(endpoint, expvar.Handler())
 	}
@@ -77,7 +81,7 @@ func NewServer(cfg *config.MetricsProviderConfigDefault) (*Server, error) {
 			ReadTimeout:  httpTimeout,
 			WriteTimeout: httpTimeout,
 		},
-		Logger: logger,
+		Logger: metricLog,
 	}
 
 	return srv, nil
@@ -124,7 +128,7 @@ func (s *Server) Run(ctx context.Context) error {
 
 	go func() {
 		addr := fmt.Sprintf("http://%s%s", s.http.Addr, endpoint)
-		s.Printf("starting metrics server and listening on %q", addr)
+		s.Infow("starting metrics server", "address", addr)
 
 		err := s.http.ListenAndServe()
 		if err != nil && err != http.ErrServerClosed {
@@ -152,7 +156,7 @@ func (s *Server) Run(ctx context.Context) error {
 
 // withBasicAuth enforces basic auth as a middleware for the given username and
 // password
-func withBasicAuth(logger *log.Logger, next http.Handler, u, p string) http.HandlerFunc {
+func withBasicAuth(logger logger.Logger, next http.Handler, u, p string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user, password, ok := r.BasicAuth()
 
@@ -163,7 +167,7 @@ func withBasicAuth(logger *log.Logger, next http.Handler, u, p string) http.Hand
 			_, err := w.Write([]byte("invalid credentials"))
 
 			if err != nil {
-				logger.Printf("could not write http response: %v", err)
+				logger.Errorf("could not write http response: %v", err)
 			}
 
 			return

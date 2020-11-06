@@ -2,11 +2,9 @@ package fake
 
 import (
 	"context"
-	"log"
-	"os"
 
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/logger"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider"
@@ -23,15 +21,15 @@ var _ provider.Provider = (*VCenter)(nil)
 // VCenter implements the streamer interface
 type VCenter struct {
 	eventCh <-chan []types.BaseEvent // channel which simulates events
-	*log.Logger
+	logger.Logger
 }
 
 // NewFakeVCenter returns a fake vcenter event stream provider streaming events
 // received from the specified generator channel
-func NewFakeVCenter(generator <-chan []types.BaseEvent) *VCenter {
+func NewFakeVCenter(generator <-chan []types.BaseEvent, log logger.Logger) *VCenter {
 	return &VCenter{
 		eventCh: generator,
-		Logger:  log.New(os.Stdout, color.Magenta("[Fake vCenter] "), log.LstdFlags),
+		Logger:  log,
 	}
 }
 
@@ -52,13 +50,13 @@ func (f *VCenter) Stream(ctx context.Context, p processor.Processor) error {
 
 				ce, err := events.NewCloudEvent(event, source)
 				if err != nil {
-					log.Printf("skipping event %v because it could not be converted to CloudEvent format: %v", event, err)
+					f.Logger.Errorw("skipping event because it could not be converted to CloudEvent format", "event", event, "error", err)
 					continue
 				}
 
 				err = p.Process(ctx, *ce)
 				if err != nil {
-					f.Logger.Printf("could not process event %v: %v", ce, err)
+					f.Logger.Errorw("could not process event", "event", ce, "error", err)
 				}
 			}
 		}

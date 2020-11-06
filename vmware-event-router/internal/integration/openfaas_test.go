@@ -11,22 +11,29 @@ import (
 	"github.com/vmware/govmomi/vim25/types"
 
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
-)
-
-const (
-	// how long to wait for gateway response/topic map sync
-	waitDelay = 1 * time.Second
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor/openfaas"
 )
 
 var _ = Describe("OpenFaaS Processor", func() {
 	BeforeEach(func() {
-		// give topic map builder in the controller time to sync
-		time.Sleep(waitDelay)
-	})
+		receiver = &fakeReceiver{
+			responseMap: make(map[bool]int),
+		}
 
-	BeforeEach(func() {
-		// reset map
-		receiver.responseMap = make(map[bool]int)
+		log.Info("creating new processor")
+		op, err := openfaas.NewProcessor(ctx,
+			cfg,
+			receiver,
+			log,
+			openfaas.WithRebuildInterval(time.Millisecond),
+			openfaas.WithResponseHandler(receiver),
+			openfaas.WithResponseChan(resCh),
+		)
+		Expect(err).ShouldNot(HaveOccurred())
+		ofProcessor = op
+
+		// give topic map builder in the controller time to sync
+		time.Sleep(time.Second)
 	})
 
 	Describe("receiving an event", func() {
@@ -40,21 +47,16 @@ var _ = Describe("OpenFaaS Processor", func() {
 
 		// assumes only of-echo is subscribed to this event
 		Context("when one function in OpenFaaS is subscribed to that event type (VmPoweredOnEvent)", func() {
-			// create VMPoweredOnEvent and marshal to CloudEvent
 			BeforeEach(func() {
 				baseEvent = newVMPoweredOnEvent()
 				ce, err = events.NewCloudEvent(baseEvent, fakeVCenterName)
 				Expect(err).ShouldNot(HaveOccurred())
 			})
 
-			// process and give response time to get back from OpenFaaS gateway
 			BeforeEach(func() {
 				err = ofProcessor.Process(ctx, *ce)
-				time.Sleep(waitDelay)
-			})
+				Expect(err).NotTo(HaveOccurred())
 
-			// avoid races
-			BeforeEach(func() {
 				receiver.RLock()
 				defer receiver.RUnlock()
 				successCount = receiver.responseMap[success]
@@ -68,29 +70,22 @@ var _ = Describe("OpenFaaS Processor", func() {
 			It("should not receive a failed invocation response", func() {
 				Expect(failCount).To(Equal(0))
 			})
-
-			It("should not error", func() {
-				Expect(err).NotTo(HaveOccurred())
-			})
 		})
 
 		// assumes only of-fail is subscribed to this event
 		Context("when a subscribed function in OpenFaaS returns an error (ClusterCreatedEvent)", func() {
-			// create ClusterCreatedEvent and marshal to CloudEvent
 			BeforeEach(func() {
 				baseEvent = newClusterCreatedEvent()
 				ce, err = events.NewCloudEvent(baseEvent, fakeVCenterName)
 				Expect(err).ShouldNot(HaveOccurred())
 			})
 
-			// process and give response time to get back from OpenFaaS gateway
 			BeforeEach(func() {
 				err = ofProcessor.Process(ctx, *ce)
-				time.Sleep(waitDelay)
-			})
+				// OpenFaaS processor does not return error directly, only in case
+				// of JSON marshaling issues which we don't expect for this test case
+				Expect(err).NotTo(HaveOccurred())
 
-			// avoid races
-			BeforeEach(func() {
 				receiver.RLock()
 				defer receiver.RUnlock()
 				successCount = receiver.responseMap[success]
@@ -104,32 +99,19 @@ var _ = Describe("OpenFaaS Processor", func() {
 			It("should receive a failed invocation response", func() {
 				Expect(failCount).To(Equal(1))
 			})
-
-			// OpenFaaS processor does not return error directly, only in case
-			// of JSON marshaling issues which we don't expect for this test case
-			It("should not error", func() {
-				Expect(err).NotTo(HaveOccurred())
-			})
 		})
 
 		Context("when no function in OpenFaaS is subscribed to that event type (LicenseEvent)", func() {
-			// create LicenseEvent and marshal to CloudEvent
 			BeforeEach(func() {
 				baseEvent = newLicenseEvent()
 				ce, err = events.NewCloudEvent(baseEvent, fakeVCenterName)
 				Expect(err).ShouldNot(HaveOccurred())
 			})
 
-			// process and give response time to get back from OpenFaaS gateway
-			// (note: we don't expect response, just making sure nothing gets
-			// through)
 			BeforeEach(func() {
 				err = ofProcessor.Process(ctx, *ce)
-				time.Sleep(waitDelay)
-			})
+				Expect(err).NotTo(HaveOccurred())
 
-			// avoid races
-			BeforeEach(func() {
 				receiver.RLock()
 				defer receiver.RUnlock()
 				successCount = receiver.responseMap[success]
@@ -142,10 +124,6 @@ var _ = Describe("OpenFaaS Processor", func() {
 
 			It("should not receive a failed invocation response", func() {
 				Expect(failCount).To(Equal(0))
-			})
-
-			It("should not error", func() {
-				Expect(err).NotTo(HaveOccurred())
 			})
 		})
 	})

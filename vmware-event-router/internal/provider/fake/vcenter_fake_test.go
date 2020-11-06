@@ -9,6 +9,7 @@ import (
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/vmware/govmomi/vim25/types"
+	"go.uber.org/zap/zaptest"
 
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
@@ -34,6 +35,9 @@ func (n *noOpProcessor) Process(_ context.Context, _ cloudevents.Event) error {
 }
 
 func TestFakeVCenter_Stream(t *testing.T) {
+	logger := zaptest.NewLogger(t).Sugar()
+	logger = logger.Named("[FAKEVC]")
+
 	type fields struct {
 		ctxTimeout time.Duration       // used to shutdown the stream
 		genDelay   *time.Duration      // delay for generating events
@@ -103,7 +107,7 @@ func TestFakeVCenter_Stream(t *testing.T) {
 			defer cancel()
 
 			eventCh := createGenerator(ctx, tt.fields.genDelay, tt.fields.events)
-			f := NewFakeVCenter(eventCh)
+			f := NewFakeVCenter(eventCh, logger)
 			_ = f.Stream(ctx, tt.args.p) // ignore errors
 
 			got := tt.args.p.invocations
