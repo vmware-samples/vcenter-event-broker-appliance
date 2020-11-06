@@ -8,14 +8,14 @@ import (
 	"os"
 	"sync"
 	"testing"
-	"time"
+
+	ofsdk "github.com/openfaas-incubator/connector-sdk/types"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zaptest"
 
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor/openfaas"
-
-	ofsdk "github.com/openfaas-incubator/connector-sdk/types"
 
 	. "github.com/onsi/ginkgo"
 
@@ -52,36 +52,35 @@ func (f *fakeReceiver) Response(res ofsdk.InvokerResponse) {
 	}()
 
 	if res.Error != nil || res.Status != http.StatusOK {
-		// fmt.Fprintf(GinkgoWriter, "function %s for topic %s returned status %d with error: %v", res.Function, res.Topic, res.Status, res.Error)
 		f.responseMap[fail]++
 		return
 	}
 
-	// fmt.Fprintf(GinkgoWriter, "successfully invoked function %s for topic %s", res.Function, res.Topic)
 	f.responseMap[success]++
 }
 
 var (
-	ctx         context.Context
+	ctx = context.Background()
+	log *zap.SugaredLogger
+
 	ofProcessor processor.Processor
+	cfg         *config.ProcessorConfigOpenFaaS
 	receiver    *fakeReceiver
-	resCh       chan ofsdk.InvokerResponse
+	resCh       = make(chan ofsdk.InvokerResponse)
 )
 
 func TestOpenfaas(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Openfaas Suite")
+	log = zaptest.NewLogger(t).Named("[OPENFAAS_SUITE]").Sugar()
+	RunSpecs(t, "OpenFaaS Suite")
 }
 
 var _ = BeforeSuite(func() {
-	ctx = context.Background()
-	receiver = &fakeReceiver{}
-
 	// we assume basic_auth and fail if OpenFaaS gateway password is empty
 	ofPass := os.Getenv("OF_PASSWORD")
 	Expect(ofPass).ToNot(BeEmpty(), "env var OF_PASSWORD for basic_auth against OpenFaaS gateway must be set")
 
-	cfg := &config.ProcessorConfigOpenFaaS{
+	cfg = &config.ProcessorConfigOpenFaaS{
 		Address: "http://localhost:8080",
 		Async:   false,
 		Auth: &config.AuthMethod{
@@ -92,17 +91,6 @@ var _ = BeforeSuite(func() {
 			},
 		},
 	}
-
-	resCh = make(chan ofsdk.InvokerResponse)
-	op, err := openfaas.NewProcessor(ctx,
-		cfg,
-		receiver,
-		openfaas.WithRebuildInterval(100*time.Millisecond),
-		openfaas.WithResponseHandler(receiver),
-		openfaas.WithResponseChan(resCh),
-	)
-	Expect(err).ShouldNot(HaveOccurred())
-	ofProcessor = op
 })
 
 var _ = AfterSuite(func() {

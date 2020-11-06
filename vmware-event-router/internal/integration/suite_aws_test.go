@@ -7,35 +7,39 @@ import (
 	"os"
 	"testing"
 
+	. "github.com/onsi/ginkgo"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zaptest"
+
+	. "github.com/onsi/gomega"
+
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor/aws"
-
-	. "github.com/onsi/ginkgo"
-
-	. "github.com/onsi/gomega"
 )
 
 const (
 	fakeVCenterName = "https://fakevc-01:443/sdk"
 )
 
-// implement metrics interface
-type fakeReceiver struct {
-}
+type receiveFunc func(stats *metrics.EventStats)
 
-func (f *fakeReceiver) Receive(_ *metrics.EventStats) {
+func (r receiveFunc) Receive(stats *metrics.EventStats) {
+	r(stats)
 }
 
 var (
-	ctx          context.Context
+	ctx context.Context
+	log *zap.SugaredLogger
+
 	awsProcessor processor.Processor
-	receiver     *fakeReceiver
+	cfg          *config.ProcessorConfigEventBridge
+	receiver     receiveFunc
 )
 
 func TestAWS(t *testing.T) {
 	RegisterFailHandler(Fail)
+	log = zaptest.NewLogger(t).Named("[AWS_SUITE]").Sugar()
 	RunSpecs(t, "AWS EventBridge Suite")
 }
 
@@ -54,7 +58,7 @@ var _ = BeforeSuite(func() {
 	Expect(awsBus).ToNot(BeEmpty(), "env var AWS_EVENT_BUS for AWS EventBridge must be set")
 	Expect(awsRule).ToNot(BeEmpty(), "env var AWS_RULE_ARN for AWS EventBridge must be set")
 
-	cfg := &config.ProcessorConfigEventBridge{
+	cfg = &config.ProcessorConfigEventBridge{
 		EventBus: awsBus,
 		Region:   awsRegion,
 		RuleARN:  awsRule,
@@ -67,10 +71,7 @@ var _ = BeforeSuite(func() {
 		},
 	}
 
-	receiver = &fakeReceiver{}
-	p, err := aws.NewEventBridgeProcessor(ctx, cfg, receiver, aws.WithVerbose(true))
-	Expect(err).NotTo(HaveOccurred())
-	awsProcessor = p
+	receiver = func(stats *metrics.EventStats) {} // noOp
 })
 
 var _ = AfterSuite(func() {})

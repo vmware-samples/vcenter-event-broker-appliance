@@ -11,17 +11,17 @@ import (
 	"github.com/vmware/govmomi/vim25/types"
 
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
-)
-
-const (
-	// how long to wait for AWS processor to send metrics
-	waitDelay = 1 * time.Second
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor/aws"
 )
 
 var _ = Describe("AWS Processor", func() {
 	BeforeEach(func() {
+		p, err := aws.NewEventBridgeProcessor(ctx, cfg, receiver, log)
+		Expect(err).NotTo(HaveOccurred())
+		awsProcessor = p
+
 		// give pattern match map time to sync
-		time.Sleep(waitDelay)
+		time.Sleep(time.Second)
 	})
 
 	Describe("receiving an event", func() {
