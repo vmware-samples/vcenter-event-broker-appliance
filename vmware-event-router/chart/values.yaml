@@ -1,0 +1,94 @@
+### image settings
+replicaCount: 1
+
+image:
+  repository: vmware/veba-event-router
+  pullPolicy: Always
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+### event router config
+eventrouter:
+  # general event router config settings
+  config:
+    # name of the router configuration
+    name: config
+    # name of the router configuration file
+    fileName: config.yaml
+    # where to mount the configuration file (with trailing "/")
+    mountPath: /etc/vmware-event-router/
+    # debug,info,warn,error
+    logLevel: info
+    # print logs as JSON
+    json: false
+  # vcenter event provider settings
+  vcenter:
+    # vcenter server address (may omit /sdk)
+    address: https://10.0.0.1/sdk
+    # username to use for connecting to vcenter
+    username: administrator@vsphere.local
+    # password to use for connecting to vcenter
+    password: ReplaceMe
+    # ignore TLS certificate warnings (e.g. self-signed certificate)
+    insecure: false
+  # openfaas event processor settings
+  openfaas:
+    # gateway address, e.g. deployment_name.namespace:port when deployed in Kubernetes
+    address: http://gateway.openfaas:8080
+    # async function invocation mode
+    async: false
+    # enable basic auth against gateway
+    basicAuth: true
+    # basic auth username
+    username: admin
+    # basic auth password
+    password: ReplaceMe
+  # metrics server settings (uses default/internal metrics server)
+  metrics:
+    type: ClusterIP
+    port: 8082
