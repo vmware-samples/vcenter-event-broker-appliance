@@ -18,7 +18,7 @@ const (
 // Processor configures the event processor
 type Processor struct {
 	// Type sets the event processor
-	Type ProcessorType `yaml:"type" json:"type" jsonschema:"enum=openfaas,enum=awsEventBridge"`
+	Type ProcessorType `yaml:"type" json:"type" jsonschema:"enum=openfaas,enum=aws_event_bridge"`
 	// Name is an identifier for the configured event processor
 	Name string `yaml:"name" json:"name" jsonschema:"required"`
 	// OpenFaaS configuration settings
