@@ -4,8 +4,6 @@ package vcsim
 
 import (
 	"context"
-	"io/ioutil"
-	"log"
 	"reflect"
 	"testing"
 
@@ -15,6 +13,7 @@ import (
 	"github.com/vmware/govmomi/vim25"
 	"github.com/vmware/govmomi/vim25/soap"
 	"github.com/vmware/govmomi/vim25/types"
+	"go.uber.org/zap/zaptest"
 
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
@@ -65,8 +64,6 @@ func Test_eventHandler(t *testing.T) {
 
 	vmOnEvent := types.VmPoweredOnEvent{}
 	vmOffEvent := types.VmPoweredOffEvent{}
-	// no logger
-	noLog := log.New(ioutil.Discard, "", 0)
 
 	u, err := soap.ParseURL("https://127.0.0.1:8989/sdk")
 	if err != nil {
@@ -81,8 +78,7 @@ func Test_eventHandler(t *testing.T) {
 				Client: c,
 			},
 		},
-		Logger:  noLog,
-		verbose: false,
+		Logger: zaptest.NewLogger(t).Sugar(),
 		stats: metrics.EventStats{
 			EventsTotal: &zero,
 			EventsErr:   &zero,

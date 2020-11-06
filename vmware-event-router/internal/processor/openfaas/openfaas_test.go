@@ -13,6 +13,9 @@ import (
 	"github.com/avast/retry-go"
 	ofsdk "github.com/openfaas-incubator/connector-sdk/types"
 	"github.com/pkg/errors"
+	"go.uber.org/zap/zaptest"
+
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/logger"
 )
 
 // counter is concurrency-safe
@@ -109,6 +112,7 @@ func Test_waitForAll(t *testing.T) {
 
 func Test_waitForOne(t *testing.T) {
 	var (
+		log         = zaptest.NewLogger(t).Sugar()
 		ctx         = context.Background()
 		numTests    = 5 // update when number of tests changes
 		retryCount  = 0 // track retries per function
@@ -165,7 +169,7 @@ func Test_waitForOne(t *testing.T) {
 		resCh     <-chan ofsdk.InvokerResponse
 		invoker   invokeFunc
 		retryMsg  []byte
-		log       logger
+		log       logger.Logger
 		retryOpts []retry.Option
 	}
 	tests := []struct {
@@ -182,7 +186,7 @@ func Test_waitForOne(t *testing.T) {
 				resCh:     resChan,
 				invoker:   okFunc,
 				retryMsg:  []byte("should not retry"),
-				log:       noOpLogger{},
+				log:       log,
 				retryOpts: retryOpts,
 			},
 			firstResponse: ofsdk.InvokerResponse{
@@ -202,7 +206,7 @@ func Test_waitForOne(t *testing.T) {
 				resCh:     resChan,
 				invoker:   failFunc,
 				retryMsg:  []byte("should retry"),
-				log:       noOpLogger{},
+				log:       log,
 				retryOpts: retryOpts,
 			},
 			firstResponse: ofsdk.InvokerResponse{
@@ -222,7 +226,7 @@ func Test_waitForOne(t *testing.T) {
 				resCh:     resChan,
 				invoker:   failWithErrFunc,
 				retryMsg:  []byte("should retry"),
-				log:       noOpLogger{},
+				log:       log,
 				retryOpts: retryOpts,
 			},
 			firstResponse: ofsdk.InvokerResponse{
@@ -242,7 +246,7 @@ func Test_waitForOne(t *testing.T) {
 				resCh:     resChan,
 				invoker:   retryableFunc,
 				retryMsg:  []byte("should retry"),
-				log:       noOpLogger{},
+				log:       log,
 				retryOpts: retryOpts,
 			},
 			firstResponse: ofsdk.InvokerResponse{
@@ -262,7 +266,7 @@ func Test_waitForOne(t *testing.T) {
 				resCh:     resChan,
 				invoker:   okFunc,
 				retryMsg:  []byte("should not retry"),
-				log:       noOpLogger{},
+				log:       log,
 				retryOpts: retryOpts,
 			},
 			firstResponse: ofsdk.InvokerResponse{
@@ -301,26 +305,17 @@ func Test_waitForOne(t *testing.T) {
 	}
 }
 
-type noOpLogger struct{}
-
-func (n noOpLogger) Printf(format string, v ...interface{}) {
-	return
-}
-
-func (n noOpLogger) Println(v ...interface{}) {
-	return
-}
-
 func Test_waitForOneProcStopped(t *testing.T) {
 	var (
 		resChan = make(chan ofsdk.InvokerResponse)
+		log     = zaptest.NewLogger(t).Sugar()
 	)
 
 	type args struct {
 		resCh     <-chan ofsdk.InvokerResponse
 		invoker   invokeFunc
 		retryMsg  []byte
-		log       logger
+		log       logger.Logger
 		retryOpts []retry.Option
 	}
 	tests := []struct {
@@ -334,7 +329,7 @@ func Test_waitForOneProcStopped(t *testing.T) {
 				resCh:     resChan,
 				invoker:   nil,
 				retryMsg:  nil,
-				log:       noOpLogger{},
+				log:       log,
 				retryOpts: nil,
 			},
 			wantErr: ErrStopped,

@@ -4,9 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
-	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -15,10 +14,11 @@ import (
 	ofsdk "github.com/openfaas-incubator/connector-sdk/types"
 	"github.com/openfaas/faas-provider/auth"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/logger"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 )
@@ -37,11 +37,6 @@ var (
 	// assert we implement Processor interface
 	_ processor.Processor = (*Processor)(nil)
 )
-
-type logger interface {
-	Printf(format string, v ...interface{})
-	Println(v ...interface{})
-}
 
 // invokeFunc is a function which invokes the given OpenFaaS function with the
 // specified message body. It returns the function response message, status
@@ -68,12 +63,10 @@ type Processor struct {
 	respChan chan ofsdk.InvokerResponse // responses from sync fn invocation
 
 	// options
-	verbose         bool
 	topicDelimiter  string
 	rebuildInterval time.Duration
 	gatewayTimeout  time.Duration
-	// TODO (@embano1): make log interface for all processors/streams
-	*log.Logger
+	logger.Logger
 
 	lock    sync.RWMutex
 	stats   metrics.EventStats
@@ -83,14 +76,18 @@ type Processor struct {
 // NewProcessor returns an OpenFaaS processor for the given stream
 // source. Asynchronous function invocation can be configured for
 // high-throughput (non-blocking) requirements.
-func NewProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFaaS, ms metrics.Receiver, opts ...Option) (*Processor, error) {
-	// defaults
-	l := log.New(os.Stdout, color.Purple("[OpenFaaS] "), log.LstdFlags)
+func NewProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFaaS, ms metrics.Receiver, log logger.Logger, opts ...Option) (*Processor, error) {
+	ofLog := log
+	if zapSugared, ok := log.(*zap.SugaredLogger); ok {
+		proc := strings.ToUpper(string(config.ProcessorOpenFaaS))
+		ofLog = zapSugared.Named(fmt.Sprintf("[%s]", proc))
+	}
+
 	ofProcessor := Processor{
 		topicDelimiter:  defaultTopicDelimiter,
 		rebuildInterval: defaultRebuildInterval,
 		gatewayTimeout:  defaultTimeout,
-		Logger:          l,
+		Logger:          ofLog,
 		respChan:        make(chan ofsdk.InvokerResponse),
 	}
 	ofProcessor.ResponseSubscriber = defaultResponseHandler(&ofProcessor)
@@ -109,7 +106,7 @@ func NewProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFaaS, ms m
 
 	switch cfg.Auth {
 	case nil:
-		l.Println("no authentication data provided, disabling basic auth")
+		ofLog.Info("no authentication data provided, disabling basic auth")
 	default:
 		if cfg.Auth.Type != config.BasicAuth {
 			return nil, fmt.Errorf("unsupported authentication method %q specified for this processor", cfg.Auth.Type)
@@ -129,7 +126,7 @@ func NewProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFaaS, ms m
 		RebuildInterval:          ofProcessor.rebuildInterval,
 		UpstreamTimeout:          ofProcessor.gatewayTimeout,
 		AsyncFunctionInvocation:  cfg.Async,
-		PrintSync:                ofProcessor.verbose,
+		PrintSync:                true,
 	}
 
 	ctl := ofsdk.NewController(&credentials, &ctlCfg, ofProcessor.Logger)
@@ -183,22 +180,16 @@ func (p *Processor) Process(ctx context.Context, ce cloudevents.Event) error {
 		return ErrStopped
 	}
 
-	if p.verbose {
-		p.Printf("processing event (ID %s): %v", ce.ID(), ce)
-	}
-
+	p.Debugw("processing event", "eventID", ce.ID(), "event", ce)
 	topic, message, err := handleEvent(ce)
 	if err != nil {
 		return processor.NewError(config.ProcessorOpenFaaS, errors.Wrapf(err, "handle event %v", ce))
 	}
 
-	if p.verbose {
-		p.Printf("created new outbound event for subscribers: %q", string(message))
-	}
-
-	p.Printf("invoking function(s) for event %q on topic: %q", ce.ID(), topic)
+	p.Debugw("created new outbound event for subscribers", "message", string(message))
+	p.Infow("invoking function(s) for event", "eventID", ce.ID(), "topic", topic)
 	defer func() {
-		p.Printf("finished processing of event %q on topic: %q", ce.ID(), topic)
+		p.Infow("finished processing of event", "eventID", ce.ID(), "topic", topic)
 	}()
 
 	m, err := p.controller.InvokeWithContext(ctx, topic, message)
@@ -206,12 +197,12 @@ func (p *Processor) Process(ctx context.Context, ce cloudevents.Event) error {
 		return processor.NewError(config.ProcessorOpenFaaS, errors.Wrap(err, "invoke function"))
 	}
 
-	p.Printf("%d function(s) matched for event %q on topic: %q", m, ce.ID(), topic)
+	p.Infow("function(s) matched for event", "count", m, "eventID", ce.ID(), "topic", topic)
 	if m == 0 {
 		return nil
 	}
 
-	p.Printf("waiting for %d functions to return", m)
+	p.Infow("waiting for functions to return", "count", m)
 
 	waitFn := waitForOne(p.respChan, p.controller.InvokeFunction, message, p.Logger, defaultRetryOpts...)
 	return waitForAll(ctx, m, waitFn)
@@ -236,25 +227,25 @@ func waitForAll(ctx context.Context, waitN int, fn waitFunc) error {
 // waitForOne waits for one InvokerResponse from resCh from a single function
 // invocation and handles retries in case of failure. If the processor has
 // already been stopped, ErrStopped will be returned.
-func waitForOne(resCh <-chan ofsdk.InvokerResponse, invoker invokeFunc, retryMsg []byte, log logger, retryOpts ...retry.Option) waitFunc {
+func waitForOne(resCh <-chan ofsdk.InvokerResponse, invoker invokeFunc, retryMsg []byte, log logger.Logger, retryOpts ...retry.Option) waitFunc {
 	return func(ctx context.Context) error {
 		var retryCount int32
 
 		if res, ok := <-resCh; ok {
 			// return early
 			if isSuccessful(res.Status, res.Error) {
-				log.Printf("successfully invoked function %q for topic %q (retries: %d)", res.Function, res.Topic, retryCount)
+				log.Infow("successfully invoked function", "function", res.Function, "topic", res.Topic, "retries", retryCount)
 				return nil
 			}
 
 			// retries unless error is nil or of type retry.Unrecoverable
 			err := retry.Do(retryFunc(ctx, res, invoker, retryMsg, &retryCount), retryOpts...)
 			if err != nil {
-				log.Printf("could not invoke function %q for topic %q (retries: %d): %v", res.Function, res.Topic, retryCount, err)
+				log.Errorw("could not invoke function", "function", res.Function, "topic", res.Topic, "retries", retryCount, "error", err)
 				return nil
 			}
 
-			log.Printf("successfully invoked function %q for topic %q (retries: %d)", res.Function, res.Topic, retryCount)
+			log.Infow("successfully invoked function", "function", res.Function, "topic", res.Topic, "retries", retryCount)
 			return nil
 		}
 
@@ -303,7 +294,7 @@ func (p *Processor) Shutdown(_ context.Context) error {
 	// free resources - if shutdown is called when they're still inflight processor
 	// invocations this will intentionally cause a panic by writing to a closed channel
 	close(p.respChan)
-	p.Println("processor shutdown successful")
+	p.Info("processor shutdown successful")
 	return nil
 }
 

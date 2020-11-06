@@ -1,33 +1,19 @@
 package openfaas
 
 import (
-	"log"
 	"time"
 
 	ofsdk "github.com/openfaas-incubator/connector-sdk/types"
 )
 
 // Option configures the OpenFaaS processor
+// TODO: change signature to return errors
 type Option func(*Processor)
-
-// WithVerbose enables verbose logging for the OpenFaaS processor
-func WithVerbose(verbose bool) Option {
-	return func(o *Processor) {
-		o.verbose = verbose
-	}
-}
 
 // WithResponseChan sets a custom response channel to use for returning invocation responses
 func WithResponseChan(resCh chan ofsdk.InvokerResponse) Option {
 	return func(o *Processor) {
 		o.respChan = resCh
-	}
-}
-
-// WithLogger sets an alternative logger for the OpenFaaS processor
-func WithLogger(logger *log.Logger) Option {
-	return func(o *Processor) {
-		o.Logger = logger
 	}
 }
 

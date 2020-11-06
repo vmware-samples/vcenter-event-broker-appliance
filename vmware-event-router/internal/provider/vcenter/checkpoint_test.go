@@ -77,8 +77,6 @@ func createTempCheckpoint(t *testing.T) (*os.File, string, string) {
 		t.Errorf("could not marshal to JSON: %v", err)
 	}
 
-	t.Logf(string(jsonByte))
-
 	_, err = f.Write(jsonByte)
 	if err != nil {
 		t.Errorf("could not write checkpoint file: %v", err)

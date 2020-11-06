@@ -3,10 +3,10 @@ package vcenter
 import (
 	"context"
 	"fmt"
-	"log"
 	"math"
 	"net/url"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -17,12 +17,13 @@ import (
 	"github.com/vmware/govmomi/vim25/methods"
 	"github.com/vmware/govmomi/vim25/soap"
 	"github.com/vmware/govmomi/vim25/types"
+	"go.uber.org/zap"
 
 	"github.com/jpillora/backoff"
 
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/color"
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/events"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/logger"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider"
@@ -38,10 +39,9 @@ const (
 // EventStream handles the connection to the vCenter events API
 type EventStream struct {
 	client govmomi.Client
-	*log.Logger
+	logger.Logger
 	checkpoint    bool
 	checkpointDir string
-	verbose       bool
 
 	sync.RWMutex
 	stats metrics.EventStats
@@ -58,7 +58,7 @@ var _ provider.Provider = (*EventStream)(nil)
 
 // NewEventStream returns a vCenter event stream manager for a given
 // configuration and metrics server
-func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCenter, ms metrics.Receiver, opts ...Option) (*EventStream, error) {
+func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCenter, ms metrics.Receiver, log logger.Logger, opts ...Option) (*EventStream, error) {
 	if cfg == nil {
 		return nil, errors.New("vCenter configuration must be provided")
 	}
@@ -67,7 +67,7 @@ func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCenter, ms m
 
 	parsedURL, err := soap.ParseURL(cfg.Address)
 	if err != nil {
-		return nil, errors.Wrap(err, "error parsing vCenter URL")
+		return nil, errors.Wrap(err, "parsing vCenter URL")
 	}
 
 	// TODO: only supporting basic auth against vCenter for now
@@ -81,11 +81,16 @@ func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCenter, ms m
 
 	client, err := govmomi.NewClient(ctx, parsedURL, cfg.InsecureSSL)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not create vCenter client")
+		return nil, errors.Wrap(err, "create vCenter client")
 	}
 
-	l := log.New(os.Stdout, color.Magenta("[vCenter] "), log.LstdFlags)
-	vc.Logger = l
+	vcLog := log
+	if zapSugared, ok := log.(*zap.SugaredLogger); ok {
+		prov := strings.ToUpper(string(config.ProviderVCenter))
+		vcLog = zapSugared.Named(fmt.Sprintf("[%s]", prov))
+	}
+
+	vc.Logger = vcLog
 	vc.client = *client
 	vc.checkpoint = cfg.Checkpoint
 	vc.checkpointDir = cfg.CheckpointDir
@@ -122,13 +127,13 @@ func (vc *EventStream) Stream(ctx context.Context, p processor.Processor) error 
 	// begin of event stream defaults to current vCenter time (UTC)
 	begin, err = methods.GetCurrentTime(ctx, vc.client)
 	if err != nil {
-		return errors.Wrap(err, "could not get current time from vCenter")
+		return errors.Wrap(err, "get current time from vCenter")
 	}
 
 	// configure checkpointing and retrieve last checkpoint, if any
 	switch vc.checkpoint {
 	case true:
-		vc.Logger.Println("enabling checkpoints and checking for existing checkpoint")
+		vc.Info("enabling checkpoints and checking for existing checkpoint")
 		host := vc.client.URL().Hostname()
 
 		dir := defaultCheckpointDir
@@ -138,36 +143,36 @@ func (vc *EventStream) Stream(ctx context.Context, p processor.Processor) error 
 
 		cp, path, err = getCheckpoint(ctx, host, dir)
 		if err != nil {
-			return errors.Wrap(err, "could not get checkpoint")
+			return errors.Wrap(err, "get checkpoint")
 		}
 
 		// if the timestamp is valid set begin to last checkpoint
 		ts := cp.LastEventKeyTimestamp
 		if !ts.IsZero() {
-			vc.Logger.Printf("found existing and valid checkpoint: %q", path)
+			vc.Infow("found existing and valid checkpoint", "path", path)
 			// perform boundary check
 			maxTS := begin.Add(checkpointMaxEventAge * -1)
 			if maxTS.Unix() > ts.Unix() {
 				begin = &maxTS
-				vc.Logger.Printf("last event timestamp in checkpoint is older than configured maximum (%q)", checkpointMaxEventAge.String())
-				vc.Logger.Printf("setting begin of event stream to: %s", begin.String())
+				vc.Warnw("last event timestamp in checkpoint is older than configured maximum", "maxTimestamp", checkpointMaxEventAge.String())
+				vc.Warnw("setting begin of event stream", "beginTimestamp", begin.String())
 			} else {
 				begin = &ts
-				vc.Logger.Printf("setting begin of event stream to: %s (event key: %d)", begin.String(), cp.LastEventKey)
+				vc.Infow("setting begin of event stream", "beginTimestamp", begin.String(), "eventKey", cp.LastEventKey)
 			}
 		} else {
-			vc.Logger.Println("no valid checkpoint found")
-			vc.Logger.Printf("empty checkpoint created: %q", path)
-			vc.Logger.Printf("setting begin of event stream to: %s", begin.String())
+			vc.Info("no valid checkpoint found")
+			vc.Infow("empty checkpoint created", "path", path)
+			vc.Infow("setting begin of event stream", "beginTimestamp", begin.String())
 		}
 
 	case false:
-		vc.Logger.Printf("checkpointing disabled, setting begin of event stream to: %s", begin.String())
+		vc.Infow("checkpointing disabled, setting begin of event stream", "beginTimestamp", begin.String())
 	}
 
 	ec, err := newHistoryCollector(ctx, vc.client.Client, begin)
 	if err != nil {
-		return errors.Wrap(err, "could not create event history collector")
+		return errors.Wrap(err, "create event history collector")
 	}
 
 	defer func() {
@@ -177,7 +182,7 @@ func (vc *EventStream) Stream(ctx context.Context, p processor.Processor) error 
 		}
 		err = ec.Destroy(ctx)
 		if err != nil {
-			vc.Logger.Printf("could not destroy property collector: %v", err)
+			vc.Errorf("could not destroy property collector: %v", err)
 		}
 	}()
 
@@ -186,14 +191,14 @@ func (vc *EventStream) Stream(ctx context.Context, p processor.Processor) error 
 
 func (vc *EventStream) stream(ctx context.Context, p processor.Processor, collector *event.HistoryCollector, enableCheckpoint bool) error {
 	// event poll ticker
-	epTicker := time.NewTicker(defaultPollFrequency)
-	defer epTicker.Stop()
+	pollTick := time.NewTicker(defaultPollFrequency)
+	defer pollTick.Stop()
 
 	// create checkpoint ticker only if needed
-	var tickerChan <-chan time.Time = nil
+	var cpTick <-chan time.Time = nil
 	if enableCheckpoint {
 		cpTicker := time.NewTicker(checkpointInterval)
-		tickerChan = cpTicker.C
+		cpTick = cpTicker.C
 		defer cpTicker.Stop()
 	}
 
@@ -216,23 +221,13 @@ func (vc *EventStream) stream(ctx context.Context, p processor.Processor, collec
 		// 	there is a small chance (timing and channel handling) that we received
 		// 	event(s) and crashed before creating the first checkpoint. at-least-once
 		// 	would be violated because we come back with an empty initialized checkpoint.
-		// 	we could force a checkpoint after the first event to reduce the likelihood
-		case <-tickerChan:
+		// 	TODO: we could force a checkpoint after the first event to reduce the likelihood
+		case <-cpTick:
 
 			// skip if checkpoint channel fires before first event or no new events received
 			// since last checkpoint
-			if last == nil {
-				if vc.verbose {
-					vc.Logger.Println("no new events, skipping checkpoint")
-				}
-				continue
-			}
-
-			// no new events since last checkpoint
-			if last.key == lastCpKey {
-				if vc.verbose {
-					vc.Logger.Println("no new events, skipping checkpoint")
-				}
+			if last == nil || (last.key == lastCpKey) {
+				vc.Debug("no new events, skipping checkpoint")
 				continue
 			}
 
@@ -248,36 +243,32 @@ func (vc *EventStream) stream(ctx context.Context, p processor.Processor, collec
 			// always create/overwrite (existing) checkpoint
 			file, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
 			if err != nil {
-				return errors.Wrap(err, "could not create checkpoint file")
+				return errors.Wrap(err, "create checkpoint file")
 			}
 
 			cp, err := createCheckpoint(ctx, file, host, *last, time.Now().UTC())
 			if err != nil {
-				return errors.Wrap(err, "could not create checkpoint")
+				return errors.Wrap(err, "create checkpoint")
 			}
 			lastCpKey = cp.LastEventKey
 
 			err = file.Close()
 			if err != nil {
-				return errors.Wrap(err, "could not close checkpoint file")
+				return errors.Wrap(err, "close checkpoint file")
 			}
 
-			if vc.verbose {
-				vc.Logger.Printf("created checkpoint %q at event key %d", path, lastCpKey)
-			}
+			vc.Infow("created checkpoint", "path", path, "eventKey", lastCpKey)
 
-		case <-epTicker.C:
+		case <-pollTick.C:
 			baseEvents, err := collector.ReadNextEvents(ctx, eventsPageMax)
 			// TODO: handle error without returning?
 			if err != nil {
-				return errors.Wrap(err, "could not retrieve events")
+				return errors.Wrap(err, "retrieve events")
 			}
 
 			if len(baseEvents) == 0 {
 				sleep := bOff.Duration()
-				if vc.verbose {
-					vc.Logger.Printf("no new events, backing off %v", sleep)
-				}
+				vc.Debugw("no new events, backing off", "delaySeconds", sleep)
 				time.Sleep(sleep)
 				continue
 			}
@@ -302,15 +293,16 @@ func (vc *EventStream) processEvents(ctx context.Context, baseEvents []types.Bas
 	for _, e := range baseEvents {
 		ce, err := events.NewCloudEvent(e, host)
 		if err != nil {
-			vc.Logger.Printf("skipping event %v because it could not be converted to CloudEvent format: %v", e, err)
+			vc.Errorw("skipping event because it could not be converted to CloudEvent format", "event", e, "error", err)
 			errCount++
 			continue
 		}
 
+		vc.Infow("invoking processor", "eventID", ce.ID())
 		err = p.Process(ctx, *ce)
 		if err != nil {
 			// retry logic handled inside processor
-			vc.Logger.Printf("could not process event %v: %v", ce, err)
+			vc.Errorw("could not process event", "event", ce, "error", err)
 			errCount++
 		}
 		last = &lastEvent{
@@ -338,7 +330,7 @@ func (vc *EventStream) Shutdown(ctx context.Context) error {
 		ctx = context.Background()
 	}
 	err := vc.client.Logout(ctx)
-	return errors.Wrap(err, "failed to logout from vCenter") // err == nil if logout was successful
+	return errors.Wrap(err, "logout from vCenter") // err == nil if logout was successful
 }
 
 // PushMetrics pushes metrics to the configured metrics receiver
