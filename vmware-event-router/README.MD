@@ -67,6 +67,7 @@ to normalize events from the supported event `providers`. See
 - [Deployment](#deployment)
   - [Assisted Deployment](#assisted-deployment)
   - [Manual Deployment](#manual-deployment)
+  - [CLI Flags](#cli-flags)
 - [Build from Source](#build-from-source)
 - [Contribute](#contribute)
 - [Example Event Structure](#example-event-structure)
@@ -477,6 +478,34 @@ earlier:
 
 ```bash
 kubectl delete namespace vmware
+```
+
+### CLI Flags
+
+By default the VMware Event Router binary will look for a YAML configuration
+file named `/etc/vmware-event-router/config`. The default log level is `info`
+and human readable colored console logs will be printed. This behavior can be
+overridden via `log-json` to generate JSON logs and `log-level` to change the
+log level. Stack traces are only generated in level `error` or higher. 
+
+```
+./vmware-event-router -h
+
+ _    ____  ___                            ______                 __     ____              __
+| |  / /  |/  /      ______ _________     / ____/   _____  ____  / /_   / __ \____  __  __/ /____  _____
+| | / / /|_/ / | /| / / __  / ___/ _ \   / __/ | | / / _ \/ __ \/ __/  / /_/ / __ \/ / / / __/ _ \/ ___/
+| |/ / /  / /| |/ |/ / /_/ / /  /  __/  / /___ | |/ /  __/ / / / /_   / _, _/ /_/ / /_/ / /_/  __/ /
+|___/_/  /_/ |__/|__/\__,_/_/   \___/  /_____/ |___/\___/_/ /_/\__/  /_/ |_|\____/\__,_/\__/\___/_/
+
+Usage of dist/vmware-event-router:
+
+  -config string
+        path to configuration file (default "/etc/vmware-event-router/config")
+  -log-json
+        print JSON-formatted logs
+  -log-level string
+        set log level (debug,info,warn,error) (default "info")
+
 ```
 
 ## Build from Source
