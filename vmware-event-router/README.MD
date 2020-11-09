@@ -66,7 +66,11 @@ to normalize events from the supported event `providers`. See
     - [Provider Type `default`](#provider-type-default)
 - [Deployment](#deployment)
   - [Assisted Deployment](#assisted-deployment)
-  - [Manual Deployment](#manual-deployment)
+    - [Helm Deployment](#helm-deployment)
+      - [OpenFaaS Helm Deployment (skip if already installed)](#openfaas-helm-deployment-skip-if-already-installed)
+      - [Example: Deploy VMware Event Router into a new namespace](#example-deploy-vmware-event-router-into-a-new-namespace)
+      - [Creating/Updating the Chart](#creatingupdating-the-chart)
+    - [Manual Deployment](#manual-deployment)
   - [CLI Flags](#cli-flags)
 - [Build from Source](#build-from-source)
 - [Contribute](#contribute)
@@ -406,19 +410,149 @@ VMware Event Router can be deployed and run as standalone binary (see
 [below](#build-from-source)). However, it is designed (and recommended) to be
 run in a Kubernetes cluster for increased availability and ease of scaling out.
 The following steps describe the deployment of the VMware Event Router in **a
-Kubernetes cluster** for an **existing** OpenFaaS ("faas-netes") environment,
-respectively AWS EventBridge.
+Kubernetes cluster** for an **existing** OpenFaaS ("faas-netes") environment.
 
 > **Note:** Docker images are available
 > [here](https://hub.docker.com/r/vmware/veba-event-router).
 
 ### Assisted Deployment
 
-For your convenience we provide an install script [here](hack/README.md) and a
-Helm Chart is WIP
-[#186](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/186).
+For your convenience we provide a Helm Chart which can be used to easily install
+the VMware Event Router into an **existing** OpenFaaS ("faas-netes")
+environment.
 
-### Manual Deployment
+See [below](#openfaas-helm-deployment) for an example how to set up OpenFaaS in
+a development environment.
+
+#### Helm Deployment
+
+The Helm files are located in the [chart](chart/) directory. The `values.yaml`
+file contains the allowed parameters and parameter descriptions which map to the
+VMware Event Router [configuration](#overview-configuration-file-structure-yaml)
+file.
+
+##### OpenFaaS Helm Deployment (skip if already installed)
+
+The following steps can be used to quickly install OpenFaaS as a requirement for the
+Helm installation instructions of the VMware Event Router below:
+
+```bash
+kubectl create ns openfaas && kubectl create ns openfaas-fn
+
+helm repo add openfaas https://openfaas.github.io/faas-netes && \
+    helm repo update \
+    && helm upgrade openfaas --install openfaas/openfaas \
+        --namespace openfaas \
+        --set functionNamespace=openfaas-fn \
+        --set generateBasicAuth=true
+
+OF_PASS=$(echo $(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode))
+```
+
+##### Example: Deploy VMware Event Router into a new namespace
+
+First create an `override.yaml` file with your environment specific settings,
+e.g.:
+
+```yaml
+eventrouter:
+  config:
+    logLevel: debug
+  vcenter:
+    address: https://10.186.34.28
+    username: administrator@vsphere.local
+    password: <vc_account_password>
+    insecure: true # ignore TLS certs
+  openfaas:
+    address: http://gateway.openfaas:8080
+    basicAuth: true
+    username: admin
+    password: <paste_OF_PASS_from_above>
+
+```
+
+> **Note:** Please ensure the correct formatting/indentation which follows the
+> Helm `values.yaml` file.
+
+
+Now add the VMware Event Router Helm release to your Helm repository:
+
+```bash
+# adds the veba chartrepo to the list of local registries with the repo name "veba"
+helm repo add vmware-veba https://projects.registry.vmware.com/chartrepo/veba
+```
+
+To ensure new releases are pulled/updated and reflected locally update the repo index:
+
+```bash
+helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "vmware-veba" chart repository
+Update Complete. ⎈ Happy Helming!⎈
+
+```
+
+The chart should now show up in the search:
+
+```bash
+helm search repo event-router
+NAME                      CHART VERSION   APP VERSION     DESCRIPTION
+vmware-veba/event-router  v0.5.0          v0.5.0          The VMware Event Router is used to connect to v...
+```
+
+> **Note:** To list/install development releases add the `--devel` flag to the Helm CLI.
+
+Now install the chart using a Helm release name of your choice, e.g. `veba`,
+using the configuration override file created above. The following command will
+create a release from the chart in the namespace `vmware`, which will be
+automatically created if it does not exist:
+
+```bash
+helm install -n vmware --create-namespace veba vmware-veba/event-router -f override.yaml
+NAME: veba
+LAST DEPLOYED: Mon Nov  9 16:27:27 2020
+NAMESPACE: vmware
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
+
+Check the logs of the VMware Event Router to validate it is operating correctly:
+
+```bash
+kubectl -n vmware logs deploy/router -f
+```
+
+If you run into issues, the logs should give you a hint, e.g.:
+
+- configuration file not found -> file naming issue
+- connection to vCenter/OpenFaaS cannot be established -> check values,
+  credentials (if any) in the configuration file
+- deployment/pod will not even come up -> check for resource issues, docker pull
+  issues and other potential causes using the standard `kubectl` troubleshooting
+  ways
+
+To uninstall the release run:
+
+```bash
+helm -n vmware uninstall veba
+```
+
+
+##### Creating/Updating the Chart
+
+Before running the following commands make the appropriate changes to the chart,
+e.g. bumping up `version` and/or `appVersion` in `Chart.yaml`.
+
+```bash
+cd chart
+helm package -d releases .
+```
+
+Then upload the created `.tgz` file inside `releases/` to your Helm chart repo.
+
+
+#### Manual Deployment
 
 Create a namespace where the VMware Event Router will be deployed to:
 
@@ -470,7 +604,7 @@ If you run into issues, the logs should give you a hint, e.g.:
 - connection to vCenter/OpenFaaS cannot be established -> check values,
   credentials (if any) in the configuration file
 - deployment/pod will not even come up -> check for resource issues, docker pull
-  issues and other potential causes using the standard kubectl troubleshooting
+  issues and other potential causes using the standard `kubectl` troubleshooting
   ways
 
 To delete the deployment and secret simply delete the namespace we created
