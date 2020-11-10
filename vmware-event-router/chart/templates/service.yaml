@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+{{ include "router.labels" . | indent 4 }}
+  name: {{ include "router.name" . }}
+spec:
+  ports:
+  {{- with .Values.eventrouter.metrics }}
+  - port: {{ .port }}
+    protocol: TCP
+    targetPort: {{ .port }}
+  type: {{ .type }}
+  {{- end }}
+  selector:
+{{ include "router.matchLabels" . | indent 4 }}
+  sessionAffinity: None

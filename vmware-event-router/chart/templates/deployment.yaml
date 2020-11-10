@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+{{ include "router.labels" . | indent 4 }}
+  name: {{ include "router.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+{{ include "router.matchLabels" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+{{ include "router.matchLabels" . | indent 8 }}
+    spec:
+      containers:
+      - image: {{ .Values.image.repository }}:{{ .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+      {{- with .Values.eventrouter.config }}
+        name: vmware-event-router
+        args:
+        - "-config"
+        - "{{ .mountPath }}{{ .fileName }}"
+        - "-log-level"
+        - {{ .logLevel }}
+        {{- if eq .json true }}
+        - "-log-json"
+        {{- end }}
+        volumeMounts:
+        - name: {{ .name }}
+          mountPath: {{ .mountPath }}
+          readOnly: true
+      volumes:
+      - name: {{ .name }}
+      {{- end }}
+        secret: 
+          secretName: {{ include "router.name" . }}-{{ .Values.eventrouter.config.name }}
