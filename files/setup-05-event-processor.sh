@@ -22,7 +22,50 @@ ESCAPED_VCENTER_USERNAME=$(echo -n ${VCENTER_USERNAME} | python -c 'import sys,j
 ESCAPED_VCENTER_PASSWORD=$(echo -n ${VCENTER_PASSWORD} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
 ESCAPED_ROOT_PASSWORD=$(echo -n ${ROOT_PASSWORD} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
 
-if [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
+if [ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]; then
+    if [ -z ${KNATIVE_HOST} ]; then
+      echo "Knative Host was not provided, exiting ..."
+      exit 1
+    fi
+
+    echo -e "\e[92mSetting up Knative Processor ..." > /dev/console
+
+    cat > ${EVENT_ROUTER_CONFIG} << __KNATIVE_PROCESSOR__
+apiVersion: event-router.vmware.com/v1alpha1
+kind: RouterConfig
+metadata:
+  name: router-config-knative
+eventProcessor:
+  name: veba-knative
+  type: knative
+  knative:
+    insecureSSL: ${KNATIVE_DISABLE_TLS}
+    encoding: binary
+    destination:
+      uri:
+        host: ${KNATIVE_HOST}
+        scheme: ${KNATIVE_SCHEME}
+        path: ${KNATIVE_PATH}
+eventProvider:
+  name: veba-vc-01
+  type: vcenter
+  vcenter:
+    address: https://${ESCAPED_VCENTER_SERVER}/sdk
+    auth:
+      basicAuth:
+        password: ${ESCAPED_VCENTER_PASSWORD}
+        username: ${ESCAPED_VCENTER_USERNAME}
+      type: basic_auth
+    insecureSSL: ${VCENTER_DISABLE_TLS}
+    checkpoint: false
+metricsProvider:
+  default:
+    bindAddress: 0.0.0.0:8082
+  name: veba-metrics
+  type: default
+__KNATIVE_PROCESSOR__
+echo "Processor: Knative" >> /etc/veba-release
+elif [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
     echo -e "\e[92mSetting up AWS Event Bridge Processor ..." > /dev/console
 
 	ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY=$(echo -n ${AWS_EVENTBRIDGE_ACCESS_KEY} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
