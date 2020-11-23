@@ -20,7 +20,6 @@ type noOpProcessor struct {
 }
 
 func (n *noOpProcessor) PushMetrics(_ context.Context, _ metrics.Receiver) {
-	return
 }
 
 func (n *noOpProcessor) Shutdown(_ context.Context) error {

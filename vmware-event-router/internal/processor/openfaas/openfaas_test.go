@@ -295,7 +295,6 @@ func Test_waitForOne(t *testing.T) {
 			// run function
 			if err := wf(tt.args.ctx); (err != nil) != tt.wantErr {
 				t.Errorf("waitForOne() error = %v, wantErr %v", err, tt.wantErr)
-
 			}
 
 			if retryCount != tt.wantRetryCount {

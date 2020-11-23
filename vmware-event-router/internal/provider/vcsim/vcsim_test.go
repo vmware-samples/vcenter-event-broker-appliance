@@ -138,7 +138,6 @@ type fakeProcessor struct {
 }
 
 func (f fakeProcessor) PushMetrics(_ context.Context, _ metrics.Receiver) {
-	return
 }
 
 func (f fakeProcessor) Shutdown(_ context.Context) error {
