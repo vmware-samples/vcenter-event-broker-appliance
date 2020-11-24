@@ -4,6 +4,7 @@ package integration_test
 
 import "github.com/vmware/govmomi/vim25/types"
 
+//nolint
 func newVMPoweredOnEvent() types.BaseEvent {
 	return &types.VmPoweredOnEvent{
 		VmEvent: types.VmEvent{
@@ -22,10 +23,12 @@ func newVMPoweredOnEvent() types.BaseEvent {
 	}
 }
 
+//nolint
 func newLicenseEvent() types.BaseEvent {
 	return types.BaseEvent(&types.LicenseEvent{})
 }
 
+//nolint
 func newClusterCreatedEvent() types.BaseEvent {
 	return types.BaseEvent(&types.ClusterCreatedEvent{})
 }

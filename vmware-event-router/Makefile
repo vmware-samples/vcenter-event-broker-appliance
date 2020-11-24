@@ -52,7 +52,7 @@ gofmt:
 
 lint:
 	$(info Make: Running linter.)
-	@golangci-lint run -v
+	@golangci-lint run --build-tags unit,integration  -v
 
 unit-test: gofmt
 	$(eval TAG=unit)
