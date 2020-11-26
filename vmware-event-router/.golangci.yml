@@ -73,26 +73,26 @@ linters:
     - dogsled
     - dupl
     - errcheck
-#    - exhaustive
-#    - funlen
+    #    - exhaustive
+    #    - funlen
     - gochecknoinits
     - goconst
-#    - gocritic
-#    - gocyclo
+    #    - gocritic
+    #    - gocyclo
     - gofmt
     - goimports
     - golint
-#    - gomnd
+    #    - gomnd
     - goprintffuncname
     - gosec
     - gosimple
     - govet
     - ineffassign
     - interfacer
-#    - lll
-#    - misspell
+    #    - lll
+    #    - misspell
     - nakedret
-#    - noctx
+    #    - noctx
     - nolintlint
     - rowserrcheck
     - scopelint
@@ -107,18 +107,18 @@ linters:
     - whitespace
 #    - wsl
 
-  # don't enable:
-  # - asciicheck
-  # - gochecknoglobals
-  # - gocognit
-  # - godot
-  # - godox
-  # - goerr113
-  # - maligned
-  # - nestif
-  # - prealloc
-  # - testpackage
-  # - wsl
+# don't enable:
+# - asciicheck
+# - gochecknoglobals
+# - gocognit
+# - godot
+# - godox
+# - goerr113
+# - maligned
+# - nestif
+# - prealloc
+# - testpackage
+# - wsl
 
 issues:
   # Excluding configuration per-path, per-linter, per-text and per-source
@@ -141,10 +141,6 @@ run:
     - internal/cache
     - internal/renameio
     - internal/robustio
-
-# golangci.com configuration
-# https://github.com/golangci/golangci/wiki/Configuration
-service:
-  golangci-lint-version: 1.23.x # use the fixed version to not introduce new linters unexpectedly
-  prepare:
-    - echo "here I can run custom commands, but no preparation needed for this repo"
+  modules-download-mode: readonly
+  skip-dirs-use-default: true
+  timeout: 5m
