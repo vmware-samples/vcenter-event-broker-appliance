@@ -3,15 +3,24 @@
 [![Photon OS 3.0](https://img.shields.io/badge/Photon%20OS-3.0-orange)](https://vmware.github.io/photon/)
 [![Published VMware Fling](https://img.shields.io/badge/VMware-Fling-green)](https://flings.vmware.com/vmware-event-broker-appliance)
 ![Website](https://img.shields.io/website?label=vmweventbroker.io&url=https%3A%2F%2Fvmweventbroker.io%2F)
+
+![VMware Event Router
+Linting](https://github.com/vmware-samples/vcenter-event-broker-appliance/workflows/VMware%20Event%20Router%20Linting/badge.svg)
+![VMware Event Router Unit
+Tests](https://github.com/vmware-samples/vcenter-event-broker-appliance/workflows/VMware%20Event%20Router%20Unit%20Tests/badge.svg)
+![VMware Event Router Integration Tests](https://github.com/vmware-samples/vcenter-event-broker-appliance/workflows/VMware%20Event%20Router%20Integration%20Tests/badge.svg)
+
 [![Twitter Follow](https://img.shields.io/twitter/follow/lamw?style=social)](https://twitter.com/lamw)
-[![Twitter Follow](https://img.shields.io/twitter/follow/embano1?style=social)](https://twitter.com/embano1)
+[![Twitter
+Follow](https://img.shields.io/twitter/follow/embano1?style=social)](https://twitter.com/embano1)
 
 
 <img src="logo/veba_otto_the_orca_320x320.png" align="right" height="320px"/>
 
 ## Table of Contents
 
-- [VMware Event Broker Appliance](#vcenter-event-broker-appliance)
+- [VMware Event Broker Appliance](#vmware-event-broker-appliance)
+  - [Table of Contents](#table-of-contents)
   - [Getting Started](#getting-started)
   - [Overview](#overview)
   - [Architecture](#architecture)
