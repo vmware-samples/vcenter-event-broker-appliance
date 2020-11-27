@@ -73,9 +73,7 @@ type Processor struct {
 	stopped bool
 }
 
-// NewProcessor returns an OpenFaaS processor for the given stream
-// source. Asynchronous function invocation can be configured for
-// high-throughput (non-blocking) requirements.
+// NewProcessor returns an OpenFaaS processor for the given configuration.
 func NewProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFaaS, ms metrics.Receiver, log logger.Logger, opts ...Option) (*Processor, error) {
 	ofLog := log
 	if zapSugared, ok := log.(*zap.SugaredLogger); ok {
@@ -283,18 +281,21 @@ func (p *Processor) PushMetrics(ctx context.Context, ms metrics.Receiver) {
 
 // Shutdown performs a clean shutdown of the OpenFaaS processor. It must not be
 // called more than once and only after all inflight event processing requests
-// have finished to avoid a panic.
+// have finished to avoid a panic. If the processor has already been stopped
+// ErrStopped is returned.
 func (p *Processor) Shutdown(_ context.Context) error {
-	if !p.isStopped() {
-		p.lock.Lock()
-		p.stopped = true
-		p.lock.Unlock()
+	p.Logger.Infof("attempting graceful shutdown")
+	if p.isStopped() {
+		return ErrStopped
 	}
+
+	p.lock.Lock()
+	p.stopped = true
+	p.lock.Unlock()
 
 	// free resources - if shutdown is called when they're still inflight processor
 	// invocations this will intentionally cause a panic by writing to a closed channel
 	close(p.respChan)
-	p.Info("processor shutdown successful")
 	return nil
 }
 
