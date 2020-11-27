@@ -169,8 +169,9 @@ func reverse(events []types.BaseEvent) {
 
 // Shutdown closes the underlying connection to vCenter simulator
 func (vcsim *EventStream) Shutdown(_ context.Context) error {
+	vcsim.Logger.Infof("attempting graceful shutdown")
+
 	// EventManager:EventManager does not implement: Destroy_Task
-	vcsim.Info("provider shutdown successful")
 	return nil
 }
 

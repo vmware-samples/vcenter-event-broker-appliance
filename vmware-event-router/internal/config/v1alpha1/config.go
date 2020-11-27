@@ -3,8 +3,8 @@ package v1alpha1
 import (
 	"io"
 
+	"github.com/goccy/go-yaml"
 	"github.com/pkg/errors"
-	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -41,7 +41,7 @@ type RouterConfig struct {
 // Parse parses a given configuration and returns a RouterConfig
 func Parse(yamlCfg io.Reader) (*RouterConfig, error) {
 	var cfg RouterConfig
-	dec := yaml.NewDecoder(yamlCfg)
+	dec := yaml.NewDecoder(yamlCfg, yaml.Strict())
 	err := dec.Decode(&cfg)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not decode configuration file")

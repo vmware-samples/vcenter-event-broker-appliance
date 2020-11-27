@@ -1,5 +1,7 @@
 package v1alpha1
 
+import duckv1 "knative.dev/pkg/apis/duck/v1"
+
 const (
 	// EventProcessor is the identifier of an event processor
 	EventProcessor = "EventProcessor"
@@ -13,12 +15,14 @@ const (
 	ProcessorOpenFaaS ProcessorType = "openfaas"
 	// ProcessorEventBridge represents the AWS Event Bridge event processor
 	ProcessorEventBridge ProcessorType = "aws_event_bridge"
+	// ProcessorKnative represents the Knative event processor
+	ProcessorKnative ProcessorType = "knative"
 )
 
 // Processor configures the event processor
 type Processor struct {
 	// Type sets the event processor
-	Type ProcessorType `yaml:"type" json:"type" jsonschema:"enum=openfaas,enum=aws_event_bridge"`
+	Type ProcessorType `yaml:"type" json:"type" jsonschema:"enum=openfaas,enum=aws_event_bridge,enum=knative,required"`
 	// Name is an identifier for the configured event processor
 	Name string `yaml:"name" json:"name" jsonschema:"required"`
 	// OpenFaaS configuration settings
@@ -27,6 +31,9 @@ type Processor struct {
 	// EventBridge configuration settings
 	// +optional
 	EventBridge *ProcessorConfigEventBridge `yaml:"awsEventBridge,omitempty" json:"awsEventBridge,omitempty" jsonschema:"oneof_required=awsEventBridge"`
+	// Knative configuration settings
+	// +optional
+	Knative *ProcessorConfigKnative `yaml:"knative,omitempty" json:"knative,omitempty" jsonschema:"oneof_required=knative"`
 }
 
 // ProcessorConfigOpenFaaS configures the OpenFaaS event processor
@@ -51,4 +58,17 @@ type ProcessorConfigEventBridge struct {
 	RuleARN string `yaml:"ruleARN" json:"ruleARN" jsonschema:"required,default=arn:aws:events:us-west-1:1234567890:rule/vmware-event-router"`
 	// Auth sets the AWS authentication credentials
 	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"oneof_required=auth,description=Authentication configuration for this section"`
+}
+
+// ProcessorConfigKnative configures the Knative event processor
+type ProcessorConfigKnative struct {
+	// Destination defines the sink where events are sent to
+	Destination *duckv1.Destination `yaml:"destination,omitempty" json:"destination,omitempty" jsonschema:"oneof_required=destination,description=Destination sink where to send events"`
+	// InsecureSSL enables/disables TLS certificate validation
+	InsecureSSL bool `yaml:"insecureSSL" json:"insecureSSL" jsonschema:"required,default=false"`
+	// Encoding set the cloud event encoding type
+	Encoding string `yaml:"encoding" json:"encoding" jsonschema:"enum=binary,enum=structured,required,default=structured"`
+	// Auth sets the AWS authentication credentials
+	// +optional
+	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"description=Authentication configuration for this section"`
 }

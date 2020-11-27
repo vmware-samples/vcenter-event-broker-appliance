@@ -15,6 +15,7 @@ events to configurable event `processors` (see below).
 
 **Supported event processors:**
 
+- [Knative](https://knative.dev/)
 - [OpenFaaS](https://www.openfaas.com/)
 - [AWS EventBridge](https://aws.amazon.com/eventbridge/?nc1=h_ls)
 
@@ -38,13 +39,17 @@ to normalize events from the supported event `providers`. See
   router crashes **within seconds** right after startup and having received *n* events but before creating the
   first valid checkpoint (current checkpoint interval is 5s)
 - If an event cannot be successfully delivered (retried) by an event `processor` it is
-  logged and discarded, i.e. there is currently no support for dead letter queues
+  logged and discarded, i.e. there is currently no support for dead letter
+  queues (see note below)
 - Retries in the [OpenFaaS event processor](#processor-type-openfaas) are only
   supported when running in synchronous mode, i.e. `async: false` (see this
   OpenFaaS [issue](https://github.com/openfaas/nats-queue-worker/issues/84))
 
 > **Note:** It is possible though to run **multiple instances** of the event
 > router with different configurations to address multi-vCenter scenarios
+
+> **Note:** Event Processors, like Knative, support Dead Letter Queues when
+> using `Broker` mode.
 
 <!-- omit in toc -->
 ## Table of Contents
@@ -57,6 +62,8 @@ to normalize events from the supported event `providers`. See
     - [Provider Type `vcenter`](#provider-type-vcenter)
     - [Provider Type `vcsim`](#provider-type-vcsim)
   - [The `eventProcessor` section](#the-eventprocessor-section)
+    - [Processor Type `knative`](#processor-type-knative)
+      - [Destination](#destination)
     - [Processor Type `openfaas`](#processor-type-openfaas)
     - [Processor Type `aws_event_bridge`](#processor-type-aws_event_bridge)
   - [The `auth` section](#the-auth-section)
@@ -71,6 +78,8 @@ to normalize events from the supported event `providers`. See
       - [Example: Deploy VMware Event Router into a new namespace](#example-deploy-vmware-event-router-into-a-new-namespace)
       - [Creating/Updating the Chart](#creatingupdating-the-chart)
     - [Manual Deployment](#manual-deployment)
+      - [Create Knative ClusterRoleBinding (skip if not using Knative)](#create-knative-clusterrolebinding-skip-if-not-using-knative)
+      - [Create the VMware Event Router Deployment](#create-the-vmware-event-router-deployment)
   - [CLI Flags](#cli-flags)
 - [Build from Source](#build-from-source)
 - [Contribute](#contribute)
@@ -96,8 +105,10 @@ Usage of ./vmware-event-router:
 
   -config string
         path to configuration file (default "/etc/vmware-event-router/config")
-  -verbose
-        verbose log output (default false)
+  -log-json
+        print JSON-formatted logs
+  -log-level string
+        set log level (debug,info,warn,error) (default "info")
 
 commit: <git_commit_sha>
 version: <release_tag>
@@ -115,8 +126,10 @@ endpoint. Configuration examples are provided [here](deploy/).
 
 ### Overview: Configuration File Structure (YAML)
 
-The following file, using `vcenter` as the event `provider` and `openfaas` as
+The following file, using `vcenter` as the event `provider` and `knative` as
 the `processor` shows an example of the configuration file syntax:
+
+<details><summary>Example Configuration File</summary>
 
 ```yaml
 apiVersion: event-router.vmware.com/v1alpha1
@@ -138,23 +151,25 @@ eventProvider:
         username: administrator@vsphere.local
         password: ReplaceMe
 eventProcessor:
-  type: openfaas
-  name: veba-demo-openfaas
-  openfaas:
-    address: http://gateway.openfaas:8080
-    async: false
-    # assuming basic_auth enabled for OpenFaaS
-    auth:
-      type: basic_auth
-      basicAuth:
-        username: admin
-        password: ReplaceMe
+  type: knative
+  name: veba-demo-knative
+  knative:
+    encoding: binary
+    insecureSSL: false
+    destination:
+      ref:
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+        name: rabbit
+        namespace: default
 metricsProvider:
   type: default
   name: veba-demo-metrics
   default:
     bindAddress: "0.0.0.0:8082"
 ```
+
+</details>
 
 ### JSON Schema Validation
 
@@ -188,11 +203,11 @@ values and examples for these fields.
 The following table lists allowed and required fields with their respective type
 values and examples for these fields.
 
-| Field             | Type   | Description                            | Required | Example                      |
-| ----------------- | ------ | -------------------------------------- | -------- | ---------------------------- |
-| `type`            | String | Type of the event provider             | true     | `vcenter`                    |
-| `name`            | String | Name identifier for the event provider | true     | `vc-01-PROD`                 |
-| `<provider_type>` | Object | Provider specific configuration        | true     | (see provider section below) |
+| Field             | Type   | Description                            | Required | Example                                    |
+| ----------------- | ------ | -------------------------------------- | -------- | ------------------------------------------ |
+| `type`            | String | Type of the event provider             | true     | `vcenter`                                  |
+| `name`            | String | Name identifier for the event provider | true     | `vc-01-PROD`                               |
+| `<provider_type>` | Object | Provider specific configuration        | true     | (see specific provider type section below) |
 
 #### Provider Type `vcenter`
 
@@ -235,11 +250,80 @@ govmomi vCenter Simulator [vcsim](https://github.com/vmware/govmomi/tree/master/
 The following table lists allowed and required fields with their respective type
 values and examples for these fields.
 
-| Field              | Type   | Description                             | Required | Example                          |
-| ------------------ | ------ | --------------------------------------- | -------- | -------------------------------- |
-| `type`             | String | Type of the event processor             | true     | `openfaas` or `aws_event_bridge` |
-| `name`             | String | Name identifier for the event processor | true     | `openfaas-01-PROD`               |
-| `<processor_type>` | Object | Processor specific configuration        | true     | (see processor section below)    |
+| Field              | Type   | Description                             | Required | Example                                     |
+| ------------------ | ------ | --------------------------------------- | -------- | ------------------------------------------- |
+| `type`             | String | Type of the event processor             | true     | `knative`, `openfaas` or `aws_event_bridge` |
+| `name`             | String | Name identifier for the event processor | true     | `knative-broker-PROD`                       |
+| `<processor_type>` | Object | Processor specific configuration        | true     | (see specific processor type section below) |
+
+
+#### Processor Type `knative`
+
+Knative is a Kubernetes-based platform to deploy and manage modern serverless
+workloads. Knative has two core building blocks, that is Serving (Knative
+`Service`) and Eventing (`Broker`, `Channel`, etc.). 
+
+The VMware Event Router can be configured to directly send events to any
+*addressable* Knative resource ("reference"), e.g. a Knative `Broker` or
+`Service`. `Broker` is the recommended deployment model for the VMware Event
+Router. Please see the Knative documentation on
+[Eventing](https://knative.dev/docs/eventing/) for details around brokers,
+triggers, event filtering, etc.
+
+Alternatively, the router can send events to a URI, e.g. an external HTTP endpoint accepting
+CloudEvents.
+
+The following table lists allowed and optional fields for using Knative as an
+event `processor`.
+
+| Field           | Type    | Description                                                                                                                                                | Required | Example                           |
+| --------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------------- |
+| `<destination>` | Object  | Knative *addressable* Destination to send events to.                                                                                                       | true     | (see `destination` section below) |
+| `encoding`      | Boolean | Cloud Events message [encoding](https://github.com/cloudevents/spec/blob/v1.0/spec.md#message)                                                             | true     | `structured` or `binary`          |
+| `insecureSSL`   | Boolean | Skip TSL verification                                                                                                                                      | true     | `true` (i.e. ignore errors)       |
+| `<auth>`        | Object  | **Optional:** authentication data (see auth section below). Omit section if your Knative Service, URI (Ingress) or Broker does not enforce authentication. | false    | (see `basic_auth` example below)  |
+
+> **Note:** When sending events to a Knative `Broker`, the Knative broker will always
+> send `binary` encoded cloud events to the Knative sinks, e.g. triggered `Service`.
+
+##### Destination
+
+Knative abstracts event receivers ("sinks") in a very flexible way via
+*addressable* `Destinations`. The VMware Event Router technically supports all
+Knative `Destinations`. However, Knative `Broker` or Knative `Services` are
+likely the ones you will be using.
+
+> **Note:** We have not done any testing for Knative `Channels`, since
+> request response style interactions are out of scope for the VMware Event
+> Router.
+
+The following table lists the available destination types for the `destination` section in
+the router configuration when targeting a URI.
+
+| Field        | Type   | Description                                                    | Required              | Example                       |
+| ------------ | ------ | -------------------------------------------------------------- | --------------------- | ----------------------------- |
+| `<uri>`      | Object | URI can be used to send events to an external HTTP(S) endpoint | one_of `uri` or `ref` |                               |
+| `uri.scheme` | String | URI scheme                                                     | `true`                | `http` or `https`             |
+| `uri.host`   | String | URI target host                                                | `true`                | `gateway-external.corp.local` |
+
+The following table lists the available destination types for the `destination` section in
+the router configuration when targeting a URI.
+
+| Field            | Type   | Description                                                                           | Required              | Example                                               |
+| ---------------- | ------ | ------------------------------------------------------------------------------------- | --------------------- | ----------------------------------------------------- |
+| `<ref>`          | Object | Ref can be used to send events to a *addressable* Kubernetes or Knative target (sink) | one_of `uri` or `ref` |                                                       |
+| `ref.apiVersion` | String | Kubernetes API version of the target                                                  | `true`                | `eventing.knative.dev/v1` or `serving.knative.dev/v1` |
+| `ref.kind`       | String | Kubernetes Kind of the target                                                         | `true`                | `Broker` or `Service`                                 |
+| `ref.name`       | String | Kubernetes object name for the given `kind` and `apiVersion`                          | `true`                | `mybroker`                                            |
+| `ref.namespace`  | String | Kubernetes namespace for the given object reference                                   | `true`                | `default`                                             |
+
+
+> **Note:** Only one of `uri` or `ref` MUST be specified. The list of all
+> available URI options is documented [here](https://pkg.go.dev/net/url#URL).
+
+> **Note:** A vanilla Kubernetes `Service` can also be specified when using
+> `Ref` as the destination type. Use `v1` in the `apiVersion` section.
+
 
 #### Processor Type `openfaas`
 
@@ -419,10 +503,10 @@ Kubernetes cluster** for an **existing** OpenFaaS ("faas-netes") environment.
 
 For your convenience we provide a Helm Chart which can be used to easily install
 the VMware Event Router into an **existing** OpenFaaS ("faas-netes")
-environment.
-
-See [below](#openfaas-helm-deployment) for an example how to set up OpenFaaS in
+environment. See [below](#openfaas-helm-deployment) for an example how to set up OpenFaaS in
 a development environment.
+
+> **Note:** Currently we do not support other event processors for Helm-based deployments.
 
 #### Helm Deployment
 
@@ -566,7 +650,7 @@ router with **one** VMware vCenter Server `eventProvider` and **one** OpenFaaS
 environment. The following example will use the OpenFaaS config sample.
 
 > **Note:** Before continuing, make sure your environment is up and running,
-> including Kubernetes and OpenFaaS.
+> including Kubernetes and the configured event `processor`.
 
 After you made your changes to the configuration file, save it as
 `"event-router-config.yaml` in your current Git working directory.
@@ -585,6 +669,58 @@ kubectl -n vmware create secret generic event-router-config --from-file=event-ro
 
 > **Note:** You might want to delete the (local) configuration file to not leave
 > behind sensitive information on your local machine.
+
+If you have configured `knative` as your event `processor` you must also create
+a `ClusterRoleBinding` for the VMware Event Router so it can lookup Knative
+`destinations`.
+
+##### Create Knative ClusterRoleBinding (skip if not using Knative)
+
+The following commands creates the `ClusterRoleBinding` assuming the VMware
+Event Router will be deployed into the `vmware` namespace using the predefined
+service account (deployment manifest). This requires a properly configured
+Knative environment with `Serving` and `Eventing` CRDs installed.
+
+```bash
+# only for Knative-based deployments
+kubectl create clusterrolebinding veba-addressable-resolver --clusterrole=addressable-resolver --serviceaccount=vmware:vmware-event-router
+```
+
+<details><summary>Addressable Resolver Permissions</summary>
+
+```bash
+kubectl describe clusterrole addressable-resolver
+Name:                                            addressable-resolver
+Labels:                                          eventing.knative.dev/release=v0.18.4
+Annotations:                                     PolicyRule:
+  Resources                                      Non-Resource URLs  Resource Names  Verbs
+  ---------                                      -----------------  --------------  -----
+  services                                       []                 []              [get list watch]
+  brokers.eventing.knative.dev/status            []                 []              [get list watch]
+  brokers.eventing.knative.dev                   []                 []              [get list watch]
+  parallels.flows.knative.dev/status             []                 []              [get list watch]
+  parallels.flows.knative.dev                    []                 []              [get list watch]
+  sequences.flows.knative.dev/status             []                 []              [get list watch]
+  sequences.flows.knative.dev                    []                 []              [get list watch]
+  channels.messaging.knative.dev/status          []                 []              [get list watch]
+  channels.messaging.knative.dev                 []                 []              [get list watch]
+  inmemorychannels.messaging.knative.dev/status  []                 []              [get list watch]
+  inmemorychannels.messaging.knative.dev         []                 []              [get list watch]
+  parallels.messaging.knative.dev/status         []                 []              [get list watch]
+  parallels.messaging.knative.dev                []                 []              [get list watch]
+  sequences.messaging.knative.dev/status         []                 []              [get list watch]
+  sequences.messaging.knative.dev                []                 []              [get list watch]
+  routes.serving.knative.dev/status              []                 []              [get list watch]
+  routes.serving.knative.dev                     []                 []              [get list watch]
+  services.serving.knative.dev/status            []                 []              [get list watch]
+  services.serving.knative.dev                   []                 []              [get list watch]
+  channels.messaging.knative.dev/finalizers      []                 []              [update]
+
+```
+
+</details>
+
+##### Create the VMware Event Router Deployment
 
 Now we can deploy the VMware Event Router:
 
@@ -702,7 +838,14 @@ the following script:
 ## Example Event Structure
 
 The following example for a `VmPoweredOnEvent` shows the event structure and
-payload:
+payload. 
+
+⚠️ **IMPORTANT:** The event structure depends on the event `processor` being
+ used, e.g. Knative supports `structured` (Cloud Events metadata in message body)
+ and `binary` (metadata in message headers) encoding modes. We might also change
+ the event structure in the future.
+
+<details><summary>Example Event Structure (structured JSON encoding)</summary>
 
 ```json
 {
@@ -755,6 +898,9 @@ payload:
   "datacontenttype": "application/json"
 }
 ```
+
+</details>
+<p>
 
 > **Note:** If you use the AWS EventBridge stream `processor` the event is
 > wrapped and accessible under `""detail": {}"` as a JSON-formatted string.
