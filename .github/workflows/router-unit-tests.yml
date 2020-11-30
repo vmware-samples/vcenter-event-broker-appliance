@@ -23,5 +23,5 @@ jobs:
     steps:
       - name: checkout source
         uses: actions/checkout@v2
-      - name: run unit tests and verify image build (w/out push)
-        run: make build
+      - name: run unit tests
+        run: make unit-test

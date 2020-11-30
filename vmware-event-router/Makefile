@@ -37,9 +37,9 @@ tidy:
 	go mod tidy -v
 
 # intended for local dev use (won't check for unclean git)
-binary: unit-test tidy
+binary: unit-test 
 	$(info Make: Building binary "$(DIST_FOLDER)/$(BINARY)".)
-	CGO_ENABLED=0 go build -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o $(DIST_FOLDER)/$(BINARY) cmd/router/main.go
+	CGO_ENABLED=0 go build -mod=readonly -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o $(DIST_FOLDER)/$(BINARY) cmd/router/main.go
 
 build: unit-test tidy
 	$(info Make: Building image "$(IMAGE_NAME)".)
@@ -58,14 +58,14 @@ unit-test: gofmt
 	$(eval TAG=unit)
 	$(eval TEST_PKGS=$(shell go list -tags=${TAG} -f '{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' ./...))
 	$(info Make: Running unit tests.)
-	@GORACE=history_size=5 go test -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover ${TEST_PKGS} -v
+	@GORACE=history_size=5 go test -mod=readonly -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover ${TEST_PKGS} -v
 
 # requires running Kubernetes/OpenFaaS environment - or use
 # hack/run_integration_tests.sh (requires kind)
 integration-test: gofmt
 	$(eval TAG=integration,openfaas)
 	$(eval TEST_PKGS=$(shell go list -tags=${TAG} -f '{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' ./...))
-	@GORACE=history_size=5 go test -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover ${TEST_PKGS} -v -ginkgo.v
+	@GORACE=history_size=5 go test -mod=readonly -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover ${TEST_PKGS} -v -ginkgo.v
 
 test: unit-test integration-test
 

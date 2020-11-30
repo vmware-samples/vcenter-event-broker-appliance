@@ -15,7 +15,7 @@ COPY cmd cmd
 COPY internal internal
 
 # build
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o vmware-event-router cmd/router/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -mod=readonly -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o vmware-event-router cmd/router/main.go
 
 # ubuntu:bionic-20200921 linux/amd64
 FROM ubuntu@sha256:45c6f8f1b2fe15adaa72305616d69a6cd641169bc8b16886756919e7c01fa48b
