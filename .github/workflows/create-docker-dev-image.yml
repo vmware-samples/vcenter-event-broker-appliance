@@ -5,7 +5,7 @@ name: VMware Event Router Development Build
 on:
   push:
     paths:
-      - 'vmware-event-router/**'
+      - "vmware-event-router/**"
     branches:
       - "development"
 
@@ -16,8 +16,18 @@ defaults:
     working-directory: ./vmware-event-router
 
 jobs:
+  modules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source
+        uses: actions/checkout@v2
+      - name: verify modules are up2date/unchanged
+        run: |
+          make tidy
+          [[ -z $(git status -s) ]] || (echo 'git dirty: modified and/or untracked'; git status -s; false)
   build-push:
     runs-on: ubuntu-latest
+    needs: modules
     steps:
       - name: checkout source (this.development branch)
         uses: actions/checkout@v2
@@ -30,16 +40,16 @@ jobs:
           DOCKER_SECRET: ${{ secrets.DOCKER_SECRET }}
         run: echo "${DOCKER_SECRET}" | docker login -u "${DOCKER_USER}" --password-stdin
       - name: test and build development image
-        env: 
-          COMMIT: ${{ steps.get_short_commit.outputs.COMMIT }}        
+        env:
+          COMMIT: ${{ steps.get_short_commit.outputs.COMMIT }}
         run: |
           echo "Building development image for vmware-event-router with commit $COMMIT"        
           make
           docker tag vmware/veba-event-router:latest vmware/veba-event-router:$COMMIT
           docker tag vmware/veba-event-router:latest vmware/veba-event-router:development
       - name: push the development image
-        env: 
-          COMMIT: ${{ steps.get_short_commit.outputs.COMMIT }}        
+        env:
+          COMMIT: ${{ steps.get_short_commit.outputs.COMMIT }}
         run: |
           docker push vmware/veba-event-router:$COMMIT
           docker push vmware/veba-event-router:development

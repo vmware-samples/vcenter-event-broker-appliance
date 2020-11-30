@@ -5,7 +5,7 @@
 ![Website](https://img.shields.io/website?label=vmweventbroker.io&url=https%3A%2F%2Fvmweventbroker.io%2F)
 
 ![VMware Event Router
-Linting](https://github.com/vmware-samples/vcenter-event-broker-appliance/workflows/VMware%20Event%20Router%20Linting/badge.svg)
+Build](https://github.com/vmware-samples/vcenter-event-broker-appliance/workflows/VMware%20Event%20Router%20Development%20Build/badge.svg)
 ![VMware Event Router Unit
 Tests](https://github.com/vmware-samples/vcenter-event-broker-appliance/workflows/VMware%20Event%20Router%20Unit%20Tests/badge.svg)
 ![VMware Event Router Integration Tests](https://github.com/vmware-samples/vcenter-event-broker-appliance/workflows/VMware%20Event%20Router%20Integration%20Tests/badge.svg)

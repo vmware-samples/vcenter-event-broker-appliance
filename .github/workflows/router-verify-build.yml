@@ -1,10 +1,14 @@
-name: Release VMware Event Router
+name: VMware Event Router Build Verification
 
+# triggered on every PRs to verify Docker builds but only when changes inside
+# vmware-event-router (sub)dir(s)
 on:
-  release:
-    types:
-      - published
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'vmware-event-router/**'
 
+# run all jobs with these defaults, unless specified otherwise
 defaults:
   run:
     shell: bash
@@ -20,18 +24,11 @@ jobs:
         run: |
           make tidy
           [[ -z $(git status -s) ]] || (echo 'git dirty: modified and/or untracked'; git status -s; false)
-  build-push:
+  docker-build:
     runs-on: ubuntu-latest
     needs: modules
     steps:
-      - name: checkout source (master branch)
+      - name: checkout source
         uses: actions/checkout@v2
-        with:
-          ref: 'master'
-      - name: log in to Docker
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_SECRET: ${{ secrets.DOCKER_SECRET }}
-        run: echo "${DOCKER_SECRET}" | docker login -u "${DOCKER_USER}" --password-stdin
-      - name: test, build, tag and push image
-        run: make release
+      - name: verify Docker build (no push)
+        run: docker build -t vmware-event-router:build-test .
