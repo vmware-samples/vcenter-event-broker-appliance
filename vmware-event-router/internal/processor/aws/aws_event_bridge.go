@@ -83,7 +83,7 @@ type eventPattern struct {
 }
 
 // NewEventBridgeProcessor returns an AWS EventBridge processor for the given
-// stream source
+// configuration
 func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEventBridge, ms metrics.Receiver, log logger.Logger, opts ...Option) (*EventBridgeProcessor, error) {
 	awsLog := log
 	if zapSugared, ok := log.(*zap.SugaredLogger); ok {
@@ -370,5 +370,6 @@ func (eb *EventBridgeProcessor) PushMetrics(ctx context.Context, ms metrics.Rece
 // Shutdown attempts a clean shutdown of the AWS EventBridge processor
 // TODO: check if we need to perform anything here
 func (eb *EventBridgeProcessor) Shutdown(_ context.Context) error {
+	eb.Logger.Infof("attempting graceful shutdown") // noop for now
 	return nil
 }

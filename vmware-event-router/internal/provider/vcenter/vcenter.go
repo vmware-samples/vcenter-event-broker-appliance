@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/embano1/waitgroup"
 	"github.com/pkg/errors"
 	"github.com/vmware/govmomi"
 	"github.com/vmware/govmomi/event"
@@ -33,7 +34,8 @@ const (
 	defaultPollFrequency  = time.Second
 	eventsPageMax         = 100 // events per page from history collector
 	checkpointInterval    = 5 * time.Second
-	checkpointMaxEventAge = time.Hour // limit event replay time window to max
+	checkpointMaxEventAge = time.Hour       // limit event replay time window to max
+	waitShutdown          = 5 * time.Second // wait for processing to finish during shutdown
 )
 
 // EventStream handles the connection to the vCenter events API
@@ -42,6 +44,8 @@ type EventStream struct {
 	logger.Logger
 	checkpoint    bool
 	checkpointDir string
+
+	wg waitgroup.WaitGroup // shutdown handling
 
 	sync.RWMutex
 	stats metrics.EventStats
@@ -180,12 +184,11 @@ func (vc *EventStream) Stream(ctx context.Context, p processor.Processor) error 
 		if ctx.Err() != nil {
 			ctx = context.Background()
 		}
-		err = ec.Destroy(ctx)
-		if err != nil {
-			vc.Errorf("could not destroy property collector: %v", err)
-		}
+		_ = ec.Destroy(ctx) // ignore any err
 	}()
 
+	vc.wg.Add(1)
+	defer vc.wg.Done()
 	return vc.stream(ctx, p, ec, vc.checkpoint)
 }
 
@@ -325,12 +328,16 @@ func (vc *EventStream) processEvents(ctx context.Context, baseEvents []types.Bas
 
 // Shutdown closes the underlying connection to vCenter
 func (vc *EventStream) Shutdown(ctx context.Context) error {
+	vc.Logger.Infof("attempting graceful shutdown")
+	if err := vc.wg.WaitTimeout(waitShutdown); err != nil {
+		return errors.Wrap(err, "shutdown")
+	}
+
 	// create new ctx in case current already cancelled
 	if ctx.Err() != nil {
 		ctx = context.Background()
 	}
-	err := vc.client.Logout(ctx)
-	return errors.Wrap(err, "logout from vCenter") // err == nil if logout was successful
+	return errors.Wrap(vc.client.Logout(ctx), "logout from vCenter") // err == nil if logout was successful
 }
 
 // PushMetrics pushes metrics to the configured metrics receiver

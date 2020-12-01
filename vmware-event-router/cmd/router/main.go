@@ -6,18 +6,17 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"os/signal"
-	"syscall"
-	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"golang.org/x/sync/errgroup"
+	"knative.dev/pkg/signals"
 
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor/aws"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor/knative"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor/openfaas"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider/vcenter"
@@ -30,7 +29,6 @@ var (
 )
 
 const (
-	graceDelay        = 3 // delay when shutdown initiated
 	defaultConfigPath = "/etc/vmware-event-router/config"
 )
 
@@ -84,22 +82,6 @@ func main() {
 	}
 	log := logger.Named("[MAIN]").Sugar()
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	// signal handler
-	go func() {
-		sigCh := make(chan os.Signal, 1)
-		signal.Notify(sigCh, syscall.SIGTERM, os.Interrupt)
-
-		sig := <-sigCh
-		log.Infow("got signal, cleaning up...", "signal", sig)
-
-		cancel()
-		// give goroutines some grace time to clean up
-		time.Sleep(graceDelay * time.Second)
-	}()
-
 	f, err := os.Open(configPath)
 	if err != nil {
 		log.Fatalf("could not open configuration file: %v", err)
@@ -115,6 +97,8 @@ func main() {
 		proc processor.Processor
 		ms   *metrics.Server // allows nil check
 	)
+
+	ctx := signals.NewContext()
 
 	// set up event provider
 	switch cfg.EventProvider.Type {
@@ -156,6 +140,14 @@ func main() {
 
 		log.Infow("connected to AWS EventBridge", "ruleARN", cfg.EventProcessor.EventBridge.RuleARN)
 
+	case config.ProcessorKnative:
+		proc, err = knative.NewProcessor(ctx, cfg.EventProcessor.Knative, ms, logger.Sugar())
+		if err != nil {
+			log.Fatalf("could not create Knative processor: %v", err)
+		}
+
+		log.Infow("created Knative processor", "sink", proc.(*knative.Processor).Sink())
+
 	default:
 		log.Fatalf("invalid type specified: %q", cfg.EventProcessor.Type)
 	}
@@ -191,11 +183,34 @@ func main() {
 
 	// event stream
 	eg.Go(func() error {
-		defer func() {
-			_ = prov.Shutdown(egCtx)
-			_ = proc.Shutdown(egCtx)
-		}()
 		return prov.Stream(egCtx, proc)
+	})
+
+	// shutdown handling
+	eg.Go(func() error {
+		<-egCtx.Done()
+		log.Infof("initiating shutdown")
+
+		var shutdownErr []error
+		err = prov.Shutdown(egCtx)
+		if err != nil {
+			shutdownErr = append(shutdownErr, fmt.Errorf("could not gracefully shutdown provider: %v", err))
+		}
+
+		err = proc.Shutdown(egCtx)
+		if err != nil {
+			shutdownErr = append(shutdownErr, fmt.Errorf("could not gracefully shutdown processor: %v", err))
+		}
+
+		if shutdownErr == nil {
+			log.Info("shutdown successful")
+			return nil
+		}
+
+		for i, sdErr := range shutdownErr {
+			log.Warnf("shutdown error [%d]: %v", i, sdErr)
+		}
+		return nil // don't propagate shutdown errors
 	})
 
 	// blocks
@@ -205,6 +220,4 @@ func main() {
 			log.Fatal(err)
 		}
 	}
-
-	log.Info("shutdown successful")
 }
