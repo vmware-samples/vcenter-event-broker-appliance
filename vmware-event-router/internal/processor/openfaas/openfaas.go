@@ -11,6 +11,7 @@ import (
 
 	"github.com/avast/retry-go"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
+	"github.com/embano1/waitgroup"
 	ofsdk "github.com/openfaas-incubator/connector-sdk/types"
 	"github.com/openfaas/faas-provider/auth"
 	"github.com/pkg/errors"
@@ -27,6 +28,7 @@ const (
 	defaultTopicDelimiter  = ","
 	defaultRebuildInterval = time.Second * 10
 	defaultTimeout         = time.Second * 15
+	waitShutdown           = 5 * time.Second // wait for processing to finish during shutdown
 )
 
 var (
@@ -61,6 +63,7 @@ type Processor struct {
 	controller ofsdk.Controller
 	ofsdk.ResponseSubscriber
 	respChan chan ofsdk.InvokerResponse // responses from sync fn invocation
+	wg       waitgroup.WaitGroup        // used in graceful shutdown
 
 	// options
 	topicDelimiter  string
@@ -178,6 +181,10 @@ func (p *Processor) Process(ctx context.Context, ce cloudevents.Event) error {
 		return ErrStopped
 	}
 
+	// coordinate concurrent shutdown
+	p.wg.Add(1)
+	defer p.wg.Done()
+
 	p.Debugw("processing event", "eventID", ce.ID(), "event", ce)
 	topic, message, err := handleEvent(ce)
 	if err != nil {
@@ -293,8 +300,16 @@ func (p *Processor) Shutdown(_ context.Context) error {
 	p.stopped = true
 	p.lock.Unlock()
 
-	// free resources - if shutdown is called when they're still inflight processor
-	// invocations this will intentionally cause a panic by writing to a closed channel
+	p.Logger.Infof("waiting up to %v for inflight events to finish processing", waitShutdown)
+	err := p.wg.WaitTimeout(waitShutdown)
+	if err != nil {
+		p.Logger.Warnw("timeout waiting for inflight events", "error", err)
+		p.Logger.Warn("enforcing shutdown")
+	}
+
+	// free resources - if waitShutdown fails (they're still inflight processor
+	// invocations) this might (intentionally) lead to a panic by writing to a
+	// closed channel from the worker routines
 	close(p.respChan)
 	return nil
 }
