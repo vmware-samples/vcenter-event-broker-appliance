@@ -1,6 +1,6 @@
 apiVersion: event-router.vmware.com/v1alpha1
 kind: RouterConfig
-objectMeta:
+metadata:
   name: {{ include "router.name" . }}-{{ .Values.eventrouter.config.name }}
   labels:
 {{ include "router.labels" . | indent 4 }}
