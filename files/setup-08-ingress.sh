@@ -21,51 +21,7 @@ kubectl --kubeconfig /root/.kube/config -n vmware create secret tls ${CERT_NAME}
 
 # Deploy Ingress Route
 
-if [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
-  cat << EOF > /root/config/ingressroute-gateway.yaml
----
-
-apiVersion: projectcontour.io/v1
-kind: HTTPProxy
-metadata:
-  labels:
-    app: vmware
-  name: event-router
-  namespace: vmware
-spec:
-  routes:
-  - conditions:
-    - prefix: /status
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /status
-    services:
-    - name: tinywww
-      port: 8100
-  - conditions:
-    - prefix: /bootstrap
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /bootstrap
-    services:
-    - name: tinywww
-      port: 8100
-  - conditions:
-    - prefix: /stats
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /stats
-    services:
-    - name: vmware-event-router
-      port: 8082
-  virtualhost:
-    fqdn: ${HOSTNAME}
-    tls:
-      minimumProtocolVersion: "1.2"
-      secretName: ${CERT_NAME}
-status: {}
-EOF
-else
+if [ "${EVENT_PROCESSOR_TYPE}" == "OpenFaas" ]; then
   cat << EOF > /root/config/ingressroute-gateway.yaml
 ---
 
@@ -127,6 +83,50 @@ spec:
     services:
     - name: gateway
       port: 8080
+status: {}
+EOF
+else
+  cat << EOF > /root/config/ingressroute-gateway.yaml
+---
+
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  labels:
+    app: vmware
+  name: event-router
+  namespace: vmware
+spec:
+  routes:
+  - conditions:
+    - prefix: /status
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /status
+    services:
+    - name: tinywww
+      port: 8100
+  - conditions:
+    - prefix: /bootstrap
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /bootstrap
+    services:
+    - name: tinywww
+      port: 8100
+  - conditions:
+    - prefix: /stats
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /stats
+    services:
+    - name: vmware-event-router
+      port: 8082
+  virtualhost:
+    fqdn: ${HOSTNAME}
+    tls:
+      minimumProtocolVersion: "1.2"
+      secretName: ${CERT_NAME}
 status: {}
 EOF
 fi
