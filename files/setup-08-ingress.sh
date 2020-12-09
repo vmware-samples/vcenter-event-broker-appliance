@@ -21,7 +21,7 @@ kubectl --kubeconfig /root/.kube/config -n vmware create secret tls ${CERT_NAME}
 
 # Deploy Ingress Route
 
-if [ "${EVENT_PROCESSOR_TYPE}" == "OpenFaas" ]; then
+if [ "${EVENT_PROCESSOR_TYPE}" == "OpenFaaS" ]; then
   cat << EOF > /root/config/ingressroute-gateway.yaml
 ---
 
