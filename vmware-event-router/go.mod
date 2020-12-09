@@ -26,4 +26,4 @@ require (
 	knative.dev/pkg v0.0.0-20201109175709-2c9320ae0640
 )
 
-replace github.com/openfaas-incubator/connector-sdk => github.com/embano1/connector-sdk v0.0.0-20201021143238-8291e33b7d6d
+replace github.com/openfaas-incubator/connector-sdk => github.com/embano1/connector-sdk v0.0.0-20201209211641-e6a3409ab348
