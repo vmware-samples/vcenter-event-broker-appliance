@@ -152,8 +152,8 @@ github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21/go.mod h1
 github.com/eapache/queue v1.1.0/go.mod h1:6eCeP0CKFpHLu8blIFXhExK/dRa7WDZfr6jVFPTqq+I=
 github.com/edsrzf/mmap-go v1.0.0/go.mod h1:YO35OhQPt3KJa3ryjFM5Bs14WD66h8eGKpfaBNrHW5M=
 github.com/elazarl/goproxy v0.0.0-20180725130230-947c36da3153/go.mod h1:/Zj4wYkgs4iZTTu3o/KG3Itv/qCCa8VVMlb3i9OVuzc=
-github.com/embano1/connector-sdk v0.0.0-20201021143238-8291e33b7d6d h1:CKyhpRBDirxWVXg0QkPNlM+6r9OF/q9UGF48J8KHyS8=
-github.com/embano1/connector-sdk v0.0.0-20201021143238-8291e33b7d6d/go.mod h1:xQK4clyPbZ1MfdIk3cU212TiS8VUwuX8RZvwtFBtacA=
+github.com/embano1/connector-sdk v0.0.0-20201209211641-e6a3409ab348 h1:504fYj6Sn07M27KkDkVz7kTu8SuM3pd76QfpKZLJZzU=
+github.com/embano1/connector-sdk v0.0.0-20201209211641-e6a3409ab348/go.mod h1:xQK4clyPbZ1MfdIk3cU212TiS8VUwuX8RZvwtFBtacA=
 github.com/embano1/waitgroup v0.0.0-20201120223302-1d5df9b49112 h1:kkUBqf7sMY9FDOWtJtG+NG71HmeyEamZE2ssGcALLXM=
 github.com/embano1/waitgroup v0.0.0-20201120223302-1d5df9b49112/go.mod h1:xIKMM6mvwOOlKMak0IkCruE/fHg6ONYIpiGVjbi+R5w=
 github.com/emicklei/go-restful v0.0.0-20170410110728-ff4f55a20633/go.mod h1:otzb+WCGbkyDHkqmQmT5YD2WR4BBwUdeQoFo8l/7tVs=
