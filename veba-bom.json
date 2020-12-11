@@ -1,12 +1,12 @@
 {
     "veba": {
-        "version": "release-0.5.0"
+        "version": "v0.5.0"
     },
     "vmware-event-router": {
-        "gitRepoTag": "release-0.5.0",
+        "gitRepoTag": "v0.5.0",
         "containers": [{
             "name": "vmware/veba-event-router",
-            "version": "release-0.5.0"
+            "version": "v0.5.0"
         }]
     },
     "antrea": {
