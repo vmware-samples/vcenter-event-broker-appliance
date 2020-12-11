@@ -1,0 +1,11 @@
+{
+    "VC" : "",
+    "VC_USERNAME" : "",
+    "VC_PASSWORD" : "",
+    "SMTP_SERVER" : "smtp.mailserver.com",
+    "SMTP_PORT" : "25",
+    "SMTP_USERNAME" : "",
+    "SMTP_PASSWORD" : "",
+    "EMAIL_TO": ["email_recipients@abc.com"],
+    "EMAIL_FROM" : "email_sender@abc.com"
+}

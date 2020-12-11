@@ -1,0 +1,34 @@
+name: VMware Event Router Build Verification
+
+# triggered on every PRs to verify Docker builds but only when changes inside
+# vmware-event-router (sub)dir(s)
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'vmware-event-router/**'
+
+# run all jobs with these defaults, unless specified otherwise
+defaults:
+  run:
+    shell: bash
+    working-directory: ./vmware-event-router
+
+jobs:
+  modules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source
+        uses: actions/checkout@v2
+      - name: verify modules are up2date/unchanged
+        run: |
+          make tidy
+          [[ -z $(git status -s) ]] || (echo 'git dirty: modified and/or untracked'; git status -s; false)
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: modules
+    steps:
+      - name: checkout source
+        uses: actions/checkout@v2
+      - name: verify Docker build (no push)
+        run: docker build -t vmware-event-router:build-test .

@@ -14,22 +14,23 @@ spec:
       labels:
         app: vmware-event-router
     spec:
+      serviceAccountName: vmware-event-router
       containers:
-      - image: vmware/veba-event-router:latest
-        args: ["-config", "/etc/vmware-event-router/event-router-config.json", "-verbose"]
-        name: vmware-event-router
-        resources:
-          requests:
-            cpu: 200m
-            memory: 200Mi
-        volumeMounts:
-        - name: config
-          mountPath: /etc/vmware-event-router/
-          readOnly: true
+        - image: vmware/veba-event-router:latest
+          args: [ "-config", "/etc/vmware-event-router/event-router-config.yaml", "-log-level", "info" ]
+          name: vmware-event-router
+          resources:
+            requests:
+              cpu: 200m
+              memory: 200Mi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/vmware-event-router/
+              readOnly: true
       volumes:
-      - name: config
-        secret: 
-          secretName: event-router-config
+        - name: config
+          secret:
+            secretName: event-router-config
 ---
 apiVersion: v1
 kind: Service
@@ -39,9 +40,14 @@ metadata:
   name: vmware-event-router
 spec:
   ports:
-  - port: 8080
-    protocol: TCP
-    targetPort: 8080
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
   selector:
     app: vmware-event-router
   sessionAffinity: None
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vmware-event-router

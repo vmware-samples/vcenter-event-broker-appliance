@@ -1,0 +1,40 @@
+apiVersion: event-router.vmware.com/v1alpha1
+kind: RouterConfig
+metadata:
+  name: {{ include "router.name" . }}-{{ .Values.eventrouter.config.name }}
+  labels:
+{{ include "router.labels" . | indent 4 }}
+eventProvider:
+  type: vcenter
+  name: {{ .Release.Name }}-vcenter
+  vcenter:
+    {{- with .Values.eventrouter.vcenter }}
+    address: {{ .address }}
+    insecureSSL: {{ .insecure }}
+    checkpoint: false
+    auth:
+      type: basic_auth
+      basicAuth:
+        username: {{ .username }}
+        password: {{ .password }}
+    {{- end }}
+eventProcessor:
+  type: openfaas
+  name: {{ .Release.Name }}-openfaas
+  openfaas:
+    {{- with .Values.eventrouter.openfaas }}
+    address: {{ .address }}
+    async: {{ .async }}
+    {{- if eq .basicAuth true }}
+    auth:
+      type: basic_auth
+      basicAuth:
+        username: {{ .username }}
+        password: {{ .password }}
+    {{- end }}
+    {{- end }}
+metricsProvider:
+  type: default
+  name: veba-demo-metrics
+  default:
+    bindAddress: 0.0.0.0:{{ .Values.eventrouter.metrics.port }}

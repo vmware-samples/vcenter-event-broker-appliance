@@ -12,17 +12,142 @@ cta:
   - text: Deploy a Function - [here](use-functions).
 ---
 
-# Deploy vCenter Event Broker Application to existing Kubernetes Cluster
+<!-- omit in toc -->
+# Deploy VMware Event Broker Application to existing Kubernetes Cluster
 
-For customers with an existing Kubernetes ("K8s") cluster, you can deploy the underlying components that make up the vCenter Event Broker Appliance. The instructions below will guide you in downloading the required files and using the `create_k8s_config.sh` [shell script](https://github.com/vmware-samples/vcenter-event-broker-appliance/blob/development/vmware-event-router/hack/create_k8s_config.sh) to aide in deploying the VEBA K8s application.
+For customers with an existing Kubernetes ("K8s") cluster, you can deploy the underlying components that make up the VMware Event Broker Appliance.
 
-The script will prompt users for the required input and automatically setup and deploy both OpenFaaS and the VMware Event Router components giving you a similar setup like the vCenter Event Broke Appliance. If you have already deployed OpenFaaS, you can skip that step during the script input phase.
+<!-- omit in toc -->
+## Table of contents
+- [Pre-Req](#pre-req)
+- [Helm Deployment](#helm-deployment)
+  - [OpenFaaS Helm Deployment (skip if already installed)](#openfaas-helm-deployment-skip-if-already-installed)
+  - [VMware Event Router Helm Deployment](#vmware-event-router-helm-deployment)
+- [Automated script-based deployment](#automated-script-based-deployment)
+  - [Install](#install)
+  - [Uninstall](#uninstall)
+- [Deploy only VMware Event Router](#deploy-only-vmware-event-router)
+- [Uninstall:](#uninstall)
 
-## Pre-Req:
+## Pre-Req
 * Ability to create namespaces, secrets and deployments in your K8s Cluster using kubectl
 * Outbound connectivity or access to private registry from the K8s Cluster to download the required containers to deploy OpenFaaS and/or VMware Event Router
+* [Helm](https://helm.sh/docs/intro/install/) installed
 
-## Deploy VMware Event Router and OpenFaaS
+## **Helm Deployment**
+
+### OpenFaaS Helm Deployment (skip if already installed)
+
+The following steps can be used to quickly install OpenFaaS as a requirement for the
+Helm installation instructions of the VMware Event Router below:
+
+```bash
+kubectl create ns openfaas && kubectl create ns openfaas-fn
+
+helm repo add openfaas https://openfaas.github.io/faas-netes && \
+    helm repo update \
+    && helm upgrade openfaas --install openfaas/openfaas \
+        --namespace openfaas \
+        --set functionNamespace=openfaas-fn \
+        --set generateBasicAuth=true
+
+OF_PASS=$(echo $(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode))
+```
+
+### VMware Event Router Helm Deployment
+
+First create an `override.yaml` file with your environment specific settings,
+e.g.:
+
+```yaml
+eventrouter:
+  config:
+    logLevel: debug
+  vcenter:
+    address: https://10.186.34.28
+    username: administrator@vsphere.local
+    password: <vc_account_password>
+    insecure: true # ignore TLS certs
+  openfaas:
+    address: http://gateway.openfaas:8080
+    basicAuth: true
+    username: admin
+    password: <paste_OF_PASS_from_above>
+
+```
+
+> **Note:** Please ensure the correct formatting/indentation which follows the
+> Helm `values.yaml` file.
+
+
+Now add the VMware Event Router Helm release to your Helm repository:
+
+```bash
+# adds the veba chartrepo to the list of local registries with the repo name "veba"
+helm repo add vmware-veba https://projects.registry.vmware.com/chartrepo/veba
+```
+
+To ensure new releases are pulled/updated and reflected locally update the repo index:
+
+```bash
+helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "vmware-veba" chart repository
+Update Complete. ⎈ Happy Helming!⎈
+
+```
+
+The chart should now show up in the search:
+
+```bash
+helm search repo event-router
+NAME                      CHART VERSION   APP VERSION     DESCRIPTION
+vmware-veba/event-router  v0.5.0          v0.5.0          The VMware Event Router is used to connect to v...
+```
+
+> **Note:** To list/install development releases add the `--devel` flag to the Helm CLI.
+
+Now install the chart using a Helm release name of your choice, e.g. `veba`,
+using the configuration override file created above. The following command will
+create a release from the chart in the namespace `vmware`, which will be
+automatically created if it does not exist:
+
+```bash
+helm install -n vmware --create-namespace veba vmware-veba/event-router -f override.yaml
+NAME: veba
+LAST DEPLOYED: Mon Nov  9 16:27:27 2020
+NAMESPACE: vmware
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
+
+Check the logs of the VMware Event Router to validate it is operating correctly:
+
+```bash
+kubectl -n vmware logs deploy/router -f
+```
+
+If you run into issues, the logs should give you a hint, e.g.:
+
+- configuration file not found -> file naming issue
+- connection to vCenter/OpenFaaS cannot be established -> check values,
+  credentials (if any) in the configuration file
+- deployment/pod will not even come up -> check for resource issues, docker pull
+  issues and other potential causes using the standard `kubectl` troubleshooting
+  ways
+
+To uninstall the release run:
+
+```bash
+helm -n vmware uninstall veba
+```
+
+## Automated script-based deployment
+
+The instructions below will guide you in downloading the required files and using the `create_k8s_config.sh` [shell script](https://github.com/vmware-samples/vcenter-event-broker-appliance/blob/development/vmware-event-router/hack/create_k8s_config.sh) to aide in deploying the VEBA K8s application.
+
+The script will prompt users for the required input and automatically setup and deploy both OpenFaaS and the VMware Event Router components giving you a similar setup like the vCenter Event Broke Appliance. If you have already deployed OpenFaaS, you can skip that step during the script input phase.
 
 ### Install
 

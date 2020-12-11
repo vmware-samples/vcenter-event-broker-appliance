@@ -1,32 +1,38 @@
 package processor
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/vmware/govmomi/vim25/types"
+	cloudevents "github.com/cloudevents/sdk-go/v2"
+
+	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 )
 
-// Processor handles incoming vCenter events. This enables different FaaS
-// implementations for vCenter event processing. Note: in the case of processing
-// failure the current behavior is to log but return nil until at-least-once
-// semantics are implemented.
+// Processor processes incoming events
 type Processor interface {
-	Process(types.ManagedObjectReference, []types.BaseEvent) error
+	Process(ctx context.Context, ce cloudevents.Event) error
+	PushMetrics(ctx context.Context, ms metrics.Receiver)
+	Shutdown(ctx context.Context) error
 }
 
 // Error struct contains the generic error content used by the processors
 // it extends the simple error by providing context which processor gave
 // the error
 type Error struct {
-	processor string
+	processor config.ProcessorType
 	err       error
 }
 
-func processorError(processor string, err error) error {
+// NewError creates an error for the given processor and error
+func NewError(processor config.ProcessorType, err error) error {
 	return &Error{
 		processor: processor,
 		err:       err,
 	}
 }
 
-func (e *Error) Error() string { return fmt.Sprintf("%s: %s", e.processor, e.err.Error()) }
+func (e *Error) Error() string {
+	return fmt.Sprintf("%s: %s", e.processor, e.err.Error())
+}

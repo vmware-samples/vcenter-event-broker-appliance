@@ -14,7 +14,7 @@ cta:
 
 # VMware Event Broker Appliance
 
-The [VMware Event Broker Appliance](https://flings.vmware.com/vcenter-event-broker-appliance#summary){:target="_blank"} Fling enables customers to unlock the hidden potential of events in the SDDC to easily create [event-driven automation](https://octo.vmware.com/vsphere-power-event-driven-automation/){:target="_blank"} and take vCenter Server Events to the next level! Extending vSphere by easily triggering custom or prebuilt actions to deliver powerful integrations within your datacenter across public cloud has never been more easier before. 
+The [VMware Event Broker Appliance](https://flings.vmware.com/vmware-event-broker-appliance#summary){:target="_blank"} Fling enables customers to unlock the hidden potential of events in the SDDC to easily create [event-driven automation](https://octo.vmware.com/vsphere-power-event-driven-automation/){:target="_blank"} and take vCenter Server Events to the next level! Extending vSphere by easily triggering custom or prebuilt actions to deliver powerful integrations within your datacenter across public cloud has never been more easier before. 
 
 VMware Event Broker Appliance is provided as a virtual appliance that can be deployed to any vSphere-based infrastructure, including an on-premises and/or any public cloud environment running on vSphere such as VMware Cloud on AWS or VMware Cloud on DellEMC.
 

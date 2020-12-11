@@ -82,9 +82,9 @@
             <Description>Disable TLS Verification for vCenter Server (required for self-sign certificate)</Description>
         </Property>
       <Category>Event Processor Configuration</Category>
-        <Property ovf:qualifiers="ValueMap{&quot;OpenFaaS&quot;, &quot;AWS EventBridge&quot;}" ovf:userConfigurable="true" ovf:value="OpenFaaS" ovf:type="string" ovf:key="guestinfo.event_processor_type">
+        <Property ovf:qualifiers="ValueMap{&quot;Knative&quot;, &quot;OpenFaaS&quot;, &quot;AWS EventBridge&quot;}" ovf:userConfigurable="true" ovf:value="OpenFaaS" ovf:type="string" ovf:key="guestinfo.event_processor_type">
           <Label>Event Processor</Label>
-          <Description>Choose either OpenFaaS (default) or AWS EventBridge and only fill in the configuration for the select event processor below</Description>
+          <Description>Choose either OpenFaaS (default), Knative, or AWS EventBridge and only fill in the configuration for the select event processor below</Description>
         </Property>
       <Category>OpenFaaS Configuration</Category>
         <Property ovf:key="guestinfo.openfaas_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
@@ -94,6 +94,23 @@
         <Property ovf:key="guestinfo.openfaas_advanced_options" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Advanced Settings</Label>
             <Description>Opaque string for applying advanced configurations for OpenFaaS Processor. For advanced use cases only, please see documentation for more details</Description>
+        </Property>
+      <Category>Knative Configuration</Category>
+        <Property ovf:key="guestinfo.knative_host" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Host</Label>
+            <Description>Knative Host (e.g. mybroker.corp.local:8080)</Description>
+        </Property>
+        <Property ovf:key="guestinfo.knative_scheme" ovf:qualifiers="ValueMap{&quot;HTTP&quot;,&quot;HTTPS&quot;}" ovf:userConfigurable="true" ovf:type="string" ovf:value="HTTP">
+            <Label>Scheme</Label>
+            <Description>Knative Scheme - HTTP or HTTPS protocol the broker is using</Description>
+        </Property>
+        <Property ovf:key="guestinfo.knative_disable_tls_verification" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+            <Label>Disable Knative host TLS Verification</Label>
+            <Description>Disable TLS Verification for Knative host (only applicable if Knative Scheme is HTTPS and for self-sign certificate)</Description>
+        </Property>
+        <Property ovf:key="guestinfo.knative_path" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Path</Label>
+            <Description>Additional path to append to the host if required (e.g. /default/default)</Description>
         </Property>
       <Category>AWS EventBridge Configuration</Category>
         <Property ovf:key="guestinfo.aws_eb_access_key" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
