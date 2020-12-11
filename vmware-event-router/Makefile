@@ -84,7 +84,7 @@ endif
 	docker push $(VERSION_TAG)
 	docker push $(LATEST_TAG)
 
-output: test
+output:
 	@echo Docker Image: $(BUILD_TAG)
 	@echo Docker Image: $(VERSION_TAG)
 	@echo Docker Image: $(LATEST_TAG)
