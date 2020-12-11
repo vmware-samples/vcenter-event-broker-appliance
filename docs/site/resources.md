@@ -1,7 +1,7 @@
 ---
 layout: resources
 title: Additional Resources
-description: Update this
+description: Useful resources and articles for VMware Event Broker Appliance
 permalink: /resources
 limit: 3
 ---

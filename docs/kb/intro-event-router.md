@@ -9,7 +9,7 @@ cta:
  description: Explore the capabilities that the VMware Event Router enables
  actions:
     - text: Install the [Appliance with OpenFaaS](install-openfaas) to extend your SDDC with our [community-sourced functions](/examples)
-    - text: Install the [Appliance with AWS EventBridge](install-eventbridge) to extend your SDDC leveraging native AWS capabilities. 
+    - text: Install the [Appliance with AWS EventBridge](install-eventbridge) to extend your SDDC leveraging native AWS capabilities.
     - text: Learn more about the [Events in vCenter](vcenter-events) and how to find the right event for your usecase
     - text: Learn more about Functions in this overview [here](functions).
 ---
@@ -18,14 +18,18 @@ cta:
 
 The VMware Event Router is responsible for connecting to event `stream` sources, such as VMware vCenter, and forward events to an event `processor`. To allow for extensibility and different event sources/processors event sources and processors are abstracted via Go `interfaces`.
 
-Currently, one VMware Event Router is deployed per appliance (1:1 mapping). Only one vCenter event stream can be processed per appliance.  Also, only one event stream (source) and one processor can be configured. The list of supported event sources and processors can be found below.We are evaluating options to support multiple event sources (vCenter servers) and processors per appliance (scale up) or alternatively support multi-node appliance deployments (scale out), which might be required in large deployments (performance, throughput). 
+Currently, one VMware Event Router is deployed per appliance (1:1 mapping). Only one vCenter event stream can be processed per appliance.  Also, only one event stream (source) and one processor can be configured. The list of supported event sources and processors can be found below.We are evaluating options to support multiple event sources (vCenter servers) and processors per appliance (scale up) or alternatively support multi-node appliance deployments (scale out), which might be required in large deployments (performance, throughput).
 
 > **Note:** We have not done any extensive performance and scalability testing to understand the limits of the single appliance model.
 
-# Supported Event Sources
-- [VMware vCenter Server](https://www.vmware.com/products/vcenter-server.html){:target="_blank"}
+## Supported Event Sources
 
-# Supported Event Processors
+- [VMware vCenter Server](https://www.vmware.com/products/vcenter-server.html){:target="_blank"}
+- vCenter Simulator [vcsim](https://github.com/vmware/govmomi/tree/master/vcsim){:target="_blank"} (for testing purposes only)
+
+## Supported Event Processors
+
+- [Knative](https://knative.dev/)
 - [OpenFaaS](https://www.openfaas.com/){:target="_blank"}
 - [AWS EventBridge](https://aws.amazon.com/eventbridge/?nc1=h_ls){:target="_blank"}
 
@@ -59,27 +63,29 @@ Even though this example looks simple, a lot of things can go wrong when transfe
 
 One of the following message delivery semantics is typically used to describe the messaging characteristics of a  distributed system such as the VMware Event Broker Appliance:
 
-- At most once semantics: a message will be delivered once or not at all to the consumer
-- At least once semantics: a message will be delivered once or multiple times to the consumer
-- Exactly once semantics: a message will be delivered exactly once to the consumer
+- At-most-once semantics: a message will be delivered once or not at all to the consumer
+- At-least-once semantics: a message will be delivered once or multiple times to the consumer
+- Exactly-once semantics: a message will be delivered exactly once to the consumer
 
-> **Note:** Exactly once semantics is not supported by all messaging systems as it requires significant engineering effort to implement. It is considered the gold standard in messaging while at the same time being a highly [debated](https://medium.com/@jaykreps/exactly-once-support-in-apache-kafka-55e1fdd0a35f){:target="_blank"} topic.
+> **Note:** Exactly-once semantics is not supported by all messaging systems as it requires significant engineering effort to implement. It is considered the gold standard in messaging while at the same time being a highly [debated](https://medium.com/@jaykreps/exactly-once-support-in-apache-kafka-55e1fdd0a35f){:target="_blank"} topic.
 
-As of today the VMware Event Broker Appliance guarantees at most once delivery. While this might sound like a huge limitation in the appliance (and it might be, depending on your use case) in practice the chances for message delivery failures are/can be reduced by:
+As of today the VMware Event Broker Appliance guarantees *at-most-once* as well as *at-least-once* event delivery semantics for the vCenter event provider (using checkpoints).
+
+**Event Delivery Guarantees:**
+
+- At-least-once event delivery
+  - with the [vCenter event provider](https://vmweventbroker.io/kb/contribute-eventrouter) option `checkpoint: true`
+- At-most-once event delivery
+  - with the [vCenter event provider](https://vmweventbroker.io/kb/contribute-eventrouter) option `checkpoint: false`
+  - with the [vcsim event provider](https://vmweventbroker.io/kb/contribute-eventrouter)
+
+The VMware Event Broker Appliance currently does not persist (to disk) or retry event delivery in case of failure during function invocation or upstream (external system, such as Slack) communication issues. For introspection and debugging purposes invocations are logged to standard output by the OpenFaaS vcenter-connector ("sync" invocation mode) or OpenFaaS queue-worker ("async" invocation mode).
+
+The chances for message delivery failures are/can be reduced by:
 
 - Using TCP/IP as the underlying communication protocol which provides certain ordering (sequencing), back-pressure and retry capabilities at the transmission layer (default in the appliance)
 - Using asynchronous function [invocation](#invocation) (defaults to "off", i.e. "synchronous", in the appliance) which internally uses a message queue for event processing
 - Following [best practices](contribute-functions.md) for writing functions
-
-> **Note:** The VMware Event Broker Appliance currently does not persist (to disk) or retry event delivery in case of failure during function invocation or upstream (external system, such as Slack) communication issues. For introspection and debugging purposes invocations are logged to standard output by the OpenFaaS vcenter-connector ("sync" invocation mode) or OpenFaaS queue-worker ("async" invocation mode).
-
-We are currently investigating options to support at least once delivery semantics. However, this requires significant changes to the event router such as:
-
-- Tracking and checkpointing (to disk) successfully processed vCenter events (stream history position)
-- Buffering events in the connector (incl. queue management to protect from overflows)
-- Raising awareness (docs, tutorials) for function authors to deal with duplicated, delayed or out of order arriving event messages
-- High-availability deployments (active-active/active-passive) to continue to retrieve the event stream during appliance downtime (maintenance, crash)
-- Describe mitigation strategies for data loss in the appliance (snapshots, backups)
 
 ## Invocation
 
