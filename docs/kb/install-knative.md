@@ -20,6 +20,7 @@ Customers looking to seamlessly extend their vCenter by either deploying our pre
 
 * 2 vCPU and 8GB of memory for VMware Event Broker Appliance
 * vCenter Server 6.x or greater
+* vCenter TCP/443 accessible from Appliance IP address
 * Account to login to vCenter Server (readOnly is sufficient)
 
 ### Step 1
