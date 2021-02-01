@@ -1,7 +1,7 @@
 apiVersion: event-router.vmware.com/v1alpha1
 kind: RouterConfig
 metadata:
-  name: router-config-aws
+  name: router-config-knative
   labels:
     key: value
 eventProvider:
