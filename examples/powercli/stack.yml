@@ -1,0 +1,17 @@
+provider:
+  name: openfaas
+  gateway: https://phxlvveba01.itplab.local
+functions:
+  nsxttagsync:
+    lang: powercli
+    handler: ./handler
+    image: cmstraka/veba-powercli-tagging:latest
+    environment:
+      write_debug: true
+      read_debug: true
+      function_debug: true
+      skip_vro_cert_check: true
+    secrets:
+      - nsx-secrets
+    annotations:
+      topic: com.vmware.cis.tagging.attach,com.vmware.cis.tagging.detach
