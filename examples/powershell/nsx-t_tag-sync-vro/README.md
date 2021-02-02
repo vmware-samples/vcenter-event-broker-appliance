@@ -1,7 +1,7 @@
 # vSphere to NSX Tag Synchronization with vRealize Orchestrator
 
 ### Author: Craig Straka (craig.straka@it-partners.com)
-### Version: .5 (Aligned with VEBA versions)
+### Version: .1
 
 ## Description
 Synchronize vSphere tags with NSX-T tags unidiretionally (vSphere is the master)
