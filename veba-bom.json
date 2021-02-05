@@ -61,26 +61,22 @@
         ]
     },
     "openfaas": {
-        "gitRepoTag": "0.10.5",
+        "gitRepoTag": "0.12.15",
         "containers": [{
-                "name": "openfaas/faas-netes",
-                "version": "0.10.3"
+                "name": "ghcr.io/openfaas/faas-netes",
+                "version": "0.12.13"
             },
             {
                 "name": "openfaas/gateway",
-                "version": "0.18.17"
+                "version": "0.20.2"
             },
             {
                 "name": "openfaas/basic-auth-plugin",
-                "version": "0.18.17"
+                "version": "0.20.1"
             },
             {
                 "name": "openfaas/queue-worker",
-                "version": "0.11.0"
-            },
-            {
-                "name": "openfaas/faas-idler",
-                "version": "0.3.0"
+                "version": "0.11.2"
             },
             {
                 "name": "prom/prometheus",
@@ -96,7 +92,7 @@
             }
         ],
         "faas-cli": {
-            "version": "0.12.4"
+            "version": "0.13.0"
         }
     },
     "tinywww": {
