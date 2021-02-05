@@ -29,22 +29,22 @@
         ]
     },
     "kubernetes": {
-        "gitRepoTag": "v1.18.3",
+        "gitRepoTag": "v1.20.2",
         "containers": [{
                 "name": "k8s.gcr.io/kube-apiserver",
-                "version": "v1.18.3"
+                "version": "v1.20.2"
             },
             {
                 "name": "k8s.gcr.io/kube-controller-manager",
-                "version": "v1.18.3"
+                "version": "v1.20.2"
             },
             {
                 "name": "k8s.gcr.io/kube-scheduler",
-                "version": "v1.18.3"
+                "version": "v1.20.2"
             },
             {
                 "name": "k8s.gcr.io/kube-proxy",
-                "version": "v1.18.3"
+                "version": "v1.20.2"
             },
             {
                 "name": "k8s.gcr.io/pause",
@@ -52,11 +52,11 @@
             },
             {
                 "name": "k8s.gcr.io/etcd",
-                "version": "3.4.3-0"
+                "version": "3.4.13-0"
             },
             {
                 "name": "k8s.gcr.io/coredns",
-                "version": "1.6.7"
+                "version": "1.7.0"
             }
         ]
     },
