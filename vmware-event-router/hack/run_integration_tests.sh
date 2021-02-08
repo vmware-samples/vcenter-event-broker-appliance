@@ -33,8 +33,7 @@ KINDBIN="kind"
 KIND_TIMEOUT=5m # exit if kind cluster creation does not complete within this time
 KIND_WAIT=2m    # wait for control plane to show ready
 KIND_CLUSTER="veba-integration"
-# using custom image built with kind since not all versions are pushed to kindtest
-KIND_IMAGE="embano1/node:${K8S_VERSION}"
+KIND_IMAGE="kindest/node:${K8S_VERSION}"
 #################################
 
 tmp_dir=$(mktemp -d -t ci-XXXXXXXXXX)
@@ -76,9 +75,9 @@ fi
 # deploy faas-netes
 cecho "---> Deploying OpenFaaS (${OF_VERSION})" ${GREEN}
 git clone https://github.com/openfaas/faas-netes ${tmp_dir} && git -C ${tmp_dir} checkout ${OF_VERSION}
-kubectl create -f ${tmp_dir}/namespaces.yml
+kubectl apply -f ${tmp_dir}/namespaces.yml
 kubectl -n openfaas create secret generic basic-auth --from-literal=basic-auth-user=admin --from-literal=basic-auth-password="$OF_PASSWORD"
-kubectl create -f ${tmp_dir}/yaml
+kubectl apply -f ${tmp_dir}/yaml
 
 cecho "---> Waiting up to ${OF_TIMEOUT} for OpenFaaS gateway to become ready" ${GREEN}
 ${TIMEOUT_CMD} ${OF_TIMEOUT} /bin/bash -c 'while [[ $READY -lt 1 ]]; do READY=$(kubectl -n openfaas get deploy gateway -o json | '"${JQBIN}"' .status.readyReplicas); sleep 1; done'
