@@ -92,4 +92,16 @@ EOF
 
 systemctl enable getty@tty1.service
 
+echo '> Enable contrackd log rotation...'
+cat > /etc/logrotate.d/contrackd << EOF
+/var/log/conntrackd*.log {
+	missingok
+	size 5M
+	rotate 3
+        maxage 7
+	compress
+	copytruncate
+}
+EOF
+
 echo '> Done'
