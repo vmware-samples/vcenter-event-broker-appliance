@@ -10,8 +10,7 @@ events to configurable event `processors` (see below).
 **Supported event providers:**
 
 - [VMware vCenter Server](https://www.vmware.com/products/vcenter-server.html)
-- vCenter Simulator [vcsim](https://github.com/vmware/govmomi/tree/master/vcsim) (for
-  testing purposes only)
+- vCenter Simulator [vcsim](https://github.com/vmware/govmomi/tree/master/vcsim) (DEPRECATED)
 
 **Supported event processors:**
 
@@ -231,8 +230,13 @@ vCenter Server and the respective type values and examples for these fields.
 
 #### Provider Type `vcsim`
 
+⚠️ This provider is **DEPRECATED** and will be removed in future versions. The
+`vcenter` provider will work correctly against a `vcsim` instance.
+
 The following table lists allowed and required fields for connecting to the
-govmomi vCenter Simulator [vcsim](https://github.com/vmware/govmomi/tree/master/vcsim) and the respective type values and examples for these fields.
+govmomi vCenter Simulator
+[vcsim](https://github.com/vmware/govmomi/tree/master/vcsim) and the respective
+type values and examples for these fields.
 
 | Field         | Type    | Description                           | Required | Example                          |
 | ------------- | ------- | ------------------------------------- | -------- | -------------------------------- |

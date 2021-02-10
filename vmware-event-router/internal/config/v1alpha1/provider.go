@@ -25,6 +25,7 @@ type Provider struct {
 	// +optional
 	VCenter *ProviderConfigVCenter `yaml:"vcenter,omitempty" json:"vcenter,omitempty" jsonschema:"oneof_required=vcenter"`
 	// VCenter simulator configuration settings
+	// DEPRECATED: use provider vcenter instead
 	// +optional
 	VCSIM *ProviderConfigVCSIM `yaml:"vcsim,omitempty" json:"vcsim,omitempty" jsonschema:"oneof_required=vcsim"`
 	// VCD configuration settings
