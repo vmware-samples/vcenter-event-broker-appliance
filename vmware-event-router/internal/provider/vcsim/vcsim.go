@@ -93,6 +93,9 @@ func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCSIM, ms met
 	}
 
 	go vcsim.PushMetrics(ctx, ms)
+
+	// this processor is deprecated since we have the appropriate fixes in govmomi
+	vcsim.Logger.Warn("this processor is deprecated, use vcenter processor instead")
 	return &vcsim, nil
 }
 

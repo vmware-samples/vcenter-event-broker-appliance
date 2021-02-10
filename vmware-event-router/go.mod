@@ -16,7 +16,7 @@ require (
 	github.com/openfaas-incubator/connector-sdk v0.0.0-20200902074656-7f648543d4aa
 	github.com/openfaas/faas-provider v0.15.1
 	github.com/pkg/errors v0.9.1
-	github.com/vmware/govmomi v0.22.2
+	github.com/vmware/govmomi v0.24.1-0.20210210035757-ed60338583b0
 	go.uber.org/zap v1.16.0
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	golang.org/x/sys v0.0.0-20201119102817-f84b799fce68 // indirect
