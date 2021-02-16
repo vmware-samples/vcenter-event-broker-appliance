@@ -7,9 +7,9 @@
 set -euo pipefail
 
 echo -e "\e[92mCreating VMware namespace ..." > /dev/console
-kubectl --kubeconfig /root/.kube/config create namespace vmware
+kubectl create namespace vmware
 
-kubectl --kubeconfig /root/.kube/config -n vmware create secret generic basic-auth \
+kubectl -n vmware create secret generic basic-auth \
         --from-literal=basic-auth-user=admin \
         --from-literal=basic-auth-password="${ROOT_PASSWORD}"
 
@@ -23,14 +23,11 @@ ESCAPED_VCENTER_PASSWORD=$(echo -n ${VCENTER_PASSWORD} | python -c 'import sys,j
 ESCAPED_ROOT_PASSWORD=$(echo -n ${ROOT_PASSWORD} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)')
 
 if [ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]; then
-    if [ -z ${KNATIVE_HOST} ]; then
-      echo "Knative Host was not provided, exiting ..."
-      exit 1
-    fi
-
     echo -e "\e[92mSetting up Knative Processor ..." > /dev/console
 
-    cat > ${EVENT_ROUTER_CONFIG} << __KNATIVE_PROCESSOR__
+    # External Knative Broker
+    if [ "${KNATIVE_DEPLOYMENT_TYPE}" == "external" ]; then
+      cat > ${EVENT_ROUTER_CONFIG} << __KNATIVE_PROCESSOR__
 apiVersion: event-router.vmware.com/v1alpha1
 kind: RouterConfig
 metadata:
@@ -64,6 +61,44 @@ metricsProvider:
   name: veba-metrics
   type: default
 __KNATIVE_PROCESSOR__
+    else
+      # Embedded Knative Broker
+      cat > ${EVENT_ROUTER_CONFIG} << __KNATIVE_PROCESSOR__
+apiVersion: event-router.vmware.com/v1alpha1
+kind: RouterConfig
+metadata:
+  name: router-config-knative
+eventProcessor:
+  name: veba-knative
+  type: knative
+  knative:
+    insecureSSL: false
+    encoding: binary
+    destination:
+      ref:
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+        name: rabbit
+        namespace: default
+eventProvider:
+  name: veba-vc-01
+  type: vcenter
+  vcenter:
+    address: https://${ESCAPED_VCENTER_SERVER}/sdk
+    auth:
+      basicAuth:
+        password: ${ESCAPED_VCENTER_PASSWORD}
+        username: ${ESCAPED_VCENTER_USERNAME}
+      type: basic_auth
+    insecureSSL: ${VCENTER_DISABLE_TLS}
+    checkpoint: false
+metricsProvider:
+  default:
+    bindAddress: 0.0.0.0:8082
+  name: veba-metrics
+  type: default
+__KNATIVE_PROCESSOR__
+    fi
 echo "Processor: Knative" >> /etc/veba-release
 elif [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
     echo -e "\e[92mSetting up AWS Event Bridge Processor ..." > /dev/console
@@ -114,14 +149,14 @@ echo "Processor: EventBridge" >> /etc/veba-release
 else
     # Setup OpenFaaS
     echo -e "\e[92mSetting up OpenFaas Processor ..." > /dev/console
-    kubectl --kubeconfig /root/.kube/config create -f /root/download/faas-netes/namespaces.yml
+    kubectl create -f /root/download/faas-netes/namespaces.yml
 
     # Setup OpenFaaS Secret
-    kubectl --kubeconfig /root/.kube/config -n openfaas create secret generic basic-auth \
+    kubectl -n openfaas create secret generic basic-auth \
         --from-literal=basic-auth-user=admin \
         --from-literal=basic-auth-password="${OPENFAAS_PASSWORD}"
 
-    kubectl --kubeconfig /root/.kube/config apply -f /root/download/faas-netes/yaml
+    kubectl create -f /root/download/faas-netes/yaml
 
 	ESCAPED_OPENFAAS_PASSWORD=$(echo -n ${OPENFAAS_PASSWORD} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)')
 

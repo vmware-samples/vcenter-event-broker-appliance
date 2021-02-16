@@ -7,7 +7,7 @@
 set -euo pipefail
 
 if [ ${VEBA_DEBUG} == "True" ]; then
-    kubectl --kubeconfig /root/.kube/config apply -f /root/config/tinywww-debug.yml
+    kubectl apply -f /root/config/tinywww-debug.yml
 else
-    kubectl --kubeconfig /root/.kube/config apply -f /root/config/tinywww.yml
+    kubectl apply -f /root/config/tinywww.yml
 fi
