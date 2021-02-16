@@ -39,6 +39,9 @@ AWS_EVENTBRIDGE_RULE_ARN=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_arn")
 AWS_EVENTBRIDGE_ADV_OPTION=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_advanced_options")
 DOCKER_NETWORK_CIDR=$(/root/setup/getOvfProperty.py "guestinfo.docker_network_cidr")
 POD_NETWORK_CIDR=$(/root/setup/getOvfProperty.py "guestinfo.pod_network_cidr")
+LOCAL_STORAGE_DISK="/dev/sdb"
+LOCAL_STOARGE_VOLUME_PATH="/data"
+export KUBECONFIG="/root/.kube/config"
 
 if [ -e /root/ran_customization ]; then
     exit
@@ -52,6 +55,17 @@ else
         echo "### WARNING -- DEBUG LOG CONTAINS ALL EXECUTED COMMANDS WHICH INCLUDES CREDENTIALS -- WARNING ###"
         echo "### WARNING --             PLEASE REMOVE CREDENTIALS BEFORE SHARING LOG            -- WARNING ###"
         echo
+	fi
+
+	# Determine Knative deployment model
+	if [ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]; then
+		if [ ! -z ${KNATIVE_HOST} ]; then
+			KNATIVE_DEPLOYMENT_TYPE="external"
+		else
+			KNATIVE_DEPLOYMENT_TYPE="embedded"
+		fi
+	else
+		KNATIVE_DEPLOYMENT_TYPE="na"
 	fi
 
 	echo -e "\e[92mStarting Customization ..." > /dev/console
@@ -68,20 +82,25 @@ else
 	echo -e "\e[92mStarting Kubernetes Configuration ..." > /dev/console
 	. /root/setup/setup-04-kubernetes.sh
 
+	if [ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]; then
+		echo -e "\e[92mStarting Knative Configuration ..." > /dev/console
+		. /root/setup/setup-05-knative.sh
+	fi
+
 	echo -e "\e[92mStarting VMware Event Processor Configuration ..." > /dev/console
-	. /root/setup/setup-05-event-processor.sh
+	. /root/setup/setup-06-event-processor.sh
 
 	echo -e "\e[92mStarting VMware Event Router Configuration ..." > /dev/console
-	. /root/setup/setup-06-event-router.sh
+	. /root/setup/setup-07-event-router.sh
 
 	echo -e "\e[92mStarting TinyWWW Configuration ..." > /dev/console
-	. /root/setup/setup-07-tinywww.sh
+	. /root/setup/setup-08-tinywww.sh
 
 	echo -e "\e[92mStarting Ingress Router Configuration ..." > /dev/console
-	. /root/setup/setup-08-ingress.sh
+	. /root/setup/setup-09-ingress.sh
 
 	echo -e "\e[92mStarting OS Banner Configuration ..."> /dev/console
-	. /root/setup/setup-09-banner.sh &
+	. /root/setup/setup-010-banner.sh &
 
 	echo -e "\e[92mCustomization Completed ..." > /dev/console
 

@@ -13,6 +13,9 @@
       "guest_os_type": "Other",
       "version": "13",
       "disk_size": "12288",
+      "disk_additional_size": [
+        "12288"
+      ],
       "boot_command": [
         "<esc><wait>",
         "vmlinuz initrd=initrd.img root=/dev/ram0 loglevel=3 ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/photon-kickstart.json photon.media=cdrom",
@@ -119,28 +122,33 @@
     },
     {
       "type": "file",
-      "source": "files/setup-05-event-processor.sh",
-      "destination": "/root/setup/setup-05-event-processor.sh"
+      "source": "files/setup-05-knative.sh",
+      "destination": "/root/setup/setup-05-knative.sh"
     },
     {
       "type": "file",
-      "source": "files/setup-06-event-router.sh",
-      "destination": "/root/setup/setup-06-event-router.sh"
+      "source": "files/setup-06-event-processor.sh",
+      "destination": "/root/setup/setup-06-event-processor.sh"
     },
     {
       "type": "file",
-      "source": "files/setup-07-tinywww.sh",
-      "destination": "/root/setup/setup-07-tinywww.sh"
+      "source": "files/setup-07-event-router.sh",
+      "destination": "/root/setup/setup-07-event-router.sh"
     },
     {
       "type": "file",
-      "source": "files/setup-08-ingress.sh",
-      "destination": "/root/setup/setup-08-ingress.sh"
+      "source": "files/setup-08-tinywww.sh",
+      "destination": "/root/setup/setup-08-tinywww.sh"
     },
     {
       "type": "file",
-      "source": "files/setup-09-banner.sh",
-      "destination": "/root/setup/setup-09-banner.sh"
+      "source": "files/setup-09-ingress.sh",
+      "destination": "/root/setup/setup-09-ingress.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-010-banner.sh",
+      "destination": "/root/setup/setup-010-banner.sh"
     },
     {
       "type": "file",

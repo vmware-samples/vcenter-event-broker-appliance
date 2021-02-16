@@ -82,9 +82,9 @@
             <Description>Disable TLS Verification for vCenter Server (required for self-sign certificate)</Description>
         </Property>
       <Category>Event Processor Configuration</Category>
-        <Property ovf:qualifiers="ValueMap{&quot;Knative&quot;, &quot;OpenFaaS&quot;, &quot;AWS EventBridge&quot;}" ovf:userConfigurable="true" ovf:value="OpenFaaS" ovf:type="string" ovf:key="guestinfo.event_processor_type">
+        <Property ovf:qualifiers="ValueMap{&quot;Knative&quot;, &quot;OpenFaaS&quot;, &quot;AWS EventBridge&quot;}" ovf:userConfigurable="true" ovf:value="Knative" ovf:type="string" ovf:key="guestinfo.event_processor_type">
           <Label>Event Processor</Label>
-          <Description>Choose either OpenFaaS (default), Knative, or AWS EventBridge and only fill in the configuration for the select event processor below</Description>
+          <Description>Choose either Knative (default), OpenFaaS, or AWS EventBridge and only fill in the configuration for the select event processor below</Description>
         </Property>
       <Category>OpenFaaS Configuration</Category>
         <Property ovf:key="guestinfo.openfaas_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">

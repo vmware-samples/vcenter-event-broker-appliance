@@ -4,7 +4,7 @@
   "iso_checksum": "f6619bcff94cef63d0d6d7ead7dd3878816ebfa6a1ef5717175bb0d08d4ccc719e4ec7daa7db3c5dc07ea3547fc24412b4dc6827a4ac332ada9d5bfc842c4229",
   "iso_checksum_type": "sha512",
   "iso_url": "http://dl.bintray.com/vmware/photon/3.0/Rev2/iso/Update1/photon-3.0-a0f216d.iso",
-  "numvcpus": "2",
+  "numvcpus": "4",
   "ramsize": "8192",
   "guest_username": "root",
   "guest_password": "##FILL-IN-SECURE-PASSWORD##"
