@@ -1,0 +1,2 @@
+language: powercli
+fprocess: xargs pwsh ./function/script.ps1
