@@ -8,6 +8,8 @@
 
   $('ul#header-nav li.' + $('body').attr('id')).addClass('selected');
 
+  $('ul#submenu li.' + $('div.sub-header').attr('id')).addClass('active');
+
   $('nav#toc-nav ul li.' + $('div.documentation-container').attr('id')).addClass('selected');
   
   if (localStorage.getItem("darkmode") === 'night'){

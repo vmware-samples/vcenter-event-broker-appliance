@@ -1,6 +1,7 @@
 ---
-layout: page
+layout: function
 id: functions
+type: openfaas
 title: Prebuilt Functions
 description: Community-sourced and validated prebuilt functions for OpenFaaS with VEBA.
 permalink: /examples
@@ -88,15 +89,6 @@ examples:
     links: 
     - language: python
       url: "/tree/master/examples/python/echo"
-
-  - title: Echo Cloud Event for Knative
-    usecases: 
-    - item: other
-    id: kn-echo-function
-    description: Function helps users understand the structure and data of a given vCenter Event using the Knative event processor which will be useful when creating brand new Functions.
-    links: 
-    - language: python
-      url: "/tree/master/examples/python/kn-echo"
 
   - title: Trigger PagerDuty incident
     usecases: 
