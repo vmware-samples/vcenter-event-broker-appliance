@@ -156,7 +156,7 @@ else
         --from-literal=basic-auth-user=admin \
         --from-literal=basic-auth-password="${OPENFAAS_PASSWORD}"
 
-    kubectl create -f /root/download/faas-netes/yaml
+    kubectl apply -f /root/download/faas-netes/yaml
 
 	ESCAPED_OPENFAAS_PASSWORD=$(echo -n ${OPENFAAS_PASSWORD} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)')
 
