@@ -27,6 +27,7 @@ git clone https://github.com/openfaas/faas-netes
 cd faas-netes
 git checkout ${OPENFAAS_VERSION}
 sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' yaml/*.yml
+sed -i '15i\ \ namespace: "openfaas"' yaml/prometheus-rbac.yml
 cd ..
 
 echo '> Downloading Contour...'
