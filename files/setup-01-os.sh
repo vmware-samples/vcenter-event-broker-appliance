@@ -33,10 +33,12 @@ echo -e "\e[92mConfiguring IP Tables for Antrea ..." > /dev/console
 iptables -A INPUT -i gw0 -j ACCEPT
 iptables-save > /etc/systemd/scripts/ip4save
 
-echo -e "\e[92mConfiguring Local Storage Volume ..." > /dev/console
-parted ${LOCAL_STORAGE_DISK} --script mklabel gpt mkpart primary ext3 0% 100%
-mkfs -t ext3 ${LOCAL_STORAGE_DISK}1
-mkdir ${LOCAL_STOARGE_VOLUME_PATH}
-chmod 777 ${LOCAL_STOARGE_VOLUME_PATH}
-echo "${LOCAL_STORAGE_DISK}1       ${LOCAL_STOARGE_VOLUME_PATH}       ext3    defaults        0        0" >> /etc/fstab
-mount ${LOCAL_STOARGE_VOLUME_PATH}
+if [ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]; then
+    echo -e "\e[92mConfiguring Local Storage Volume ..." > /dev/console
+    parted ${LOCAL_STORAGE_DISK} --script mklabel gpt mkpart primary ext3 0% 100%
+    mkfs -t ext3 ${LOCAL_STORAGE_DISK}1
+    mkdir ${LOCAL_STOARGE_VOLUME_PATH}
+    chmod 777 ${LOCAL_STOARGE_VOLUME_PATH}
+    echo "${LOCAL_STORAGE_DISK}1       ${LOCAL_STOARGE_VOLUME_PATH}       ext3    defaults        0        0" >> /etc/fstab
+    mount ${LOCAL_STOARGE_VOLUME_PATH}
+fi
