@@ -3,7 +3,7 @@ title: Automation
 #subtitle: See Function
 redirect_from: /docs
 image: fas fa-magic
-excerpt: Automate repetitive tasks and improve efficiency with event-driven functions powered by OpenFaaS
+excerpt: Automate repetitive tasks and improve efficiency with event-driven functions
 author_name: VEBA Team
 # author_avatar: https://placehold.it/64x64
 categories: ['repetitive']

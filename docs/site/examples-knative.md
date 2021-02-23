@@ -18,7 +18,7 @@ examples:
     description: Function helps users understand the structure and data of a given vCenter Event using the Knative event processor which will be useful when creating brand new Functions.
     links: 
     - language: python
-      url: "/tree/master/examples/python/kn-echo"
+      url: "/tree/master/examples/knative/python/kn-echo"
 
 ---
 
