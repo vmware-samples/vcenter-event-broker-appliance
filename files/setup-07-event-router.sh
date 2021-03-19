@@ -7,7 +7,7 @@
 set -euo pipefail
 
 echo -e "\e[92mDeploying VMware Event Router ..." > /dev/console
-kubectl -n vmware create secret generic event-router-config --from-file=${EVENT_ROUTER_CONFIG}
+kubectl -n vmware-system create secret generic event-router-config --from-file=${EVENT_ROUTER_CONFIG}
 
 # Retrieve the VMware Event Router image
 VEBA_BOM_FILE=/root/config/veba-bom.json
@@ -83,9 +83,9 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: vmware-event-router
-  namespace: vmware
+  namespace: vmware-system
 EOF
 
 kubectl apply -f /root/config/event-router-clusterrole.yaml
-kubectl -n vmware apply -f /root/config/event-router-k8s.yaml
-kubectl wait deployment --all --timeout=-1s --for=condition=Available -n vmware
+kubectl -n vmware-system apply -f /root/config/event-router-k8s.yaml
+kubectl wait deployment --all --timeout=-1s --for=condition=Available -n vmware-system
