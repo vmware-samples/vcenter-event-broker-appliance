@@ -5,7 +5,7 @@
     "vmware-event-router": {
         "gitRepoTag": "v0.5.0",
         "containers": [{
-            "name": "vmware/veba-event-router",
+            "name": "projects.registry.vmware.com/veba/veba-event-router",
             "version": "v0.5.0"
         }]
     },
@@ -107,7 +107,7 @@
     "knative-function": {
         "gitRepoTag": "latest",
             "containers": [{
-                "name": "embano1/kn-echo",
+                "name": "projects.registry.vmware.com/veba/kn-echo",
                 "version": "latest"
             }
         ]
@@ -186,7 +186,7 @@
     "tinywww": {
         "gitRepoTag": "master",
         "containers": [{
-            "name": "embano1/tinywww",
+            "name": "projects.registry.vmware.com/veba/tinywww",
             "version": "latest"
         }]
     }

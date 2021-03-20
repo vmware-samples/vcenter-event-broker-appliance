@@ -18,7 +18,7 @@ spec:
         app: tinywww
     spec:
       containers:
-      - image: embano1/tinywww:latest
+      - image: projects.registry.vmware.com/veba/tinywww:latest
         imagePullPolicy: IfNotPresent
         name: tinywww
         ports:
