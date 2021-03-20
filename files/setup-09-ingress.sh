@@ -20,7 +20,7 @@ CERT_NAME=eventrouter-tls
 
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ${KEY_FILE} -out ${CERT_FILE} -subj "/CN=${CN_NAME}/O=${CN_NAME}"
 
-kubectl -n vmware create secret tls ${CERT_NAME} --key ${KEY_FILE} --cert ${CERT_FILE}
+kubectl -n vmware-system create secret tls ${CERT_NAME} --key ${KEY_FILE} --cert ${CERT_FILE}
 
 # Knative Contour for Knative Embedded Broker
 if [ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]; then
@@ -44,7 +44,7 @@ metadata:
   labels:
     app: vmware
   name: event-router
-  namespace: vmware
+  namespace: vmware-system
 spec:
   includes:
   - conditions:
@@ -110,7 +110,7 @@ metadata:
   labels:
     app: vmware
   name: event-router
-  namespace: vmware
+  namespace: vmware-system
 spec:
   routes:
   - conditions:
@@ -154,7 +154,7 @@ metadata:
   labels:
     app: vmware
   name: event-router
-  namespace: vmware
+  namespace: vmware-system
 spec:
   routes:
   - conditions:

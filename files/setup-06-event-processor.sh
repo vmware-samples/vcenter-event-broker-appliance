@@ -6,10 +6,7 @@
 
 set -euo pipefail
 
-echo -e "\e[92mCreating VMware namespace ..." > /dev/console
-kubectl create namespace vmware
-
-kubectl -n vmware create secret generic basic-auth \
+kubectl -n vmware-system create secret generic basic-auth \
         --from-literal=basic-auth-user=admin \
         --from-literal=basic-auth-password="${ROOT_PASSWORD}"
 

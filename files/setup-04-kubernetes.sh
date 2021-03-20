@@ -63,3 +63,7 @@ if [ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]; then
   kubectl apply -f /root/download/local-path-storage.yaml
   kubectl patch sc local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 fi
+
+echo -e "\e[92mCreating VMware namespaces ..." > /dev/console
+kubectl create namespace vmware-system
+kubectl create namespace vmware-functions
