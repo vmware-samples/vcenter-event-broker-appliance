@@ -20,6 +20,13 @@ DNS=${DNS_SERVER}
 Domain=${DNS_DOMAIN}
 __CUSTOMIZE_PHOTON__
 
+# Remove default symlink to prevent reverting back to local DNS stub resolver
+rm -f /etc/resolv.conf
+cat > /etc/resolv.conf <<EOF
+nameserver ${DNS_SERVER}
+search ${DNS_DOMAIN}
+EOF
+
 echo -e "\e[92mConfiguring NTP ..." > /dev/console
 cat > /etc/systemd/timesyncd.conf << __CUSTOMIZE_PHOTON__
 
