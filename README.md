@@ -59,6 +59,7 @@ The VMware Event Broker Appliance follows a highly modular approach, using Kuber
   - Supported Event Stream Sources:
     - VMware vCenter ([Website](https://www.vmware.com/products/vcenter-server.html))
   - Supported Event Stream Processors: 
+    - Knative [Website](https://knative.dev/)
     - OpenFaaS ([Website](https://www.openfaas.com/))
     - AWS EventBridge ([Website](https://aws.amazon.com/eventbridge/))
 - Contour ([Github](https://github.com/projectcontour/contour))
