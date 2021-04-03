@@ -75,8 +75,8 @@ eventProcessor:
       ref:
         apiVersion: eventing.knative.dev/v1
         kind: Broker
-        name: rabbit
-        namespace: default
+        name: default
+        namespace: vmware-functions
 eventProvider:
   name: veba-vc-01
   type: vcenter

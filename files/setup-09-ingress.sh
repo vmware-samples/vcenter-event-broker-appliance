@@ -137,6 +137,11 @@ spec:
     services:
     - name: vmware-event-router
       port: 8082
+  - conditions:
+    - prefix: /veba-ui
+    services:
+    - name: veba-ui
+      port: 80
   virtualhost:
     fqdn: ${HOSTNAME}
     tls:
