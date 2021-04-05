@@ -147,8 +147,13 @@
     },
     {
       "type": "file",
-      "source": "files/setup-010-banner.sh",
-      "destination": "/root/setup/setup-010-banner.sh"
+      "source": "files/setup-010-veba-ui.sh",
+      "destination": "/root/setup/setup-010-veba-ui.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-011-banner.sh",
+      "destination": "/root/setup/setup-011-banner.sh"
     },
     {
       "type": "file",

@@ -77,6 +77,14 @@
             <Label>vCenter Password</Label>
             <Description>Password to login to vCenter Server</Description>
         </Property>
+        <Property ovf:key="guestinfo.vcenter_veba_ui_username" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>vCenter Username to register VEBA UI</Label>
+            <Description>Username to register VMware Event Broker UI to vCenter Server for Knative Processor (optional)</Description>
+        </Property>
+        <Property ovf:key="guestinfo.vcenter_veba_ui_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>vCenter Password to register VEBA UI</Label>
+            <Description>Password to register VMware Event Broker UI to vCenter Server for Knative Processor (optional)</Description>
+        </Property>
         <Property ovf:key="guestinfo.vcenter_disable_tls_verification" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Disable vCenter Server TLS Verification</Label>
             <Description>Disable TLS Verification for vCenter Server (required for self-sign certificate)</Description>

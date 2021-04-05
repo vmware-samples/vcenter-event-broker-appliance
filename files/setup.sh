@@ -23,6 +23,8 @@ ENABLE_SSH=$(/root/setup/getOvfProperty.py "guestinfo.enable_ssh" | tr '[:upper:
 VCENTER_SERVER=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_server")
 VCENTER_USERNAME=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_username")
 VCENTER_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_password")
+VCENTER_USERNAME_FOR_VEBA_UI=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_veba_ui_username")
+VCENTER_PASSWORD_FOR_VEBA_UI=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_veba_ui_password")
 VCENTER_DISABLE_TLS=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_disable_tls_verification" | tr '[:upper:]' '[:lower:]')
 EVENT_PROCESSOR_TYPE=$(/root/setup/getOvfProperty.py "guestinfo.event_processor_type")
 OPENFAAS_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.openfaas_password")
@@ -99,8 +101,13 @@ else
 	echo -e "\e[92mStarting Ingress Router Configuration ..." > /dev/console
 	. /root/setup/setup-09-ingress.sh
 
+	if [[ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]] && [[ ! -z ${VCENTER_USERNAME_FOR_VEBA_UI} ]] && [[ ! -z ${VCENTER_PASSWORD_FOR_VEBA_UI} ]]; then
+		echo -e "\e[92mStarting Knative UI Configuration ..." > /dev/console
+		. /root/setup/setup-010-veba-ui.sh
+	fi
+
 	echo -e "\e[92mStarting OS Banner Configuration ..."> /dev/console
-	. /root/setup/setup-010-banner.sh &
+	. /root/setup/setup-011-banner.sh &
 
 	echo -e "\e[92mCustomization Completed ..." > /dev/console
 
