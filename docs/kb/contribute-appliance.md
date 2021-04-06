@@ -13,7 +13,7 @@ cta:
 
 ## Requirements
 
-* 2 vCPU and 8GB of memory for VMware Event Broker Appliance
+* 4 vCPU and 8GB of memory for VMware Event Broker Appliance
 * ESXi host v6.7 or greater
   * SSH must be enabled on the host
   * Enable GuestIPHack on the host by running `esxcli system settings advanced set -o /Net/GuestIPHack -i 1`

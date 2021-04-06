@@ -12,23 +12,22 @@ cta:
 
 ## Requirements
 
-You must log on to the VMware Event Broker appliance as root. You can do this from the console. If you want SSH access, execute the following command:
+You must log on to the VMware Event Broker appliance as root. If you did not enable SSH as part of the initial VMware Event Broker Appliance deployment, you can perform this operation at the console. To enable SSH access, execute the following command:
 
 ```bash
-systemctl start sshd 
+systemctl start sshd
 ```
 
-This turns on the SSH daemon but does not enable it to start on appliance boot. You should now be able to SSH into the appliance. 
+This turns on the SSH daemon but does not enable it to start on appliance boot. You should now be able to SSH into the appliance.
 
 If you wish to disable the SSH daemon when you are done troubleshooting, execute the following command:
 
 ```bash
-systemctl stop sshd 
+systemctl stop sshd
 ```
-  
 ## Troubleshooting an initial deployment
 
-If the appliance is not working immediately after deployment, the first thing to do is check your Kubernetes pods. 
+If the appliance is not working immediately after deployment, the first thing to do is check your Kubernetes pods.
 
 ```bash
 kubectl get pods -A
@@ -37,29 +36,48 @@ kubectl get pods -A
 Here is the command output:
 
 ```
-NAMESPACE        NAME                                   READY   STATUS          RESTARTS        AGE
-kube-system      coredns-584795fc57-hcvxh               1/1     Running              1          4d15h
-kube-system      coredns-584795fc57-hf72w               1/1     Running              1          4d15h
-kube-system      etcd-veba02                            1/1     Running              1          4d15h
-kube-system      kube-apiserver-veba02                  1/1     Running              1          4d15h
-kube-system      kube-controller-manager-veba02         1/1     Running              1          4d15h
-kube-system      kube-proxy-fj47p                       1/1     Running              1          4d15h
-kube-system      kube-scheduler-veba02                  1/1     Running              1          4d15h
-kube-system      weave-net-vs8ls                        2/2     Running              4          4d15h
-projectcontour   contour-5cddfc8f6-8hzd6                1/1     Running              1          4d15h
-projectcontour   contour-5cddfc8f6-jq7d8                1/1     Running              1          4d15h
-projectcontour   contour-certgen-f92l5                  0/1     Completed            0          4d15h
-projectcontour   envoy-gcmqt                            1/1     Running              1          4d15h
-vmware           tinywww-7fcfc6fb94-mfltm               1/1     Running              1          4d15h
-vmware           vmware-event-router-5dd9c8f858-5c9mh   0/1     CrashLoopBackoff     6          4d13h
+k get pods -A
+NAMESPACE            NAME                                                  READY   STATUS      RESTARTS   AGE
+contour-external     contour-5869594b-bmccv                                1/1     Running     0          6h37m
+contour-external     contour-5869594b-jr4k8                                1/1     Running     0          6h37m
+contour-external     contour-certgen-v1.10.0-btmlp                         0/1     Completed   0          6h37m
+contour-external     envoy-hzhnz                                           2/2     Running     0          6h37m
+contour-internal     contour-5d47766fd8-5shp2                              1/1     Running     0          6h37m
+contour-internal     contour-5d47766fd8-hv9zl                              1/1     Running     0          6h37m
+contour-internal     contour-certgen-v1.10.0-szssj                         0/1     Completed   0          6h37m
+contour-internal     envoy-hpch5                                           2/2     Running     0          6h37m
+knative-eventing     eventing-controller-658f454d9d-pfs5d                  1/1     Running     0          6h37m
+knative-eventing     eventing-webhook-69fdcdf8d4-fdtmp                     1/1     Running     0          6h37m
+knative-eventing     rabbitmq-broker-controller-88fc96b44-6jb82            1/1     Running     0          6h37m
+knative-serving      activator-85cd6f6f9-7l9q5                             1/1     Running     0          6h38m
+knative-serving      autoscaler-7959969587-kzdrj                           1/1     Running     0          6h38m
+knative-serving      contour-ingress-controller-6d5777577c-sb6vr           1/1     Running     0          6h37m
+knative-serving      controller-577558f799-fmfgq                           1/1     Running     0          6h38m
+knative-serving      webhook-78f446786-zj9n4                               1/1     Running     0          6h38m
+kube-system          antrea-agent-xgn24                                    2/2     Running     0          6h38m
+kube-system          antrea-controller-849fff8c5d-h5tjb                    1/1     Running     0          6h38m
+kube-system          coredns-74ff55c5b-kpfxz                               1/1     Running     0          6h38m
+kube-system          coredns-74ff55c5b-wrjp4                               1/1     Running     0          6h38m
+kube-system          etcd-veba.primp-industries.local                      1/1     Running     0          6h38m
+kube-system          kube-apiserver-veba.primp-industries.local            1/1     Running     0          6h38m
+kube-system          kube-controller-manager-veba.primp-industries.local   1/1     Running     0          6h38m
+kube-system          kube-proxy-gs59c                                      1/1     Running     0          6h38m
+kube-system          kube-scheduler-veba.primp-industries.local            1/1     Running     0          6h38m
+local-path-storage   local-path-provisioner-5696dbb894-sf457               1/1     Running     0          6h38m
+rabbitmq-system      rabbitmq-cluster-operator-7bbbb8d559-sw4kt            1/1     Running     0          6h37m
+vmware-functions     default-broker-ingress-5c98bf68bc-nl5m7               1/1     Running     0          6h36m
+vmware-system        tinywww-dd88dc7db-f74br                               1/1     Running     0          6h36m
+vmware-system        veba-rabbit-server-0                                  1/1     Running     0          6h36m
+vmware-system        veba-ui-677b77dfcf-q9t84                              1/1     Running     0          6h36m
+vmware-system        vmware-event-router-5dd9c8f858-5c9mh                  0/1     CrashLoopBackoff     6  4d13h
 ```
 
-> **Note:** The status ```Completed``` of the container ```contour-certgen-f92l5``` is expected after successful appliance deployment.
+> **Note:** The status ```Completed``` of the container ```contour-certgen-v1.10.0-btmlp``` is expected after successful appliance deployment.
 
 One of the first things to look for is whether a pod is in a crash state. In this case, the vmware-event-router pod is crashing. We need to look at the logs with this command:
 
 ```bash
-kubectl logs vmware-event-router-5dd9c8f858-5c9mh  -n vmware
+kubectl -n vmware-system logs vmware-event-router-5dd9c8f858-5c9mh
 ```
 
 > **Note:** The pod suffix ```-5dd9c8f858-5c9mh``` will be different in each environment
@@ -81,184 +99,197 @@ Here is the command output:
 The error message shows us that we made a mistake when we configured our username or password. We must now edit the Event Router JSON configuration file to fix the mistake.
 
 ```bash
-vi /root/config/event-router-config.json
-
+vi /root/config/event-router-config.yaml
 ```
 
-Here is some of the JSON from the config file - you can see the mistake in the credentials. Fix the credentials and save the file.
+Here is some of the YAML from the config file - you can see the mistake in the credentials. Fix the credentials and save the file.
 
-```json
-[
-  {
-    "type": "stream",
-    "provider": "vmware_vcenter",
-    "address": "https://vc01.labad.int/sdk",
-    "auth": {
-      "method": "user_password",
-      "secret": {
-        "username": "administrator@vsphere.local",
-        "password": "WrongPassword"
-      }
-    },
-    "options": {
-      "insecure": "true"
-    }
-  }
-]
+```yaml
+eventProvider:
+  name: veba-vc-01
+  type: vcenter
+  vcenter:
+    address: https://vc01.labad.int/sdk
+    auth:
+      basicAuth:
+        password: "wrongPassword"
+        username: "veba@vsphere.local"
+      type: basic_auth
+    insecureSSL: true
+    checkpoint: false
 ```
 
-We now fix the Kubernetes configuration with 3 commands - delete and recreate the secret file, then delete the broken pod. Kubernetes will automatically spin up a new pod with the new configuration. We need to do this because the JSON configuration file is not directly referenced by the event router. The JSON file is mounted into the event router pod as a Kubernetes secret. 
+We now fix the Kubernetes configuration with 3 commands - delete and recreate the secret file, then delete the broken pod. Kubernetes will automatically spin up a new pod with the new configuration. We need to do this because the YAML configuration file is not directly referenced by the event router. The YAML file is mounted into the event router pod as a Kubernetes secret.
 
 ```
-kubectl -n vmware delete secret event-router-config
-kubectl -n vmware create secret generic event-router-config --from-file=event-router-config.json
-kubectl -n vmware delete pod vmware-event-router-5dd9c8f858-5c9mh 
+kubectl -n vmware-system delete secret event-router-config
+kubectl -n vmware-system create secret generic event-router-config --from-file=event-router-config.yaml
+kubectl -n vmware-system delete pod vmware-event-router-5dd9c8f858-5c9mh
 ```
 
 We get a pod list again to determine the name of the new pod.
 
 ```
-kubectl get pods -A
+kubectl -n vmware-system get pods
 ```
 
 Here is the command output:
 ```
-NAMESPACE        NAME                                   READY   STATUS        RESTARTS   AGE
-kube-system      coredns-584795fc57-hcvxh               1/1     Running       1          4d19h
-kube-system      coredns-584795fc57-hf72w               1/1     Running       1          4d19h
-kube-system      etcd-veba02                            1/1     Running       1          4d19h
-kube-system      kube-apiserver-veba02                  1/1     Running       1          4d19h
-kube-system      kube-controller-manager-veba02         1/1     Running       1          4d19h
-kube-system      kube-proxy-fj47p                       1/1     Running       1          4d19h
-kube-system      kube-scheduler-veba02                  1/1     Running       1          4d19h
-kube-system      weave-net-vs8ls                        2/2     Running       4          4d19h
-projectcontour   contour-5cddfc8f6-8hzd6                1/1     Running       1          4d19h
-projectcontour   contour-5cddfc8f6-jq7d8                1/1     Running       1          4d19h
-projectcontour   contour-certgen-f92l5                  0/1     Completed     0          4d19h
-projectcontour   envoy-gcmqt                            1/1     Running       1          4d19h
-vmware           tinywww-7fcfc6fb94-mfltm               1/1     Running       1          4d19h
-vmware           vmware-event-router-5dd9c8f858-5c9mh   0/1     Terminating   40         3h9m
-vmware           vmware-event-router-5dd9c8f858-wt64s   1/1     Running       0          28s
+NAME                                  READY   STATUS        RESTARTS   AGE
+tinywww-dd88dc7db-f74br               1/1     Running       0          6h39m
+veba-rabbit-server-0                  1/1     Running       0          6h40m
+veba-ui-677b77dfcf-q9t84              1/1     Running       0          6h39m
+vmware-event-router-5dd9c8f858-5c9mh  0/1     Terminating   3          6h40m
+vmware-event-router-5dd9c8f858-wt64s  1/1     Running       0          28s
 ```
 
 Now view the event router logs.
 
 ```bash
-kubectl logs -n vmware vmware-event-router-5dd9c8f858-wt64s
+kubectl -n vmware-system logs vmware-event-router-5dd9c8f858-wt64s
 ```
 
 Here is the command output:
 ```
-
  _    ____  ___                            ______                 __     ____              __
 | |  / /  |/  /      ______ _________     / ____/   _____  ____  / /_   / __ \____  __  __/ /____  _____
 | | / / /|_/ / | /| / / __  / ___/ _ \   / __/ | | / / _ \/ __ \/ __/  / /_/ / __ \/ / / / __/ _ \/ ___/
 | |/ / /  / /| |/ |/ / /_/ / /  /  __/  / /___ | |/ /  __/ / / / /_   / _, _/ /_/ / /_/ / /_/  __/ /
 |___/_/  /_/ |__/|__/\__,_/_/   \___/  /_____/ |___/\___/_/ /_/\__/  /_/ |_|\____/\__,_/\__/\___/_/
 
-
-[VMware Event Router] 2020/03/10 20:37:28 connecting to vCenter https://vc01.labad.int/sdk/sdk
-[VMware Event Router] 2020/03/10 20:37:28 connecting to OpenFaaS gateway http://gateway.openfaas:8080 (async mode: false)
-[VMware Event Router] 2020/03/10 20:37:28 exposing metrics server on 0.0.0.0:8080 (auth: basic_auth)
-[Metrics Server] 2020/03/10 20:37:28 starting metrics server and listening on "http://0.0.0.0:8080/stats"
-2020/03/10 20:37:28 Syncing topic map
-[OpenFaaS] 2020/03/10 20:37:28 processing event [0] of type *types.UserLoginSessionEvent from source https://vc01.labad.int/sdk: &{SessionEvent:{Event:{DynamicData:{} Key:8755384 ChainId:8755384 CreatedTime:2020-03-10 20:36:19.594 +0000 UTC UserName::<nil> ComputeResource:<nil> Host:<nil> Vm:<nil> Ds:<nil> Net:<nil> Dvs:<nil> FullFormattedMessage:User @10.46.144.4 logged in as VMware vim-java 1.0 ChangeTag:}} IpAddress:192.168.10.24 UserAgent:VMware vim-java 1.0 Locale:en SessionId:5254c9e5-4c2d-0af0-cae3-7fdebdc2eacb}
+2021-04-04T14:30:16.589Z        ESC[34mINFOESC[0m       [MAIN]  router/main.go:111      connecting to vCenter   {"address": "https://vc01.labad.int/sdk"}
+2021-04-04T14:30:16.589Z        ESC[34mINFOESC[0m       [KNATIVE]       injection/injection.go:61       Starting informers...
+2021-04-04T14:30:16.699Z        ESC[34mINFOESC[0m       [MAIN]  router/main.go:149      created Knative processor       {"sink": "http://default-broker-ingress.vmware-functions.svc.cluster.local"}
+2021-04-04T14:30:16.699Z        ESC[33mWARNESC[0m       [METRICS]       metrics/server.go:59    no credentials found, disabling authentication for metrics server
+2021-04-04T14:30:16.700Z        ESC[34mINFOESC[0m       [METRICS]       metrics/server.go:131   starting metrics server {"address": "http://0.0.0.0:8082/stats"}
+2021-04-04T14:30:16.703Z        ESC[34mINFOESC[0m       [VCENTER]       vcenter/vcenter.go:174  checkpointing disabled, setting begin of event stream   {"beginTimestamp": "2021-04-04 14:30:16.70642 +0000 UTC"}
 ```
 
 We now see that the Event Router came online, connected to vCenter, and successfully received an event.
 
 ## Changing the vCenter service account
 
-If you need to change the account the appliance uses to connect to vCenter, use the following procedure. 
+If you need to change the account the appliance uses to connect to vCenter, the procedure above can be used.
 
-Open a console to the appliance. If you want to do the configuration via SSH, you must first enable the SSH daemon with the following command
-```bash 
-systemcl start sshd
-```
-The SSH daemon will run but not automatically start with the next reboot. You can use the same command with `stop` instead of `start` when you are finished. Or you can type everything directly into the console if you do not want to use SSH.
+## Troubleshooting VMware Event Broker Appliance vSphere UI
 
-Edit the configuration file with vi
+Ensure there is proper bi-directional network connectivity between the VMware Event Broker Appliance and vCenter Server for proper UI functionality which runs over port 443.
+
+When the VMware Event Broker Appliance vSphere UI container starts up, it will attempt to register itself as a vSphere remote plugin with the vCenter Server. Upon a successful registration, a vCenter Plugin Extension will be created on the vCenter Server and that will direct the vSphere UI to connect to the VMware Event Broker Appliance, which is where the VMware Event Broker Appliance UI plugin will be running.
+
+There are several areas which may prevent the VMware Event Broker Appliance vSphere UI from properly running.
+
+Ensure that the VMware Event Broker Appliance UI container is running:
+
 ```bash
-vi /root/config/event-router-config.json
-```
-
-The editor will open with output similar to this (truncated)
-```bash
-[{
-                "type": "stream",
-                "provider": "vmware_vcenter",
-                "address": "https://vc01.lab.int/sdk",
-                "auth": {
-                        "method": "user_password",
-                        "secret": {
-                                "username": "administrator@vsphere.local",
-                                "password": "KeepMeSecure123!"
-                        }
-                },
-                "options": {
-                        "insecure": "true"
-                }
-        },
+kubectl -n vmware-system get deployments/veba-ui
 ```
 
-Change the username and password, then save the file. Then delete and recreate the event router pod secret with the following commands:
-```bash
-kubectl -n vmware delete secret event-router-config
-kubectl -n vmware create secret generic event-router-config --from-file=/root/event-router-config.json
-```
-
-Now, restart the event router pod. Get the current pod name with the following command:
-```bash
-kubectl get pods -A
-```
-You will see output similar the following (trucnated):
-```bash
-projectcontour   contour-certgen-7r9dl                  0/1     Completed   0          22d
-projectcontour   envoy-htrwv                            1/1     Running     1          22d
-vmware           tinywww-7fcfc6fb94-tv98j               1/1     Running     1          22d
-vmware           vmware-event-router-5dd9c8f858-7htv5   1/1     Running     14         19d
-```
-
-Find the event router pod. Every environment will have a unique suffix on the pod name - in this example, it is `-5dd9c8f858-7htv5`. Delete the event router pod with the following command (make sure to match the pod name with the one in your environment):
-```bash
-kubectl -n vmware delete pod vmware-event-router-5dd9c8f858-7htv5
-```
-
-The pod will automatically recreate itself. You can repeatedly run the following command:
-```bash
-kubectl get pods -A
-```
-Various stages of the pod lifecycle may be shown. Here, we see the original pod terminating while the new pod is spinning up.
-```bash
-projectcontour   envoy-htrwv                            1/1     Running             1          22d
-vmware           tinywww-7fcfc6fb94-tv98j               1/1     Running             1          22d
-vmware           vmware-event-router-5dd9c8f858-7htv5   0/1     Terminating         14         19d
-vmware           vmware-event-router-5dd9c8f858-l6gdj   0/1     ContainerCreating   0          4s
-```
-
-Eventually the old pod will disappear and the new pod will show as running:
-```bash
-projectcontour   contour-certgen-7r9dl                  0/1     Completed   0          22d
-projectcontour   envoy-htrwv                            1/1     Running     1          22d
-vmware           tinywww-7fcfc6fb94-tv98j               1/1     Running     1          22d
-vmware           vmware-event-router-5dd9c8f858-l6gdj   1/1     Running     0          92s
-```
-
-You can check the pod logs with the following command (make sure to add the correct suffix shown in your environment):
-```bash
-kubectl logs -n vmware kubectl logs -n vmware  vmware-event-router-5dd9c8f858-n9pg6
-```
-You should see a successful connection to vCenter in the logs
-```bash
- _    ____  ___                            ______                 __     ____              __
-| |  / /  |/  /      ______ _________     / ____/   _____  ____  / /_   / __ \____  __  __/ /____  _____
-| | / / /|_/ / | /| / / __  / ___/ _ \   / __/ | | / / _ \/ __ \/ __/  / /_/ / __ \/ / / / __/ _ \/ ___/
-| |/ / /  / /| |/ |/ / /_/ / /  /  __/  / /___ | |/ /  __/ / / / /_   / _, _/ /_/ / /_/ / /_/  __/ /
-|___/_/  /_/ |__/|__/\__,_/_/   \___/  /_____/ |___/\___/_/ /_/\__/  /_/ |_|\____/\__,_/\__/\___/_/
+Here is the command output:
 
 
-[VMware Event Router] 2020/04/08 05:07:11 connecting to vCenter https://vc01.lab.int/sdk
-[VMware Event Router] 2020/04/08 05:07:11 connecting to OpenFaaS gateway http://gateway.openfaas:8080 (async mode: false)
-[VMware Event Router] 2020/04/08 05:07:11 exposing metrics server on 0.0.0.0:8080 (auth: basic_auth)
-[Metrics Server] 2020/04/08 05:07:11 starting metrics server and listening on "http://0.0.0.0:8080/stats"
+```console
+kubectl -n vmware-system get deployments/veba-ui
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+veba-ui   1/1     1            1           6h50m
+```
+
+Ensure there are no errors in the logs for the VMware Event Broker Appliance UI container. Incorrect credentials or credentials without the correct permissions will prevent the registration with vCenter Server and the logs should give you some additional insights.
+
+```bash
+kubectl -n vmware-system logs deployments/veba-ui
+```
+
+Here is the command output:
+
+```console
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.0.3.RELEASE)
+
+2021-04-04 14:30:22.690  INFO 1 --- [           main] c.v.sample.remote.SpringBootApplication  : Starting SpringBootApplication on veba-ui-677b77dfcf-q9t84 with PID 1 (/app.jar started by root in /)
+2021-04-04 14:30:22.695  INFO 1 --- [           main] c.v.sample.remote.SpringBootApplication  : No active profile set, falling back to default profiles: default
+2021-04-04 14:30:22.806  INFO 1 --- [           main] ConfigServletWebServerApplicationContext : Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@3339ad8e: startup date [Sun Apr 04 14:30:22 GMT 2021]; root of context hierarchy
+2021-04-04 14:30:23.569  INFO 1 --- [           main] o.s.b.f.xml.XmlBeanDefinitionReader      : Loading XML bean definitions from class path resource [spring-context.xml]
+...
+```
+
+Ensure the VMware Event Broker Appliance UI was able to successfully register with vCenter Server and create vCenter Plugin Extension.
+
+Open a web browser and enter the following URL and login. Replace the FQDN or IP Address of your vCenter Server
+
+```console
+https://[VCENTER_FQDN_OR_IP]/mob/?moid=ExtensionManager&doPath=extensionList%5b%22com.vmware.veba%22%5d
+```
+
+If the registration exists, this most likely means that vCenter Server can not reach the VMware Event Broker Appliance.
+
+To verify, you can SSH to the vCenter Server Appliance and attempt to retrieve the `plugin.json`.
+
+```bash
+curl -L -k https://[VEBA_FQDN_OR_IP_ADDRESS]/veba-ui/plugin.json
+```
+
+Here is the command output:
+
+```console
+{
+   "manifestVersion": "1.0.0",
+   "requirements": {
+      "plugin.api.version": "1.0.0"
+   },
+   "configuration": {
+      "nameKey": "plugin.name",
+      "icon": {
+         "name": "main"
+      }
+   },
+   "global": {
+      "view": {
+         "navigationId": "entryPoint",
+         "uri": "index.html#/veba-ui",
+         "navigationVisible": false
+      }
+   },
+   "definitions": {
+      "iconSpriteSheet": {
+         "uri": "assets/images/veba_otto_the_orca.png",
+         "definitions": {
+            "main": {
+               "x": 0,
+               "y": 0
+            }
+         },
+         "themeOverrides": {
+            "dark": {
+               "uri": "assets/images/veba_otto_the_orca.png",
+               "definitions": {
+                  "main": {
+                     "x": 0,
+                     "y": 0
+                  }
+               }
+            }
+         }
+      },
+      "i18n": {
+         "locales": [
+            "en-US",
+            "de-DE",
+            "fr-FR"
+         ],
+         "definitions": {
+            "plugin.name": {
+               "en-US": "VMware Event Broker",
+               "de-DE": "VMware Event Broker",
+               "fr-FR": "VMware Event Broker"
+            }
+         }
+      }
+   }
+}
 ```
