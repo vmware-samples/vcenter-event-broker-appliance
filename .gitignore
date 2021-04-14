@@ -16,4 +16,6 @@ Gemfile.lock
 *.coverprofile
 faas-cli*
 template
+# don't exclude this pkg by rule above
+!**/vendor/**/template
 checkpoints/
