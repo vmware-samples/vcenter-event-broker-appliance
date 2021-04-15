@@ -147,7 +147,41 @@ spec:
     tls:
       minimumProtocolVersion: "1.2"
       secretName: ${CERT_NAME}
-status: {}
+  includes:
+  - name: sockeye
+    namespace: vmware-functions
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: contour-external
+  name: sockeye
+  namespace: vmware-functions
+spec:
+  routes:
+  - conditions:
+    - prefix: /events
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /
+    services:
+    - name: sockeye
+      port: 80
+  - conditions:
+    - prefix: /static
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /static
+    services:
+    - name: sockeye
+      port: 80
+  - conditions:
+    - prefix: /ws
+    enableWebsockets: true
+    services:
+    - name: sockeye
+      port: 80
 EOF
 else
   cat << EOF > /root/config/ingressroute-gateway.yaml
