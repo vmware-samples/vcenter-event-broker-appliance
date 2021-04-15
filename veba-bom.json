@@ -1,16 +1,16 @@
 {
     "veba": {
-        "version": "v0.5.0"
+        "version": "release-0.6.0"
     },
     "vmware-event-router": {
-        "gitRepoTag": "v0.5.0",
+        "gitRepoTag": "release-0.6.0",
         "containers": [{
-            "name": "projects.registry.vmware.com/veba/veba-event-router",
-            "version": "v0.5.0"
+            "name": "vmware/veba-event-router",
+            "version": "release-0.6.0"
         }]
     },
     "veba-ui": {
-        "gitRepoTag": "v0.5.0",
+        "gitRepoTag": "release-0.6.0",
         "containers": [{
             "name": "projects.registry.vmware.com/veba/veba-ui",
             "version": "0de4b1fd"
