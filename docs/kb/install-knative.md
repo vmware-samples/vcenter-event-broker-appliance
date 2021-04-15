@@ -8,7 +8,7 @@ cta:
  title: Deploy a Function
  description: At this point, you have successfully deployed the VMware Event Broker Appliance and you are ready to start deploying your functions! 
  actions:
-  - text: Check the [Knative Echo Function](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/python/kn-echo){:target="_blank"} to quickly get started
+  - text: Check the [Knative Echo Function](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative/powershell/kn-ps-echo){:target="_blank"} to quickly get started
 ---
 # Deploy VMware Event Broker Appliance with Knative
 
@@ -18,7 +18,7 @@ Customers looking to seamlessly extend their vCenter by either deploying our pre
 
 ### Requirements
 
-* 2 vCPU and 8GB of memory for VMware Event Broker Appliance
+* 4 vCPU and 8GB of memory for VMware Event Broker Appliance
 * vCenter Server 6.x or greater
 * vCenter TCP/443 accessible from Appliance IP address
 * Account to login to vCenter Server (readOnly is sufficient)
@@ -57,6 +57,8 @@ Deploy the VMware Event Broker Appliance OVA to your vCenter Server using the vS
   * vCenter Server - This FQDN or IP Address of your vCenter Server that you wish to associate this VMware Event Broker Appliance to for Event subscription
   * vCenter Username - The username to login to vCenter Server, as mentioned earlier, readOnly account is sufficient
   * vCenter Password - The password to the vCenter Username
+  * vCenter Username to register VEBA UI (Optional) - Username to register VMware Event Broker UI to vCenter Server for Knative Processor
+  * vCenter Password to register VEBA UI (Optional) - Password to register VMware Event Broker UI to vCenter Server for Knative Processor
   * Disable vCenter Server TLS Verification - If you have a self-signed SSL Certificate, you will need to check this box
 
 #### **Event Processor Configuration** (**Required**)
@@ -64,6 +66,7 @@ Deploy the VMware Event Broker Appliance OVA to your vCenter Server using the vS
 
 #### **Knative Configuration** (**Required**)
   * Host - Knative host (e.g. mybroker.corp.local:8080)
+    * Leave `host` field blank to automatically enable the embedded Knative broker
   * Scheme - HTTP or HTTPS protocol the broker is using
   * Disable Knative host TLS Verification - Only applicable for HTTPs scheme. If you have a self-signed SSL Certificate, you will need to check this box.
   * Path - Additional path to append to the host if required, e.g. "/default/broker"

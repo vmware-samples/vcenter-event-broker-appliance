@@ -17,7 +17,7 @@ examples:
     description: Many configurations such as enabling memory/cpu hot add, changing the number of CPUs, or changing amount of memory can be set only when a VM is powered off (if the hot plug/hot add settings are not yet enabled). Attach tags containing desired configuration settings to a VM and have it automatically reconfigure the next time it powers down.
     links:
     - language: go
-      url: "tree/master/examples/go/vm-reconfig-via-tag"
+      url: "/tree/master/examples/openfaas/go/vm-reconfig-via-tag"
 
   - title: vSphere Tagging
     usecases: 
@@ -27,11 +27,11 @@ examples:
     links:
      - language: python
        image: {{ page.images.python }}
-       url: "/tree/master/examples/python/tagging"
+       url: "/tree/master/examples/openfaas/python/tagging"
      - language: powercli
-       url: "/tree/master/examples/powercli/tagging"
+       url: "/tree/master/examples/openfaas/powercli/tagging"
      - language: go
-       url: "/tree/master/examples/go/tagging"
+       url: "/tree/master/examples/openfaas/go/tagging"
 
   - title: Send VM Configuration Changes to Slack
     usecases: 
@@ -41,7 +41,7 @@ examples:
     description: Notify a Slack channel upon a VM configuration change event.
     links: 
     - language: powercli
-      url: "/tree/master/examples/powercli/hwchange-slack"
+      url: "/tree/master/examples/openfaas/powercli/hwchange-slack"
 
   - title: Disable Alarms for Host Maintenance
     usecases: 
@@ -50,7 +50,7 @@ examples:
     description: Disable alarm actions on a host when it has entered maintenance mode and will re-enable alarm actions on a host after it has exited maintenance mode.
     links: 
     - language: powercli
-      url: "/tree/master/examples/powercli/hostmaint-alarms"
+      url: "/tree/master/examples/openfaas/powercli/hostmaint-alarms"
 
   - title: ESX Maximum transmission unit fixer
     usecases: 
@@ -60,7 +60,7 @@ examples:
     description: Remediation function which will be triggered when a VM is powered on to ensure that the Maximum Transmission Unit (MTU) of the VM Kernel Adapter on all ESX hosts is at least 1500.
     links: 
     - language: python
-      url: "/tree/master/examples/python/esx-mtu-fixer"
+      url: "/tree/master/examples/openfaas/python/esx-mtu-fixer"
 
   - title: Datastore Usage Notification
     usecases: 
@@ -69,7 +69,7 @@ examples:
     description: Send an email notification when warning/error threshold is reach for Datastore Usage Alarm in vSphere.
     links: 
     - language: powercli
-      url: "/tree/master/examples/powercli/datastore-usage-email"
+      url: "/tree/master/examples/openfaas/powercli/datastore-usage-email"
 
   - title: vRealize Orchestrator
     usecases: 
@@ -79,7 +79,7 @@ examples:
     description: Trigger vRealize Orchestrator workflow using vRO REST API.
     links: 
     - language: powershell
-      url: "/tree/master/examples/powershell/vro"
+      url: "/tree/master/examples/openfaas/powershell/vro"
 
   - title: Echo Cloud Event
     usecases: 
@@ -88,7 +88,7 @@ examples:
     description: Function helps users understand the structure and data of a given vCenter Event which will be useful when creating brand new Functions.
     links: 
     - language: python
-      url: "/tree/master/examples/python/echo"
+      url: "/tree/master/examples/openfaas/python/echo"
 
   - title: Trigger PagerDuty incident
     usecases: 
@@ -99,9 +99,9 @@ examples:
     description: Trigger a PagerDuty incident upon a vCenter Event.
     links: 
     - language: python
-      url: "/tree/master/examples/python/trigger-pagerduty-incident"
+      url: "/tree/master/examples/openfaas/python/trigger-pagerduty-incident"
     - language: go
-      url: "/tree/master/examples/go/pagerduty-trigger"
+      url: "/tree/master/examples/openfaas/go/pagerduty-trigger"
 
   - title: POST to any REST API
     usecases: 
@@ -113,7 +113,7 @@ examples:
     description: Function allows making a single post api request to any endpoint - tested with Slack, ServiceNow and PagerDuty.
     links: 
     - language: python
-      url: "/tree/master/examples/python/invoke-rest-api"
+      url: "/tree/master/examples/openfaas/python/invoke-rest-api"
 
   - title: HA Restarted VMs Notification
     usecases: 
@@ -122,7 +122,7 @@ examples:
     description: Send an email listing all of the VMs which were restarted due to a host failure in an HA enabled cluster.
     links: 
     - language: powercli
-      url: "/tree/master/examples/powercli/ha-restarted-vms"
+      url: "/tree/master/examples/openfaas/powercli/ha-restarted-vms"
 
   - title: VMware Cloud on AWS SDDC Provisioned and Deletion Slack Notification
     usecases:
@@ -131,7 +131,7 @@ examples:
     description: Send Slack message when a VMware Cloud on AWS SDDC is Provisioned or Deleted.
     links:
     - language: powershell
-      url: "/tree/master/examples/powershell/vmware-cloud-ngw-slack"
+      url: "/tree/master/examples/openfaas/powershell/vmware-cloud-ngw-slack"
 
   - title: VMware Cloud on AWS SDDC Provisioned and Deletion Microsoft Teams Notification
     usecases:
@@ -140,7 +140,7 @@ examples:
     description: Send Microsoft Team message when a VMware Cloud on AWS SDDC is Provisioned or Deleted.
     links:
     - language: powershell
-      url: "/tree/master/examples/powershell/vmware-cloud-ngw-teams"
+      url: "/tree/master/examples/openfaas/powershell/vmware-cloud-ngw-teams"
 
   - title: vCenter Managed Object Pre-Filter
     usecases: 
@@ -149,7 +149,7 @@ examples:
     description: Function to limit the scope of other functions by allowing filtering of events by vCenter Inventory paths using standard regex.
     links: 
     - language: python
-      url: "/tree/master/examples/python/pre-filter" #relative path to the function
+      url: "/tree/master/examples/openfaas/python/pre-filter" #relative path to the function
 
   - title: Auto-refresh of a vSphere Client UI plugin
     usecases:
@@ -159,7 +159,7 @@ examples:
     description: Plugin auto-refresh function triggers automatic refresh of the UI of a vSphere Client plugin after data changes.
     links:
     - language: java
-      url: "/tree/master/examples/java/plugin-auto-refresh"
+      url: "/tree/master/examples/openfaas/java/plugin-auto-refresh"
 
   - title: Automatic Backup of Virtual Machines via Veeam Backup & Replication
     usecases:
@@ -169,7 +169,7 @@ examples:
     description: Veeam-vm-backup function uses 3rd party solution Veeam to provide automatic backup for any virtual machine when when the VM state changes.
     links:
     - language: java
-      url: "/tree/master/examples/java/veeam-vm-backup"
+      url: "/tree/master/examples/openfaas/java/veeam-vm-backup"
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 

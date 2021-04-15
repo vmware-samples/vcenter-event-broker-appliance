@@ -17,5 +17,5 @@ When you are making a contribution, the [master list of functions](https://vmwev
     description: #description of the function purpose and what it does
     links: 
     - language: python              #use python for python3 as well
-      url: "/tree/master/examples/python/invoke-rest-api" #relative path to the function
+      url: "/tree/master/examples/knative/python/invoke-rest-api" #relative path to the function
 ```

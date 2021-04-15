@@ -8,6 +8,7 @@ cta:
  title: Get Started
  description: Explore the capabilities that the VMware Event Router enables
  actions:
+    - text: Install the [Appliance with Knative](install-knative) to extend your SDDC with our [community-sourced functions](/examples)
     - text: Install the [Appliance with OpenFaaS](install-openfaas) to extend your SDDC with our [community-sourced functions](/examples)
     - text: Install the [Appliance with AWS EventBridge](install-eventbridge) to extend your SDDC leveraging native AWS capabilities.
     - text: Learn more about the [Events in vCenter](vcenter-events) and how to find the right event for your usecase

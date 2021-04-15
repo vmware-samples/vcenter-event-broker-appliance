@@ -26,9 +26,17 @@ If you're just starting out with containers and source control and are looking f
 
 # Preqrequisites
 
-Three tools are required in order to contribute functions - You must install [Git](https://git-scm.com/downloads){:target="_blank"}, [Docker](https://docs.docker.com/){:target="_blank"},  and download [faas-cli.exe](https://github.com/openfaas/faas-cli/releases){:target="_blank"}. 
+You must create a [Github](https://github.com/join){:target="_blank"} account. You need to verify your email with Github in order to contribute to the VEBA repository.
 
-You must also create a [Github](https://github.com/join){:target="_blank"} account. You need to verify your email with Github in order to contribute to the VEBA repository.
+For Knative, the following tools are required:
+ * [Git](https://git-scm.com/downloads){:target="_blank"}
+ * [Docker](https://docs.docker.com/){:target="_blank"}
+ * [Knative CLI](https://knative.dev/docs/install/install-kn/){:target="_blank"}
+
+For OpenFaaS, the following tools are required:
+ * [Git](https://git-scm.com/downloads){:target="_blank"}
+ * [Docker](https://docs.docker.com/){:target="_blank"}
+ * [OpenFaaS CLI](https://github.com/openfaas/faas-cli/releases){:target="_blank"}
 
 # Quickstart for Contributing
 
@@ -80,7 +88,9 @@ You can then submit a pull request (PR) to the VEBA maintainers - a step-by-step
 
 # Changing or contributing new functions
 
-The git commands are the same, but in order to change code, you must reference your own Docker image. The example YAML below comes from the [datastore-usage-email](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/powercli/datastore-usage-email){:target="_blank"} sample function. Note that the `image:` references the `vmware` docker account. You must change this to your own docker account. As always the `gateway:` must point to your own local VEBA appliance
+The git commands are the same, but in order to change code, you must reference your own Docker image. The example YAML below comes from the OpenFaaS [datastore-usage-email](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/openfaas/powercli/datastore-usage-email){:target="_blank"} sample function. A similar workflow is also followed for Knative functions.
+
+> Note: The `image:` references the `vmware` docker account. You must change this to your own docker account. As always the `gateway:` must point to your own local VEBA appliance
 
 
 ```yaml
