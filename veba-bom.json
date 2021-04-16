@@ -13,7 +13,7 @@
         "gitRepoTag": "release-0.6.0",
         "containers": [{
             "name": "projects.registry.vmware.com/veba/veba-ui",
-            "version": "0de4b1fd"
+            "version": "b5412f7d"
         }]
     },
     "antrea": {

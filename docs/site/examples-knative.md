@@ -11,14 +11,23 @@ images:
   go: /assets/img/languages/go.png
   powershell: /assets/img/languages/powershell.png
 examples:
-  - title: Echo Cloud Event for Knative
+  - title: Powershell echo Cloud Event for Knative
     usecases: 
     - item: other
-    id: kn-echo-function
-    description: Function helps users understand the structure and data of a given vCenter Event using the Knative event processor which will be useful when creating brand new Functions.
+    id: kn-ps-echo-function
+    description: Powershell function that helps users understand the structure and data of a given vCenter Event using the Knative event processor which will be useful when creating brand new Functions.
     links: 
-    - language: python
-      url: "/tree/master/examples/knative/python/kn-echo"
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-echo"
+  - title: Slack Notification
+    usecases: 
+    - item: integration
+    - item: notification
+    id: kn-ps-slack-function
+    description: Powershell function to send a Slack notification.
+    links: 
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-slack"
 
 ---
 
