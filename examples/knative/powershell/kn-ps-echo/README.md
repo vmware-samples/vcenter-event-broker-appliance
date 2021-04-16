@@ -66,7 +66,7 @@ Edit the `function.yaml` file with the name of the container image from Step 1 i
 ```bash
 # Deploy function
 
-kubectl apply -f function.yaml
+kubectl -n vmware-functions apply -f function.yaml
 ```
 
 For testing purposes, the `function.yaml` contains the following annotations, which will ensure the Knative Service Pod will always run **exactly** one instance for debugging purposes. Functions deployed through through the VMware Event Broker Appliance UI defaults to scale to 0, which means the pods will only run when it is triggered by an vCenter Event.
@@ -75,4 +75,12 @@ For testing purposes, the `function.yaml` contains the following annotations, wh
 annotations:
   autoscaling.knative.dev/maxScale: "1"
   autoscaling.knative.dev/minScale: "1"
+```
+
+# Step 4 - Undeploy
+
+```bash
+# Undeploy function
+
+kubectl -n vmware-functions delete -f function.yaml
 ```

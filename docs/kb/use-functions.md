@@ -26,7 +26,7 @@ The steps below describe a generalized deployment step of a function on the VMwa
 
 ## Knative
 
-For this walk-through, the [`kn-echo`](/examples-knative) function from the example folder is used.
+For this walk-through, the [`kn-ps-echo`](/examples-knative) function from the example folder is used.
 
 ### Knative Prerequisites
 
@@ -38,7 +38,7 @@ Step 1 - Clone repo
 
 ```
 git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
-cd vcenter-event-broker-appliance/examples/knative/python/kn-echo
+cd vcenter-event-broker-appliance/examples/knative/powershell/kn-ps-echo
 git checkout master
 ```
 
@@ -50,19 +50,21 @@ Step 2 - Edit the configuration files
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: kn-echo
-  namespace: vmware-functions
+  name: kn-ps-echo
+  labels:
+    app: veba-ui
 spec:
   template:
     spec:
       containers:
-        - image: embano1/kn-echo:latest
+        - image: projects.registry.vmware.com/veba/kn-ps-echo:1.0
 ---
 apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
-  name: veba-echo-trigger
-  namespace: vmware-functions
+  name: veba-ps-echo-trigger
+  labels:
+    app: veba-ui
 spec:
   broker: default
   filter:
@@ -73,13 +75,13 @@ spec:
     ref:
       apiVersion: serving.knative.dev/v1
       kind: Service
-      name: kn-echo
+      name: kn-ps-echo
 ```
 
 Step 3 - Deploy function to VMware Event Broker Appliance
 
 ```
-kubectl apply -f function.yaml
+kubectl -n vmware-functions apply -f function.yaml
 ```
 
 Step 4 - Test your functions

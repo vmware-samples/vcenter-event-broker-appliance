@@ -47,6 +47,8 @@ kind: Service
 metadata:
  name: kn-ps-echo
  namespace: vmware-functions
+ labels:
+   app: veba-ui
 spec:
  template:
   spec:
@@ -61,6 +63,8 @@ The value of this field:
 - must not conflict with an existing function
 - should not contain special characters, e.g. "$" or "/"
 - should represent the intent of the function, e.g. "tag" or "tagging"
+
+`app: veba-ui`: The Kubernetes label that is required for the VMware Event Broker Appliance UI to display a manually deployed Knative Service
 
 `vmware-functions`: The Kubernetes namespace to deploy all functions to. By default, this is `vmware-functions` which is automatically created as part of the VMware Event Broker Appliance setup.
 
@@ -87,7 +91,8 @@ apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
   name: veba-ps-echo-trigger
-  namespace: vmware-functions
+  labels:
+    app: veba-ui
 spec:
   broker: default
   subscriber:
@@ -105,6 +110,8 @@ The value of this field:
 - should not contain special characters, e.g. "$" or "/"
 - should represent the intent of the trigger, e.g. "tag" or "tagging"
 
+`app: veba-ui`: The Kubernetes label that is required for the VMware Event Broker Appliance UI to display a manually deployed Knative Trigger
+
 `default`: The name of Knative broker. For VEBA with Embedded Knative Broker, the value will be `default`
 
 `kn-ps-echo`: The name of the Knative Service
@@ -116,7 +123,8 @@ apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
   name: veba-ps-echo-trigger
-  namespace: vmware-functions
+  labels:
+    app: veba-ui
 spec:
   broker: default
   filter:
@@ -137,6 +145,8 @@ The value of this field:
 - must not conflict with an existing trigger
 - should not contain special characters, e.g. "$" or "/"
 - should represent the intent of the trigger, e.g. "tag" or "tagging"
+
+`veba-ui`: The Kubernetes label that is required for the VMware Event Broker Appliance UI to display manually deployed Knative Trigger
 
 `default`: The name of Knative broker. For VEBA with Embedded Knative Broker, the value will be `default`
 
@@ -155,7 +165,8 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
  name: kn-ps-echo
- namespace: vmware-functions
+ labels:
+   app: veba-ui
 spec:
  template:
   spec:
@@ -166,7 +177,8 @@ apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
   name: veba-ps-echo-trigger
-  namespace: vmware-functions
+  labels:
+    app: veba-ui
 spec:
   broker: default
   filter:
@@ -178,19 +190,18 @@ spec:
       apiVersion: serving.knative.dev/v1
       kind: Service
       name: kn-ps-echo
-      namespace: vmware-functions
 ```
 
 To deploy the Knative Service/Trigger, just run:
 
 ```
-kubectl apply -f function.yaml
+kubectl -n vmware-functions apply -f function.yaml
 ```
 
 To undeploy the Knative Service/Trigger, just run:
 
 ```
-kubectl delete -f function.yaml
+kubectl -n vmware-functions delete -f function.yaml
 ```
 
 ## Knative Secrets
@@ -217,7 +228,7 @@ Next, we need to create the Kubernetes secret by using the `--from-file` option,
 kubectl -n vmware-functions create secret generic slack-secret --from-file=SLACK_SECRET=secret
 
 # update label
-kubectl -n vmware-functions label secret foo-secret app=veba-ui
+kubectl -n vmware-functions label secret slack-secret app=veba-ui
 ```
 
 > **Note:** The VMware Event Broker Appliance UI in the vSphere UI can also be used to view and manage Kubernetes secrets. However, to ensure Kubernetes secrets that were manually created is visible in the UI, you need to also upate the `app` label with the value of `veba-ui` which the VMware Event Broker Appliance UI will only filter on.
@@ -228,35 +239,36 @@ To use the newly created Kubernetes secret, we will need to add a new section to
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
- name: kn-ps-echo
- namespace: vmware-functions
+  name: kn-ps-slack
+  labels:
+    app: veba-ui
 spec:
- template:
-  metadata:
-  spec:
-   containers:
-    - image: projects.registry.vmware.com/veba/kn-ps-echo:1.0
-      envFrom:
-        - secretRef:
-            name: slack-secret
+  template:
+    metadata:
+    spec:
+      containers:
+        - image: projects.registry.vmware.com/veba/kn-ps-slack:1.0
+          envFrom:
+            - secretRef:
+                name: slack-secret
 ---
 apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
-  name: veba-ps-echo-trigger
-  namespace: vmware-functions
+  name: veba-ps-slack-trigger
+  labels:
+    app: veba-ui
 spec:
   broker: default
   filter:
     attributes:
-       type: com.vmware.event.router/event
-       subject: VmPoweredOffEvent
+      type: com.vmware.event.router/event
+      subject: VmPoweredOffEvent
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1
       kind: Service
-      name: kn-ps-echo
-      namespace: vmware-functions
+      name: kn-ps-slack
 ```
 
 Finally, to access the secret from within your function handler, use the language specific option to access the environment variable that you had named earlier called `SLACK_SECRET` and decode the contents.
@@ -280,7 +292,8 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
  name: kn-ps-slack
- namespace: vmware-functions
+ labels:
+   app: veba-ui
 spec:
  template:
   metadata:
@@ -298,7 +311,8 @@ apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
   name: veba-ps-echo-trigger
-  namespace: vmware-functions
+  labels:
+    app: veba-ui
 spec:
   broker: default
   filter:
@@ -310,7 +324,6 @@ spec:
       apiVersion: serving.knative.dev/v1
       kind: Service
       name: kn-ps-slack
-      namespace: vmware-functions
 ```
 
 ---
