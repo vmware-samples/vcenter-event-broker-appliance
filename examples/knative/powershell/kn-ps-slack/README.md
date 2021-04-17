@@ -10,7 +10,7 @@ Create the container image and optionally push to an external registry such as D
 
 ```
 docker build -t <docker-username>/kn-ps-slack:1.0 .
-docker push -t <docker-username>/kn-ps-slack:1.0
+docker push <docker-username>/kn-ps-slack:1.0
 ```
 
 # Step 2 - Test
