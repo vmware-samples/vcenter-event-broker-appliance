@@ -58,7 +58,7 @@ Update the `secret` file with your Slack webhook URL and then create the kuberne
 ```bash
 # create secret
 
-kubectl create secret generic slack-secret --from-file=SLACK_SECRET=secret
+kubectl -n vmware-functions create secret generic slack-secret --from-file=SLACK_SECRET=secret
 ```
 
 Edit the `function.yaml` file with the name of the container image from Step 1 if you made any changes. If not, the default VMware container image will suffice. By default, the function deployment will filter on the `VmPoweredOffEvent` vCenter Server Event. If you wish to change this, update the `subject` field within `function.yaml` to the desired event type.
