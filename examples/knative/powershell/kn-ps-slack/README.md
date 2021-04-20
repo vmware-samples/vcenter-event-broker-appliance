@@ -10,7 +10,7 @@ Create the container image and optionally push to an external registry such as D
 
 ```
 docker build -t <docker-username>/kn-ps-slack:1.0 .
-docker push -t <docker-username>/kn-ps-slack:1.0
+docker push <docker-username>/kn-ps-slack:1.0
 ```
 
 # Step 2 - Test
@@ -58,7 +58,7 @@ Update the `secret` file with your Slack webhook URL and then create the kuberne
 ```bash
 # create secret
 
-kubectl create secret generic slack-secret --from-file=SLACK_SECRET=secret
+kubectl -n vmware-functions create secret generic slack-secret --from-file=SLACK_SECRET=secret
 ```
 
 Edit the `function.yaml` file with the name of the container image from Step 1 if you made any changes. If not, the default VMware container image will suffice. By default, the function deployment will filter on the `VmPoweredOffEvent` vCenter Server Event. If you wish to change this, update the `subject` field within `function.yaml` to the desired event type.
@@ -69,7 +69,7 @@ Deploy the function to the VMware Event Broker Appliance (VEBA).
 ```bash
 # Deploy function
 
-kubectl apply -f function.yaml
+kubectl -n vmware-functions apply -f function.yaml
 ```
 
 For testing purposes, the `function.yaml` contains the following annotations, which will ensure the Knative Service Pod will always run **exactly** one instance for debugging purposes. Functions deployed through through the VMware Event Broker Appliance UI defaults to scale to 0, which means the pods will only run when it is triggered by an vCenter Event.
@@ -78,4 +78,12 @@ For testing purposes, the `function.yaml` contains the following annotations, wh
 annotations:
   autoscaling.knative.dev/maxScale: "1"
   autoscaling.knative.dev/minScale: "1"
+```
+
+# Step 4 - Undeploy
+
+```bash
+# Undeploy function
+
+kubectl -n vmware-functions delete -f function.yaml
 ```

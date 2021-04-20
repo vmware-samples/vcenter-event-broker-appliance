@@ -2,7 +2,8 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: kn-ps-echo
-  namespace: vmware-functions
+  labels:
+    app: veba-ui
 spec:
   template:
     metadata:
@@ -17,7 +18,8 @@ apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
   name: kn-ps-echo-trigger
-  namespace: vmware-functions
+  labels:
+    app: veba-ui
 spec:
   broker: default
   subscriber:
@@ -25,4 +27,3 @@ spec:
       apiVersion: serving.knative.dev/v1
       kind: Service
       name: kn-ps-echo
-      namespace: vmware-functions

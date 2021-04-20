@@ -16,10 +16,6 @@ kubectl patch configmap/config-network --namespace knative-serving --type merge 
 kubectl wait deployment --all --timeout=-1s --for=condition=Available -n contour-external
 kubectl wait deployment --all --timeout=-1s --for=condition=Available -n contour-internal
 
-# Github Issue #332
-kubectl -n knative-serving get cm config-deployment -o json | jq '.data.registriesSkippingTagResolving="projects.registry.vmware.com"' > /root/config/skip-tag-patch.json
-kubectl -n knative-serving patch cm config-deployment --type=merge --patch-file /root/config/skip-tag-patch.json
-
 echo -e "\e[92mDeploying Knative Eventing ..." > /dev/console
 kubectl apply -f /root/download/eventing-crds.yaml
 kubectl apply -f /root/download/eventing-core.yaml
