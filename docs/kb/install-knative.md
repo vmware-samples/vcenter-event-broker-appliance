@@ -64,6 +64,8 @@ Deploy the VMware Event Broker Appliance OVA to your vCenter Server using the vS
 #### **Event Processor Configuration** (**Required**)
   * Event Processor - Choose Knative
 
+(Note: Selecting Knative here will default to using the embedded Knative event processor within the VMware Event Broker Appliance.  If this is your intent, you do not have to fill in any of the settings for the Knative Configuration section below. The Knative Configuration section below is for use with an external Knative event processor.)
+
 #### **Knative Configuration** (**Required**)
   * Host - Knative host (e.g. mybroker.corp.local:8080)
     * Leave `host` field blank to automatically enable the embedded Knative broker
