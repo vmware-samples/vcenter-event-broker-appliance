@@ -19,8 +19,9 @@ Customers looking to seamlessly extend their vCenter through native AWS componen
 
 ### Requirements
 
-* 2 vCPU and 8GB of memory for VMware Event Broker Appliance
+* 4 vCPU and 8GB of memory for VMware Event Broker Appliance
 * vCenter Server 6.x or greater
+* vCenter TCP/443 accessible from Appliance IP address
 * Account to login to vCenter Server (readOnly is sufficient)
 * Access credentials for AWS account
 * Details about the AWS EventBridge setup (Rules, Region etc) 

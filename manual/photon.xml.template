@@ -77,25 +77,24 @@
             <Label>vCenter Password</Label>
             <Description>Password to login to vCenter Server</Description>
         </Property>
+        <Property ovf:key="guestinfo.vcenter_veba_ui_username" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>vCenter Username to register VEBA UI</Label>
+            <Description>Username to register VMware Event Broker UI to vCenter Server for Knative Processor (optional)</Description>
+        </Property>
+        <Property ovf:key="guestinfo.vcenter_veba_ui_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>vCenter Password to register VEBA UI</Label>
+            <Description>Password to register VMware Event Broker UI to vCenter Server for Knative Processor (optional)</Description>
+        </Property>
         <Property ovf:key="guestinfo.vcenter_disable_tls_verification" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Disable vCenter Server TLS Verification</Label>
             <Description>Disable TLS Verification for vCenter Server (required for self-sign certificate)</Description>
         </Property>
       <Category>Event Processor Configuration</Category>
-        <Property ovf:qualifiers="ValueMap{&quot;Knative&quot;, &quot;OpenFaaS&quot;, &quot;AWS EventBridge&quot;}" ovf:userConfigurable="true" ovf:value="OpenFaaS" ovf:type="string" ovf:key="guestinfo.event_processor_type">
+        <Property ovf:qualifiers="ValueMap{&quot;Knative&quot;, &quot;OpenFaaS&quot;, &quot;AWS EventBridge&quot;}" ovf:userConfigurable="true" ovf:value="Knative" ovf:type="string" ovf:key="guestinfo.event_processor_type">
           <Label>Event Processor</Label>
-          <Description>Choose either OpenFaaS (default), Knative, or AWS EventBridge and only fill in the configuration for the select event processor below</Description>
+          <Description>Choose either Knative (default), OpenFaaS, or AWS EventBridge and only fill in the configuration for the select event processor below</Description>
         </Property>
-      <Category>OpenFaaS Configuration</Category>
-        <Property ovf:key="guestinfo.openfaas_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
-            <Label>Password</Label>
-            <Description>Password to login into OpenFaaS. Please use a secure password</Description>
-        </Property>
-        <Property ovf:key="guestinfo.openfaas_advanced_options" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
-            <Label>Advanced Settings</Label>
-            <Description>Opaque string for applying advanced configurations for OpenFaaS Processor. For advanced use cases only, please see documentation for more details</Description>
-        </Property>
-      <Category>Knative Configuration</Category>
+      <Category>Existing Knative Environment Configuration</Category>
         <Property ovf:key="guestinfo.knative_host" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Host</Label>
             <Description>Knative Host (e.g. mybroker.corp.local:8080)</Description>
@@ -111,6 +110,15 @@
         <Property ovf:key="guestinfo.knative_path" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Path</Label>
             <Description>Additional path to append to the host if required (e.g. /default/default)</Description>
+        </Property>
+      <Category>OpenFaaS Configuration</Category>
+        <Property ovf:key="guestinfo.openfaas_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Password</Label>
+            <Description>Password to login into OpenFaaS. Please use a secure password</Description>
+        </Property>
+        <Property ovf:key="guestinfo.openfaas_advanced_options" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Advanced Settings</Label>
+            <Description>Opaque string for applying advanced configurations for OpenFaaS Processor. For advanced use cases only, please see documentation for more details</Description>
         </Property>
       <Category>AWS EventBridge Configuration</Category>
         <Property ovf:key="guestinfo.aws_eb_access_key" ovf:type="string" ovf:userConfigurable="true" ovf:value="">

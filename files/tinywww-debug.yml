@@ -4,7 +4,7 @@ metadata:
   labels:
     app: tinywww
   name: tinywww
-  namespace: vmware
+  namespace: vmware-system
 spec:
   replicas: 1
   selector:
@@ -18,7 +18,7 @@ spec:
         app: tinywww
     spec:
       containers:
-      - image: embano1/tinywww:latest
+      - image: projects.registry.vmware.com/veba/tinywww:latest
         imagePullPolicy: IfNotPresent
         name: tinywww
         ports:
@@ -56,7 +56,7 @@ metadata:
   labels:
     app: tinywww
   name: tinywww
-  namespace: vmware
+  namespace: vmware-system
 spec:
   ports:
   - port: 8100

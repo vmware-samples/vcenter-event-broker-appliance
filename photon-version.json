@@ -1,10 +1,10 @@
 {
   "description": "Photon Build for vCenter Event Broker Appliance",
   "vm_name": "vCenter_Event_Broker_Appliance",
-  "iso_checksum": "f6619bcff94cef63d0d6d7ead7dd3878816ebfa6a1ef5717175bb0d08d4ccc719e4ec7daa7db3c5dc07ea3547fc24412b4dc6827a4ac332ada9d5bfc842c4229",
+  "iso_checksum": "248b9916bc60698bdc8aeecf17547cac98c52f60b69d3ec4848e1df6ba4b8e72af8cff0557ac303928beef4e299ca1090c5369d739e97f19d683d84e9c72bc6d",
   "iso_checksum_type": "sha512",
-  "iso_url": "http://dl.bintray.com/vmware/photon/3.0/Rev2/iso/Update1/photon-3.0-a0f216d.iso",
-  "numvcpus": "2",
+  "iso_url": "https://packages.vmware.com/photon/3.0/Rev2/iso/Update2/photon-3.0-a0f216d.iso",
+  "numvcpus": "4",
   "ramsize": "8192",
   "guest_username": "root",
   "guest_password": "##FILL-IN-SECURE-PASSWORD##"

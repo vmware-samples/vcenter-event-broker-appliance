@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v2
       - name: verify modules are up2date/unchanged
         run: |
-          make tidy
+          make vendor
           [[ -z $(git status -s) ]] || (echo 'git dirty: modified and/or untracked'; git status -s; false)
   build-push:
     runs-on: ubuntu-latest

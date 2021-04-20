@@ -42,10 +42,10 @@ kubeadm init --ignore-preflight-errors SystemVerification --skip-token-print --c
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
-kubectl --kubeconfig /root/.kube/config taint nodes --all node-role.kubernetes.io/master-
+kubectl taint nodes --all node-role.kubernetes.io/master-
 
 echo -e "\e[92mDeloying Antrea ..." > /dev/console
-kubectl --kubeconfig /root/.kube/config apply -f /root/download/antrea.yml
+kubectl apply -f /root/download/antrea.yml
 
 echo -e "\e[92mStarting k8s ..." > /dev/console
 systemctl enable kubelet.service
@@ -55,3 +55,15 @@ do
     echo -e "\e[92mk8s service is still inactive, sleeping for 10secs" > /dev/console
     sleep 10
 done
+
+if [ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]; then
+  echo -e "\e[92mDeploying Local Storage Provisioner ..." > /dev/console
+  mkdir -p ${LOCAL_STOARGE_VOLUME_PATH}/local-path-provisioner
+  chmod 777 ${LOCAL_STOARGE_VOLUME_PATH}/local-path-provisioner
+  kubectl apply -f /root/download/local-path-storage.yaml
+  kubectl patch sc local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+fi
+
+echo -e "\e[92mCreating VMware namespaces ..." > /dev/console
+kubectl create namespace vmware-system
+kubectl create namespace vmware-functions

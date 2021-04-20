@@ -28,7 +28,7 @@ default: build
 release: build tag push output
 	$(info Make: Making new release for image "$(IMAGE_NAME)" based on commit "$(COMMIT)".)
 
-vendor:
+vendor: tidy
 	$(info Make: syncing Go dependencies with vendor folder.)
 	go mod vendor -v
 
@@ -39,7 +39,7 @@ tidy:
 # intended for local dev use (won't check for unclean git)
 binary: unit-test 
 	$(info Make: Building binary "$(DIST_FOLDER)/$(BINARY)".)
-	CGO_ENABLED=0 go build -mod=readonly -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o $(DIST_FOLDER)/$(BINARY) cmd/router/main.go
+	CGO_ENABLED=0 go build -mod=vendor -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o $(DIST_FOLDER)/$(BINARY) cmd/router/main.go
 
 build: unit-test tidy
 	$(info Make: Building image "$(IMAGE_NAME)".)
@@ -48,24 +48,24 @@ build: unit-test tidy
 
 gofmt:
 	$(info Make: Checking code is gofmted.)
-	@test -z "$(shell gofmt -s -l -d -e . | tee /dev/stderr)"
+	$(eval PKGS=$(shell go list -f {{.Dir}} ./...))
+	@test -z "$(shell gofmt -s -l -d -e ${PKGS} | tee /dev/stderr)"
 
 lint:
 	$(info Make: Running linter.)
 	@golangci-lint run --build-tags unit,integration  -v
 
 unit-test: gofmt
-	$(eval TAG=unit)
-	$(eval TEST_PKGS=$(shell go list -tags=${TAG} -f '{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' ./...))
 	$(info Make: Running unit tests.)
-	@GORACE=history_size=5 go test -mod=readonly -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover ${TEST_PKGS} -v
+	$(eval TAG=unit)
+	@go test -mod=vendor -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover -v ./...
 
 # requires running Kubernetes/OpenFaaS environment - or use
 # hack/run_integration_tests.sh (requires kind)
 integration-test: gofmt
+	$(info Make: Running integration tests.)
 	$(eval TAG=integration,openfaas)
-	$(eval TEST_PKGS=$(shell go list -tags=${TAG} -f '{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' ./...))
-	@GORACE=history_size=5 go test -mod=readonly -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover ${TEST_PKGS} -v -ginkgo.v
+	@go test -mod=vendor -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover -v ./... -ginkgo.v
 
 test: unit-test integration-test
 

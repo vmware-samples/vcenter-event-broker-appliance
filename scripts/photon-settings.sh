@@ -31,7 +31,8 @@ tdnf install -y \
   unzip \
   awk \
   tar \
-  jq
+  jq \
+  parted
 
 echo '> Adding K8s Repo'
 curl -L https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg -o /etc/pki/rpm-gpg/GOOGLE-RPM-GPG-KEY
@@ -48,6 +49,12 @@ EOF
 K8S_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["kubernetes"].gitRepoTag' | sed 's/v//g')
 # Ensure kubelet is updated to the latest desired K8s version
 tdnf install -y kubelet-${K8S_VERSION} kubectl-${K8S_VERSION} kubeadm-${K8S_VERSION}
+
+echo '> Downloading Kn CLI'
+KNATIVE_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["knative"].gitRepoTag')
+wget https://github.com/knative/client/releases/download/${KNATIVE_VERSION}/kn-linux-amd64
+chmod +x kn-linux-amd64
+mv kn-linux-amd64 /usr/local/bin/kn
 
 echo '> Creating directory for setup scripts and configuration files'
 mkdir -p /root/setup
@@ -91,5 +98,17 @@ KillMode=process
 EOF
 
 systemctl enable getty@tty1.service
+
+echo '> Enable contrackd log rotation...'
+cat > /etc/logrotate.d/contrackd << EOF
+/var/log/conntrackd*.log {
+	missingok
+	size 5M
+	rotate 3
+        maxage 7
+	compress
+	copytruncate
+}
+EOF
 
 echo '> Done'
