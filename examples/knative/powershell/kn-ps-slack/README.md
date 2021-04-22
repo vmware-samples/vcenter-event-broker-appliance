@@ -17,13 +17,20 @@ docker push <docker-username>/kn-ps-slack:1.0
 
 Verify the container image works by executing it locally.
 
+**Windows PowerShell:**
+
+```powershell
+docker run -e FUNCTION_DEBUG=true -e PORT=8080 -e SLACK_SECRET="{'SLACK_WEBHOOK_URL': 'YOUR-WEBHOOK-URL'}" -it --rm -p 8080:8080 <docker-username>/kn-ps-slack:1.0
+```
+
+**Windows WSL/Linux/MacOS:**
 ```bash
 docker run -e FUNCTION_DEBUG=true -e PORT=8080 -e SLACK_SECRET='{"SLACK_WEBHOOK_URL": "YOUR-WEBHOOK-URL"}' -it --rm -p 8080:8080 <docker-username>/kn-ps-slack:1.0
+```
 
-# now in a separate window run the following
+In a separate terminal, run either `test.ps1` (PowerShell Script) or `test.sh` (Bash Script) to simulate a CloudEvent payload being sent to the local container image
 
-# Run either test.ps1 (PowerShell Script) or test.sh (Bash Script) to simulate a CloudEvent payload being sent to the container image
-./test.ps1
+```
 
 Testing Function ...
 See docker container console for output
