@@ -1,0 +1,101 @@
+name: VMware Event Router Helm Test
+
+# triggered on every PR and commit on changes inside the vmware-event-router
+# (Helm) chart directory
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "vmware-event-router/chart/**"
+  push:
+    paths:
+      - "vmware-event-router/chart/**"
+
+jobs:
+  helm:
+    name: Verify Helm chart (latest release)
+    runs-on: ubuntu-latest
+    env:
+      KO_DOCKER_REPO: kind.local
+      KO_VERSION: 0.8.2
+      KIND_VERSION: v0.10.0
+      NAMESPACE: vmware
+      CHART_REPO: "https://projects.registry.vmware.com/chartrepo/veba"
+    timeout-minutes: 15
+
+    steps:
+      - name: Install KinD
+        run: |
+          curl -L https://github.com/google/ko/releases/download/v${KO_VERSION}/ko_${KO_VERSION}_Linux_x86_64.tar.gz | tar xzf - ko
+          chmod +x ./ko
+          sudo mv ko /usr/local/bin
+
+      - name: Check out code onto GOPATH
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Setup KinD Cluster
+        run: |
+          set -x
+          curl -Lo ./kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VERSION}/kind-$(uname)-amd64
+          chmod +x ./kind
+          sudo mv kind /usr/local/bin
+
+          # create cluster with defaults
+          kind create cluster --wait 3m
+
+      - name: Install OpenFaaS with Helm
+        run: |
+          kubectl create ns openfaas && kubectl create ns openfaas-fn
+          helm repo add openfaas https://openfaas.github.io/faas-netes 
+          helm repo update
+          helm upgrade openfaas --install openfaas/openfaas \
+            --namespace openfaas \
+            --set functionNamespace=openfaas-fn \
+            --set generateBasicAuth=true --wait
+
+          kubectl wait --timeout=1m --for=condition=Available -n openfaas deploy/gateway
+          echo "OF_PASS=$(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode)" >> $GITHUB_ENV
+
+      - name: Install vCenter Simulator
+        working-directory: ./vmware-event-router
+        run: |
+          kubectl create ns ${NAMESPACE}
+          kubectl -n ${NAMESPACE} apply -f deploy/vcsim.yaml
+          kubectl wait --timeout=1m --for=condition=Available -n ${NAMESPACE} deploy/vcsim
+
+      - name: Install VMware Event Router with Helm
+        run: |
+          echo "::group::Create override.yaml"
+          cat << EOF > override.yaml
+          eventrouter:
+            config:
+              logLevel: debug
+            vcenter:
+              address: https://vcsim.vmware.svc.cluster.local
+              username: user
+              password: pass
+              insecure: true # ignore TLS certs
+            openfaas:
+              address: http://gateway.openfaas.svc.cluster.local:8080
+              basicAuth: true
+              username: admin
+              password: ${OF_PASS}
+          EOF
+          echo "::endgroup::"
+
+          echo "::group::Deploy VMware Event Router"
+          helm repo add vmware-veba ${CHART_REPO}
+          helm install -n vmware --create-namespace veba vmware-veba/event-router -f override.yaml --wait
+
+          # assert it deployed correctly
+          kubectl wait --timeout=1m --for=condition=Available -n vmware deploy/router
+          echo "::endgroup::"
+
+      - name: "Debug"
+        if: ${{ always() }}
+        run: |
+          kubectl get pods --all-namespaces
+          kubectl -n ${NAMESPACE} describe pods
+          kubectl -n ${NAMESPACE} get events
