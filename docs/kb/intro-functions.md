@@ -22,7 +22,7 @@ The VMware Event Broker Appliance can be deployed using either Knative or OpenFa
 - [Knative](#knative)
   - [Knative Naming and Version Control](#knative-naming-and-version-control)
     - [Knative Service](#knative-service)
-    - [Knative Trigger](#knative-service)
+    - [Knative Trigger](#knative-trigger)
     - [Knative Combined Service and Trigger](#knative-combined-service-and-trigger)
     - [Knative Secrets](#knative-secrets)
     - [Knative Environment Variables](#knative-environment-variables)
@@ -154,7 +154,49 @@ The value of this field:
 
 `kn-ps-echo`: The name of the Knative Service
 
-> **Note:** Today, a single Knative Trigger can only filter on one vCenter Server event. To associate multiple vCenter Server events to a given Knative Service, you simply create a Knative Trigger for each event.
+Today, a single Knative Trigger can only filter on one vCenter Server event. To associate multiple vCenter Server events to a given Knative Service, you simply create a Knative Trigger for each event as shown in the two examples below, one for `VmPoweredOffEvent` and `DrsVmPoweredOnEvent` vCenter Events respectively:
+
+`kn-trigger-1.yaml`
+```
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: veba-ps-echo-trigger-1
+  labels:
+    app: veba-ui
+spec:
+  broker: default
+  filter:
+    attributes:
+       type: com.vmware.event.router/event
+       subject: VmPoweredOffEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-ps-echo
+```
+
+`kn-trigger-2.yaml`
+```
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: veba-ps-echo-trigger-2
+  labels:
+    app: veba-ui
+spec:
+  broker: default
+  filter:
+    attributes:
+       type: com.vmware.event.router/event
+       subject: DrsVmPoweredOnEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-ps-echo
+```
 
 ## Knative Combined Service and Trigger
 
