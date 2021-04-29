@@ -61,6 +61,8 @@ Deploy the VMware Event Broker Appliance OVA to your vCenter Server using the vS
   * vCenter Password to register VEBA UI (Optional) - Password to register VMware Event Broker UI to vCenter Server for Knative Processor
   * Disable vCenter Server TLS Verification - If you have a self-signed SSL Certificate, you will need to check this box
 
+> **Note:** The minimum vSphere Privileges that is required for proper VEBA UI functionality are: **Register Extension**, **Update Extension** (Installing Plugins) and **Manage Plugins** (Updating Plugins)
+
 #### **Event Processor Configuration** (**Required**)
   * Event Processor - Choose Knative
 
