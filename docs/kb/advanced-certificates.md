@@ -42,13 +42,13 @@ If you are using the Embedded Knative Broker, you will also need to reference th
 
 ```bash
 cd /folder/certs/location
-KNATIVE_CERT_NAME=eventrouter-tls #DO NOT CHANGE THIS
+KNATIVE_CERT_NAME=default-cert #DO NOT CHANGE THIS
 KEY_FILE=<cert-key-file>.pem
 CERT_FILE=<public-cert>.cer
 
 #recreate the tls secret
 kubectl -n contour-external delete secret ${KNATIVE_CERT_NAME}
-kubectl -n contour-external create secret tls default-cert --key ${KEY_FILE} --cert ${CERT_FILE}
+kubectl -n contour-external create secret tls ${KNATIVE_CERT_NAME} --key ${KEY_FILE} --cert ${CERT_FILE}
 
 #reapply the config to take the new certificate
 kubectl apply -f /root/config/ingressroute-gateway.yaml
