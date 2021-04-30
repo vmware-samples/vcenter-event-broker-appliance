@@ -1,0 +1,38 @@
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  labels:
+    app: vmware
+  name: event-router
+  namespace: vmware-system
+spec:
+  routes:
+  - conditions:
+    - prefix: /status
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /status
+    services:
+    - name: tinywww
+      port: 8100
+  - conditions:
+    - prefix: /bootstrap
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /bootstrap
+    services:
+    - name: tinywww
+      port: 8100
+  - conditions:
+    - prefix: /stats
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /stats
+    services:
+    - name: vmware-event-router
+      port: 8082
+  virtualhost:
+    fqdn: ##HOSTNAME##
+    tls:
+      minimumProtocolVersion: "1.2"
+      secretName: ##CERT_NAME##

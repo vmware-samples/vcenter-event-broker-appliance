@@ -169,6 +169,31 @@
       "type": "file",
       "source": "files/veba-dcui",
       "destination": "/usr/bin/veba-dcui"
+    },
+    {
+      "type": "file",
+      "source": "files/knative-embedded-veba-ui-ingressroute-gateway.yaml",
+      "destination": "/root/config/knative-embedded-veba-ui-ingressroute-gateway.yaml"
+    },
+    {
+      "type": "file",
+      "source": "files/knative-embedded-ingressroute-gateway.yaml",
+      "destination": "/root/config/knative-embedded-ingressroute-gateway.yaml"
+    },
+    {
+      "type": "file",
+      "source": "files/knative-external-ingressroute-gateway.yaml",
+      "destination": "/root/config/knative-external-ingressroute-gateway.yaml"
+    },
+    {
+      "type": "file",
+      "source": "files/eventbridge-ingressroute-gateway.yaml",
+      "destination": "/root/config/eventbridge-ingressroute-gateway.yaml"
+    },
+    {
+      "type": "file",
+      "source": "files/openfaas-ingressroute-gateway.yaml",
+      "destination": "/root/config/openfaas-ingressroute-gateway.yaml"
     }
   ],
   "post-processors": [
