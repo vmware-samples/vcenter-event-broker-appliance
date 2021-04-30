@@ -1,4 +1,3 @@
-<!-- omit in toc -->
 # VMware Event Router
 
 The VMware Event Router is used to connect to various VMware event `providers`
@@ -49,40 +48,6 @@ to normalize events from the supported event `providers`. See
 
 > **Note:** Event Processors, like Knative, support Dead Letter Queues when
 > using `Broker` mode.
-
-<!-- omit in toc -->
-## Table of Contents
-
-- [Configuration](#configuration)
-  - [Overview: Configuration File Structure (YAML)](#overview-configuration-file-structure-yaml)
-  - [JSON Schema Validation](#json-schema-validation)
-  - [API Version, Kind and Metadata](#api-version-kind-and-metadata)
-  - [The `eventProvider` section](#the-eventprovider-section)
-    - [Provider Type `vcenter`](#provider-type-vcenter)
-    - [Provider Type `vcsim`](#provider-type-vcsim)
-  - [The `eventProcessor` section](#the-eventprocessor-section)
-    - [Processor Type `knative`](#processor-type-knative)
-      - [Destination](#destination)
-    - [Processor Type `openfaas`](#processor-type-openfaas)
-    - [Processor Type `aws_event_bridge`](#processor-type-aws_event_bridge)
-  - [The `auth` section](#the-auth-section)
-    - [Type `basic_auth`](#type-basic_auth)
-    - [Type `aws_access_key`](#type-aws_access_key)
-  - [The `metricsProvider` section](#the-metricsprovider-section)
-    - [Provider Type `default`](#provider-type-default)
-- [Deployment](#deployment)
-  - [Assisted Deployment](#assisted-deployment)
-    - [Helm Deployment](#helm-deployment)
-      - [OpenFaaS Helm Deployment (skip if already installed)](#openfaas-helm-deployment-skip-if-already-installed)
-      - [Example: Deploy VMware Event Router into a new namespace](#example-deploy-vmware-event-router-into-a-new-namespace)
-      - [Creating/Updating the Chart](#creatingupdating-the-chart)
-    - [Manual Deployment](#manual-deployment)
-      - [Create Knative ClusterRoleBinding (skip if not using Knative)](#create-knative-clusterrolebinding-skip-if-not-using-knative)
-      - [Create the VMware Event Router Deployment](#create-the-vmware-event-router-deployment)
-  - [CLI Flags](#cli-flags)
-- [Build from Source](#build-from-source)
-- [Contribute](#contribute)
-- [Example Event Structure](#example-event-structure)
 
 ## Configuration
 
@@ -497,8 +462,6 @@ and optional fields for configuring the `default` metrics server.
 VMware Event Router can be deployed and run as standalone binary (see
 [below](#build-from-source)). However, it is designed (and recommended) to be
 run in a Kubernetes cluster for increased availability and ease of scaling out.
-The following steps describe the deployment of the VMware Event Router in **a
-Kubernetes cluster** for an **existing** OpenFaaS ("faas-netes") environment.
 
 > **Note:** Docker images are available
 > [here](https://hub.docker.com/r/vmware/veba-event-router).
@@ -506,11 +469,9 @@ Kubernetes cluster** for an **existing** OpenFaaS ("faas-netes") environment.
 ### Assisted Deployment
 
 For your convenience we provide a Helm Chart which can be used to easily install
-the VMware Event Router into an **existing** OpenFaaS ("faas-netes")
-environment. See [below](#openfaas-helm-deployment) for an example how to set up OpenFaaS in
-a development environment.
-
-> **Note:** Currently we do not support other event processors for Helm-based deployments.
+the VMware Event Router into an **existing** OpenFaaS ("faas-netes") or Knative
+environment. See [below](#openfaas-helm-deployment) for an example how to set up
+OpenFaaS in a development environment.
 
 #### Helm Deployment
 
@@ -519,12 +480,13 @@ file contains the allowed parameters and parameter descriptions which map to the
 VMware Event Router [configuration](#overview-configuration-file-structure-yaml)
 file.
 
-##### OpenFaaS Helm Deployment (skip if already installed)
+##### Option 1: Configuration with OpenFaaS
 
-The following steps can be used to quickly install OpenFaaS as a requirement for the
-Helm installation instructions of the VMware Event Router below:
+The following steps can be used to quickly install OpenFaaS as a requirement for
+the Helm installation instructions of the VMware Event Router below. Skip this
+part if you already have an OpenFaaS environment set up.
 
-```bash
+```console
 kubectl create ns openfaas && kubectl create ns openfaas-fn
 
 helm repo add openfaas https://openfaas.github.io/faas-netes && \
@@ -537,9 +499,7 @@ helm repo add openfaas https://openfaas.github.io/faas-netes && \
 OF_PASS=$(echo $(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode))
 ```
 
-##### Example: Deploy VMware Event Router into a new namespace
-
-First create an `override.yaml` file with your environment specific settings,
+Now create a Helm `override.yaml` file with your environment specific settings,
 e.g.:
 
 ```yaml
@@ -547,43 +507,76 @@ eventrouter:
   config:
     logLevel: debug
   vcenter:
-    address: https://10.186.34.28
+    address: https://vcenter.corp.local
     username: administrator@vsphere.local
-    password: <vc_account_password>
-    insecure: true # ignore TLS certs
+    password: replaceMe
+    insecure: true # if required ignore TLS certs
+  eventProcessor: openfaas
   openfaas:
     address: http://gateway.openfaas:8080
     basicAuth: true
     username: admin
-    password: <paste_OF_PASS_from_above>
+    password: ${OF_PASS} # variable from previous section
 
 ```
 
 > **Note:** Please ensure the correct formatting/indentation which follows the
 > Helm `values.yaml` file.
 
+##### Option 2: Configuration with Knative
 
-Now add the VMware Event Router Helm release to your Helm repository:
+If you don't have a working Knative installation, follow the steps described in
+the [official](https://knative.dev/docs/install/prerequisites/) documentation to
+deploy Knative Serving **and** Eventing.
 
-```bash
+Now create a Helm `override.yaml` file with your environment specific settings,
+e.g.:
+
+```yaml
+eventrouter:
+  config:
+    logLevel: debug
+  vcenter:
+    address: https://vcenter.corp.local
+    username: administrator@vsphere.local
+    password: replaceMe
+    insecure: true # if required ignore TLS certs
+  eventProcessor: knative
+  knative:
+    destination: # follows Knative convention for ref/uri
+      ref:
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+        name: default
+        namespace: default
+```
+
+> **Note:** Please ensure the correct formatting/indentation which follows the
+> Helm `values.yaml` file.
+
+##### Deploy the VMware Event Router Helm Chart
+
+
+Add the VMware Event Router Helm release to your Helm repository:
+
+```console
 # adds the veba chartrepo to the list of local registries with the repo name "veba"
-helm repo add vmware-veba https://projects.registry.vmware.com/chartrepo/veba
+$ helm repo add vmware-veba https://projects.registry.vmware.com/chartrepo/veba
 ```
 
 To ensure new releases are pulled/updated and reflected locally update the repo index:
 
-```bash
-helm repo update
+```console
+$ helm repo update
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "vmware-veba" chart repository
 Update Complete. ⎈ Happy Helming!⎈
-
 ```
 
 The chart should now show up in the search:
 
-```bash
-helm search repo event-router
+```console
+$ helm search repo event-router
 NAME                      CHART VERSION   APP VERSION     DESCRIPTION
 vmware-veba/event-router  v0.5.0          v0.5.0          The VMware Event Router is used to connect to v...
 ```
@@ -595,8 +588,8 @@ using the configuration override file created above. The following command will
 create a release from the chart in the namespace `vmware`, which will be
 automatically created if it does not exist:
 
-```bash
-helm install -n vmware --create-namespace veba vmware-veba/event-router -f override.yaml
+```console
+$ helm install -n vmware --create-namespace veba vmware-veba/event-router -f override.yaml
 NAME: veba
 LAST DEPLOYED: Mon Nov  9 16:27:27 2020
 NAMESPACE: vmware
@@ -607,8 +600,8 @@ TEST SUITE: None
 
 Check the logs of the VMware Event Router to validate it is operating correctly:
 
-```bash
-kubectl -n vmware logs deploy/router -f
+```console
+$ kubectl -n vmware logs deploy/router -f
 ```
 
 If you run into issues, the logs should give you a hint, e.g.:
@@ -622,8 +615,8 @@ If you run into issues, the logs should give you a hint, e.g.:
 
 To uninstall the release run:
 
-```bash
-helm -n vmware uninstall veba
+```console
+$ helm -n vmware uninstall veba
 ```
 
 
@@ -632,20 +625,19 @@ helm -n vmware uninstall veba
 Before running the following commands make the appropriate changes to the chart,
 e.g. bumping up `version` and/or `appVersion` in `Chart.yaml`.
 
-```bash
-cd chart
-helm package -d releases .
+```console
+$ cd chart
+$ helm package -d releases .
 ```
 
 Then upload the created `.tgz` file inside `releases/` to your Helm chart repo.
-
 
 #### Manual Deployment
 
 Create a namespace where the VMware Event Router will be deployed to:
 
-```bash
-kubectl create namespace vmware
+```console
+$ kubectl create namespace vmware
 ```
 
 Use one of the configuration files provided [here](deploy/) to configure the
@@ -667,8 +659,8 @@ Now, from your current Git working directory create a Kubernetes
 [secret](https://kubernetes.io/docs/concepts/configuration/secret/) with the
 configuration file as input:
 
-```bash
-kubectl -n vmware create secret generic event-router-config --from-file=event-router-config.yaml
+```console
+$ kubectl -n vmware create secret generic event-router-config --from-file=event-router-config.yaml
 ```
 
 > **Note:** You might want to delete the (local) configuration file to not leave
@@ -685,15 +677,15 @@ Event Router will be deployed into the `vmware` namespace using the predefined
 service account (deployment manifest). This requires a properly configured
 Knative environment with `Serving` and `Eventing` CRDs installed.
 
-```bash
+```console
 # only for Knative-based deployments
-kubectl create clusterrolebinding veba-addressable-resolver --clusterrole=addressable-resolver --serviceaccount=vmware:vmware-event-router
+$ kubectl create clusterrolebinding veba-addressable-resolver --clusterrole=addressable-resolver --serviceaccount=vmware:vmware-event-router
 ```
 
 <details><summary>Addressable Resolver Permissions</summary>
 
-```bash
-kubectl describe clusterrole addressable-resolver
+```console
+$ kubectl describe clusterrole addressable-resolver
 Name:                                            addressable-resolver
 Labels:                                          eventing.knative.dev/release=v0.18.4
 Annotations:                                     PolicyRule:
@@ -719,7 +711,6 @@ Annotations:                                     PolicyRule:
   services.serving.knative.dev/status            []                 []              [get list watch]
   services.serving.knative.dev                   []                 []              [get list watch]
   channels.messaging.knative.dev/finalizers      []                 []              [update]
-
 ```
 
 </details>
@@ -728,14 +719,14 @@ Annotations:                                     PolicyRule:
 
 Now we can deploy the VMware Event Router:
 
-```bash
-kubectl -n vmware create -f deploy/event-router-k8s.yaml
+```console
+$ kubectl -n vmware create -f deploy/event-router-k8s.yaml
 ```
 
 Check the logs of the VMware Event Router to validate it started correctly:
 
-```bash
-kubectl -n vmware logs deploy/vmware-event-router -f
+```console
+$ kubectl -n vmware logs deploy/vmware-event-router -f
 ```
 
 If you run into issues, the logs should give you a hint, e.g.:
@@ -750,8 +741,8 @@ If you run into issues, the logs should give you a hint, e.g.:
 To delete the deployment and secret simply delete the namespace we created
 earlier:
 
-```bash
-kubectl delete namespace vmware
+```console
+$ kubectl delete namespace vmware
 ```
 
 ### CLI Flags
@@ -762,8 +753,8 @@ and human readable colored console logs will be printed. This behavior can be
 overridden via `log-json` to generate JSON logs and `log-level` to change the
 log level. Stack traces are only generated in level `error` or higher. 
 
-```
-./vmware-event-router -h
+```console
+$ ./vmware-event-router -h
 
  _    ____  ___                            ______                 __     ____              __
 | |  / /  |/  /      ______ _________     / ____/   _____  ____  / /_   / __ \____  __  __/ /____  _____
@@ -789,15 +780,15 @@ Requirements: This project uses [Golang](https://golang.org/dl/) and Go
 and Dockerfile are provided requiring `make` and
 [Docker](https://www.docker.com/) to be installed as well.
 
-```bash
-git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
-cd vcenter-event-broker-appliance/vmware-event-router
+```console
+$ git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
+$ cd vcenter-event-broker-appliance/vmware-event-router
 
 # for Go versions before v1.13
-export GO111MODULE=on
+$ export GO111MODULE=on
 
 # defaults to build with Docker (use "make binary" for local executable instead)
-make
+$ make
 ```
 
 > **Note:** For `_test.go` files your editor (e.g. vscode) might show errors and

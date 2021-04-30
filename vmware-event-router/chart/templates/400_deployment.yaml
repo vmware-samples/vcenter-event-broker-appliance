@@ -14,6 +14,7 @@ spec:
       labels:
 {{ include "router.matchLabels" . | indent 8 }}
     spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       containers:
       - image: {{ .Values.image.repository }}:{{ .Chart.AppVersion }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
