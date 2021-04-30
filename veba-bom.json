@@ -140,6 +140,10 @@
             {
                 "name": "gcr.io/knative-releases/knative.dev/eventing-rabbitmq/cmd/ingress@sha256",
                 "version": "94232a856453d0761bf0ffd1fb13cb2a957591fabac8821c1be796098acc6d62"
+            },
+            {
+                "name": "gcr.io/knative-releases/knative.dev/eventing-rabbitmq/cmd/dispatcher@sha256",
+                "version": "2f99ca7c62a68c213d17c23c17ec92e3b4815cec982631c3050d9ccee38fabcb"
             }
         ]
     },
