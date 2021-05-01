@@ -1,0 +1,40 @@
+{
+  "Key": 2040013,
+  "ChainId": 2040012,
+  "CreatedTime": "2021-04-23T20:21:02.277Z",
+  "UserName": "VSPHERE.LOCAL\\william",
+  "Datacenter": {
+    "Name": "Primp-Datacenter",
+    "Datacenter": {
+      "Type": "Datacenter",
+      "Value": "datacenter-3"
+    }
+  },
+  "ComputeResource": {
+    "Name": "Supermicro-Cluster",
+    "ComputeResource": {
+      "Type": "ClusterComputeResource",
+      "Value": "domain-c8"
+    }
+  },
+  "Host": {
+    "Name": "192.168.30.5",
+    "Host": {
+      "Type": "HostSystem",
+      "Value": "host-11"
+    }
+  },
+  "Vm": {
+    "Name": "FooBar",
+    "Vm": {
+      "Type": "VirtualMachine",
+      "Value": "vm-10838"
+    }
+  },
+  "Ds": null,
+  "Net": null,
+  "Dvs": null,
+  "FullFormattedMessage": "Removed FooBar on 192.168.30.5 from Primp-Datacenter",
+  "ChangeTag": "",
+  "Template": false
+}

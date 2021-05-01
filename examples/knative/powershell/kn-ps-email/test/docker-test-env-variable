@@ -1,0 +1,1 @@
+EMAIL_SECRET={"SMTP_SERVER":"smtp.primp-industries.com","SMTP_PORT":"587","SMTP_USERNAME":"email@primp-industries.com","SMTP_PASSWORD":"FILE-ME-IN-PLEASE","EMAIL_SUBJECT":"⚠️ [VM Delete Notification] ⚠️","EMAIL_TO":"admins@primp-industries.com,sre@primp-industries.com","EMAIL_FROM":"notification-do-not-reply@primp-industries.com"}

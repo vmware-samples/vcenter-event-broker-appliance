@@ -1,0 +1,33 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-ps-email
+  labels:
+    app: veba-ui
+spec:
+  template:
+    metadata:
+    spec:
+      containers:
+        - image: projects.registry.vmware.com/veba/kn-ps-email:1.0
+          envFrom:
+            - secretRef:
+                name: email-secret
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: veba-ps-email-trigger
+  labels:
+    app: veba-ui
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: com.vmware.event.router/event
+      subject: VmRemovedEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-ps-email
