@@ -32,201 +32,29 @@ if [ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]; then
   kubectl patch configmap -n knative-serving config-domain -p "{\"data\": {\"$CN_NAME\": \"\"}}"
 fi
 
-# Deploy Ingress Route
-
+# Ingress Route Configuration for OpenFaaS
 if [ "${EVENT_PROCESSOR_TYPE}" == "OpenFaaS" ]; then
-  cat << EOF > /root/config/ingressroute-gateway.yaml
----
-
-apiVersion: projectcontour.io/v1
-kind: HTTPProxy
-metadata:
-  labels:
-    app: vmware
-  name: event-router
-  namespace: vmware-system
-spec:
-  includes:
-  - conditions:
-    - prefix: /
-    name: gateway
-    namespace: openfaas
-  routes:
-  - conditions:
-    - prefix: /status
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /status
-    services:
-    - name: tinywww
-      port: 8100
-  - conditions:
-    - prefix: /bootstrap
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /bootstrap
-    services:
-    - name: tinywww
-      port: 8100
-  - conditions:
-    - prefix: /stats
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /stats
-    services:
-    - name: vmware-event-router
-      port: 8082
-  virtualhost:
-    fqdn: ${HOSTNAME}
-    tls:
-      minimumProtocolVersion: "1.2"
-      secretName: ${CERT_NAME}
-status: {}
----
-
-apiVersion: projectcontour.io/v1
-kind: HTTPProxy
-metadata:
-  name: gateway
-  namespace: openfaas
-spec:
-  routes:
-  - conditions:
-    - prefix: /
-    services:
-    - name: gateway
-      port: 8080
-status: {}
-EOF
+  INGRESS_CONFIG_YAML=/root/config/openfaas-ingressroute-gateway.yaml
+# Ingress Route Configuration for AWS EventBridge
+elif [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
+  INGRESS_CONFIG_YAML=/root/config/eventbridge-ingressroute-gateway.yaml
+# Ingress Route Configuration for Knative External
+elif [[ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]] && [[ "${KNATIVE_DEPLOYMENT_TYPE}" == "external" ]]; then
+  INGRESS_CONFIG_YAML=/root/config/knative-external-ingressroute-gateway.yaml
+# Ingress Route Configuration for Knative Embedded w/VEBA UI
+elif [[ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]] && [[ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]] && [[ ! -z ${VCENTER_USERNAME_FOR_VEBA_UI} ]] && [[ ! -z ${VCENTER_PASSWORD_FOR_VEBA_UI} ]]; then
+  INGRESS_CONFIG_YAML=/root/config/knative-embedded-veba-ui-ingressroute-gateway.yaml
+# Ingress Route Configuration for Knative Embedded w/o VEBA UI
 elif [[ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]] && [[ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]]; then
-  cat << EOF > /root/config/ingressroute-gateway.yaml
----
-
-apiVersion: projectcontour.io/v1
-kind: HTTPProxy
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: contour-external
-  labels:
-    app: vmware
-  name: event-router
-  namespace: vmware-system
-spec:
-  routes:
-  - conditions:
-    - prefix: /status
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /status
-    services:
-    - name: tinywww
-      port: 8100
-  - conditions:
-    - prefix: /bootstrap
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /bootstrap
-    services:
-    - name: tinywww
-      port: 8100
-  - conditions:
-    - prefix: /stats
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /stats
-    services:
-    - name: vmware-event-router
-      port: 8082
-  - conditions:
-    - prefix: /veba-ui
-    services:
-    - name: veba-ui
-      port: 80
-  virtualhost:
-    fqdn: ${HOSTNAME}
-    tls:
-      minimumProtocolVersion: "1.2"
-      secretName: ${CERT_NAME}
-  includes:
-  - name: sockeye
-    namespace: vmware-functions
----
-apiVersion: projectcontour.io/v1
-kind: HTTPProxy
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: contour-external
-  name: sockeye
-  namespace: vmware-functions
-spec:
-  routes:
-  - conditions:
-    - prefix: /events
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /
-    services:
-    - name: sockeye
-      port: 80
-  - conditions:
-    - prefix: /static
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /static
-    services:
-    - name: sockeye
-      port: 80
-  - conditions:
-    - prefix: /ws
-    enableWebsockets: true
-    services:
-    - name: sockeye
-      port: 80
-EOF
-else
-  cat << EOF > /root/config/ingressroute-gateway.yaml
----
-
-apiVersion: projectcontour.io/v1
-kind: HTTPProxy
-metadata:
-  labels:
-    app: vmware
-  name: event-router
-  namespace: vmware-system
-spec:
-  routes:
-  - conditions:
-    - prefix: /status
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /status
-    services:
-    - name: tinywww
-      port: 8100
-  - conditions:
-    - prefix: /bootstrap
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /bootstrap
-    services:
-    - name: tinywww
-      port: 8100
-  - conditions:
-    - prefix: /stats
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /stats
-    services:
-    - name: vmware-event-router
-      port: 8082
-  virtualhost:
-    fqdn: ${HOSTNAME}
-    tls:
-      minimumProtocolVersion: "1.2"
-      secretName: ${CERT_NAME}
-status: {}
-EOF
+  INGRESS_CONFIG_YAML=/root/config/knative-embedded-ingressroute-gateway.yaml
 fi
 
-kubectl create -f /root/config/ingressroute-gateway.yaml
+if [ ! -z ${INGRESS_CONFIG_YAML} ]; then
+  echo -e "\e[92mDeploying Ingress using configuration ${INGRESS_CONFIG_YAML} ..." > /dev/console
+  sed -i "s/##HOSTNAME##/${HOSTNAME}/s" ${INGRESS_CONFIG_YAML}
+  sed -i "s/##CERT_NAME##/${CERT_NAME}/s" ${INGRESS_CONFIG_YAML}
+  kubectl create -f ${INGRESS_CONFIG_YAML}
+else
+  echo -e "\e[91mUnable to match a supported Ingress configuration ..." > /dev/console
+  exit 1
+fi
