@@ -12,13 +12,19 @@ if [[ "${KNATIVE_DEPLOYMENT_TYPE}" == "na" ]] || [[ "${KNATIVE_DEPLOYMENT_TYPE}"
   kubectl create -f /root/download/contour/examples/contour/
 fi
 
-## Create SSL Certificate & Secret
 KEY_FILE=/root/config/eventrouter.key
 CERT_FILE=/root/config/eventrouter.crt
-CN_NAME=$(hostname -f)
 CERT_NAME=eventrouter-tls
+CN_NAME=$(hostname -f)
 
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ${KEY_FILE} -out ${CERT_FILE} -subj "/CN=${CN_NAME}/O=${CN_NAME}"
+# Customer provided TLS Certificate
+if [[ ! -z ${CUSTOM_VEBA_TLS_PRIVATE_KEY} ]] && [[ ! -z ${CUSTOM_VEBA_TLS_CA_CERT} ]]; then
+  echo ${CUSTOM_VEBA_TLS_PRIVATE_KEY} | /usr/bin/base64 -d > ${KEY_FILE}
+  echo ${CUSTOM_VEBA_TLS_CA_CERT} | /usr/bin/base64 -d > ${CERT_FILE}
+else
+  # Create Self Sign TLS Certifcate
+  openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ${KEY_FILE} -out ${CERT_FILE} -subj "/CN=${CN_NAME}/O=${CN_NAME}"
+fi
 
 kubectl -n vmware-system create secret tls ${CERT_NAME} --key ${KEY_FILE} --cert ${CERT_FILE}
 

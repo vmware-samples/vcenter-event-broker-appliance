@@ -145,6 +145,15 @@
             <Label>Advanced Settings</Label>
             <Description>Opaque string for applying advanced configurations for AWS EventBridge Processor. For advanced use cases only, please see documentation for more details</Description>
         </Property>
+      <Category>Custom TLS Certificate Configuration</Category>
+        <Property ovf:key="guestinfo.custom_tls_private_key" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Custom VMware Event Broker Appliance TLS Certificate Private Key (Base64)</Label>
+            <Description>Base64 encoded custom TLS certificate (.PEM) for the VMware Event Broker Appliance</Description>
+        </Property>
+        <Property ovf:key="guestinfo.custom_tls_ca_cert" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Custom VMware Event Broker Appliance TLS Certificate Authority Certificate (Base64)</Label>
+            <Description>Base64 encoded custom TLS certificate (.CER) for the VMware Event Broker Appliance</Description>
+        </Property>
       <Category>zAdvanced</Category>
         <Property ovf:key="guestinfo.debug" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Debugging</Label>
