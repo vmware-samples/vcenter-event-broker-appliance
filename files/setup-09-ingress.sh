@@ -51,8 +51,8 @@ fi
 
 if [ ! -z ${INGRESS_CONFIG_YAML} ]; then
   echo -e "\e[92mDeploying Ingress using configuration ${INGRESS_CONFIG_YAML} ..." > /dev/console
-  sed -i "s/##HOSTNAME##/${HOSTNAME}/s" ${INGRESS_CONFIG_YAML}
-  sed -i "s/##CERT_NAME##/${CERT_NAME}/s" ${INGRESS_CONFIG_YAML}
+  sed -i "s/##HOSTNAME##/${HOSTNAME}/g" ${INGRESS_CONFIG_YAML}
+  sed -i "s/##CERT_NAME##/${CERT_NAME}/g" ${INGRESS_CONFIG_YAML}
   kubectl create -f ${INGRESS_CONFIG_YAML}
 else
   echo -e "\e[91mUnable to match a supported Ingress configuration ..." > /dev/console
