@@ -5,53 +5,61 @@ title: VMware Event Broker Appliance - Certificates
 description: Updating Certificates
 permalink: /kb/advanced-certificates
 cta:
- description: With your certificates updated, you can now skip using the `--tls-no-verify` flag while working with faas-cli.
+ description: Replacing the default self-signed TLS certificate in VMware Event Broke Appliance.
 ---
 
 ## Updating the TLS Certificate on VEBA
- 
-The default certificate for OpenFaaS (/ui), Stats (/stats), Status (/status), Logs (/bootstrap) and the other web endpoints running on VEBA are self signed. This might cause browsers to show the certificate as untrusted and would require providing the `--no-tls-verify` flag when working with faas-cli. 
- 
-In order to update the certificates with a certificate from a trusted authority, please follow the steps outlined below
- 
+
+By default, the VMware Event Broker Appliance generates a self-signed TLS certificate that is used to support different web endpoints running on the appliance such as Stats (`/stats`), Status (`/status`), Logs (`/bootstrap`) and Events (`/events`). This will cause browsers to show the certificate as untrusted.
+
+For organizations that require the use of a TLS certificate from a trusted authority, the VMware Event Broker Appliance provides an option for users to provide their certificate information during the OVF property configuration when deploying the virtual appliance.
+
+In order to use a certificates from a trusted authority, please follow the steps outlined below.
+
 ### Assumptions
 
-* Access to VMware Event Broker Appliance terminal 
-* Certificates from a trusted authority pre-downloaded onto the Appliance
+* Certificates from a trusted authority pre-downloaded onto your local desktop
     * The public/private key pair must exist before hand. The public key certificate must be .PEM encoded and match the given private key.
 
 ### Steps
 
-Run the below commands to update the certificate on VEBA
+In the example, the private key file is named `privateKey.key` and certificate file is named `certificate.crt`
 
-```bash
-cd /folder/certs/location
-CERT_NAME=eventrouter-tls #DO NOT CHANGE THIS
-KEY_FILE=<cert-key-file>.pem
-CERT_FILE=<public-cert>.cer
+1. Encode both the private key and the certificate file using base64 encoding.
 
-#recreate the tls secret
-kubectl -n vmware-system delete secret ${CERT_NAME}
-kubectl -n vmware-system create secret tls ${CERT_NAME} --key ${KEY_FILE} --cert ${CERT_FILE}
+Microsoft Windows (PowerShell)
 
-#reapply the config to take the new certificate
-kubectl apply -f /root/config/ingressroute-gateway.yaml
+```console
+$privateKeyContent = Get-Content -Raw privateKey.key
+$privateKeybase64 = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes($privateKeyContent))
+Write-Host "Encoded Private Key:`n$privateKeybase64`n"
+
+$certContent = Get-Content -Raw certificate.crt
+$certbase64 = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes($certContent))
+Write-Host "Encoded Certificate:`n$certbase64`n"
+
+Encoded Private Key:
+LS0tLS1CRUd......==
+
+
+Encoded Certificate Key:
+LS0tLS1CRUe......==
 ```
 
-If you are using the Embedded Knative Broker, you will also need to reference the newly generated certificate as it is also used as part of the Knative Contour integration.
+MacOS/Linux
 
-```bash
-cd /folder/certs/location
-KNATIVE_CERT_NAME=default-cert #DO NOT CHANGE THIS
-KEY_FILE=<cert-key-file>.pem
-CERT_FILE=<public-cert>.cer
+```
+cat privateKey.key | base64
 
-#recreate the tls secret
-kubectl -n contour-external delete secret ${KNATIVE_CERT_NAME}
-kubectl -n contour-external create secret tls ${KNATIVE_CERT_NAME} --key ${KEY_FILE} --cert ${CERT_FILE}
+LS0tLS1CRUd......==
 
-#reapply the config to take the new certificate
-kubectl apply -f /root/config/ingressroute-gateway.yaml
+cat certificate.crt | base64
+
+LS0tLS1CRUd......==
 ```
 
-Watch this short video to see the steps being performed to successfully update the certs for VEBA configured for OpenFaaS - [here](https://youtu.be/7oMCvxvL2ns){:target="_blank"}
+2. Using the output from the previous step, the base64 content can now be provided in `Custom TLS Certificate Configuration` section of the OVF property during the deployment of the VMware Event Broker Appliance.
+    * Custom VMware Event Broker Appliance TLS Certificate Private Key (Base64)
+    * Custom VMware Event Broker Appliance TLS Certificate Authority Certificate (Base64)
+
+3. Power on the VMware Event Broker Appliance and ensure that the provided TLS certificate is now used instead of the auto-generated self-sign TLS certificate by opening a browser to one of the VMware Event Broker Appliance endpoints such as `/status`.
