@@ -12,24 +12,16 @@ on:
       - "vmware-event-router/chart/**"
 
 jobs:
-  helm:
-    name: Verify Helm chart (latest release)
+  openfaas:
+    name: OpenFaaS Event Processor
     runs-on: ubuntu-latest
     env:
       KO_DOCKER_REPO: kind.local
-      KO_VERSION: 0.8.2
       KIND_VERSION: v0.10.0
       NAMESPACE: vmware
-      CHART_REPO: "https://projects.registry.vmware.com/chartrepo/veba"
     timeout-minutes: 15
 
     steps:
-      - name: Install KinD
-        run: |
-          curl -L https://github.com/google/ko/releases/download/v${KO_VERSION}/ko_${KO_VERSION}_Linux_x86_64.tar.gz | tar xzf - ko
-          chmod +x ./ko
-          sudo mv ko /usr/local/bin
-
       - name: Check out code onto GOPATH
         uses: actions/checkout@v2
         with:
@@ -42,8 +34,17 @@ jobs:
           chmod +x ./kind
           sudo mv kind /usr/local/bin
 
-          # create cluster with defaults
-          kind create cluster --wait 3m
+          # KinD configuration.
+          cat > kind.yaml <<EOF
+          apiVersion: kind.x-k8s.io/v1alpha4
+          kind: Cluster
+          nodes:
+          - role: control-plane
+          - role: worker
+          EOF
+
+          # Create a cluster!
+          kind create cluster --config kind.yaml --wait 3m
 
       - name: Install OpenFaaS with Helm
         run: |
@@ -55,7 +56,7 @@ jobs:
             --set functionNamespace=openfaas-fn \
             --set generateBasicAuth=true --wait
 
-          kubectl wait --timeout=1m --for=condition=Available -n openfaas deploy/gateway
+          kubectl wait --timeout=3m --for=condition=Available -n openfaas deploy/gateway
           echo "OF_PASS=$(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode)" >> $GITHUB_ENV
 
       - name: Install vCenter Simulator
@@ -63,9 +64,10 @@ jobs:
         run: |
           kubectl create ns ${NAMESPACE}
           kubectl -n ${NAMESPACE} apply -f deploy/vcsim.yaml
-          kubectl wait --timeout=1m --for=condition=Available -n ${NAMESPACE} deploy/vcsim
+          kubectl wait --timeout=3m --for=condition=Available -n ${NAMESPACE} deploy/vcsim
 
       - name: Install VMware Event Router with Helm
+        working-directory: ./vmware-event-router
         run: |
           echo "::group::Create override.yaml"
           cat << EOF > override.yaml
@@ -77,6 +79,7 @@ jobs:
               username: user
               password: pass
               insecure: true # ignore TLS certs
+            eventProcessor: openfaas
             openfaas:
               address: http://gateway.openfaas.svc.cluster.local:8080
               basicAuth: true
@@ -86,11 +89,144 @@ jobs:
           echo "::endgroup::"
 
           echo "::group::Deploy VMware Event Router"
-          helm repo add vmware-veba ${CHART_REPO}
-          helm install -n vmware --create-namespace veba vmware-veba/event-router -f override.yaml --wait
+          helm install veba-openfaas -n ${NAMESPACE} --wait -f override.yaml ./chart
 
           # assert it deployed correctly
-          kubectl wait --timeout=1m --for=condition=Available -n vmware deploy/router
+          kubectl wait --timeout=3m --for=condition=Available -n ${NAMESPACE} deploy/router
+          echo "::endgroup::"
+
+      - name: "Debug"
+        if: ${{ always() }}
+        run: |
+          kubectl get pods --all-namespaces
+          kubectl -n ${NAMESPACE} describe pods
+          kubectl -n ${NAMESPACE} get events
+
+  knative:
+    name: Knative Event Processor
+    runs-on: ubuntu-latest
+    env:
+      KO_DOCKER_REPO: kind.local
+      KIND_VERSION: v0.10.0
+      NAMESPACE: vmware
+      KNATIVE_VERSION: v0.22.0
+      BROKER_NAMESPACE: default
+      BROKER_NAME: default
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out code onto GOPATH
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Setup KinD Cluster
+        run: |
+          set -x
+          curl -Lo ./kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VERSION}/kind-$(uname)-amd64
+          chmod +x ./kind
+          sudo mv kind /usr/local/bin
+
+          # KinD configuration.
+          cat > kind.yaml <<EOF
+          apiVersion: kind.x-k8s.io/v1alpha4
+          kind: Cluster
+          nodes:
+          - role: control-plane
+          - role: worker
+          EOF
+
+          # Create a cluster!
+          kind create cluster --config kind.yaml --wait 3m
+
+      - name: Setup Knative Serving
+        env:
+          KNATIVE_VERSION: v0.22.0
+        run: |
+          echo "::group::Serving CRDs"
+          kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_VERSION}/serving-crds.yaml
+          kubectl wait --timeout=20s --for=condition=Established crd/services.serving.knative.dev
+          echo "::endgroup::"
+
+          echo "::group::Serving Core"
+          kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_VERSION}/serving-core.yaml
+          kubectl -n knative-serving wait --timeout=3m --for=condition=Available deploy/webhook
+          echo "::endgroup::"
+
+          echo "::group::Ingress"
+          kubectl apply -f https://github.com/knative/net-kourier/releases/download/${KNATIVE_VERSION}/kourier.yaml
+          kubectl -n kourier-system wait --timeout=3m --for=condition=Available deploy/3scale-kourier-gateway
+          kubectl patch configmap/config-network \
+          --namespace knative-serving \
+          --type merge \
+          --patch '{"data":{"ingress.class":"kourier.ingress.networking.knative.dev"}}'
+          echo "::endgroup::"
+
+      - name: Setup Knative Eventing
+        run: |
+          echo "::group::Eventing CRDs"
+          kubectl apply -f https://github.com/knative/eventing/releases/download/${KNATIVE_VERSION}/eventing-crds.yaml
+          kubectl wait --timeout=20s --for=condition=Established crd/brokers.eventing.knative.dev
+          echo "::endgroup::"
+
+          echo "::group::Eventing Core"
+          kubectl apply -f https://github.com/knative/eventing/releases/download/${KNATIVE_VERSION}/eventing-core.yaml
+          kubectl -n knative-eventing wait --timeout=3m --for=condition=Available deploy/eventing-webhook
+          echo "::endgroup::"
+
+          echo "::group::Broker Core"
+          kubectl apply -f https://github.com/knative/eventing/releases/download/${KNATIVE_VERSION}/in-memory-channel.yaml
+          kubectl -n knative-eventing wait --timeout=3m --for=condition=Available deploy/imc-controller
+          kubectl apply -f https://github.com/knative/eventing/releases/download/${KNATIVE_VERSION}/mt-channel-broker.yaml
+          kubectl -n knative-eventing wait --timeout=3m --for=condition=Available deploy/mt-broker-controller
+          echo "::endgroup::"
+
+          echo "::group::Default Broker"
+          kubectl apply -f - <<EOF
+          apiVersion: eventing.knative.dev/v1
+          kind: broker
+          metadata:
+            name: ${BROKER_NAME}
+            namespace: ${BROKER_NAMESPACE}
+          EOF
+          echo "::endgroup::"
+
+      - name: Install vCenter Simulator
+        working-directory: ./vmware-event-router
+        run: |
+          kubectl create ns ${NAMESPACE}
+          kubectl -n ${NAMESPACE} apply -f deploy/vcsim.yaml
+          kubectl wait --timeout=3m --for=condition=Available -n ${NAMESPACE} deploy/vcsim
+
+      - name: Install VMware Event Router with Helm
+        working-directory: ./vmware-event-router
+        run: |
+          echo "::group::Create override.yaml"
+          cat << EOF > override.yaml
+          eventrouter:
+            config:
+              logLevel: debug
+            vcenter:
+              address: https://vcsim.vmware.svc.cluster.local
+              username: user
+              password: pass
+              insecure: true # ignore TLS certs
+            eventProcessor: knative
+            knative:
+              destination:
+                ref:
+                  apiVersion: eventing.knative.dev/v1
+                  kind: Broker
+                  name: ${BROKER_NAME}
+                  namespace: ${BROKER_NAMESPACE}
+          EOF
+          echo "::endgroup::"
+
+          echo "::group::Deploy VMware Event Router"
+          helm install veba-knative -n ${NAMESPACE} --wait -f override.yaml ./chart
+
+          # assert it deployed correctly
+          kubectl wait --timeout=3m --for=condition=Available -n ${NAMESPACE} deploy/router
           echo "::endgroup::"
 
       - name: "Debug"

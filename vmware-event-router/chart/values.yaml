@@ -10,13 +10,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 serviceAccount:
-  # Specifies whether a service account should be created
-  create: false
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
+  name: "vmware-event-router"
 
 podAnnotations: {}
 
@@ -66,7 +60,12 @@ eventrouter:
     logLevel: info
     # print logs as JSON
     json: false
-  # vcenter event provider settings
+    
+  # define default event provider and processor
+  eventProvider: vcenter
+  eventProcessor: openfaas
+  
+  # vcenter event provider default settings
   vcenter:
     # vcenter server address (may omit /sdk)
     address: https://10.0.0.1/sdk
@@ -76,7 +75,8 @@ eventrouter:
     password: ReplaceMe
     # ignore TLS certificate warnings (e.g. self-signed certificate)
     insecure: false
-  # openfaas event processor settings
+    
+  # openfaas event processor default settings
   openfaas:
     # gateway address, e.g. deployment_name.namespace:port when deployed in Kubernetes
     address: http://gateway.openfaas:8080
@@ -88,7 +88,19 @@ eventrouter:
     username: admin
     # basic auth password
     password: ReplaceMe
-  # metrics server settings (uses default/internal metrics server)
+
+  # knative event processor default settings  
+  knative:
+    encoding: binary
+    insecureSSL: false
+    destination:
+      ref:
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+        name: default
+        namespace: default
+
+  # metrics server default settings (uses default/internal metrics server)
   metrics:
     type: ClusterIP
     port: 8082

@@ -5,8 +5,8 @@ metadata:
   labels:
 {{ include "router.labels" . | indent 4 }}
 eventProvider:
-  type: vcenter
-  name: {{ .Release.Name }}-vcenter
+  type: {{ .Values.eventrouter.eventProvider }}
+  name: {{ .Release.Name }}-{{ .Values.eventrouter.eventProvider }}
   vcenter:
     {{- with .Values.eventrouter.vcenter }}
     address: {{ .address }}
@@ -19,8 +19,9 @@ eventProvider:
         password: {{ .password }}
     {{- end }}
 eventProcessor:
-  type: openfaas
-  name: {{ .Release.Name }}-openfaas
+  type: {{ .Values.eventrouter.eventProcessor }}
+  name: {{ .Release.Name }}-{{ .Values.eventrouter.eventProcessor }}
+  {{- if eq .Values.eventrouter.eventProcessor "openfaas" }}
   openfaas:
     {{- with .Values.eventrouter.openfaas }}
     address: {{ .address }}
@@ -33,6 +34,16 @@ eventProcessor:
         password: {{ .password }}
     {{- end }}
     {{- end }}
+  {{- end }}
+  {{- if eq .Values.eventrouter.eventProcessor "knative" }}
+  knative:
+    {{- with .Values.eventrouter.knative }}
+    encoding: {{ .encoding }}
+    insecureSSL: {{ .insecureSSL }}
+    destination:
+{{ toYaml .destination | indent 6 }}
+    {{- end }}
+  {{- end }}
 metricsProvider:
   type: default
   name: veba-demo-metrics
