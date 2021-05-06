@@ -26,6 +26,12 @@ type ObjectMeta struct {
 	Labels map[string]string `yaml:"labels,omitempty" jsonschema:""`
 }
 
+// Certificates defines custom certificate types to be used instead of the
+// system (OS) defaults.
+type Certificates struct {
+	RootCAs []string `yaml:"rootCAs,omitempty" json:"rootCAs,omitempty" jsonschema:""`
+}
+
 // RouterConfig sets configuration for the event router
 type RouterConfig struct {
 	TypeMeta   `yaml:",inline" jsonschema:"required"`
@@ -36,6 +42,9 @@ type RouterConfig struct {
 	EventProcessor Processor `yaml:"eventProcessor" json:"eventProcessor" jsonschema:"required"`
 	// MetricsProvider contains configuration information for a supported metrics provider
 	MetricsProvider MetricsProvider `yaml:"metricsProvider" json:"metricsProvider" jsonschema:"required"`
+	// Certificates contains configuration information to define certificates. This
+	// section is currently only used by the vCenter event provider.
+	Certificates Certificates `yaml:"certificates,omitempty" json:"certificates,omitempty" jsonschema:""`
 }
 
 // Parse parses a given configuration and returns a RouterConfig
