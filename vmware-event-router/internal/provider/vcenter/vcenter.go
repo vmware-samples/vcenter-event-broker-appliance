@@ -14,11 +14,13 @@ import (
 	"github.com/pkg/errors"
 	"github.com/vmware/govmomi"
 	"github.com/vmware/govmomi/event"
+	"github.com/vmware/govmomi/session"
 	"github.com/vmware/govmomi/vim25"
 	"github.com/vmware/govmomi/vim25/methods"
 	"github.com/vmware/govmomi/vim25/soap"
 	"github.com/vmware/govmomi/vim25/types"
 	"go.uber.org/zap"
+	"knative.dev/pkg/logging"
 
 	"github.com/jpillora/backoff"
 
@@ -40,10 +42,11 @@ const (
 
 // EventStream handles the connection to the vCenter events API
 type EventStream struct {
-	client govmomi.Client
+	client *govmomi.Client
 	logger.Logger
 	checkpoint    bool
 	checkpointDir string
+	rootCAs       []string // custom root CAs, TLS OS defaults if not specified
 
 	wg waitgroup.WaitGroup // shutdown handling
 
@@ -83,25 +86,30 @@ func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCenter, ms m
 	password := cfg.Auth.BasicAuth.Password
 	parsedURL.User = url.UserPassword(username, password)
 
-	client, err := govmomi.NewClient(ctx, parsedURL, cfg.InsecureSSL)
-	if err != nil {
-		return nil, errors.Wrap(err, "create vCenter client")
+	// apply options (use defaults otherwise)
+	for _, opt := range opts {
+		opt(&vc)
 	}
 
-	vcLog := log
+	vc.Logger = log
 	if zapSugared, ok := log.(*zap.SugaredLogger); ok {
 		prov := strings.ToUpper(string(config.ProviderVCenter))
-		vcLog = zapSugared.Named(fmt.Sprintf("[%s]", prov))
+		vc.Logger = zapSugared.Named(fmt.Sprintf("[%s]", prov))
+		ctx = logging.WithLogger(ctx, vc.Logger.(*zap.SugaredLogger))
 	}
 
-	vc.Logger = vcLog
-	vc.client = *client
+	if vc.client == nil {
+		vc.client, err = newClient(ctx, parsedURL, vc.rootCAs, cfg.InsecureSSL)
+		if err != nil {
+			return nil, errors.Wrap(err, "create client")
+		}
+	}
+
 	vc.checkpoint = cfg.Checkpoint
 	vc.checkpointDir = cfg.CheckpointDir
 
-	// apply options (overwrite any defaults)
-	for _, opt := range opts {
-		opt(&vc)
+	if cfg.InsecureSSL {
+		vc.Logger.Warnw("using potentially insecure connection to vCenter", "address", cfg.Address, "insecure", cfg.InsecureSSL)
 	}
 
 	// seed the metrics stats
@@ -117,6 +125,34 @@ func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCenter, ms m
 
 	go vc.PushMetrics(ctx, ms)
 	return &vc, nil
+}
+
+func newClient(ctx context.Context, u *url.URL, rootCAs []string, insecure bool) (*govmomi.Client, error) {
+	log := logging.FromContext(ctx)
+	soapClient := soap.NewClient(u, insecure)
+
+	if len(rootCAs) > 0 {
+		files := strings.Join(rootCAs, ":")
+		log.Debugw("setting custom root CAs", "certificates", files)
+		if err := soapClient.SetRootCAs(files); err != nil {
+			return nil, err
+		}
+	}
+
+	vimClient, err := vim25.NewClient(ctx, soapClient)
+	if err != nil {
+		return nil, err
+	}
+
+	c := &govmomi.Client{
+		Client:         vimClient,
+		SessionManager: session.NewManager(vimClient),
+	}
+
+	if err = c.Login(ctx, u.User); err != nil {
+		return nil, err
+	}
+	return c, nil
 }
 
 // Stream is the main logic, blocking to receive and handle events from vCenter
