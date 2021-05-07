@@ -38,8 +38,8 @@ links:
     display: true
     details: 
       url_text: blog post
-      external_url: https://www.virtuallyghetto.com/2020/07/integrating-vmware-cloud-notification-gateway-with-vmware-event-broker-appliance-veba.html
-      external_image: https://i2.wp.com/www.virtuallyghetto.com/wp-content/uploads/2020/07/vmware-cloud-notification-to-veba-diagram.png?ssl=1
+      external_url: https://www.williamlam.com/2020/07/integrating-vmware-cloud-notification-gateway-with-vmware-event-broker-appliance-veba.html
+      external_image: https://i2.wp.com/www.williamlam.com/wp-content/uploads/2020/07/vmware-cloud-notification-to-veba-diagram.png?ssl=1
       author_name: William Lam
       excerpt: advantage of the NGW webhook capability but instead of forwarding the NGW notification to a cloud service that supports an incoming webhook, we are sending it to VEBA for processing. Once the notification has been received by VEBA, customers can apply...
 
@@ -107,7 +107,7 @@ otherlinks:
     url: https://rguske.github.io/post/monitoring-the-vmware-event-broker-appliance-with-vrealize-operations-manager/
   - title: vCenter Event Broker Appliance Updates – VMworld, Fling, Community & Open Source
     display: true
-    url: https://www.virtuallyghetto.com/2019/11/vcenter-event-broker-appliance-updates-vmworld-fling-community-open-source.html
+    url: https://www.williamlam.com/2019/11/vcenter-event-broker-appliance-updates-vmworld-fling-community-open-source.html
   - title: If This Then That for vSphere
     display: true
     url: https://octo.vmware.com/vsphere-power-event-driven-automation/
@@ -139,7 +139,7 @@ otherlinks:
     url: https://www.vmworld.com/en/video-library/video-landing.html?sessionid=15614121705290019EX2&region=EU
     display: true
   - title: Listing all Events for vCenter Server
-    url: https://www.virtuallyghetto.com/2019/12/listing-all-events-for-vcenter-server.html
+    url: https://www.williamlam.com/2019/12/listing-all-events-for-vcenter-server.html
     display: true
   - title: Video - Robert and Michael explore Event Driven Automation for vCenter
     url: https://www.youtube.com/watch?v=X3usMlmyEoA&feature=emb_logo

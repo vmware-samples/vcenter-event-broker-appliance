@@ -72,7 +72,7 @@ As described in the architecture section [above](#architecture) due to the micro
 
 ## Event Types supported
 
-For the supported event stream source, e.g. VMware vCenter, all events provided by that source can be used. Since event types are environment specific (vSphere version, extensions), a list of events for vCenter as an event source can be generated as described in this [blog post](https://www.virtuallyghetto.com/2019/12/listing-all-events-for-vcenter-server.html).
+For the supported event stream source, e.g. VMware vCenter, all events provided by that source can be used. Since event types are environment specific (vSphere version, extensions), a list of events for vCenter as an event source can be generated as described in this [blog post](https://www.williamlam.com/2019/12/listing-all-events-for-vcenter-server.html).
 
 ## Message Delivery Guarantees
 
