@@ -10,11 +10,13 @@ options:
         - fix
         - feat
         - chore
+        - docs
   commit_groups:
     title_maps:
       fix: 🐞 Fix
       feat: 💫 Feature
       chore: 🧹 Chore
+      docs: 📃 Documentation
   header:
     pattern: "^(\\w*)\\:\\s(.*)$"
     pattern_maps:
