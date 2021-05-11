@@ -7,7 +7,7 @@ This function demonstrates using PowerShell to trigger vRealize Orchestrator wor
 ## Prerequisites
 
 * You have deployed the example vSphere Tagging vRO Workflow package from https://github.com/kclinden/vro-vsphere-tagging
-* You have retrieved the required vRO Workflow ID (please see this blog post [here](https://www.virtuallyghetto.com/2020/03/using-vro-rest-api-to-execute-a-workflow-with-sdk-objects.html) for more details)
+* You have retrieved the required vRO Workflow ID (please see this blog post [here](https://www.williamlam.com/2020/03/using-vro-rest-api-to-execute-a-workflow-with-sdk-objects.html) for more details)
 
 ## Instruction Consuming Function
 
