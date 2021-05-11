@@ -28,6 +28,14 @@ examples:
     links: 
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-slack"
+  - title: Email Notification
+    usecases:
+    - item: notification
+    id: kn-ps-email-function
+    description: Powershell function to send an Email.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-email"
 
 ---
 
