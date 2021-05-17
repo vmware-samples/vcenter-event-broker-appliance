@@ -9,7 +9,8 @@ events to configurable event `processors` (see below).
 **Supported event providers:**
 
 - [VMware vCenter Server](https://www.vmware.com/products/vcenter-server.html)
-- vCenter Simulator [vcsim](https://github.com/vmware/govmomi/tree/master/vcsim) (DEPRECATED)
+- vCenter Simulator [vcsim](https://github.com/vmware/govmomi/tree/master/vcsim)
+  (DEPRECATED, see note [below](#provider-type-vcsim))
 
 **Supported event processors:**
 
