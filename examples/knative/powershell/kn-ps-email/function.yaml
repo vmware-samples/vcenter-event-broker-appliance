@@ -4,6 +4,11 @@ metadata:
   name: kn-ps-email
   labels:
     app: veba-ui
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
 spec:
   template:
     metadata:
@@ -13,6 +18,9 @@ spec:
           envFrom:
             - secretRef:
                 name: email-secret
+          env:
+            - name: FUNCTION_DEBUG
+              value: "false"
 ---
 apiVersion: eventing.knative.dev/v1
 kind: Trigger

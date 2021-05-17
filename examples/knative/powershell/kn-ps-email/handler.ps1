@@ -1,25 +1,37 @@
+Function Process-Init {
+   Write-Host "$(Get-Date) - Processing Init`n"
+
+   Write-Host "$(Get-Date) - Init Processing Completed`n"
+}
+
+Function Process-Shutdown {
+   Write-Host "$(Get-Date) - Processing Shutdown`n"
+
+   Write-Host "$(Get-Date) - Shutdown Processing Completed`n"
+}
+
 Function Process-Handler {
    param(
       [Parameter(Position=0,Mandatory=$true)][CloudNative.CloudEvents.CloudEvent]$CloudEvent
    )
 
    # Decode CloudEvent
-   $cloudEventData = $cloudEvent | Read-CloudEventJsonData -ErrorAction SilentlyContinue -Depth 10
-   if($cloudEventData -eq $null) {
-      $cloudEventData = $cloudEvent | Read-CloudEventData
+   try {
+      $cloudEventData = $cloudEvent | Read-CloudEventJsonData -Depth 10
+   } catch {
+      throw "`nPayload must be JSON encoded"
+   }
+
+   try {
+      $jsonSecrets = ${env:EMAIL_SECRET} | ConvertFrom-Json
+   } catch {
+      throw "`nK8s secrets `$env:EMAIL_SECRET does not look to be defined"
    }
 
    if(${env:FUNCTION_DEBUG} -eq "true") {
-      Write-Host "DEBUG: K8s Secrets:`n${env:EMAIL_SECRET}`n"
+      Write-Host "$(Get-Date) - DEBUG: K8s Secrets:`n${env:EMAIL_SECRET}`n"
 
-      Write-Host "DEBUG: CloudEventData`n $(${cloudEventData} | ConvertTo-Json)`n"
-   }
-
-   if(${env:EMAIL_SECRET}) {
-      $jsonSecrets = ${env:EMAIL_SECRET} | ConvertFrom-Json
-   } else {
-      Write-Host "K8s secrets `$env:EMAIL_SECRET does not look to be defined"
-      break
+      Write-Host "$(Get-Date) - DEBUG: CloudEventData`n $(${cloudEventData} | ConvertTo-Json)`n"
    }
 
    ### BEGIN BUSINESS LOGIC CODE ###
@@ -55,7 +67,7 @@ Function Process-Handler {
       EmailBody=$EmailBody
 "@
 
-      Write-Host "DEBUG: `n$debugOutput"
+      Write-Host "$(Get-Date) - DEBUG: `n$debugOutput"
    }
 
    # Secure Email
@@ -73,7 +85,7 @@ Function Process-Handler {
          "Port"          = $EMAIL_SERVER_PORT
       }
 
-      Write-Host "Sending Secure Email ..."
+      Write-Host "$(Get-Date) - Sending Secure Email ..."
       Send-MailkitMessage @EmailParams
 
    } else {
@@ -87,7 +99,7 @@ Function Process-Handler {
          "Port"          = $EMAIL_SERVER_PORT
    }
 
-      Write-Host "Sending Non-Secure Email ..."
+      Write-Host "$(Get-Date) - Sending Non-Secure Email ..."
       Send-MailkitMessage @EmailParams
    }
 
