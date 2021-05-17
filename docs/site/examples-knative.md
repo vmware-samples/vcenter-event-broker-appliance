@@ -36,6 +36,14 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-email"
+  - title: vSphere Tagging
+    usecases:
+    - item: automation
+    id: kn-pcli-tag-function
+    description: Automatically tag a VM upon a vCenter event (ex. a VM can be tagged during a poweron event).
+    links:
+    - language: powercli
+      url: "/tree/master/examples/knative/powercli/kn-pcli-tag"
 
 ---
 
