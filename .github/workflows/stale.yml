@@ -1,0 +1,34 @@
+name: "Close stale issues"
+on:
+  schedule:
+  # runs daily
+  - cron: '0 0 * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/stale@v3
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+        # for issues and PRs        
+        days-before-stale: 90
+        days-before-close: 30
+        exempt-issue-labels: 'awaiting-approval,work-in-progress,wip'
+
+        # issues
+        stale-issue-message: |-
+            This issue is stale because it has been open for 90 days with no
+            activity. It will automatically close after 30 more days of
+            inactivity. Mark as fresh by adding the comment `/remove-lifecycle stale`.
+        close-issue-message: 'Closing issue due to inactivity. Please reopen if needed'
+        stale-issue-label: 'stale'
+
+        # PRs
+        stale-pr-message: |-
+            This Pull Request is stale because it has been open for 90 days with
+            no activity. It will automatically close after 30 more days of
+            inactivity. Mark as fresh by adding the comment `/remove-lifecycle stale`.
+        close-pr-message: 'Closing pull request due to inactivity. Please reopen if needed'
+        stale-pr-label: 'stale'
