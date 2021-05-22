@@ -8,7 +8,7 @@
 ### {{ .Title }}
 
 {{ range .Commits -}}
-- {{ .Subject }}
+- [{{ .Hash.Short }}]{{"\t"}}{{ .Subject }}
 {{ end }}
 {{ end -}}
 
@@ -16,7 +16,7 @@
 ### ⏮ Reverts
 
 {{ range .RevertCommits -}}
-- {{ .Revert.Header }}
+- [{{ .Hash.Short }}]{{"\t"}}{{ .Revert.Header }}
 {{ end }}
 {{ end -}}
 
@@ -36,7 +36,7 @@
 {{ if not .Merge -}}
 {{ if not (contains .Header "Update CHANGELOG for" ) -}}
 {{ if not (contains .Header "Merge branch" ) -}}
-- {{ .Header }} [{{ .Hash.Short }}]
+- [{{ .Hash.Short }}]{{"\t"}}{{ .Header }}
 {{ end -}}
 {{ end -}}
 {{ end -}}
