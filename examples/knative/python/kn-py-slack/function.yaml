@@ -1,0 +1,40 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-py-slack
+  labels:
+    app: veba-ui
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+spec:
+  template:
+    metadata:
+    spec:
+      containers:
+        - image: projects.registry.vmware.com/veba/kn-py-slack:1.0
+          envFrom:
+            - secretRef:
+                name: slack-secret
+
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: veba-py-slack-trigger
+  labels:
+    app: veba-ui
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: com.vmware.event.router/event
+      subject: VmPoweredOffEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-py-slack
+
