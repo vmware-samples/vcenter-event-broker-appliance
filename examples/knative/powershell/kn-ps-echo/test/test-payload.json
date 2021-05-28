@@ -1,0 +1,40 @@
+{
+	"Key": 2817273,
+	"ChainId": 2817260,
+	"CreatedTime": "2021-05-17T22:01:36.496Z",
+	"UserName": "VSPHERE.LOCAL\\Administrator",
+	"Datacenter": {
+	  "Name": "Primp-Datacenter",
+	  "Datacenter": {
+		"Type": "Datacenter",
+		"Value": "datacenter-3"
+	  }
+	},
+	"ComputeResource": {
+	  "Name": "Supermicro-Cluster",
+	  "ComputeResource": {
+		"Type": "ClusterComputeResource",
+		"Value": "domain-c8"
+	  }
+	},
+	"Host": {
+	  "Name": "192.168.30.5",
+	  "Host": {
+		"Type": "HostSystem",
+		"Value": "host-11"
+	  }
+	},
+	"Vm": {
+	  "Name": "K8s-User-Group-Test",
+	  "Vm": {
+		"Type": "VirtualMachine",
+		"Value": "vm-11099"
+	  }
+	},
+	"Ds": null,
+	"Net": null,
+	"Dvs": null,
+	"FullFormattedMessage": "K8s-User-Group-Test on  192.168.30.5 in Primp-Datacenter is powered off",
+	"ChangeTag": "",
+	"Template": false
+  }

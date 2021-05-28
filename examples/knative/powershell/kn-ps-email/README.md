@@ -1,5 +1,5 @@
 # kn-ps-email
-Example Knative PowerShell function that uses [Send-MailKitMessage](https://www.powershellgallery.com/packages/Send-MailKitMessage) to send email notification.
+Example Knative PowerShell function that uses [Send-MailKitMessage](https://www.powershellgallery.com/packages/Send-MailKitMessage) to send email notification when a Virtual Machine is deleted.
 
 ![](screenshots/screenshot-1.png)
 
@@ -110,6 +110,9 @@ Update the `email_secret.json` file with your email configurations and then crea
 # create secret
 
 kubectl -n vmware-functions create secret generic email-secret --from-file=EMAIL_SECRET=email_secret.json
+
+# update label for secret to show up in VEBA UI
+kubectl -n vmware-functions label secret email-secret app=veba-ui
 ```
 
 Edit the `function.yaml` file with the name of the container image from Step 1 if you made any changes. If not, the default VMware container image will suffice. By default, the function deployment will filter on the `VmRemovedEvent` vCenter Server Event. If you wish to change this, update the `subject` field within `function.yaml` to the desired event type.
@@ -118,7 +121,7 @@ Edit the `function.yaml` file with the name of the container image from Step 1 i
 Deploy the function to the VMware Event Broker Appliance (VEBA).
 
 ```console
-# Deploy function
+# deploy function
 
 kubectl -n vmware-functions apply -f function.yaml
 ```
@@ -134,7 +137,10 @@ annotations:
 # Step 4 - Undeploy
 
 ```console
-# Undeploy function
+# undeploy function
 
 kubectl -n vmware-functions delete -f function.yaml
+
+# delete secret
+kubectl -n vmware-functions delete secret email-secret
 ```
