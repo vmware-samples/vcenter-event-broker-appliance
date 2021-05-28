@@ -1,0 +1,4 @@
+flask==1.1.4
+cloudevents==1.2.0
+pyvmomi==7.0.2
+python-dotenv==0.17.1
