@@ -4,6 +4,8 @@
 
 > Release Date: 2021-04-20
 
+### ⚠️ BREAKING
+
 ### 📖 Commits
 
 - [2088553]	Bump version to v0.6.0 for release
@@ -11,16 +13,16 @@
 - [8246c90]	Adding missing vmware-functions NS to secret example
 - [27b6553]	Re-enable Registry Digest Check
 - [77f830e]	Fix typo for Docker push command
-- [f53f20c]	Fixed VEBA UI image + Documentation Updates
-- [7701edb]	Add `/events` API endpoint
+- [f53f20c]	Fixed VEBA UI image + Documentation Updates (#337)
+- [7701edb]	Add `/events` API endpoint (#335)
 - [c710557]	Adding code to include external contributors
 - [bc15599]	Bump version to v0.6.0 for release
 - [df1b12a]	Integrate Sockeye into VEBA
 - [1abc331]	Disable digest checking for Harbor Registry
 - [fa226c5]	Add Knative Documentation + Reorganize example folders
-- [d9def65]	Use mod=vendor
+- [d9def65]	Use mod=vendor (#329)
 - [ddba4b6]	Integrate VEBA UI
-- [2e0f556]	Add Knative to architecture
+- [2e0f556]	Add Knative to architecture (#323)
 - [5df7dab]	Update stale workflow
 - [e6baaca]	Updating VMware container image URLs to VMware Harbor
 - [403b586]	Removing symlink to /etc/resolv.conf
@@ -44,6 +46,8 @@
 
 > Release Date: 2020-12-11
 
+### ⚠️ BREAKING
+
 ### 📖 Commits
 
 - [d2876b0]	Remove test from output target
@@ -64,7 +68,7 @@
 - [5951bf4]	Optimize Router Workflows
 - [3278b74]	Add Status Badges for Router Actions
 - [da5f3a3]	Increase timeout
-- [317570c]	Make linter standalone action
+- [317570c]	Make linter standalone action (#253)
 - [26aaad5]	Update README
 - [c8bf2d5]	Remove verbose flag from YAML
 - [7547f6c]	Add Helm chart
@@ -87,11 +91,11 @@
 - [7799c9f]	Include all files in gofmt
 - [406e29d]	Fix BOM version change in integration tests
 - [9fde8e7]	Address review Frankie
-- [bafa586]	Add vcsim as event provider
+- [bafa586]	Add vcsim as event provider (#2134)
 - [d95529b]	Function for plugin auto-refresh
 - [0dbb217]	Changing development branch to use development container and simplify build script
 - [9ba03c6]	Remove set-env references
-- [1c41453]	Proposed fix for issue [#211](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/211)
+- [1c41453]	Proposed fix for issue [#211](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/211) (#211)
 - [dde2464]	Update create-docker-dev-image.yml
 - [2b8b852]	Moving VMware Event Router section to top for ease of edit
 - [0a22792]	Renaming version in BOM to represent Github Repo Tag
@@ -112,7 +116,7 @@
 - [75fefdc]	Reflect changes in build files
 - [a719289]	Move router cmd to sub-folder
 - [120beec]	Migrate to v1alpha1 config API using YAML
-- [88b878c]	Add Pagerduty trigger example in go ([#201](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/201))
+- [88b878c]	Add Pagerduty trigger example in go ([#201](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/201)) (#201)
 - [01fb656]	Add vm-reconfigure-via-tag go handle function example
 - [fd2b58a]	Initial commit of pre-filter function
 - [3980efb]	Shorten workflow names
@@ -137,6 +141,8 @@
 ## [Release v0.4.1](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.4.0...v0.4.1)
 
 > Release Date: 2020-06-10
+
+### ⚠️ BREAKING
 
 ### 📖 Commits
 
@@ -173,6 +179,8 @@
 
 > Release Date: 2020-05-11
 
+### ⚠️ BREAKING
+
 ### 📖 Commits
 
 - [70d47df]	Fixing minor typo in README
@@ -198,24 +206,24 @@
 - [65c71b8]	Add PagerDuty Python Example (tested with VEBA v0.3, vCenter 6.7 with VMPowerOn/Off Events)
 - [c0caac1]	Consistent use of Notes in markdown files
 - [10e14a8]	Fix VMware Event Router image pull to support air-gap scenario
-- [7af6632]	Add Docker image for :VERSION tag
+- [7af6632]	Add Docker image for :VERSION tag (#102)
 - [53293b0]	Handling special character which must be escaped in Event Router JSON configuration
 - [9bf3702]	Updated to pull Weave YAML from Github rather than from dynamic URL + updated Weave version
 - [6bf1e8b]	Add Otto to start page
-- [b6421db]	Add official VEBA mascot ([#98](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/98))
+- [b6421db]	Add official VEBA mascot ([#98](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/98)) (#98)
 - [7addae5]	Updating Troubleshooting docs with correct path to config file
 - [4cc3083]	Cleaning up dev template to simplify contributions
 - [7a2c0d7]	Reorganize all VEBA config files into /root/config
 - [73c9377]	Add example function using Go and govmomi that attaches tag to VM
 - [54adab3]	Add initial release of troubleshooting guide
 - [c73bf9b]	Adding /etc/veba-release to include VEBA version, commit ID & event processor type
-- [7d3b92f]	Remove User Stories ([#84](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/84))
-- [902e376]	Add greeting action on pull requests ([#88](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/88))
+- [7d3b92f]	Remove User Stories ([#84](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/84)) (#84)
+- [902e376]	Add greeting action on pull requests ([#88](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/88)) (#88)
 - [10a536f]	Revert Github action for stale issues/PRs
 - [015fa43]	Add Github Action for stale issues/PRs
 - [55a0d0d]	Fix rule processing switch statements
-- [db01ee1]	Make EventBridge client interface
-- [4d30278]	Support customization of Docker Bridge Network ([#76](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/76))
+- [db01ee1]	Make EventBridge client interface (#69)
+- [4d30278]	Support customization of Docker Bridge Network ([#76](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/76)) (#76)
 - [beb7637]	vRO Function
 - [11500b7]	Spruce up README with a few badges
 
@@ -224,19 +232,21 @@
 
 > Release Date: 2020-03-10
 
+### ⚠️ BREAKING
+
 ### 📖 Commits
 
-- [976adc5]	Clarify resync period of AWS EventBridge Processor
+- [976adc5]	Clarify resync period of AWS EventBridge Processor (#68)
 - [d5dc652]	Ensure we pull latest vmware-event-router image
 - [61f98e2]	Fixed OpenFaaS admin password
-- [d083a45]	Added unauthenticated SMTP and green status emails ([#72](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/72))
+- [d083a45]	Added unauthenticated SMTP and green status emails ([#72](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/72)) (#72)
 - [993eea3]	Fixing FQDN in /etc/issue
 - [1c97a8b]	Fixing syntax issue w/creating tools.conf
 - [f019970]	Bump version to v0.3.0 for release
 - [dd1330e]	Fixed MoRef procesisng for v0.3
 - [81587c7]	Ensuring eth0 interface is shown first in vSphere UI
 - [8c2327d]	Colorized log output
-- [75414da]	Fix linter errors
+- [75414da]	Fix linter errors (#58)
 - [dd3ca14]	Updated Getting Started User Guide
 - [0e193ee]	Stricter linting on VMware Event Router
 - [84eb278]	Add branch information to Python examples
@@ -266,6 +276,8 @@
 
 > Release Date: 2020-01-23
 
+### ⚠️ BREAKING
+
 ### 📖 Commits
 
 - [0b2c33a]	Bump version to v0.2.0 for release
@@ -293,6 +305,8 @@
 ## v0.1.0
 
 > Release Date: 2019-11-25
+
+### ⚠️ BREAKING
 
 ### 📖 Commits
 
