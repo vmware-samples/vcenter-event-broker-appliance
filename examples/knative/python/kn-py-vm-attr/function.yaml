@@ -1,0 +1,94 @@
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-py-vm-attr-service
+  labels:
+    app: kn-py-vm-attr
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+      - image: projects.registry.vmware.com/veba/kn-py-vm-attr:latest
+        envFrom:
+        - secretRef:
+            name: vcconfig-secret
+---
+# Here is a list of triggers with event type filtering to match multiple kind of VM events
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: kn-py-vm-attr-trigger-vmcreated
+  labels:
+    app: kn-py-vm-attr
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: com.vmware.event.router/event
+      subject: VmCreatedEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-py-vm-attr-service
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: kn-py-vm-attr-trigger-vmcloned
+  labels:
+    app: kn-py-vm-attr
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: com.vmware.event.router/event
+      subject: VmClonedEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-py-vm-attr-service
+
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: kn-py-vm-attr-trigger-vmregistered
+  labels:
+    app: kn-py-vm-attr
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: com.vmware.event.router/event
+      subject: VmRegisteredEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-py-vm-attr-service
+
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: kn-py-vm-attr-trigger-drsvmpoweredon
+  labels:
+    app: kn-py-vm-attr
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: com.vmware.event.router/event
+      subject: DrsVmPoweredOnEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-py-vm-attr-service
