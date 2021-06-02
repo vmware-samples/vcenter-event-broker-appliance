@@ -11,23 +11,29 @@ images:
   go: /assets/img/languages/go.png
   powershell: /assets/img/languages/powershell.png
 examples:
-  - title: Powershell echo Cloud Event for Knative
-    usecases: 
+  - title: Echo Cloud Event for Knative
+    usecases:
     - item: other
     id: kn-ps-echo-function
-    description: Powershell function that helps users understand the structure and data of a given vCenter Event using the Knative event processor which will be useful when creating brand new Functions.
-    links: 
+    description: Function that helps users understand the structure and data of a given vCenter Event using the Knative event processor which will be useful when creating brand new Functions.
+    links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-echo"
+    - language: python
+      url: "/tree/master/examples/knative/python/kn-py-echo"
+    - language: go
+      url: "/tree/master/examples/knative/go/kn-go-echo"
   - title: Slack Notification
-    usecases: 
+    usecases:
     - item: integration
     - item: notification
     id: kn-ps-slack-function
-    description: Powershell function to send a Slack notification.
-    links: 
+    description: Function to send a Slack notification.
+    links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-slack"
+    - language: python
+      url: "/tree/master/examples/knative/python/kn-py-slack"
   - title: Email Notification
     usecases:
     - item: notification
@@ -44,6 +50,14 @@ examples:
     links:
     - language: powercli
       url: "/tree/master/examples/knative/powercli/kn-pcli-tag"
+  - title: vSphere Custom Attributes
+    usecases:
+    - item: automation
+    id: kn-py-vm-attr-function
+    description: Add Custom Attribute to VM upon a vCenter event.
+    links:
+    - language: python
+      url: "/tree/master/examples/knative/python/kn-py-vm-attr"
 
 ---
 
@@ -51,7 +65,7 @@ A complete and updated list of ready to use functions curated by the VMware Even
 
 # Get started with our prebuilt functions
 
-These functions are prebuilt, available in ready to deploy container and `stack.yml` files for you to deploy as is. Should you need to modify the functions to fit your needs, the `README.md` files provided within each function folder will provide all the information you need to customize, build and deploy the function on your VMware Event Broker appliance. 
+These functions are prebuilt, available in ready to deploy container and `function.yaml` files for you to deploy as is. Should you need to modify the functions to fit your needs, the `README.md` files provided within each function folder will provide all the information you need to customize, build and deploy the function on your VMware Event Broker appliance. 
 
 > **Note:** These functions are provided and tested to be used with the VMware Event Broker Appliance deployed with [Knative](/kb/install-knative) as the event stream processor. 
 
