@@ -36,8 +36,9 @@ const (
 	defaultPollFrequency  = time.Second
 	eventsPageMax         = 100 // events per page from history collector
 	checkpointInterval    = 5 * time.Second
-	checkpointMaxEventAge = time.Hour       // limit event replay time window to max
-	waitShutdown          = 5 * time.Second // wait for processing to finish during shutdown
+	checkpointMaxEventAge = time.Hour           // limit event replay time window to max
+	waitShutdown          = 5 * time.Second     // wait for processing to finish during shutdown
+	ceVSphereAPIKey       = "vsphereapiversion" // extended attribute representing vSphere API version
 )
 
 // EventStream handles the connection to the vCenter events API
@@ -46,7 +47,8 @@ type EventStream struct {
 	logger.Logger
 	checkpoint    bool
 	checkpointDir string
-	rootCAs       []string // custom root CAs, TLS OS defaults if not specified
+	rootCAs       []string          // custom root CAs, TLS OS defaults if not specified
+	ceAttributes  map[string]string // custom cloudevent context attributes added to events
 
 	wg waitgroup.WaitGroup // shutdown handling
 
@@ -70,7 +72,18 @@ func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCenter, ms m
 		return nil, errors.New("vCenter configuration must be provided")
 	}
 
-	var vc EventStream
+	vc := EventStream{
+		ceAttributes: make(map[string]string),
+		stats: metrics.EventStats{
+			Provider:    string(config.ProviderVCenter),
+			Type:        config.EventProvider,
+			Address:     cfg.Address,
+			Started:     time.Now().UTC(),
+			EventsTotal: new(int),
+			EventsErr:   new(int),
+			EventsSec:   new(float64),
+		},
+	}
 
 	parsedURL, err := soap.ParseURL(cfg.Address)
 	if err != nil {
@@ -104,23 +117,13 @@ func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCenter, ms m
 			return nil, errors.Wrap(err, "create client")
 		}
 	}
+	vc.ceAttributes[ceVSphereAPIKey] = vc.client.ServiceContent.About.ApiVersion
 
 	vc.checkpoint = cfg.Checkpoint
 	vc.checkpointDir = cfg.CheckpointDir
 
 	if cfg.InsecureSSL {
 		vc.Logger.Warnw("using potentially insecure connection to vCenter", "address", cfg.Address, "insecure", cfg.InsecureSSL)
-	}
-
-	// seed the metrics stats
-	vc.stats = metrics.EventStats{
-		Provider:    string(config.ProviderVCenter),
-		Type:        config.EventProvider,
-		Address:     cfg.Address,
-		Started:     time.Now().UTC(),
-		EventsTotal: new(int),
-		EventsErr:   new(int),
-		EventsSec:   new(float64),
 	}
 
 	go vc.PushMetrics(ctx, ms)
@@ -330,7 +333,7 @@ func (vc *EventStream) processEvents(ctx context.Context, baseEvents []types.Bas
 	host := vc.client.URL().String()
 
 	for _, e := range baseEvents {
-		ce, err := events.NewCloudEvent(e, host)
+		ce, err := events.NewFromVSphere(e, host, events.WithAttributes(vc.ceAttributes))
 		if err != nil {
 			vc.Errorw("skipping event because it could not be converted to CloudEvent format", "event", e, "error", err)
 			errCount++

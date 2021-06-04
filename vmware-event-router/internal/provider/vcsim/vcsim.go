@@ -135,7 +135,7 @@ func eventHandler(ctx context.Context, vcsim *EventStream, proc processor.Proces
 		// reverse slice because vcsim sends events in descending key order
 		reverse(baseEvents)
 		for _, e := range baseEvents {
-			ce, err := events.NewCloudEvent(e, source)
+			ce, err := events.NewFromVSphere(e, source)
 			if err != nil {
 				vcsim.Errorw("skipping event because it could not be converted to CloudEvent format", "event", e, "error", err)
 				errCount++

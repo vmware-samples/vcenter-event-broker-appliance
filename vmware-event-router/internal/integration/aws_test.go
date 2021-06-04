@@ -35,7 +35,7 @@ var _ = Describe("AWS Processor", func() {
 			// create VMPoweredOnEvent and marshal to CloudEvent
 			BeforeEach(func() {
 				baseEvent = newVMPoweredOnEvent()
-				ce, err = events.NewCloudEvent(baseEvent, fakeVCenterName)
+				ce, err = events.NewFromVSphere(baseEvent, fakeVCenterName)
 				Expect(err).ShouldNot(HaveOccurred())
 			})
 
@@ -53,7 +53,7 @@ var _ = Describe("AWS Processor", func() {
 			// create LicenseEvent and marshal to CloudEvent
 			BeforeEach(func() {
 				baseEvent = newLicenseEvent()
-				ce, err = events.NewCloudEvent(baseEvent, fakeVCenterName)
+				ce, err = events.NewFromVSphere(baseEvent, fakeVCenterName)
 				Expect(err).ShouldNot(HaveOccurred())
 			})
 
