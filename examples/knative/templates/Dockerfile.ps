@@ -5,13 +5,15 @@ ENV PORT 8080
 
 ARG POWERSHELL_VERSION="7.1.2-1.ph3"
 ARG ICU_VERSION="67.1"
+ARG CURL_VERSION="7.75.0-2.ph3"
+ARG RPM_LIBS="4.14.2-12.ph3"
 ARG THREADJOB_VERSION="2.0.3"
 ARG CLOUDEVENTS_SDK_VERSION="0.2.0"
 
 # Set terminal. If we don't do this, weird readline things happen.
 RUN echo "/usr/bin/pwsh" >> /etc/shells && \
     echo "/bin/pwsh" >> /etc/shells && \
-    tdnf install -y powershell-${POWERSHELL_VERSION} icu-${ICU_VERSION} && \
+    tdnf install -y powershell-${POWERSHELL_VERSION} icu-${ICU_VERSION} curl-${CURL_VERSION} rpm-libs-${RPM_LIBS} && \
     pwsh -c "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted" && \
     pwsh -c "Install-Module ThreadJob -Force -Confirm:\$false -RequiredVersion ${THREADJOB_VERSION}" && \
     pwsh -c "Install-Module -Name CloudEvents.Sdk -RequiredVersion ${CLOUDEVENTS_SDK_VERSION}" && \
