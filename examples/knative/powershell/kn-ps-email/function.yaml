@@ -14,7 +14,7 @@ spec:
     metadata:
     spec:
       containers:
-        - image: projects.registry.vmware.com/veba/kn-ps-email:1.0
+        - image: projects.registry.vmware.com/veba/kn-ps-email:1.1
           envFrom:
             - secretRef:
                 name: email-secret

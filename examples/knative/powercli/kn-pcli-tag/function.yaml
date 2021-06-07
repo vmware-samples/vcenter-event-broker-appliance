@@ -14,7 +14,7 @@ spec:
     metadata:
     spec:
       containers:
-        - image: projects.registry.vmware.com/veba/kn-pcli-tag:1.0
+        - image: projects.registry.vmware.com/veba/kn-pcli-tag:1.1
           envFrom:
             - secretRef:
                 name: tag-secret
