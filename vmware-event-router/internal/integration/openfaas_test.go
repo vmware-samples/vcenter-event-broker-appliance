@@ -49,7 +49,7 @@ var _ = Describe("OpenFaaS Processor", func() {
 		Context("when one function in OpenFaaS is subscribed to that event type (VmPoweredOnEvent)", func() {
 			BeforeEach(func() {
 				baseEvent = newVMPoweredOnEvent()
-				ce, err = events.NewCloudEvent(baseEvent, fakeVCenterName)
+				ce, err = events.NewFromVSphere(baseEvent, fakeVCenterName)
 				Expect(err).ShouldNot(HaveOccurred())
 			})
 
@@ -76,7 +76,7 @@ var _ = Describe("OpenFaaS Processor", func() {
 		Context("when a subscribed function in OpenFaaS returns an error (ClusterCreatedEvent)", func() {
 			BeforeEach(func() {
 				baseEvent = newClusterCreatedEvent()
-				ce, err = events.NewCloudEvent(baseEvent, fakeVCenterName)
+				ce, err = events.NewFromVSphere(baseEvent, fakeVCenterName)
 				Expect(err).ShouldNot(HaveOccurred())
 			})
 
@@ -104,7 +104,7 @@ var _ = Describe("OpenFaaS Processor", func() {
 		Context("when no function in OpenFaaS is subscribed to that event type (LicenseEvent)", func() {
 			BeforeEach(func() {
 				baseEvent = newLicenseEvent()
-				ce, err = events.NewCloudEvent(baseEvent, fakeVCenterName)
+				ce, err = events.NewFromVSphere(baseEvent, fakeVCenterName)
 				Expect(err).ShouldNot(HaveOccurred())
 			})
 
