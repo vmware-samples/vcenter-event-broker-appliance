@@ -6,9 +6,8 @@ on:
     types: [opened, synchronize, reopened, edited]
 
 jobs:
-  WIP:
+  wip:
     runs-on: ubuntu-latest
-    if: startsWith(github.event.pull_request.title, 'WIP')
     steps:
-      - name: Must Exit
-        run: exit 1
+      - name: Check WIP in PR Title
+        uses: embano1/wip@v1

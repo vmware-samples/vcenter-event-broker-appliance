@@ -8,6 +8,8 @@ if(${env:PORT}) {
 
 $serverStopMessage = 'break-signal-e2db683c-b8ff-4c4f-8158-c44f734e2bf1'
 
+. ./handler.ps1
+
 $backgroundServer = Start-ThreadJob {
    param($url, $serverStopMessage)
 
@@ -60,40 +62,48 @@ $backgroundServer = Start-ThreadJob {
                $headers[$context.Request.Headers.GetKey($i)] = $context.Request.Headers.GetValues($i)
             }
 
-            $context.Response.StatusCode = [int]([System.Net.HttpStatusCode]::OK)
+            $cloudEvent = ConvertFrom-HttpMessage -Headers $headers -Body $bodyData
+
+            # function result
+            ([System.Text.Encoding]::UTF8.GetString($bodyData) -eq $serverStopMessage)
+
+            if ( $cloudEvent -ne $null ) {
+               try {
+                  Process-Handler -CloudEvent $cloudEvent | Out-Null
+                  $context.Response.StatusCode = [int]([System.Net.HttpStatusCode]::OK)
+               } catch {
+                  Write-Error "$(Get-Date) - Handler Processing Error: $($_.Exception.ToString())"
+                  $context.Response.StatusCode = [int]([System.Net.HttpStatusCode]::InternalServerError)
+               }
+            }
+
          } catch {
-            Write-Error "HTTP Request Processing Error: $($_.Exception.ToString())"
+            Write-Error "`n$(Get-Date) - HTTP Request Processing Error: $($_.Exception.ToString())"
             $context.Response.StatusCode = [int]([System.Net.HttpStatusCode]::InternalServerError)
          } finally {
             $context.Response.Close();
          }
 
-         $cloudEvent = ConvertFrom-HttpMessage -Headers $headers -Body $bodyData
-
-         # function result
-         ([System.Text.Encoding]::UTF8.GetString($bodyData) -eq $serverStopMessage)
-
       } catch {
-         Write-Error "CloudEvent Processing Error: $($_.Exception.ToString())"
+         Write-Error "$(Get-Date) - Listener Processing Error: $($_.Exception.ToString())"
+         exit 1
       } finally {
          $listener.Stop()
       }
-
-      if ( $cloudEvent -ne $null ) {
-         try {
-            Process-Handler -CloudEvent $cloudEvent | Out-Null
-         }catch {
-            Write-Error "Handler Processing Error: $($_.Exception.ToString())"
-         }
-      }
    }
 
-
+   # Runs Init function (defined in handler.ps1) which can be used to enable warm startup
+   try {
+      Process-Init
+   } catch {
+      Write-Error "$(Get-Date) - Init Processing Error: $($_.Exception.ToString())"
+      exit 1
+   }
 
    while($true) {
       $breakSignal = Start-HttpCloudEventListener -Url $url
       if ($breakSignal) {
-         Write-Host "Server stop requested"
+         Write-Host "$(Get-Date) - PowerShell HTTP server stop requested"
          break;
       }
    }
@@ -108,7 +118,7 @@ param($killEvent, $url, $serverStopMessage)
 } -ArgumentList $killEvent, $localUrl, $serverStopMessage
 
 try {
-   Write-Host "Server start listening on '$url'"
+   Write-Host "$(Get-Date) - PowerShell HTTP server start listening on '$url'"
    $running = $true
    while($running) {
       Start-Sleep  -Milliseconds 100
@@ -117,8 +127,15 @@ try {
       $backgroundServer | Receive-Job
    }
 } finally {
-   Write-Host "PowerShell stop requested. Wait server to stop"
+   Write-Host "$(Get-Date) - PowerShell HTTP Server stop requested. Waiting for server to stop"
    $killEvent.Set() | Out-Null
    Get-Job | Wait-Job | Receive-Job
-   Write-Host "Server is stopped"
+   Write-Host "$(Get-Date) - PowerShell HTTP server is stopped"
+
+   # Runs Shutdown function (defined in handler.ps1) to clean up connections from warm startup
+   try {
+      Process-Shutdown
+   } catch {
+      Write-Error "`n$(Get-Date) - Shutdown Processing Error: $($_.Exception.ToString())"
+   }
 }

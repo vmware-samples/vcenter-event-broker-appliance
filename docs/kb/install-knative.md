@@ -20,6 +20,7 @@ Customers looking to seamlessly extend their vCenter by either deploying our pre
 
 * 4 vCPU and 8GB of memory for VMware Event Broker Appliance
 * vCenter Server 6.x or greater
+  *  The VEBA UI requires vCenter Server 7.0 or greater
 * vCenter TCP/443 accessible from Appliance IP address
 * Account to login to vCenter Server (readOnly is sufficient)
 
@@ -60,6 +61,8 @@ Deploy the VMware Event Broker Appliance OVA to your vCenter Server using the vS
   * vCenter Username to register VEBA UI (Optional) - Username to register VMware Event Broker UI to vCenter Server for Knative Processor
   * vCenter Password to register VEBA UI (Optional) - Password to register VMware Event Broker UI to vCenter Server for Knative Processor
   * Disable vCenter Server TLS Verification - If you have a self-signed SSL Certificate, you will need to check this box
+
+> **Note:** The minimum vSphere Privileges that is required for proper VEBA UI functionality are: **Register Extension**, **Update Extension** (Installing Plugins) and **Manage Plugins** (Updating Plugins)
 
 #### **Event Processor Configuration** (**Required**)
   * Event Processor - Choose Knative

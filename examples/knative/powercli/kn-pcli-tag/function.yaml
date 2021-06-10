@@ -1,0 +1,41 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-pcli-tag
+  labels:
+    app: veba-ui
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+spec:
+  template:
+    metadata:
+    spec:
+      containers:
+        - image: projects.registry.vmware.com/veba/kn-pcli-tag:1.1
+          envFrom:
+            - secretRef:
+                name: tag-secret
+          env:
+            - name: FUNCTION_DEBUG
+              value: "false"
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: veba-pcli-tag-trigger
+  labels:
+    app: veba-ui
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: com.vmware.event.router/event
+      subject: DrsVmPoweredOnEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-pcli-tag

@@ -17,7 +17,7 @@ eventProvider:
         username: administrator@vsphere.local
         password: ReplaceMe
 eventProcessor:
-  type: awsEventBridge
+  type: aws_event_bridge
   name: veba-demo-aws
   awsEventBridge:
     eventBus: default

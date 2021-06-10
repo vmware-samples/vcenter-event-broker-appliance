@@ -1,0 +1,8 @@
+FROM projects.registry.vmware.com/veba/ce-ps-base:1.1
+
+ARG POWERCLI_VERSION="12.3.0.17860403"
+
+RUN pwsh -c "\$ProgressPreference = \"SilentlyContinue\"; Install-Module VMware.PowerCLI -RequiredVersion ${POWERCLI_VERSION}" && \
+    pwsh -c 'Set-PowerCLIConfiguration -ParticipateInCEIP $true -confirm:$false'
+
+CMD ["pwsh","./server.ps1"]

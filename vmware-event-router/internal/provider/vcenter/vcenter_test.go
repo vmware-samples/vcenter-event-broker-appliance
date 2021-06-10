@@ -72,7 +72,7 @@ func TestEventStream_stream(t *testing.T) {
 				}
 
 				vc := &EventStream{
-					client:     c,
+					client:     &c,
 					Logger:     logger,
 					checkpoint: tt.args.enableCheckpoint,
 					stats: metrics.EventStats{

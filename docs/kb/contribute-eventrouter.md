@@ -266,7 +266,7 @@ centralized platform for controlling your VMware vSphere environments, allowing
 you to automate and deliver a virtual infrastructure across the hybrid cloud
 with confidence. Since VMware vCenter Server event types are environment specific (vSphere version,
 extensions), a list of events for vCenter as an event source can be generated as
-described in this [blog post](https://www.virtuallyghetto.com/2019/12/listing-all-events-for-vcenter-server.html).
+described in this [blog post](https://www.williamlam.com/2019/12/listing-all-events-for-vcenter-server.html).
 
 The following table lists allowed and required fields for connecting to a
 vCenter Server and the respective type values and examples for these fields.

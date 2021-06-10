@@ -24,7 +24,11 @@ if [ "${DOCKER_NETWORK_CIDR}" != "172.17.0.1/16" ]; then
     echo -e "\e[92mConfiguring Docker Bridge Network ..." > /dev/console
     cat > /etc/docker/daemon.json << EOF
 {
-    "bip": "${DOCKER_NETWORK_CIDR}"
+    "bip": "${DOCKER_NETWORK_CIDR}",
+    "log-opts": {
+       "max-size": "10m",
+       "max-file": "5"
+    }
 }
 EOF
 fi

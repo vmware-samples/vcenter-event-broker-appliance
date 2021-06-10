@@ -65,7 +65,7 @@ NotificationEvents = @("SDDC-PROVISION","SDDC-DELETE");
 New-VmcNotificationWebhook @vmcVebaSlackNotificationParams
 ```
 
-> **Note:** For list of all available VMware Cloud Notification Events, please see this [blog post](https://www.virtuallyghetto.com/2020/06/extending-vmware-cloud-on-aws-notifications-using-the-notification-gateway-api.html) for more details.
+> **Note:** For list of all available VMware Cloud Notification Events, please see this [blog post](https://www.williamlam.com/2020/06/extending-vmware-cloud-on-aws-notifications-using-the-notification-gateway-api.html) for more details.
 
 ### Test VMware Cloud Notification
 

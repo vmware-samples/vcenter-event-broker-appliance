@@ -80,7 +80,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	log := logger.Named("[MAIN]").Sugar()
+	log := logger.Named("[MAIN]").Sugar().With("commit", commit, "version", version)
 
 	f, err := os.Open(configPath)
 	if err != nil {
@@ -103,7 +103,7 @@ func main() {
 	// set up event provider
 	switch cfg.EventProvider.Type {
 	case config.ProviderVCenter:
-		prov, err = vcenter.NewEventStream(ctx, cfg.EventProvider.VCenter, ms, logger.Sugar())
+		prov, err = vcenter.NewEventStream(ctx, cfg.EventProvider.VCenter, ms, logger.Sugar(), vcenter.WithRootCAs(cfg.Certificates.RootCAs))
 		if err != nil {
 			log.Fatalf("could not connect to vCenter: %v", err)
 		}
@@ -111,6 +111,7 @@ func main() {
 		log.Infow("connecting to vCenter", "address", cfg.EventProvider.VCenter.Address)
 
 	case config.ProviderVCSIM:
+		log.Warn("%s is DEPRECATED and will be removed in future versions", config.ProviderVCSIM)
 		prov, err = vcsim.NewEventStream(ctx, cfg.EventProvider.VCSIM, ms, logger.Sugar())
 		if err != nil {
 			log.Fatalf("could not connect to vCenter simulator: %v", err)

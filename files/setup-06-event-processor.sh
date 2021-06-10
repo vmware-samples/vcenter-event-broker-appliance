@@ -118,7 +118,7 @@ eventProcessor:
     region: ${AWS_EVENTBRIDGE_REGION}
     ruleARN: ${ESCAPED_AWS_EVENTBRIDGE_RULE_ARN}
   name: veba-aws
-  type: awsEventBridge
+  type: aws_event_bridge
 eventProvider:
   name: veba-vc-01
   type: vcenter
