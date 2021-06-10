@@ -1,4 +1,102 @@
 
+<a name="v0.6.1"></a>
+## [Release v0.6.1](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.6.0...v0.6.1)
+
+> Release Date: 2021-06-10
+
+### 🐞 Fix
+
+- [fd738b3]	Resolve CVE-2021{22901,22898,20266} for PS Base Image (#443) 
+- [2fcac13]	Update Knative PS examples for consistency
+- [1c78537]	Fix command in adding trusted root CA cert documentation
+- [a8c1976]	Update documentation to reflect minimum of vCenter Server 7.0 for VEBA UI
+- [0356447]	Wrong association in greeting
+
+### 💫 Feature
+
+- [e6371a6]	add kn-py-echo example (#426) 
+- [c37b8e2]	Add Knative Python VM Attribute Example (#434) 
+- [509e763]	Add Knative Base PowerShell/PowerCLI Container Images
+- [12ac7ac]	Add Knative PowerCLI vSphere Tagging Example
+- [e3b02a5]	Add kn-py-slack Python example
+- [eefe0d2]	Document Trusted Root Certificate support w/VMware Event Router
+- [b2507eb]	Add router support for custom certificates (#370) 
+- [4d503c9]	Add Helm Option for Knative
+
+### 📃 Documentation
+
+- [4e4c8f7]	Add new Python/Go examples to Docs
+- [8bb8949]	Update Knative Function list w/PowerShell Email Example
+
+### 🧹 Chore
+
+- [59590e8]	Update CHANGELOG template (#429) 
+- [0666a0a]	Add CHANGELOG workflow
+- [a5a91d0]	Daily build and helm verification (#414) 
+- [2ef2aa1]	Automate CHANGELOG (#394) 
+- [d0d93c8]	Add issue greeting (#390) 
+
+### ⚠️ BREAKING
+
+### 📖 Commits
+
+- [992f8fb]	Bump version to v0.6.1 for release
+- [fd738b3]	fix: Resolve CVE-2021{22901,22898,20266} for PS Base Image (#443)
+- [0e3cfb8]	Bump version to v0.6.1 for release
+- [b894ab6]	Bump requests lib in OpenFaaS Python fns (#440)
+- [4dd5870]	chore(deps): Bump urllib3
+- [2eb6ae9]	chore(deps): Bump urllib3
+- [8d0dcb9]	Use 1.0 tag for image (#437)
+- [e6371a6]	feat: add kn-py-echo example (#426)
+- [4e4c8f7]	docs: Add new Python/Go examples to Docs
+- [c37b8e2]	feat: Add Knative Python VM Attribute Example (#434)
+- [cbeb5bd]	chore(deps): Bump urllib3 in /examples/openfaas/python/tagging/handler
+- [59590e8]	chore: Update CHANGELOG template (#429)
+- [509e763]	feat: Add Knative Base PowerShell/PowerCLI Container Images
+- [2fcac13]	fix: Update Knative PS examples for consistency
+- [12ac7ac]	feat: Add Knative PowerCLI vSphere Tagging Example
+- [6367ee0]	Bump requests in /examples/knative/python/kn-py-slack
+- [e3b02a5]	feat: Add kn-py-slack Python example
+- [02bd23c]	Example Knative echo service written in Go
+- [0666a0a]	chore: Add CHANGELOG workflow
+- [ceaa976]	Update stale action (#420)
+- [a5a91d0]	chore: Daily build and helm verification (#414)
+- [c3b670d]	Clarify vcsim deprecation (#408)
+- [8bb8949]	docs: Update Knative Function list w/PowerShell Email Example
+- [761d41c]	Add docs section to CHANGELOG (#404)
+- [1c78537]	fix: Fix command in adding trusted root CA cert documentation
+- [a8c1976]	fix: Update documentation to reflect minimum of vCenter Server 7.0 for VEBA UI
+- [e859262]	Updated docs with new URL www.williamlam.com
+- [eefe0d2]	feat: Document Trusted Root Certificate support w/VMware Event Router
+- [0356447]	fix: Wrong association in greeting
+- [2ef2aa1]	chore: Automate CHANGELOG (#394)
+- [b2507eb]	feat: Add router support for custom certificates (#370)
+- [5e7c2e4]	Document simplified steps for replacing TLS certifcate in VEBA
+- [121c688]	Bump Helm chart version to v0.6.2
+- [f03672e]	Add v0.6.2 Chart Pre-Release
+- [4d503c9]	feat: Add Helm Option for Knative
+- [d0d93c8]	chore: Add issue greeting (#390)
+- [168abeb]	Example Knative PowerShell Email Function
+- [11a83cd]	Update WIP Action (#382)
+- [7f8177f]	Fix sed command
+- [5169b39]	Configure container log rotation
+- [bf21bbd]	Add support for custom VEBA TLS Certificate
+- [d288918]	Refactor Ingress Configuration based on Processor Type
+- [46d7e5d]	Bump urllib3 in /examples/openfaas/python/tagging/handler
+- [8fa4b40]	Bump urllib3 in /examples/openfaas/python/invoke-rest-api/handler
+- [db9399e]	Bump urllib3
+- [c778a0a]	VEBA UI fix for incorrect TLS miss-match
+- [33ed689]	Add dispatcher container image to VEBA BOM for RabbitMQ Broker deployment
+- [c7da5cc]	Add correct AWS Event Bridge Type into Event Router Config
+- [6f33d65]	Update the correct cert name for TLS replacement (#367)
+- [016bd9a]	Document multiple Knative Triggers
+- [166f396]	Document minimum vSphere Privileges for VEBA UI
+- [7a24aef]	Verify Helm chart (#359)
+- [b567d65]	Update helm chart (#355) (#357)
+- [72bb151]	Fix [#355](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/355) by helm-ignoring releases folder (#355)
+- [e234437]	Remove * in front of Closes keyword + Fix Typo
+- [7f246ef]	Add Windows specific Docker command to kn-ps-slack function
+
 <a name="v0.6.0"></a>
 ## [Release v0.6.0](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.5.0...v0.6.0)
 
