@@ -1,30 +1,36 @@
 name: VMware Event Router Helm Test
 
-# triggered on every PR and commit on changes inside the vmware-event-router
-# (Helm) chart directory
+# triggered on every push and PRs but only when changes inside
+# vmware-event-router (sub)dir(s)
 on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - "vmware-event-router/chart/**"
+      - 'vmware-event-router/**'
   push:
     paths:
-      - "vmware-event-router/chart/**"
-  schedule:
-  # runs daily
-  - cron: '0 0 * * *'
+      - 'vmware-event-router/**'
+
+env:
+  KIND_VERSION: v0.11.1 
+  NAMESPACE: vmware
+  KO_DOCKER_REPO: kind.local
 
 jobs:
   openfaas:
     name: OpenFaaS Event Processor
     runs-on: ubuntu-latest
-    env:
-      KO_DOCKER_REPO: kind.local
-      KIND_VERSION: v0.10.0
-      NAMESPACE: vmware
     timeout-minutes: 15
 
     steps:
+      - name: Set up Go 1.15.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+
+      - name: Setup ko
+        uses: imjasonh/setup-ko@v0.4 # will install latest ko version
+
       - name: Check out code onto GOPATH
         uses: actions/checkout@v2
         with:
@@ -48,6 +54,12 @@ jobs:
 
           # Create a cluster!
           kind create cluster --config kind.yaml --wait 3m
+
+      - name: Build router image with ko
+        working-directory: ./vmware-event-router
+        run: |
+          # loads image into kind
+          ko publish -B github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/cmd/router 
 
       - name: Install OpenFaaS with Helm
         run: |
@@ -74,6 +86,10 @@ jobs:
         run: |
           echo "::group::Create override.yaml"
           cat << EOF > override.yaml
+          image:
+            repository: kind.local/router
+            pullPolicy: IfNotPresent
+            tag: "latest"
           eventrouter:
             config:
               logLevel: debug
@@ -109,15 +125,20 @@ jobs:
     name: Knative Event Processor
     runs-on: ubuntu-latest
     env:
-      KO_DOCKER_REPO: kind.local
-      KIND_VERSION: v0.10.0
-      NAMESPACE: vmware
-      KNATIVE_VERSION: v0.22.0
+      KNATIVE_VERSION: v0.23.0
       BROKER_NAMESPACE: default
       BROKER_NAME: default
     timeout-minutes: 15
 
     steps:
+      - name: Set up Go 1.15.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+
+      - name: Setup ko
+        uses: imjasonh/setup-ko@v0.4 # will install latest ko version
+
       - name: Check out code onto GOPATH
         uses: actions/checkout@v2
         with:
@@ -142,9 +163,13 @@ jobs:
           # Create a cluster!
           kind create cluster --config kind.yaml --wait 3m
 
+      - name: Build router image with ko
+        working-directory: ./vmware-event-router
+        run: |
+          # loads image into kind
+          ko publish -B github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/cmd/router 
+
       - name: Setup Knative Serving
-        env:
-          KNATIVE_VERSION: v0.22.0
         run: |
           echo "::group::Serving CRDs"
           kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_VERSION}/serving-crds.yaml
@@ -157,6 +182,7 @@ jobs:
           echo "::endgroup::"
 
           echo "::group::Ingress"
+          echo "waiting 10s before proceeding..." && sleep 10 # hack: give webhook mutating admission controllers some time to settle
           kubectl apply -f https://github.com/knative/net-kourier/releases/download/${KNATIVE_VERSION}/kourier.yaml
           kubectl -n kourier-system wait --timeout=3m --for=condition=Available deploy/3scale-kourier-gateway
           kubectl patch configmap/config-network \
@@ -206,6 +232,10 @@ jobs:
         run: |
           echo "::group::Create override.yaml"
           cat << EOF > override.yaml
+          image:
+            repository: kind.local/router
+            pullPolicy: IfNotPresent
+            tag: "latest"
           eventrouter:
             config:
               logLevel: debug

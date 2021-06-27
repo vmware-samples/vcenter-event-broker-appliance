@@ -4,6 +4,7 @@ replicaCount: 1
 image:
   repository: vmware/veba-event-router
   pullPolicy: Always
+  tag: "" # can be overwritten for testing
 
 imagePullSecrets: []
 nameOverride: ""

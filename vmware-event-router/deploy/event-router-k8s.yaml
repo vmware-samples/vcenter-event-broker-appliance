@@ -40,9 +40,9 @@ metadata:
   name: vmware-event-router
 spec:
   ports:
-    - port: 8080
+    - port: 8082
       protocol: TCP
-      targetPort: 8080
+      targetPort: 8082 # must match port defined in metrics server section
   selector:
     app: vmware-event-router
   sessionAffinity: None
