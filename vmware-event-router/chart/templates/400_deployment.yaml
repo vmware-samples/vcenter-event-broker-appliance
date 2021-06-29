@@ -16,7 +16,11 @@ spec:
     spec:
       serviceAccountName: {{ .Values.serviceAccount.name }}
       containers:
+      {{- if .Values.image.tag }}
+      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+      {{- else }}
       - image: {{ .Values.image.repository }}:{{ .Chart.AppVersion }}
+      {{- end }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
       {{- with .Values.eventrouter.config }}
         name: vmware-event-router

@@ -680,16 +680,17 @@ Knative environment with `Serving` and `Eventing` CRDs installed.
 
 ```console
 # only for Knative-based deployments
-$ kubectl create clusterrolebinding veba-addressable-resolver --clusterrole=addressable-resolver --serviceaccount=vmware:vmware-event-router
+$ kubectl create clusterrolebinding veba-addressable-resolver --clusterrole=knative-serving-aggregated-addressable-resolver --serviceaccount=vmware:vmware-event-router
 ```
 
 <details><summary>Addressable Resolver Permissions</summary>
 
 ```console
 $ kubectl describe clusterrole addressable-resolver
-Name:                                            addressable-resolver
-Labels:                                          eventing.knative.dev/release=v0.18.4
-Annotations:                                     PolicyRule:
+Name:         knative-serving-aggregated-addressable-resolver
+Labels:       serving.knative.dev/release=v0.23.0
+Annotations:  <none>
+PolicyRule:
   Resources                                      Non-Resource URLs  Resource Names  Verbs
   ---------                                      -----------------  --------------  -----
   services                                       []                 []              [get list watch]
