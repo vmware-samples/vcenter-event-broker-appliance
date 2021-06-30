@@ -154,6 +154,23 @@
             <Label>Custom VMware Event Broker Appliance TLS Certificate Authority Certificate (Base64)</Label>
             <Description>Base64 encoded custom TLS certificate (.CER) for the VMware Event Broker Appliance</Description>
         </Property>
+      <Category>Syslog Server Configuration</Category>
+        <Property ovf:key="guestinfo.syslog_server_hostname" ovf:type="string" ovf:userConfigurable="true">
+            <Label>Hostname or IP Address</Label>
+            <Description>Specify the Hostname (FQDN) or IP Address of the Syslog Server</Description>
+        </Property>
+        <Property ovf:key="guestinfo.syslog_server_port" ovf:type="string" ovf:userConfigurable="true" ovf:value="514">
+            <Label>Port</Label>
+            <Description>Syslog Server Port</Description>
+        </Property>
+        <Property ovf:key="guestinfo.syslog_server_protocol" ovf:qualifiers="ValueMap{&quot;TCP&quot;,&quot;TLS&quot;,&quot;UDP&quot;}" ovf:userConfigurable="true" ovf:type="string" ovf:value="TCP">
+            <Label>Protocol</Label>
+            <Description>Choose the Transport Protocol</Description>
+        </Property>
+        <Property ovf:key="guestinfo.syslog_server_format" ovf:qualifiers="ValueMap{&quot;RFC5424&quot;,&quot;RFC3164&quot;}" ovf:userConfigurable="true" ovf:type="string" ovf:value="RFC5424">
+            <Label>Format</Label>
+            <Description>Choose the Syslog Protocol Format</Description>
+        </Property>
       <Category>zAdvanced</Category>
         <Property ovf:key="guestinfo.debug" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Debugging</Label>

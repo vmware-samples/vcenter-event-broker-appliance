@@ -152,8 +152,13 @@
     },
     {
       "type": "file",
-      "source": "files/setup-011-banner.sh",
-      "destination": "/root/setup/setup-011-banner.sh"
+      "source": "files/setup-011-fluentbit.sh",
+      "destination": "/root/setup/setup-011-fluentbit.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-099-banner.sh",
+      "destination": "/root/setup/setup-099-banner.sh"
     },
     {
       "type": "file",

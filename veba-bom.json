@@ -32,6 +32,13 @@
             {
                 "name": "envoyproxy/envoy",
                 "version": "v1.15.1"
+            }]
+    },
+    "fluentbit": {
+        "gitRepoTag": "v1.7.9",
+        "containers": [{
+            "name": "fluent/fluent-bit",
+            "version": "1.7.9"
             }
         ]
     },
