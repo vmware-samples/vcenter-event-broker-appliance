@@ -88,4 +88,4 @@ EOF
 
 kubectl apply -f /root/config/event-router-clusterrole.yaml
 kubectl -n vmware-system apply -f /root/config/event-router-k8s.yaml
-kubectl wait deployment --all --timeout=-1s --for=condition=Available -n vmware-system
+kubectl wait deployment --all --timeout=3m --for=condition=Available -n vmware-system
