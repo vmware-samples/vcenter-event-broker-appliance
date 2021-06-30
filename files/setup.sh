@@ -43,6 +43,10 @@ CUSTOM_VEBA_TLS_PRIVATE_KEY=$(/root/setup/getOvfProperty.py "guestinfo.custom_tl
 CUSTOM_VEBA_TLS_CA_CERT=$(/root/setup/getOvfProperty.py "guestinfo.custom_tls_ca_cert")
 DOCKER_NETWORK_CIDR=$(/root/setup/getOvfProperty.py "guestinfo.docker_network_cidr")
 POD_NETWORK_CIDR=$(/root/setup/getOvfProperty.py "guestinfo.pod_network_cidr")
+SYSLOG_SERVER_HOSTNAME=$(/root/setup/getOvfProperty.py "guestinfo.syslog_server_hostname")
+SYSLOG_SERVER_PORT=$(/root/setup/getOvfProperty.py "guestinfo.syslog_server_port")
+SYSLOG_SERVER_PROTOCOL=$(/root/setup/getOvfProperty.py "guestinfo.syslog_server_protocol")
+SYSLOG_SERVER_FORMAT=$(/root/setup/getOvfProperty.py "guestinfo.syslog_server_format")
 LOCAL_STORAGE_DISK="/dev/sdb"
 LOCAL_STOARGE_VOLUME_PATH="/data"
 export KUBECONFIG="/root/.kube/config"
@@ -108,8 +112,13 @@ else
 		. /root/setup/setup-010-veba-ui.sh
 	fi
 
+	if [ -n "${SYSLOG_SERVER_HOSTNAME}" ]; then
+		echo -e "\e[92mStarting FluentBit Configuration ..." > /dev/console
+		. /root/setup/setup-011-fluentbit.sh
+	fi
+
 	echo -e "\e[92mStarting OS Banner Configuration ..."> /dev/console
-	. /root/setup/setup-011-banner.sh &
+	. /root/setup/setup-099-banner.sh &
 
 	echo -e "\e[92mCustomization Completed ..." > /dev/console
 
