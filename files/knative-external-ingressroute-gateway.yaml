@@ -36,3 +36,18 @@ spec:
     tls:
       minimumProtocolVersion: "1.2"
       secretName: ##CERT_NAME##
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  labels:
+    app: cadvisor
+  name: cadvisor
+  namespace: vmware-system
+spec:
+  routes:
+  - conditions:
+    - prefix: /top
+    services:
+    - name: cadvisor
+      port: 8080

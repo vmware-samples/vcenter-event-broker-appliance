@@ -41,6 +41,8 @@ spec:
   includes:
   - name: sockeye
     namespace: vmware-functions
+  - name: cadvisor
+    namespace: vmware-system
 ---
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
@@ -73,3 +75,20 @@ spec:
     services:
     - name: sockeye
       port: 80
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: contour-external
+  labels:
+    app: cadvisor
+  name: cadvisor
+  namespace: vmware-system
+spec:
+  routes:
+  - conditions:
+    - prefix: /top
+    services:
+    - name: cadvisor
+      port: 8080

@@ -41,7 +41,11 @@ spec:
     tls:
       minimumProtocolVersion: "1.2"
       secretName: ##CERT_NAME##
-status: {}
+  includes:
+  - name: gateway
+    namespace: openfaas
+  - name: cadvisor
+    namespace: vmware-system
 ---
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
@@ -55,4 +59,18 @@ spec:
     services:
     - name: gateway
       port: 8080
-status: {}
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  labels:
+    app: cadvisor
+  name: cadvisor
+  namespace: vmware-system
+spec:
+  routes:
+  - conditions:
+    - prefix: /top
+    services:
+    - name: cadvisor
+      port: 8080

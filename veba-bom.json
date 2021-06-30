@@ -37,10 +37,16 @@
     "fluentbit": {
         "gitRepoTag": "v1.7.9",
         "containers": [{
-            "name": "fluent/fluent-bit",
-            "version": "1.7.9"
-            }
-        ]
+                "name": "fluent/fluent-bit",
+                "version": "1.7.9"
+            }]
+    },
+    "cadvisor": {
+        "gitRepoTag": "v0.37.5",
+        "containers": [{
+                "name": "gcr.io/cadvisor/cadvisor",
+                "version": "v0.37.5"
+            }]
     },
     "kubernetes": {
         "gitRepoTag": "v1.20.2",
