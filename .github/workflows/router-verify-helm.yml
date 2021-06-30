@@ -87,9 +87,8 @@ jobs:
           echo "::group::Create override.yaml"
           cat << EOF > override.yaml
           image:
-            repository: kind.local/router
+            fullImage: kind.local/router:latest
             pullPolicy: IfNotPresent
-            tag: "latest"
           eventrouter:
             config:
               logLevel: debug
@@ -233,9 +232,8 @@ jobs:
           echo "::group::Create override.yaml"
           cat << EOF > override.yaml
           image:
-            repository: kind.local/router
+            fullImage: kind.local/router:latest
             pullPolicy: IfNotPresent
-            tag: "latest"
           eventrouter:
             config:
               logLevel: debug

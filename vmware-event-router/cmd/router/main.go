@@ -21,6 +21,7 @@ import (
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider/vcenter"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider/vcsim"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider/webhook"
 )
 
 var (
@@ -109,6 +110,14 @@ func main() {
 		}
 
 		log.Infow("connecting to vCenter", "address", cfg.EventProvider.VCenter.Address)
+
+	case config.ProviderWebhook:
+		prov, err = webhook.NewServer(ctx, cfg.EventProvider.Webhook, ms, logger.Sugar())
+		if err != nil {
+			log.Fatalf("could not create webhook server: %v", err)
+		}
+
+		log.Infow("starting webhook listener", "address", prov.(*webhook.Server).Address())
 
 	case config.ProviderVCSIM:
 		log.Warn("%s is DEPRECATED and will be removed in future versions", config.ProviderVCSIM)

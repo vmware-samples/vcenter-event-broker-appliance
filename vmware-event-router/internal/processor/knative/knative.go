@@ -170,6 +170,7 @@ func (p *Processor) Process(ctx context.Context, ce cloudevents.Event) error {
 	subject := ce.Subject()
 	p.mu.Lock()
 	// initialize invocation stats
+	// TODO: #182
 	if _, ok := p.stats.Invocations[subject]; !ok {
 		p.stats.Invocations[subject] = &metrics.InvocationDetails{}
 	}
