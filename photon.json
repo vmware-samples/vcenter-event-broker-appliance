@@ -157,6 +157,11 @@
     },
     {
       "type": "file",
+      "source": "files/setup-012-cadvisor.sh",
+      "destination": "/root/setup/setup-012-cadvisor.sh"
+    },
+    {
+      "type": "file",
       "source": "files/setup-099-banner.sh",
       "destination": "/root/setup/setup-099-banner.sh"
     },

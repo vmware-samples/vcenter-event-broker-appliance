@@ -117,6 +117,9 @@ else
 		. /root/setup/setup-011-fluentbit.sh
 	fi
 
+	echo -e "\e[92mStarting cAdvisor Configuration ..." > /dev/console
+	. /root/setup/setup-012-cadvisor.sh
+
 	echo -e "\e[92mStarting OS Banner Configuration ..."> /dev/console
 	. /root/setup/setup-099-banner.sh &
 
