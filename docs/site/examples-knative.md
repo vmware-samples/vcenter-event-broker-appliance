@@ -58,6 +58,16 @@ examples:
     links:
     - language: python
       url: "/tree/master/examples/knative/python/kn-py-vm-attr"
+  - title: Enhancing vSphere Alarm Actions
+    usecases:
+    - item: integration
+    - item: notification
+    id: kn-ps-slack-vsphere-alarm-function
+    description: Function to send a Slack notification triggered by a vSphere Alarm.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-slack-vsphere-alarm"
+  - title: Email Notification
 
 ---
 
