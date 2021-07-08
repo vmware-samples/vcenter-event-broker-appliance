@@ -3,6 +3,8 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: kn-ps-slack-vsphere-alarm
+  labels:
+    app: veba-ui
 spec:
   template:
     metadata:

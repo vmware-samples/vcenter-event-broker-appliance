@@ -4,14 +4,12 @@ metadata:
   name: kn-ps-slack
   labels:
     app: veba-ui
+spec:
   template:
     metadata:
       annotations:
         autoscaling.knative.dev/maxScale: "1"
         autoscaling.knative.dev/minScale: "1"
-spec:
-  template:
-    metadata:
     spec:
       containers:
         - image: projects.registry.vmware.com/veba/kn-ps-slack:1.1

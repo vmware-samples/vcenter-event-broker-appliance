@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: kn-py-vm-attr-service
   labels:
-    app: kn-py-vm-attr
+    app: veba-ui
 spec:
   template:
     metadata:
