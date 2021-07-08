@@ -11,13 +11,13 @@ Function Process-Init {
    $VCENTER_SERVER = ${jsonSecrets}.VCENTER_SERVER
    $VCENTER_USERNAME = ${jsonSecrets}.VCENTER_USERNAME
    $VCENTER_PASSWORD = ${jsonSecrets}.VCENTER_PASSWORD
-   $VCENTER_CERTIFCATE_ACTION = ${jsonSecrets}.VCENTER_CERTIFCATE_ACTION
+   $VCENTER_CERTIFICATE_ACTION = ${jsonSecrets}.VCENTER_CERTIFICATE_ACTION
 
    # Configure TLS 1.2/1.3 support as this is required for latest vSphere release
    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor [System.Net.SecurityProtocolType]::Tls12 -bor [System.Net.SecurityProtocolType]::Tls13
 
    Write-Host "$(Get-Date) - Configuring PowerCLI Configuration Settings`n"
-   Set-PowerCLIConfiguration -InvalidCertificateAction:${VCENTER_CERTIFCATE_ACTION} -ParticipateInCeip:$true -Confirm:$false | Out-Null
+   Set-PowerCLIConfiguration -InvalidCertificateAction:${VCENTER_CERTIFICATE_ACTION} -ParticipateInCeip:$true -Confirm:$false | Out-Null
 
    Write-Host "$(Get-Date) - Connecting to vCenter Server $VCENTER_SERVER`n"
    Connect-VIServer -Server $VCENTER_SERVER -User $VCENTER_USERNAME -Password $VCENTER_PASSWORD | Out-Null
@@ -30,7 +30,7 @@ Function Process-Init {
 Function Process-Shutdown {
    Write-Host "$(Get-Date) - Processing Shutdown`n"
 
-   Write-Host "$(Get-Date) - Disconnecting from to vCenter Server`n"
+   Write-Host "$(Get-Date) - Disconnecting from vCenter Server`n"
 
    try {
       Disconnect-VIServer * -Confirm:$false | Out-Null
@@ -77,4 +77,8 @@ Function Process-Handler {
    } catch {
       throw "`nFailed to assign vSphere Tag"
    }
+
+   Write-Host "$(Get-Date) - vSphere Tag Operation complete ...`n"
+
+   Write-Host "$(Get-Date) - Handler Processing Completed ...`n"
 }
