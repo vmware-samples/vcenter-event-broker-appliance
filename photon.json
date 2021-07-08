@@ -12,9 +12,9 @@
       "vm_name": "{{ user `vm_name` }}",
       "guest_os_type": "Other",
       "version": "13",
-      "disk_size": "12288",
+      "disk_size": "25600",
       "disk_additional_size": [
-        "12288"
+        "25600"
       ],
       "boot_command": [
         "<esc><wait>",
