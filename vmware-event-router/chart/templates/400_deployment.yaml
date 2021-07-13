@@ -16,8 +16,8 @@ spec:
     spec:
       serviceAccountName: {{ .Values.serviceAccount.name }}
       containers:
-      {{- if .Values.image.tag }}
-      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+      {{- if .Values.image.fullImage }}
+      - image: {{ .Values.image.fullImage }}
       {{- else }}
       - image: {{ .Values.image.repository }}:{{ .Chart.AppVersion }}
       {{- end }}

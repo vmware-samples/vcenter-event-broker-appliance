@@ -107,7 +107,7 @@ func NewProcessor(ctx context.Context, cfg *config.ProcessorConfigOpenFaaS, ms m
 
 	switch cfg.Auth {
 	case nil:
-		ofLog.Info("no authentication data provided, disabling basic auth")
+		ofLog.Warn("disabling basic auth: no authentication data provided")
 	default:
 		if cfg.Auth.Type != config.BasicAuth {
 			return nil, fmt.Errorf("unsupported authentication method %q specified for this processor", cfg.Auth.Type)

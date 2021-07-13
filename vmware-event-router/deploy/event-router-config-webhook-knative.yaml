@@ -1,0 +1,43 @@
+apiVersion: event-router.vmware.com/v1alpha1
+kind: RouterConfig
+metadata:
+  name: router-config-knative
+  labels:
+    key: value
+eventProvider:
+  type: webhook
+  name: veba-demo-webhook
+  webhook:
+    bindAddress: 0.0.0.0:8080
+    path: /webhook
+    auth:
+      type: basic_auth
+      basicAuth:
+        username: webhook-user
+        password: webhook-pass
+eventProcessor:
+  name: veba-demo-knative
+  type: knative
+  knative:
+    encoding: binary
+    insecureSSL: false
+    destination:
+#      uri:
+#        host: mybroker-external.corp.local
+#        scheme: http
+      ref:
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+        name: rabbit
+        namespace: default
+metricsProvider:
+  type: default
+  name: veba-demo-metrics
+  default:
+    bindAddress: "0.0.0.0:8082"
+# disabling auth for the metrics endpoint
+#    auth:
+#      type: basic_auth
+#      basicAuth:
+#        username: admin
+#        password: ReplaceMe

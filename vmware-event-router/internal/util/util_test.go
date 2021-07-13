@@ -1,12 +1,12 @@
 // +build unit
 
-package metrics
+package util
 
 import (
 	"testing"
 )
 
-func Test_validateAddress(t *testing.T) {
+func TestValidateAddress(t *testing.T) {
 	type args struct {
 		address string
 	}
@@ -60,7 +60,7 @@ func Test_validateAddress(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := validateAddress(tt.args.address); (err != nil) != tt.wantErr {
+			if err := ValidateAddress(tt.args.address); (err != nil) != tt.wantErr {
 				t.Errorf("validateAddress() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
