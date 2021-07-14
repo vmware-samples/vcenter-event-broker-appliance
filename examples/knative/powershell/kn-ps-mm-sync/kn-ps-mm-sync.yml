@@ -1,0 +1,57 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-ps-mm-sync-service
+  labels:
+    app: veba-ui
+  namespace: vmware-functions
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+        - image: ghcr.io/darrylcauldwell/kn-ps-mm-sync-image:1.0
+          envFrom:
+            - secretRef:
+                name: kn-ps-mm-sync-secret
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: kn-ps-mm-sync-enter-trigger
+  labels:
+    app: veba-ui
+  namespace: vmware-functions
+spec:
+  broker: default
+  filter:
+    attributes:
+        type: com.vmware.event.router/event
+        subject: EnteredMaintenanceModeEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-ps-mm-sync-service
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: kn-ps-mm-sync-exit-trigger
+  labels:
+    app: veba-ui
+  namespace: vmware-functions
+spec:
+  broker: default
+  filter:
+    attributes:
+        type: com.vmware.event.router/event
+        subject: ExitMaintenanceModeEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-ps-mm-sync-service
