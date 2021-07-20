@@ -56,6 +56,12 @@ wget https://github.com/knative/client/releases/download/${KNATIVE_VERSION}/kn-l
 chmod +x kn-linux-amd64
 mv kn-linux-amd64 /usr/local/bin/kn
 
+echo '> Downloading YTT CLI'
+YTT_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["ytt-cli"].version')
+wget https://github.com/vmware-tanzu/carvel-ytt/releases/download/${YTT_VERSION}/ytt-linux-amd64
+chmod +x ytt-linux-amd64
+mv ytt-linux-amd64 /usr/local/bin/ytt
+
 echo '> Creating directory for setup scripts and configuration files'
 mkdir -p /root/setup
 

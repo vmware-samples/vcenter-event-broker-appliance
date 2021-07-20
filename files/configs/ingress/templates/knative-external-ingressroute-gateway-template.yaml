@@ -32,13 +32,10 @@ spec:
     - name: vmware-event-router
       port: 8082
   virtualhost:
-    fqdn: ##HOSTNAME##
+    fqdn: {{ "" }}
     tls:
       minimumProtocolVersion: "1.2"
-      secretName: ##CERT_NAME##
-  includes:
-  - name: cadvisor
-    namespace: vmware-system
+      secretName: {{ "" }}
 ---
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy

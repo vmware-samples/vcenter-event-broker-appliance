@@ -1,0 +1,51 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@ load("@ytt:json", "json")
+#@ name = json.decode(data.values.bom)["veba-ui"]["containers"][0]["name"]
+#@ version = json.decode(data.values.bom)["veba-ui"]["containers"][0]["version"]
+#@ image = name + ":" + version
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: veba-ui
+  name: veba-ui
+  namespace: vmware-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: veba-ui
+  template:
+    metadata:
+      labels:
+        app: veba-ui
+    spec:
+      serviceAccountName: veba-ui
+      containers:
+      - image: #@ image
+        imagePullPolicy: IfNotPresent
+        name: veba-ui
+        ports:
+          - containerPort: 8080
+        envFrom:
+          - secretRef:
+              name: veba-ui-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: veba-ui
+  name: veba-ui
+  namespace: vmware-system
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: veba-ui
+  sessionAffinity: None

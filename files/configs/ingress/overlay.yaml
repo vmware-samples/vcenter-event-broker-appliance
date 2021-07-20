@@ -1,0 +1,13 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@ load("@ytt:json", "json")
+#@ fqdn = json.decode(data.values.config)["HOSTNAME"]
+
+#@overlay/match by=overlay.subset({"kind":"HTTPProxy", "metadata": {"name": "event-router"}})
+---
+spec:
+  virtualhost:
+    fqdn: #@ fqdn
+    tls:
+      secretName: #@ data.values.secretName
