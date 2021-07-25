@@ -18,7 +18,7 @@
       ],
       "boot_command": [
         "<esc><wait>",
-        "vmlinuz initrd=initrd.img root=/dev/ram0 loglevel=3 ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/photon-kickstart.json photon.media=cdrom",
+        "vmlinuz initrd=initrd.img root=/dev/ram0 loglevel=3 ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/photon-kickstart.json photon.media=cdrom insecure_installation=1",
         "<enter>"
       ],
       "boot_wait": "10s",
