@@ -1,3 +1,13 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@ load("@ytt:json", "json")
+#@ debug = json.decode(data.values.config)["VEBA_DEBUG"]
+
+#@ name = json.decode(data.values.bom)["tinywww"]["containers"][0]["name"]
+#@ version = json.decode(data.values.bom)["tinywww"]["containers"][0]["version"]
+#@ image = name + ":" + version
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,7 +28,7 @@ spec:
         app: tinywww
     spec:
       containers:
-      - image: projects.registry.vmware.com/veba/tinywww:latest
+      - image: #@ image
         imagePullPolicy: IfNotPresent
         name: tinywww
         ports:
@@ -40,12 +50,14 @@ spec:
       volumes:
       - name: issue
         hostPath:
-          # location on host
           path: /etc/issue
       - name: bootstrap
         hostPath:
-          # location on host
+          #@ if debug == "True":
           path: /var/log/bootstrap-debug.log
+          #@ else:
+          path: /var/log/bootstrap.log
+          #@ end
       - name: auth
         secret:
           secretName: basic-auth

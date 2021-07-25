@@ -1,16 +1,13 @@
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
+  annotations:
+    kubernetes.io/ingress.class: contour-external
   labels:
     app: vmware
   name: event-router
   namespace: vmware-system
 spec:
-  includes:
-  - conditions:
-    - prefix: /
-    name: gateway
-    namespace: openfaas
   routes:
   - conditions:
     - prefix: /status
@@ -37,32 +34,53 @@ spec:
     - name: vmware-event-router
       port: 8082
   virtualhost:
-    fqdn: ##HOSTNAME##
+    fqdn: {{ "" }}
     tls:
       minimumProtocolVersion: "1.2"
-      secretName: ##CERT_NAME##
+      secretName: {{ "" }}
   includes:
-  - name: gateway
-    namespace: openfaas
+  - name: sockeye
+    namespace: vmware-functions
   - name: cadvisor
     namespace: vmware-system
 ---
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
-  name: gateway
-  namespace: openfaas
+  annotations:
+    kubernetes.io/ingress.class: contour-external
+  name: sockeye
+  namespace: vmware-functions
 spec:
   routes:
   - conditions:
-    - prefix: /
+    - prefix: /events
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /
     services:
-    - name: gateway
-      port: 8080
+    - name: sockeye
+      port: 80
+  - conditions:
+    - prefix: /static
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /static
+    services:
+    - name: sockeye
+      port: 80
+  - conditions:
+    - prefix: /ws
+    enableWebsockets: true
+    services:
+    - name: sockeye
+      port: 80
 ---
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
+  annotations:
+    kubernetes.io/ingress.class: contour-external
   labels:
     app: cadvisor
   name: cadvisor

@@ -1,0 +1,56 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@ load("@ytt:json", "json")
+#@ name = json.decode(data.values.bom)["sockeye"]["containers"][0]["name"]
+#@ version = json.decode(data.values.bom)["sockeye"]["containers"][0]["version"]
+#@ image = name + ":" + version
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sockeye
+  name: sockeye
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sockeye
+  template:
+    metadata:
+      labels:
+        app: sockeye
+    spec:
+      containers:
+      - image: #@ image
+        name: sockeye
+        ports:
+          - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: sockeye
+  name: sockeye
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: sockeye
+  sessionAffinity: None
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: sockeye-trigger
+spec:
+  broker: default
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: sockeye
