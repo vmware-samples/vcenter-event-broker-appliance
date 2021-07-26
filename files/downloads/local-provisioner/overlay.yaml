@@ -1,0 +1,53 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
+#@ load("@ytt:json", "json")
+
+#@ name = json.decode(data.values.bom)["csi"]["containers"][1]["name"]
+#@ version = json.decode(data.values.bom)["csi"]["containers"][1]["version"]
+#@ image = name + ":" + version
+
+#@ def path_values():
+nodePathMap:
+#@overlay/match by=overlay.all
+-
+  #@overlay/replace
+  paths:
+  - #@ data.values.path
+#@ end
+
+#@ def update_path(old, _):
+#@   return json.encode(overlay.apply(json.decode(old), path_values()))
+#@ end
+
+#@ def image_values():
+spec:
+  containers:
+  #@overlay/match by=overlay.all, expects="1+"
+  -
+    image: #@ image
+    #@overlay/match missing_ok=True
+    imagePullPolicy: IfNotPresent
+#@ end
+
+#@ def update_image(old, _):
+#@   return yaml.encode(overlay.apply(yaml.decode(old), image_values()))
+#@ end
+
+#@overlay/match by=overlay.subset({"kind":"ConfigMap", "metadata": {"name": "local-path-config"}})
+---
+data:
+  #@overlay/replace via=update_image
+  helperPod.yaml:
+  #@overlay/replace via=update_path
+  config.json:
+
+#@overlay/match by=overlay.subset({"kind":"Deployment", "metadata": {"name": "local-path-provisioner"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by=overlay.all, expects="1+"
+      -
+        imagePullPolicy: IfNotPresent

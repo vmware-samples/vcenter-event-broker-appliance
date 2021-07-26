@@ -55,12 +55,17 @@
   "provisioners": [
     {
       "type": "shell",
-      "inline": ["mkdir -p /root/config"]
+      "inline": ["mkdir -p /root/config && mkdir -p /root/download"]
     },
     {
       "type": "file",
       "source": "veba-bom.json",
       "destination": "/root/config/veba-bom.json"
+    },
+    {
+      "type": "file",
+      "source": "files/downloads/",
+      "destination": "/root/download/"
     },
     {
       "type": "shell",

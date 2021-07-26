@@ -19,7 +19,7 @@ do
     fi
 done
 
-mkdir -p /root/download && cd /root/download
+cd /root/download
 
 echo '> Downloading FaaS-Netes...'
 OPENFAAS_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["openfaas"].gitRepoTag')
@@ -44,11 +44,13 @@ sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' examples/cont
 cd ..
 
 echo '> Downloading Antrea...'
+mkdir -p /root/download/antrea/templates
 ANTREA_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["antrea"].gitRepoTag')
-ANTREA_CONTAINER_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["antrea"].containers | .[] | select(.name | contains("antrea/antrea-ubuntu")).version')
-wget https://github.com/vmware-tanzu/antrea/releases/download/${ANTREA_VERSION}/antrea.yml -O /root/download/antrea.yml
-sed -i "s/image: antrea\/antrea-ubuntu:.*/image: antrea\/antrea-ubuntu:${ANTREA_CONTAINER_VERSION}/g" /root/download/antrea.yml
-sed -i '/image:.*/i \        imagePullPolicy: IfNotPresent' /root/download/antrea.yml
+ANTREA_TEMPLATE=/root/download/antrea/templates/antrea-template.yml
+ANTREA_OVERLAY=/root/download/antrea/overlay.yaml
+ANTREA_CONFIG=/root/download/antrea.yml
+curl -L https://github.com/vmware-tanzu/antrea/releases/download/${ANTREA_VERSION}/antrea.yml -o ${ANTREA_TEMPLATE}
+ytt -f ${ANTREA_OVERLAY} -f ${ANTREA_TEMPLATE} > ${ANTREA_CONFIG}
 
 echo '> Downloading Knative...'
 KNATIVE_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["knative"].gitRepoTag')
@@ -59,36 +61,33 @@ curl -L https://github.com/knative/eventing/releases/download/${KNATIVE_VERSION}
 curl -L https://github.com/knative/eventing/releases/download/${KNATIVE_VERSION}/eventing-core.yaml -o /root/download/eventing-core.yaml
 
 echo '> Downloading RabbitMQ...'
+mkdir -p /root/download/rabbitmq-operator/templates
 RABBITMQ_OPERATOR_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["rabbitmq-operator"].gitRepoTag')
-curl -L https://github.com/rabbitmq/cluster-operator/releases/download/${RABBITMQ_OPERATOR_VERSION}/cluster-operator.yml -o /root/download/cluster-operator.yml
-sed -i '/image: rabbitmqoperator.*/i \        imagePullPolicy: IfNotPresent' /root/download/cluster-operator.yml
+RABBITMQ_OPERATOR_TEMPLATE=/root/download/rabbitmq-operator/templates/cluster-operator-template.yml
+RABBITMQ_OPERATOR_OVERLAY=/root/download/rabbitmq-operator/overlay.yaml
+RABBITMQ_OPERATOR_CONFIG=/root/download/cluster-operator.yml
+curl -L https://github.com/rabbitmq/cluster-operator/releases/download/${RABBITMQ_OPERATOR_VERSION}/cluster-operator.yml -o ${RABBITMQ_OPERATOR_TEMPLATE}
+ytt -f ${RABBITMQ_OPERATOR_OVERLAY} -f ${RABBITMQ_OPERATOR_TEMPLATE} > ${RABBITMQ_OPERATOR_CONFIG}
 
 RABBITMQ_BROKER_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["rabbitmq-broker"].gitRepoTag')
 curl -L https://github.com/knative-sandbox/eventing-rabbitmq/releases/download/${RABBITMQ_BROKER_VERSION}/rabbitmq-broker.yaml -o /root/download/rabbitmq-broker.yaml
 
 echo '> Downloading Knative Contour...'
-curl -L https://github.com/knative/net-contour/releases/download/${KNATIVE_VERSION}/contour.yaml -o /root/download/knative-contour.yaml
-sed -i '1902i\      dnsPolicy: ClusterFirstWithHostNet\n      hostNetwork: true' /root/download/knative-contour.yaml
-sed -i 's/type: LoadBalancer/type: NodePort/g' /root/download/knative-contour.yaml
-sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' /root/download/knative-contour.yaml
-cat > /root/download/contour-delegation.yaml << EOF
-apiVersion: projectcontour.io/v1
-kind: TLSCertificateDelegation
-metadata:
-  name: default-delegation
-  namespace: contour-external
-spec:
-  delegations:
-    - secretName: default-cert
-      targetNamespaces:
-      - "*"
-EOF
+mkdir -p /root/download/knative-contour/templates
+KNATIVE_CONTOUR_TEMPLATE=/root/download/knative-contour/templates/knative-contour.yaml
+KNATIVE_CONTOUR_OVERLAY=/root/download/knative-contour/overlay.yaml
+KNATIVE_CONTOUR_CONFIG=/root/download/knative-contour.yaml
+curl -L https://github.com/knative/net-contour/releases/download/${KNATIVE_VERSION}/contour.yaml -o ${KNATIVE_CONTOUR_TEMPLATE}
+ytt -f ${KNATIVE_CONTOUR_OVERLAY} -f ${KNATIVE_CONTOUR_TEMPLATE} > ${KNATIVE_CONTOUR_CONFIG}
+
 curl -L https://github.com/knative/net-contour/releases/download/${KNATIVE_VERSION}/net-contour.yaml -o /root/download/net-contour.yaml
 
 echo '> Downloading Local Path Provisioner...'
+mkdir -p /root/download/local-provisioner/templates
 LOCAL_PROVISIONER_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["csi"].gitRepoTag')
 LOCAL_STOARGE_VOLUME_PATH="/data/local-path-provisioner"
-curl -L https://raw.githubusercontent.com/rancher/local-path-provisioner/${LOCAL_PROVISIONER_VERSION}/deploy/local-path-storage.yaml -o /root/download/local-path-storage.yaml
-sed -i "s#/opt/local-path-provisioner#${LOCAL_STOARGE_VOLUME_PATH}#g" /root/download/local-path-storage.yaml
-sed -i 's/busybox/busybox:latest/g' /root/download/local-path-storage.yaml
-sed -i '/image: busybox.*/i \            imagePullPolicy: IfNotPresent' /root/download/local-path-storage.yaml
+LOCAL_PROVISIONER_TEMPLATE=/root/download/local-provisioner/templates/local-path-storage-template.yaml
+LOCAL_PROVISIONER_OVERLAY=/root/download/local-provisioner/overlay.yaml
+LOCAL_PROVISIONER_CONFIG=/root/download/local-path-storage.yaml
+curl -L https://raw.githubusercontent.com/rancher/local-path-provisioner/${LOCAL_PROVISIONER_VERSION}/deploy/local-path-storage.yaml -o ${LOCAL_PROVISIONER_TEMPLATE}
+ytt --data-value path=${LOCAL_STOARGE_VOLUME_PATH} --data-value-file bom=${VEBA_BOM_FILE} -f ${LOCAL_PROVISIONER_OVERLAY} -f ${LOCAL_PROVISIONER_TEMPLATE} > ${LOCAL_PROVISIONER_CONFIG}
