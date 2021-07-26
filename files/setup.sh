@@ -82,20 +82,20 @@ else
 	fi
 
 	# Slicing of escaped variables needed to properly handle the double quotation issue
-	ESCAPED_VCENTER_SERVER=$(echo -n ${VCENTER_SERVER} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)[1:-1]')
-	ESCAPED_VCENTER_USERNAME=$(echo -n ${VCENTER_USERNAME} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)')
-	ESCAPED_VCENTER_PASSWORD=$(echo -n ${VCENTER_PASSWORD} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)')
-	ESCAPED_ROOT_PASSWORD=$(echo -n ${ROOT_PASSWORD} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)')
+	ESCAPED_VCENTER_SERVER=$(eval echo -n ${VCENTER_SERVER} | jq -Rs .)
+	ESCAPED_VCENTER_USERNAME=$(eval echo -n ${VCENTER_USERNAME} | jq -Rs .)
+	ESCAPED_VCENTER_PASSWORD=$(eval echo -n ${VCENTER_PASSWORD} | jq -Rs .)
+	ESCAPED_ROOT_PASSWORD=$(eval echo -n ${ROOT_PASSWORD} | jq -Rs .)
 
-	ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI=$(echo -n ${VCENTER_USERNAME_FOR_VEBA_UI} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)')
-	ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI=$(echo -n ${VCENTER_PASSWORD_FOR_VEBA_UI} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)')
+	ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI=$(eval echo -n ${VCENTER_USERNAME_FOR_VEBA_UI} | jq -Rs .)
+	ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI=$(eval echo -n ${VCENTER_PASSWORD_FOR_VEBA_UI} | jq -Rs .)
 
-	ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY=$(echo -n ${AWS_EVENTBRIDGE_ACCESS_KEY} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)')
-	ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET=$(echo -n ${AWS_EVENTBRIDGE_ACCESS_SECRET} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)')
-	ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS=$(echo -n ${AWS_EVENTBRIDGE_EVENT_BUS} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)')
-	ESCAPED_AWS_EVENTBRIDGE_RULE_ARN=$(echo -n ${AWS_EVENTBRIDGE_RULE_ARN} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)')
+	ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY=$(eval echo -n ${AWS_EVENTBRIDGE_ACCESS_KEY} | jq -Rs .)
+	ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET=$(eval echo -n ${AWS_EVENTBRIDGE_ACCESS_SECRET} | jq -Rs .)
+	ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS=$(eval echo -n ${AWS_EVENTBRIDGE_EVENT_BUS} | jq -Rs .)
+	ESCAPED_AWS_EVENTBRIDGE_RULE_ARN=$(eval echo -n ${AWS_EVENTBRIDGE_RULE_ARN} | jq -Rs .)
 
-	ESCAPED_OPENFAAS_PASSWORD=$(echo -n ${OPENFAAS_PASSWORD} | python -c 'import sys,json;data=sys.stdin.read(); print json.dumps(data)')
+	ESCAPED_OPENFAAS_PASSWORD=$(eval echo -n ${OPENFAAS_PASSWORD} | jq -Rs .)
 
 	cat > /root/config/veba-config.json <<EOF
 {
@@ -114,7 +114,7 @@ else
 	"NO_PROXY": "${NO_PROXY}",
 	"ESCAPED_ROOT_PASSWORD": ${ESCAPED_ROOT_PASSWORD},
 	"ENABLE_SSH": "${ENABLE_SSH}",
-	"ESCAPED_VCENTER_SERVER": "${ESCAPED_VCENTER_SERVER}",
+	"ESCAPED_VCENTER_SERVER": ${ESCAPED_VCENTER_SERVER},
 	"ESCAPED_VCENTER_USERNAME": ${ESCAPED_VCENTER_USERNAME},
 	"ESCAPED_VCENTER_PASSWORD": ${ESCAPED_VCENTER_PASSWORD},
 	"ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI": ${ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI},
