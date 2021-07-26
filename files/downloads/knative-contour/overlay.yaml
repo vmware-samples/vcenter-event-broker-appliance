@@ -1,0 +1,16 @@
+#@ load("@ytt:overlay", "overlay")
+
+#@overlay/match by=overlay.subset({"kind":"DaemonSet", "metadata": {"name": "envoy", "namespace": "contour-external"}})
+---
+spec:
+  template:
+    spec:
+      #@overlay/match missing_ok=True
+      dnsPolicy: ClusterFirstWithHostNet
+      #@overlay/match missing_ok=True
+      hostNetwork: true
+
+#@overlay/match by=overlay.subset({"kind":"Service", "metadata": {"name": "envoy", "namespace": "contour-external"}})
+---
+spec:
+  type: NodePort
