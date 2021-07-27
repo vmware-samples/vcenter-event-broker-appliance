@@ -11,19 +11,13 @@ defaults:
     working-directory: ./vmware-event-router
 
 jobs:
-  modules:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout source
-        uses: actions/checkout@v2
-      - name: verify modules are up2date/unchanged
-        run: |
-          make vendor
-          [[ -z $(git status -s) ]] || (echo 'git dirty: modified and/or untracked'; git status -s; false)
   build-push:
     runs-on: ubuntu-latest
-    needs: modules
     steps:
+      - name: Set up Go 1.16.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
       - name: checkout source (this.release branch)
         uses: actions/checkout@v2
       - name: get the version from ref without prefixes
