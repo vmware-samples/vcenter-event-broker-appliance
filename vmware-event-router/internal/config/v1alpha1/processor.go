@@ -42,8 +42,8 @@ type ProcessorConfigOpenFaaS struct {
 	Address string `yaml:"address" json:"address" jsonschema:"required,description=OpenFaaS gateway address,default=http://gateway.openfaas:8080"`
 	// Async enables/disables async function invocation mode
 	Async bool `yaml:"async" json:"async" jsonschema:"required,description=Use async function invocation mode,default=false"`
-	// Auth sets the OpenFaaS authentication credentials (optional)
-	// +optional
+	// Auth sets the OpenFaaS authentication credentials (optional). Only basic_auth
+	// is supported. +optional
 	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"description=Authentication configuration for this section"`
 }
 
@@ -56,7 +56,8 @@ type ProcessorConfigEventBridge struct {
 	// RuleARN is the ARN of the rule to use for configuring pattern matching and event forwarding
 	// TODO (@mgasch): deprecate and support 1..n rules per given eventbus
 	RuleARN string `yaml:"ruleARN" json:"ruleARN" jsonschema:"required,default=arn:aws:events:us-west-1:1234567890:rule/vmware-event-router"`
-	// Auth sets the AWS authentication credentials
+	// Auth sets the AWS authentication credentials. Only aws_access_key is
+	// supported.
 	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"oneof_required=auth,description=Authentication configuration for this section"`
 }
 
@@ -68,7 +69,7 @@ type ProcessorConfigKnative struct {
 	InsecureSSL bool `yaml:"insecureSSL" json:"insecureSSL" jsonschema:"required,default=false"`
 	// Encoding set the cloud event encoding type
 	Encoding string `yaml:"encoding" json:"encoding" jsonschema:"enum=binary,enum=structured,required,default=structured"`
-	// Auth sets the AWS authentication credentials
+	// Auth sets the Knative authentication credentials for the specified destination
 	// +optional
 	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"description=Authentication configuration for this section"`
 }

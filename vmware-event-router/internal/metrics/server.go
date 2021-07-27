@@ -9,8 +9,9 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/util"
 	"go.uber.org/zap"
+
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/util"
 
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/logger"
@@ -122,7 +123,7 @@ func (s *Server) Run(ctx context.Context) error {
 
 // withBasicAuth enforces basic auth as a middleware for the given username and
 // password
-func withBasicAuth(logger logger.Logger, next http.Handler, u, p string) http.HandlerFunc {
+func withBasicAuth(log logger.Logger, next http.Handler, u, p string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user, password, ok := r.BasicAuth()
 
@@ -133,7 +134,7 @@ func withBasicAuth(logger logger.Logger, next http.Handler, u, p string) http.Ha
 			_, err := w.Write([]byte("invalid credentials"))
 
 			if err != nil {
-				logger.Errorf("could not write http response: %v", err)
+				log.Errorf("could not write http response: %v", err)
 			}
 
 			return

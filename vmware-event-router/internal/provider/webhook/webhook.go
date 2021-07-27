@@ -17,13 +17,14 @@ import (
 	ceclient "github.com/cloudevents/sdk-go/v2/client"
 	cehttp "github.com/cloudevents/sdk-go/v2/protocol/http"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
+	"knative.dev/pkg/logging"
+
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/logger"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/util"
-	"go.uber.org/zap"
-	"knative.dev/pkg/logging"
 )
 
 const (
@@ -188,9 +189,9 @@ func withBasicAuth(_ context.Context, next http.Handler, u, p string) http.Handl
 }
 
 // withLogger logs the incoming http request in DEBUG level
-func withLogger(logger logger.Logger, next http.Handler) http.HandlerFunc {
+func withLogger(log logger.Logger, next http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		logger.Debugw("incoming http request", "method", r.Method, "path", r.URL.Path, "remote", r.RemoteAddr, "headers", r.Header)
+		log.Debugw("incoming http request", "method", r.Method, "path", r.URL.Path, "remote", r.RemoteAddr, "headers", r.Header)
 		next.ServeHTTP(w, r)
 	}
 }
