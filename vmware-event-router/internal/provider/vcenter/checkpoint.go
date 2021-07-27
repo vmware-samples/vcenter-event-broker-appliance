@@ -167,7 +167,7 @@ func fileName(host string) string {
 
 // fullPath returns the full path for the given checkpoint file name and
 // directory
-func fullPath(file string, dir string) string {
+func fullPath(file, dir string) string {
 	dir = filepath.Clean(dir)
 	return filepath.Join(dir, file) // file: e.g. checkpoints/cp-<hostname>.json
 }
@@ -175,6 +175,5 @@ func fullPath(file string, dir string) string {
 // closeWithErrCapture runs function and on error return error by argument including the given error (usually
 // from caller function).
 func closeWithErrCapture(err *error, closer io.Closer, errMsg string) {
-	wrapErr := errors.Wrapf(closer.Close(), errMsg)
-	*err = wrapErr
+	*err = errors.Wrapf(closer.Close(), errMsg)
 }

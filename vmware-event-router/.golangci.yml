@@ -9,11 +9,11 @@ linters-settings:
       - github.com/sirupsen/logrus: "logging is allowed only by logutils.Log"
   dupl:
     threshold: 100
-  exhaustive:
-    default-signifies-exhaustive: false
   funlen:
     lines: 100
     statements: 50
+  gci:
+    local-prefixes: github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router
   goconst:
     min-len: 2
     min-occurrences: 2
@@ -34,8 +34,6 @@ linters-settings:
     min-complexity: 15
   goimports:
     local-prefixes: github.com/golangci/golangci-lint
-  golint:
-    min-confidence: 0
   gomnd:
     settings:
       mnd:
@@ -63,8 +61,6 @@ linters-settings:
     require-specific: false # don't require nolint directives to be specific about which linter is being skipped
 
 linters:
-  # please, do not use `enable-all`: it's deprecated and will be removed soon.
-  # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
   disable-all: true
   enable:
     - bodyclose
@@ -73,29 +69,20 @@ linters:
     - dogsled
     - dupl
     - errcheck
-    #    - exhaustive
-    #    - funlen
+    - exportloopref
+    - exhaustive
     - gochecknoinits
     - goconst
-    #    - gocritic
-    #    - gocyclo
     - gofmt
     - goimports
-    - golint
-    #    - gomnd
     - goprintffuncname
-    - gosec
     - gosimple
     - govet
     - ineffassign
-    - interfacer
-    #    - lll
-    #    - misspell
     - nakedret
-    #    - noctx
+    - noctx
     - nolintlint
     - rowserrcheck
-    - scopelint
     - staticcheck
     - structcheck
     - stylecheck
@@ -105,20 +92,24 @@ linters:
     - unused
     - varcheck
     - whitespace
-#    - wsl
 
-# don't enable:
-# - asciicheck
-# - gochecknoglobals
-# - gocognit
-# - godot
-# - godox
-# - goerr113
-# - maligned
-# - nestif
-# - prealloc
-# - testpackage
-# - wsl
+  # don't enable:
+  # - gosec
+  # - gocritic
+  # - asciicheck
+  # - scopelint
+  # - gochecknoglobals
+  # - gocognit
+  # - godot
+  # - godox
+  # - goerr113
+  # - interfacer
+  # - maligned
+  # - nestif
+  # - prealloc
+  # - testpackage
+  # - revive
+  # - wsl
 
 issues:
   # Excluding configuration per-path, per-linter, per-text and per-source
@@ -127,13 +118,24 @@ issues:
       linters:
         - gomnd
 
-    # https://github.com/go-critic/go-critic/issues/926
-    - linters:
-        - gocritic
-      text: "unnecessaryDefer:"
+    - path: pkg/golinters/errcheck.go
+      text: "SA1019: errCfg.Exclude is deprecated: use ExcludeFunctions instead"
+    - path: pkg/commands/run.go
+      text: "SA1019: lsc.Errcheck.Exclude is deprecated: use ExcludeFunctions instead"
 
-  exclude:
-    - Using the variable on range scope .* in function literal
+    # TODO must be removed after the release of the next version (v1.41.0)
+    - path: pkg/commands/run.go
+      linters:
+        - gomnd
+    # TODO must be removed after the release of the next version (v1.41.0)
+    - path: pkg/golinters/nolintlint/nolintlint.go
+      linters:
+        - gomnd
+    # TODO must be removed after the release of the next version (v1.41.0)
+    - path: pkg/printers/tab.go
+      linters:
+        - gomnd
+
 
 run:
   skip-dirs:
@@ -141,6 +143,3 @@ run:
     - internal/cache
     - internal/renameio
     - internal/robustio
-  modules-download-mode: readonly
-  skip-dirs-use-default: true
-  timeout: 5m
