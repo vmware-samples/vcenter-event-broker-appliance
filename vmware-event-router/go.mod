@@ -6,8 +6,10 @@ require (
 	github.com/alecthomas/jsonschema v0.0.0-20200530073317-71f438968921
 	github.com/avast/retry-go v2.6.1+incompatible
 	github.com/aws/aws-sdk-go v1.33.12
+	github.com/benbjohnson/clock v1.1.0
 	github.com/cloudevents/sdk-go/v2 v2.3.1
 	github.com/embano1/waitgroup v0.0.0-20201120223302-1d5df9b49112
+	github.com/go-resty/resty/v2 v2.6.0
 	github.com/goccy/go-yaml v1.8.4
 	github.com/google/uuid v1.1.2
 	github.com/jpillora/backoff v1.0.0
@@ -19,7 +21,6 @@ require (
 	github.com/vmware/govmomi v0.24.1-0.20210210035757-ed60338583b0
 	go.uber.org/zap v1.16.0
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
-	golang.org/x/sys v0.0.0-20201119102817-f84b799fce68 // indirect
 	gotest.tools v2.2.0+incompatible
 	k8s.io/api v0.18.8
 	k8s.io/apimachinery v0.18.8

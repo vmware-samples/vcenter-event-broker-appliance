@@ -34,6 +34,19 @@ eventProvider:
     {{- end }}
     {{- end }}
   {{- end }}
+  {{- if eq .Values.eventrouter.eventProvider "horizon" }}
+  horizon:
+    {{- with .Values.eventrouter.horizon }}
+    address: {{ .address }}
+    insecureSSL: {{ .insecure }}
+    auth:
+      type: active_directory
+      activeDirectoryAuth:
+        domain: {{ .domain }}
+        username: {{ .username }}
+        password: {{ .password }}
+    {{- end }}
+  {{- end }}
 eventProcessor:
   type: {{ .Values.eventrouter.eventProcessor }}
   name: {{ .Release.Name }}-{{ .Values.eventrouter.eventProcessor }}

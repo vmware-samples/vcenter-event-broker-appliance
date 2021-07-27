@@ -11,9 +11,15 @@ import (
 )
 
 const (
-	eventCanonicalType = "com.vmware.event.router"
-	eventSpecVersion   = cloudevents.VersionV1
-	eventContentType   = cloudevents.ApplicationJSON
+	// EventCanonicalType is the prefix used in the CloudEvent type by the VMware
+	// Event Router
+	EventCanonicalType = "com.vmware.event.router"
+	// EventSpecVersion is the CloudEvent spec version used by the VMware Event
+	// Router
+	EventSpecVersion = cloudevents.VersionV1
+	// EventContentType is the CloudEvent data content type used by the VMware Event
+	// Router
+	EventContentType = cloudevents.ApplicationJSON
 )
 
 // VCenterEventInfo contains the name and category of an event received from vCenter
@@ -82,21 +88,22 @@ func WithAttributes(ceAttrs map[string]string) Option {
 // NewFromVSphere returns a compliant CloudEvent for the given vSphere event
 func NewFromVSphere(event types.BaseEvent, source string, options ...Option) (*cloudevents.Event, error) {
 	eventInfo := GetDetails(event)
-	ce := cloudevents.NewEvent(eventSpecVersion)
+	ce := cloudevents.NewEvent(EventSpecVersion)
 
 	// URI of the event producer, e.g. http(s)://vcenter.domain.ext/sdk
 	ce.SetSource(source)
 
 	// apply defaults
 	ce.SetID(uuid.New().String())
-	ce.SetType(eventCanonicalType + "/" + eventInfo.Category)
-	ce.SetSubject(eventInfo.Name)
 	ce.SetTime(event.GetEvent().CreatedTime)
 
+	ce.SetType(EventCanonicalType + "/" + eventInfo.Category)
+	ce.SetSubject(eventInfo.Name)
+
 	var err error
-	err = ce.SetData(eventContentType, event)
+	err = ce.SetData(EventContentType, event)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not create CloudEvent")
+		return nil, errors.Wrap(err, "set CloudEvent data")
 	}
 
 	// apply options

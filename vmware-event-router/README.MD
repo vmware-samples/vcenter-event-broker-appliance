@@ -6,14 +6,15 @@ The VMware Event Router is used to connect to various VMware event `providers`
 Appliance_](https://www.vmweventbroker.io/) as the core logic to forward vCenter
 events to configurable event `processors` (see below).
 
-**Supported event providers:**
+**Supported Event `Providers`:**
 
 - [VMware vCenter Server](https://www.vmware.com/products/vcenter-server.html)
+- [VMware Horizon](https://www.vmware.com/products/horizon.html)
 - Webhook
 - vCenter Simulator [vcsim](https://github.com/vmware/govmomi/tree/master/vcsim)
-  (DEPRECATED, see note [below](#provider-type-vcsim))
+  (deprecated, see note [below](#provider-type-vcsim))
 
-**Supported event processors:**
+**Supported Event `Processors`:**
 
 - [Knative](https://knative.dev/)
 - [OpenFaaS](https://www.openfaas.com/)
@@ -23,13 +24,21 @@ The VMware Event Router uses the [CloudEvents](https://cloudevents.io/) standard
 to normalize events from the supported event `providers`. See
 [below](#example-event-structure) for an example.
 
-**Event Delivery Guarantees:**
+**Event `Provider` Delivery Guarantees:**
 
 - At-least-once event delivery
   -  with the [vCenter event provider](#provider-type-vcenter) option `checkpoint: true`
 - At-most-once event delivery
   - with the [vCenter event provider](#provider-type-vcenter) option `checkpoint: false`
+  - with the [Webhook event provider](#provider-type-webhook)
+  - with the [Horizon event provider](#provider-type-horizon)
   - with the [vcsim event provider](#provider-type-vcsim)
+
+**Note:** All implemented event `processors` use built-in retry mechanisms so
+your function might still be involved multiple times depending on its response
+code. However, if an event `provider` crashes before sending an event to the
+configured `processor` or when the `processor` returns an error, the event is
+not retried and discarded.
 
 **Current limitations:**
 
@@ -46,7 +55,8 @@ to normalize events from the supported event `providers`. See
   OpenFaaS [issue](https://github.com/openfaas/nats-queue-worker/issues/84))
 
 > **Note:** It is possible though to run **multiple instances** of the event
-> router with different configurations to address multi-vCenter scenarios
+> router with different configurations to address multi-vCenter scenarios. This
+> decision was made for scalability and resource/tenancy isolation purposes.
 
 > **Note:** Event Processors, like Knative, support Dead Letter Queues when
 > using `Broker` mode.
@@ -195,6 +205,26 @@ vCenter Server and the respective type values and examples for these fields.
 | `checkpointDir` | Boolean | **Optional:** Configure an alternative location for persisting checkpoints (default: `./checkpoints`) | false    | `/var/local/checkpoints`         |
 | `<auth>`        | Object  | vCenter credentials                                                                                   | true     | (see `basic_auth` example below) |
 
+#### Provider Type `horizon`
+
+VMware Horizon is a platform for delivering virtual desktops and apps
+efficiently and securely across hybrid cloud for the best end-user digital
+workspace experience.
+
+This provider supports all audit events (model `AuditEventSummary`) exposed
+through the Horizon REST API starting with
+[version](https://code.vmware.com/apis/1169/view-rest-api#/External/listAuditEvents)
+`2106`.
+
+The following table lists allowed and required fields for connecting to the
+Horizon REST API and the respective type values and examples for these fields.
+
+| Field         | Type    | Description                 | Required | Example                                |
+|---------------|---------|-----------------------------|----------|----------------------------------------|
+| `address`     | String  | URI of the Horizon REST API | true     | `https://api.myhorizon.corp.local`     |
+| `insecureSSL` | Boolean | Skip TSL verification       | true     | `true` (i.e. ignore errors)            |
+| `<auth>`      | Object  | Horizon domain credentials  | true     | (see `active_directory` example below) |
+
 #### Provider Type `webhook`
 
 The `webhook` event provider listens for incoming CloudEvents (binary or
@@ -215,7 +245,7 @@ requests (method, path, headers, remote address) will be logged.
 
 #### Provider Type `vcsim`
 
-⚠️ This provider is **DEPRECATED** and will be removed in future versions. The
+⚠️ This provider is **deprecated** and will be removed in future versions. The
 `vcenter` provider will work correctly against a `vcsim` instance.
 
 The following table lists allowed and required fields for connecting to the
@@ -244,7 +274,6 @@ values and examples for these fields.
 | `type`             | String | Type of the event processor             | true     | `knative`, `openfaas` or `aws_event_bridge` |
 | `name`             | String | Name identifier for the event processor | true     | `knative-broker-PROD`                       |
 | `<processor_type>` | Object | Processor specific configuration        | true     | (see specific processor type section below) |
-
 
 #### Processor Type `knative`
 
@@ -453,6 +482,23 @@ permissions ("Action"):
   ]
 }
 ```
+
+#### Type `active_directory`
+
+Supported providers/processors:
+
+- `horizon` (required: `true`)
+
+| Field                          | Type   | Description                                   | Required | Example            |
+|--------------------------------|--------|-----------------------------------------------|----------|--------------------|
+| `type`                         | String | Authentication method to use                  | true     | `active_directory` |
+| `activeDirectoryAuth`          | Object | Use when `active_directory` type is specified | true     |                    |
+| `activeDirectoryAuth.domain`   | String | Domain                                        | true     | `corp`             |
+| `activeDirectoryAuth.username` | String | Username                                      | true     | `administrator`    |
+| `activeDirectoryAuth.password` | String | Password                                      | true     | `P@ssw0rd`         |
+
+> **Note:** UPN authentication, e.g. `administrator@corp.local` as `username`,
+> is not supported.
 
 ### The `metricsProvider` section
 

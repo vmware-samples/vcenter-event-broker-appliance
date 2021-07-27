@@ -83,6 +83,14 @@ eventrouter:
     path: "/webhook"
     username: "" # empty disables basic_auth
     password: ""
+  
+  # horizon event provider default settings
+  horizon:
+    address: https://api.myhorizon.corp.local
+    insecure: false
+    domain: "corp"
+    username: "administrator"
+    password: "ReplaceMe"
     
   # openfaas event processor default settings
   openfaas:

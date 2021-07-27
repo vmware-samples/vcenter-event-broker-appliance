@@ -87,7 +87,7 @@ func Test_NewFromVSphere(t *testing.T) {
 	e1.SetSource(source)
 	e1.SetID("1")
 	e1.SetTime(now)
-	e1.SetType(eventCanonicalType + "/" + "event")
+	e1.SetType(EventCanonicalType + "/" + "event")
 	e1.SetSubject("VmPoweredOnEvent")
 	if err := e1.SetData(cloudevents.ApplicationJSON, newVMPoweredOnEvent()); err != nil {
 		t.Errorf("marshal data: %v", err)
