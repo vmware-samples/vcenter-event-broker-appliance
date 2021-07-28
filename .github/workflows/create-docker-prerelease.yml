@@ -24,10 +24,7 @@ jobs:
         id: get_version
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
       - name: log in to Docker
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_SECRET: ${{ secrets.DOCKER_SECRET }}
-        run: echo "${DOCKER_SECRET}" | docker login -u "${DOCKER_USER}" --password-stdin
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_SECRET }}
       - name: test and build pre-release image
         env: 
           VERSION: ${{ steps.get_version.outputs.VERSION }}        
