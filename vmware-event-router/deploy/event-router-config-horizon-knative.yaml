@@ -1,20 +1,21 @@
 apiVersion: event-router.vmware.com/v1alpha1
 kind: RouterConfig
 metadata:
-  name: router-config-webhook-knative
+  name: router-config-horizon-knative
   labels:
     key: value
 eventProvider:
-  type: webhook
-  name: veba-demo-webhook
-  webhook:
-    bindAddress: 0.0.0.0:8080
-    path: /webhook
+  type: horizon
+  name: veba-demo-horizon
+  horizon:
+    address: https://api.myhorizon.corp.local
+    insecureSSL: false
     auth:
-      type: basic_auth
-      basicAuth:
-        username: webhook-user
-        password: webhook-pass
+      type: active_directory
+      activeDirectoryAuth:
+        domain: corp
+        username: administrator
+        password: ReplaceMe
 eventProcessor:
   name: veba-demo-knative
   type: knative

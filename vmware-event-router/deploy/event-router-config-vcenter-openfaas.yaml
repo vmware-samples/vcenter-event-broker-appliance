@@ -1,7 +1,7 @@
 apiVersion: event-router.vmware.com/v1alpha1
 kind: RouterConfig
 metadata:
-  name: router-config-aws
+  name: router-config-vcenter-openfaas
   labels:
     key: value
 eventProvider:
@@ -17,17 +17,17 @@ eventProvider:
         username: administrator@vsphere.local
         password: ReplaceMe
 eventProcessor:
-  type: aws_event_bridge
-  name: veba-demo-aws
-  awsEventBridge:
-    eventBus: default
-    region: us-west-1
-    ruleARN: arn:aws:events:us-west-1:1234567890:rule/vmware-event-router
+  type: openfaas
+  name: veba-demo-openfaas
+  openfaas:
+    address: http://gateway.openfaas:8080
+    async: false
+    # assuming basic_auth enabled for OpenFaaS
     auth:
-      type: aws_access_key
-      awsAccessKeyAuth:
-        accessKey: ABCDEFGHIJK
-        secretKey: ZYXWVUTSRQPO
+      type: basic_auth
+      basicAuth:
+        username: admin
+        password: ReplaceMe
 metricsProvider:
   type: default
   name: veba-demo-metrics
