@@ -6,28 +6,31 @@
 #@ version = json.decode(data.values.bom)["vmware-event-router"]["containers"][0]["version"]
 #@ image = name + ":" + version
 
+#@ routerName = "vmware-event-router-" + data.values.eventProvider
+#@ routerConfig = "vmware-event-router-config-" + data.values.eventProvider
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     app: vmware-event-router
-  name: vmware-event-router
+  name: #@ routerName
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: vmware-event-router
+      app: #@ routerName
   template:
     metadata:
       labels:
-        app: vmware-event-router
+        app: #@ routerName
     spec:
       serviceAccountName: vmware-event-router
       containers:
         - image: #@ image
           imagePullPolicy: IfNotPresent
-          args: [ "-config", "/etc/vmware-event-router/event-router-config.yaml", "-log-level", "info" ]
-          name: vmware-event-router
+          args: #@ [ "-config", "/etc/vmware-event-router/" + routerConfig + ".yaml", "-log-level", "info" ]
+          name: #@ routerName
           resources:
             requests:
               cpu: 200m
@@ -39,21 +42,22 @@ spec:
       volumes:
         - name: config
           secret:
-            secretName: event-router-config
+            secretName: #@ routerConfig
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: vmware-event-router
-  name: vmware-event-router
+    app: #@ routerName
+  name: #@ routerName
 spec:
   ports:
     - port: 8082
+      name: metrics
       protocol: TCP
       targetPort: 8082
   selector:
-    app: vmware-event-router
+    app: #@ routerName
   sessionAffinity: None
 ---
 apiVersion: v1

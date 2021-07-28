@@ -65,6 +65,9 @@ else
         echo
 	fi
 
+	# Determine Event Providers
+	EVENT_PROVIDERS=("vcenter")
+
 	# Determine Knative deployment model
 	if [ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]; then
 		if [ ! -z ${KNATIVE_HOST} ]; then
