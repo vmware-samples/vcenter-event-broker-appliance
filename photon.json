@@ -177,6 +177,11 @@
     },
     {
       "type": "file",
+      "source": "logo/veba_otto_the_orca_320x320.png",
+      "destination": "/boot/grub/themes/photon/photon.png"
+    },
+    {
+      "type": "file",
       "source": "files/configs/",
       "destination": "/root/config/"
     }
