@@ -17,10 +17,10 @@
         }]
     },
     "antrea": {
-        "gitRepoTag": "v0.6.0",
+        "gitRepoTag": "v1.2.0",
         "containers": [{
-            "name": "antrea/antrea-ubuntu",
-            "version": "v0.6.0"
+            "name": "projects.registry.vmware.com/antrea/antrea-ubuntu",
+            "version": "v1.2.0"
         }]
     },
     "contour": {
