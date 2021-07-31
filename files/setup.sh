@@ -26,6 +26,9 @@ VCENTER_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_password")
 VCENTER_USERNAME_FOR_VEBA_UI=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_veba_ui_username")
 VCENTER_PASSWORD_FOR_VEBA_UI=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_veba_ui_password")
 VCENTER_DISABLE_TLS=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_disable_tls_verification")
+WEBHOOK_ENABLED=$(/root/setup/getOvfProperty.py "guestinfo.webhook")
+WEBHOOK_USERNAME=$(/root/setup/getOvfProperty.py "guestinfo.webhook_username")
+WEBHOOK_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.webhook_password")
 EVENT_PROCESSOR_TYPE=$(/root/setup/getOvfProperty.py "guestinfo.event_processor_type")
 OPENFAAS_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.openfaas_password")
 OPENFAAS_ADV_OPTION=$(/root/setup/getOvfProperty.py "guestinfo.openfaas_advanced_options")
@@ -68,6 +71,10 @@ else
 	# Determine Event Providers
 	EVENT_PROVIDERS=("vcenter")
 
+	if [ ${WEBHOOK_ENABLED} == "True" ]; then
+		EVENT_PROVIDERS+=("webhook")
+	fi
+
 	# Determine Knative deployment model
 	if [ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]; then
 		if [ ! -z ${KNATIVE_HOST} ]; then
@@ -92,6 +99,9 @@ else
 
 	ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI=$(eval echo -n ${VCENTER_USERNAME_FOR_VEBA_UI} | jq -Rs .)
 	ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI=$(eval echo -n ${VCENTER_PASSWORD_FOR_VEBA_UI} | jq -Rs .)
+
+	ESCAPED_WEBHOOK_USERNAME=$(eval echo -n ${WEBHOOK_USERNAME} | jq -Rs .)
+	ESCAPED_WEBHOOK_PASSWORD=$(eval echo -n ${WEBHOOK_PASSWORD} | jq -Rs .)
 
 	ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY=$(eval echo -n ${AWS_EVENTBRIDGE_ACCESS_KEY} | jq -Rs .)
 	ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET=$(eval echo -n ${AWS_EVENTBRIDGE_ACCESS_SECRET} | jq -Rs .)
@@ -123,6 +133,9 @@ else
 	"ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI": ${ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI},
 	"ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI": ${ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI},
 	"VCENTER_DISABLE_TLS": "${VCENTER_DISABLE_TLS}",
+	"WEBHOOK_ENABLED": "${WEBHOOK_ENABLED}",
+	"ESCAPED_WEBHOOK_USERNAME": ${ESCAPED_WEBHOOK_USERNAME},
+	"ESCAPED_WEBHOOK_PASSWORD": ${ESCAPED_WEBHOOK_PASSWORD},
 	"EVENT_PROCESSOR_TYPE": "${EVENT_PROCESSOR_TYPE}",
 	"KNATIVE_DEPLOYMENT_TYPE": "${KNATIVE_DEPLOYMENT_TYPE}",
 	"ESCAPED_OPENFAAS_PASSWORD": ${ESCAPED_OPENFAAS_PASSWORD},

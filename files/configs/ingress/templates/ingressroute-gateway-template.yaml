@@ -8,6 +8,7 @@
 #@ knativeDeploymentType = json.decode(data.values.config)["KNATIVE_DEPLOYMENT_TYPE"]
 #@ vebaUIUsername = json.decode(data.values.config)["ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI"]
 #@ vebaUIPassword = json.decode(data.values.config)["ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI"]
+#@ webhookEnabled = json.decode(data.values.config)["WEBHOOK_ENABLED"]
 
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
@@ -46,6 +47,24 @@ spec:
     services:
     - name: vmware-event-router-vcenter
       port: 8082
+  #@ if webhookEnabled == "True":
+  - conditions:
+    - prefix: /stats/webhook
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /stats
+    services:
+    - name: vmware-event-router-webhook
+      port: 8082
+  - conditions:
+    - prefix: /webhook
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /webhook
+    services:
+    - name: vmware-event-router-webhook
+      port: 8080
+  #@ end
   #@ if vebaUIUsername != "" and vebaUIPassword != "":
   - conditions:
     - prefix: /veba-ui

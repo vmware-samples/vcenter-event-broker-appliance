@@ -89,6 +89,19 @@
             <Label>Disable vCenter Server TLS Verification</Label>
             <Description>Disable TLS Verification for vCenter Server (required for self-sign certificate)</Description>
         </Property>
+      <Category>Webhook</Category>
+        <Property ovf:key="guestinfo.webhook" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+            <Label>Enable Webhook Event Provider</Label>
+            <Description>Enable Webhook Event Provider</Description>
+        </Property>
+        <Property ovf:key="guestinfo.webhook_username" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Basic Auth Username (Optional)</Label>
+            <Description>Username to login to webhook endpoint</Description>
+        </Property>
+        <Property ovf:key="guestinfo.webhook_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Basic Auth Password (Optional)</Label>
+            <Description>Password to login to webhook endpoint</Description>
+        </Property>
       <Category>Event Processor Configuration</Category>
         <Property ovf:qualifiers="ValueMap{&quot;Knative&quot;, &quot;OpenFaaS&quot;, &quot;AWS EventBridge&quot;}" ovf:userConfigurable="true" ovf:value="Knative" ovf:type="string" ovf:key="guestinfo.event_processor_type">
           <Label>Event Processor</Label>

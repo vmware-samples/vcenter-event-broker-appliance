@@ -103,6 +103,22 @@ eventProvider:
     #@ end
     checkpoint: false
   #@ end
+  #@ if data.values.eventProvider == "webhook":
+  #@ webhookUsername = json.decode(data.values.config)["ESCAPED_WEBHOOK_USERNAME"]
+  #@ webhookPassword = json.decode(data.values.config)["ESCAPED_WEBHOOK_PASSWORD"]
+  name: veba-webhook-01
+  type: webhook
+  webhook:
+    bindAddress: 0.0.0.0:8080
+    path: /webhook
+    #@ if webhookUsername != "" and webhookPassword != "":
+    auth:
+      type: basic_auth
+      basicAuth:
+        username: #@ webhookUsername
+        password: #@ webhookPassword
+    #@ end
+  #@ end
 kind: RouterConfig
 metadata:
   name: #@ routerName
