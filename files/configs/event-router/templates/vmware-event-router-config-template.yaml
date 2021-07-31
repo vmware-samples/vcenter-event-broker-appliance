@@ -9,6 +9,15 @@
 #@ vcenterPassword = json.decode(data.values.config)["ESCAPED_VCENTER_PASSWORD"]
 #@ vcenterTls = json.decode(data.values.config)["VCENTER_DISABLE_TLS"]
 
+#@ if processor == "Knative":
+#@ processorName = "knative"
+#@ elif processor == "AWS EventBridge":
+#@ processorName = "aws"
+#@ elif processor == "OpenFaaS":
+#@ processorName = "openfaas"
+#@ end
+#@ routerName = "vmware-event-router-config-" + processorName + "-" + data.values.eventProvider
+
 apiVersion: event-router.vmware.com/v1alpha1
 eventProcessor:
   #@ if processor == "Knative":
@@ -77,6 +86,7 @@ eventProcessor:
   type: openfaas
   #@ end
 eventProvider:
+  #@ if data.values.eventProvider == "vcenter":
   name: veba-vc-01
   type: vcenter
   vcenter:
@@ -92,15 +102,10 @@ eventProvider:
     insecureSSL: false
     #@ end
     checkpoint: false
+  #@ end
 kind: RouterConfig
 metadata:
-  #@ if processor == "Knative":
-  name: router-config-knative
-  #@ elif processor == "AWS EventBridge":
-  name: router-config-aws
-  #@ elif processor == "OpenFaaS":
-  name: router-config-openfaas
-  #@ end
+  name: #@ routerName
 metricsProvider:
   default:
     bindAddress: 0.0.0.0:8082
