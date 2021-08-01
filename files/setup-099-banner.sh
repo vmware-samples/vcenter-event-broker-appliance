@@ -8,11 +8,9 @@ set -euo pipefail
 
 echo -e "\e[92mCreating Login Banner ..." > /dev/console
 
-if [ "${EVENT_PROCESSOR_TYPE}" == "OpenFaaS" ]; then
-    cat << EOF > /etc/issue
-Welcome to the vCenter Event Broker Appliance
+cat << EOF > /etc/issue
+Welcome to the VMware Event Broker Appliance (VEBA)
 
 EOF
-fi
 
 /usr/sbin/agetty --reload
