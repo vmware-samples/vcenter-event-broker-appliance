@@ -26,6 +26,12 @@ VCENTER_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_password")
 VCENTER_USERNAME_FOR_VEBA_UI=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_veba_ui_username")
 VCENTER_PASSWORD_FOR_VEBA_UI=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_veba_ui_password")
 VCENTER_DISABLE_TLS=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_disable_tls_verification")
+HORIZON_ENABLED=$(/root/setup/getOvfProperty.py "guestinfo.horizon")
+HORIZON_SERVER=$(/root/setup/getOvfProperty.py "guestinfo.horizon_server")
+HORIZON_DOMAIN=$(/root/setup/getOvfProperty.py "guestinfo.horizon_domain")
+HORIZON_USERNAME=$(/root/setup/getOvfProperty.py "guestinfo.horizon_username")
+HORIZON_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.horizon_password")
+HORIZON_DISABLE_TLS=$(/root/setup/getOvfProperty.py "guestinfo.horizon_disable_tls_verification")
 WEBHOOK_ENABLED=$(/root/setup/getOvfProperty.py "guestinfo.webhook")
 WEBHOOK_USERNAME=$(/root/setup/getOvfProperty.py "guestinfo.webhook_username")
 WEBHOOK_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.webhook_password")
@@ -75,6 +81,10 @@ else
 		EVENT_PROVIDERS+=("webhook")
 	fi
 
+	if [ ${HORIZON_ENABLED} == "True" ]; then
+		EVENT_PROVIDERS+=("horizon")
+	fi
+
 	# Determine Knative deployment model
 	if [ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]; then
 		if [ ! -z ${KNATIVE_HOST} ]; then
@@ -99,6 +109,11 @@ else
 
 	ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI=$(eval echo -n ${VCENTER_USERNAME_FOR_VEBA_UI} | jq -Rs .)
 	ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI=$(eval echo -n ${VCENTER_PASSWORD_FOR_VEBA_UI} | jq -Rs .)
+
+	ESCAPED_HORIZON_SERVER=$(eval echo -n ${HORIZON_SERVER} | jq -Rs .)
+	ESCAPED_HORIZON_USERNAME=$(eval echo -n ${HORIZON_USERNAME} | jq -Rs .)
+	ESCAPED_HORIZON_PASSWORD=$(eval echo -n ${HORIZON_PASSWORD} | jq -Rs .)
+	ESCAPED_ROOT_PASSWORD=$(eval echo -n ${ROOT_PASSWORD} | jq -Rs .)
 
 	ESCAPED_WEBHOOK_USERNAME=$(eval echo -n ${WEBHOOK_USERNAME} | jq -Rs .)
 	ESCAPED_WEBHOOK_PASSWORD=$(eval echo -n ${WEBHOOK_PASSWORD} | jq -Rs .)
@@ -133,6 +148,12 @@ else
 	"ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI": ${ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI},
 	"ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI": ${ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI},
 	"VCENTER_DISABLE_TLS": "${VCENTER_DISABLE_TLS}",
+	"HORIZON_ENABLED": "${HORIZON_ENABLED}",
+	"ESCAPED_HORIZON_SERVER": ${ESCAPED_HORIZON_SERVER},
+	"HORIZON_DOMAIN": "${HORIZON_DOMAIN}",
+	"ESCAPED_HORIZON_USERNAME": ${ESCAPED_HORIZON_USERNAME},
+	"ESCAPED_HORIZON_PASSWORD": ${ESCAPED_HORIZON_PASSWORD},
+	"HORIZON_DISABLE_TLS": "${HORIZON_DISABLE_TLS}",
 	"WEBHOOK_ENABLED": "${WEBHOOK_ENABLED}",
 	"ESCAPED_WEBHOOK_USERNAME": ${ESCAPED_WEBHOOK_USERNAME},
 	"ESCAPED_WEBHOOK_PASSWORD": ${ESCAPED_WEBHOOK_PASSWORD},

@@ -103,6 +103,28 @@ eventProvider:
     #@ end
     checkpoint: false
   #@ end
+  #@ if data.values.eventProvider == "horizon":
+  #@ horizon = json.decode(data.values.config)["ESCAPED_HORIZON_SERVER"]
+  #@ horizonDomain = json.decode(data.values.config)["HORIZON_DOMAIN"]
+  #@ horizonUsername = json.decode(data.values.config)["ESCAPED_HORIZON_USERNAME"]
+  #@ horizonPassword = json.decode(data.values.config)["ESCAPED_HORIZON_PASSWORD"]
+  #@ horizonNoTLS = json.decode(data.values.config)["HORIZON_DISABLE_TLS"]
+  name: veba-horizon-01
+  type: horizon
+  horizon:
+    address: #@ "https://"+horizon
+    auth:
+      type: active_directory
+      activeDirectoryAuth:
+        domain: #@ horizonDomain
+        username: #@ horizonUsername
+        password: #@ horizonPassword
+    #@ if horizonNoTLS == "True":
+    insecureSSL: true
+    #@ else:
+    insecureSSL: false
+    #@ end
+  #@ end
   #@ if data.values.eventProvider == "webhook":
   #@ webhookUsername = json.decode(data.values.config)["ESCAPED_WEBHOOK_USERNAME"]
   #@ webhookPassword = json.decode(data.values.config)["ESCAPED_WEBHOOK_PASSWORD"]

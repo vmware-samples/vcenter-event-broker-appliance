@@ -28,6 +28,11 @@ cat >> ${DCUI_ENDPOINTS_FILE} <<EOF
 Appliance Provider Stats,vCenter,/stats/vcenter
 EOF
 
+# For Horizon Provider
+if [ ${HORIZON_ENABLED} == "True" ]; then
+    echo "Appliance Provider Stats,Horizon,/stats/horizon" >> ${DCUI_ENDPOINTS_FILE}
+fi
+
 # For Webhook Provider
 if [ ${WEBHOOK_ENABLED} == "True" ]; then
     echo "Appliance Provider Stats,Webhook,/stats/webhook" >> ${DCUI_ENDPOINTS_FILE}
