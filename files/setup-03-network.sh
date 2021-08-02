@@ -46,3 +46,6 @@ systemctl restart systemd-networkd
 
 echo -e "\e[92mRestarting Timesync ..." > /dev/console
 systemctl restart systemd-timesyncd
+
+# Disables cloud-init which ensures FQDN hostname is preserved upon reboot
+touch /etc/cloud/cloud-init.disabled
