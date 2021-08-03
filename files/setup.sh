@@ -211,7 +211,9 @@ EOF
 	echo -e "\e[92mCustomization Completed ..." > /dev/console
 
 	# Clear guestinfo.ovfEnv
-	vmtoolsd --cmd "info-set guestinfo.ovfEnv NULL"
+	if [ ${VEBA_DEBUG} == "False" ]; then
+		vmtoolsd --cmd "info-set guestinfo.ovfEnv NULL"
+	fi
 
 	# Ensure we don't run customization again
 	touch /root/ran_customization
