@@ -205,6 +205,9 @@ EOF
 	echo -e "\e[92mStarting cAdvisor Configuration ..." > /dev/console
 	. /root/setup/setup-012-cadvisor.sh
 
+	echo -e "\e[92mStarting VEBA Endpoint File Configuration ..." > /dev/console
+	. /root/setup/setup-098-dcui-endpoints.sh
+
 	echo -e "\e[92mStarting OS Banner Configuration ..."> /dev/console
 	. /root/setup/setup-099-banner.sh &
 
