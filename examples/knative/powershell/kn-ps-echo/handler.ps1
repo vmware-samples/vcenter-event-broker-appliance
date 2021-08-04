@@ -29,5 +29,5 @@ Function Process-Handler {
    }
 
    Write-Host $(Get-Date) - "CloudEvent Data:"
-   Write-Host $(Get-Date) - "$($cloudEventData | Out-String)"
+   Write-Host $(Get-Date) - "`n$($cloudEventData | ConvertTo-Json)"
 }
