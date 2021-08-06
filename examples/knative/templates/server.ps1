@@ -108,6 +108,8 @@ $backgroundServer = Start-ThreadJob {
 
                             $context.Response.StatusCode = [int]([System.Net.HttpStatusCode]::InternalServerError)
                         }
+                    } else {
+                        $context.Response.StatusCode = [int]([System.Net.HttpStatusCode]::BadRequest)
                     }
 
                 }
@@ -146,6 +148,7 @@ $backgroundServer = Start-ThreadJob {
         Write-Host "$(Get-Date) - PowerShell HTTP server stop requested"
         break;
     }
+
 } -ArgumentList $url, $serverStopMessage
 
 $killEvent = new-object 'System.Threading.AutoResetEvent' -ArgumentList $false
