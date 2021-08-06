@@ -9,8 +9,9 @@ Simple Powershell function with an HTTP listener running in Knative to echo
 Create the container image and optionally push to an external registry such as Docker.
 
 ```
-docker build -t <docker-username>/kn-ps-echo:1.0 .
-docker push <docker-username>/kn-ps-echo:1.0
+export TAG=<version>
+docker build -t <docker-username>/kn-ps-echo:${TAG} .
+docker push <docker-username>/kn-ps-echo:${TAG}
 ```
 
 # Step 2 - Test
@@ -18,7 +19,7 @@ docker push <docker-username>/kn-ps-echo:1.0
 Verify the container image works by executing it locally.
 
 ```bash
-docker run -e PORT=8080 -it --rm -p 8080:8080 <docker-username>/kn-ps-echo:1.0
+docker run -e PORT=8080 -it --rm -p 8080:8080 <docker-username>/kn-ps-echo:${TAG}
 
 # now in a separate window run the following
 
