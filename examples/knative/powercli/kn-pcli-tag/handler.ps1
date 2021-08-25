@@ -71,6 +71,16 @@ Function Process-Handler {
    # Extract VM Name from event
    $vmName = $cloudEventData.Vm.Name
 
+   # Ensure vCenter session is still viable for Tag actions (This expires before the general session)
+   Try {
+      Get-TagCategory -ErrorAction:stop | Out-Null
+      Write-Host "$(Get-Date) - vCenter session verified viable for tagging."
+   } Catch {
+      Write-Host "$(Get-Date) - vCenter session for tagging has expired. Reinitializing..."
+      Disconnect-VIServer -Server * -Confirm:$false -Force:$true
+      Process-Init
+   }
+
    Write-Host "$(Get-Date) - Applying vSphere Tag `"$VCENTER_TAG_NAME`" to $vmName ...`n"
    try {
       Get-VM $vmName | New-TagAssignment -Tag (Get-Tag -Name $VCENTER_TAG_NAME) -Confirm:$false
