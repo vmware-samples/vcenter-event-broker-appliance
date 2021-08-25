@@ -33,6 +33,17 @@ Start the container image by running the following command:
 docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 <docker-username>/kn-pcli-tag:1.0
 ```
 
+In the `test` directory, edit `test-payload.json`. Locate the `Vm` section of the JSON file. Change the `Name:` property from `REPLACE-ME` to the name of a test VM currently in your vCenter inventory. If you do not make this change, the function will still be invoked, but the tag operation will fail because the VM will not be found.
+
+```json
+"Vm": {
+  "Name": "REPLACE-ME",
+  "Vm": {
+	"Type": "VirtualMachine",
+	"Value": "vm-11099"
+  }
+}
+```
 In a separate terminal, run either `send-cloudevent-test.ps1` (PowerShell Script) or `send-cloudevent-test.sh` (Bash Script) to simulate a CloudEvent payload being sent to the local container image
 
 ```console
