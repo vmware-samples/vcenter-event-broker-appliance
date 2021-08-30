@@ -18,7 +18,10 @@ spec:
           ports:
             - name: https
               containerPort: 8989
-
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "128Mi"
 ---
 apiVersion: v1
 kind: Service

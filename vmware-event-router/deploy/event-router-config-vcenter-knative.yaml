@@ -1,0 +1,44 @@
+apiVersion: event-router.vmware.com/v1alpha1
+kind: RouterConfig
+metadata:
+  name: router-config-vcenter-knative
+  labels:
+    key: value
+eventProvider:
+  type: vcenter
+  name: veba-demo-vc-01
+  vcenter:
+    address: https://my-vcenter01.domain.local/sdk
+    insecureSSL: false
+    checkpoint: false
+    auth:
+      type: basic_auth
+      basicAuth:
+        username: administrator@vsphere.local
+        password: ReplaceMe
+eventProcessor:
+  name: veba-demo-knative
+  type: knative
+  knative:
+    encoding: binary
+    insecureSSL: false
+    destination:
+#      uri:
+#        host: mybroker-external.corp.local
+#        scheme: http
+      ref:
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+        name: rabbit
+        namespace: default
+metricsProvider:
+  type: default
+  name: veba-demo-metrics
+  default:
+    bindAddress: "0.0.0.0:8082"
+# disabling auth for the metrics endpoint
+#    auth:
+#      type: basic_auth
+#      basicAuth:
+#        username: admin
+#        password: ReplaceMe

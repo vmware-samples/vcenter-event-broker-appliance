@@ -1,7 +1,7 @@
 apiVersion: event-router.vmware.com/v1alpha1
 kind: RouterConfig
 metadata:
-  name: router-config-knative
+  name: router-config-webhook-knative
   labels:
     key: value
 eventProvider:
@@ -22,9 +22,6 @@ eventProcessor:
     encoding: binary
     insecureSSL: false
     destination:
-#      uri:
-#        host: mybroker-external.corp.local
-#        scheme: http
       ref:
         apiVersion: eventing.knative.dev/v1
         kind: Broker

@@ -3,7 +3,7 @@ name: event-router
 description: The VMware Event Router is used to connect to various VMware event providers and forwards received events to supported event processors.
 home: https://vmweventbroker.io/
 type: application
-version: v0.6.5
+version: v0.6.6-pre-release
 appVersion: development
 maintainers:
   - name: Michael Gasch
