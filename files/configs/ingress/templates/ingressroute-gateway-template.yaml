@@ -9,6 +9,7 @@
 #@ vebaUIUsername = json.decode(data.values.config)["ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI"]
 #@ vebaUIPassword = json.decode(data.values.config)["ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI"]
 #@ webhookEnabled = json.decode(data.values.config)["WEBHOOK_ENABLED"]
+#@ horizonEnabled = json.decode(data.values.config)["HORIZON_ENABLED"]
 
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
@@ -64,6 +65,16 @@ spec:
     services:
     - name: vmware-event-router-webhook
       port: 8080
+  #@ end
+  #@ if horizonEnabled == "True":
+  - conditions:
+    - prefix: /stats/horizon
+    pathRewritePolicy:
+      replacePrefix:
+      - replacement: /stats
+    services:
+    - name: vmware-event-router-horizon
+      port: 8082
   #@ end
   #@ if vebaUIUsername != "" and vebaUIPassword != "":
   - conditions:
