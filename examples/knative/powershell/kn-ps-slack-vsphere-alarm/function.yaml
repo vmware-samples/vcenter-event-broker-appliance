@@ -13,7 +13,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: projects.registry.vmware.com/veba/kn-ps-slack-vsphere-alarm:1.0
+        - image: projects.registry.vmware.com/veba/kn-ps-slack-vsphere-alarm:1.1
           envFrom:
             - secretRef:
                 name: slack-secret

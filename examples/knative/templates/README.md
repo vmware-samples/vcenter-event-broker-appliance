@@ -8,20 +8,20 @@
 
 Pre-built base PowerShell Image:
 
-* projects.registry.vmware.com/veba/ce-ps-base:1.1
+* projects.registry.vmware.com/veba/ce-ps-base:1.2
 
 Pre-built base PowerCLI Image:
 
-* projects.registry.vmware.com/veba/ce-pcli-base:1.1
+* projects.registry.vmware.com/veba/ce-pcli-base:1.2
 # Build
 
 Build Base PowerShell Image
 ```console
-docker build -t <docker-username>/ce-ps-base:1.1 -f Dockerfile.ps .
+docker build -t <docker-username>/ce-ps-base:<version> -f Dockerfile.ps .
 ```
 
 Build Base PowerCLI Image
 
 ```console
-docker build -t <docker-username>/ce-pcli-base:1.1 -f Dockerfile.pcli .
+docker build -t <docker-username>/ce-pcli-base:<version> -f Dockerfile.pcli .
 ```

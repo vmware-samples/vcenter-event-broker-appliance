@@ -1,4 +1,4 @@
-FROM projects.registry.vmware.com/veba/ce-ps-base:1.1
+FROM projects.registry.vmware.com/veba/ce-ps-base:1.2
 
 ARG POWERCLI_VERSION="12.3.0.17860403"
 

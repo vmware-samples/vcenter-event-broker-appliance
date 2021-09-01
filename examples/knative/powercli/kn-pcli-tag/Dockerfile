@@ -1,6 +1,4 @@
-FROM projects.registry.vmware.com/veba/ce-pcli-base:1.1
-ENV TERM linux
-ENV PORT 8080
+FROM projects.registry.vmware.com/veba/ce-pcli-base:1.2
 
 COPY handler.ps1 handler.ps1
 
