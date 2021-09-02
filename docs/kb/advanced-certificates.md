@@ -115,7 +115,6 @@ To support this use case, a post-deployment reconfiguration of the VMware Event 
 WARN    [VCENTER]       vcenter/vcenter.go:112  using potentially insecure connection to vCenter  {"address": "https://vcsa.primp-industries.local", "insecure": true}
 ```
 
-
 In order to import your trusted root certificate, please follow the steps outlined below.
 
 ### Assumptions
@@ -135,7 +134,7 @@ kubectl -n vmware-system create cm ca-root-cert --from-file ca-root.crt
 Step 2 - Undeploy the VMware Event Router and delete the current configuration secret.
 
 ```console
-kubectl -n vmware-system delete -f /root/config/event-router-k8s.yaml
+kubectl -n vmware-system delete deploy vmware-event-router
 kubectl -n vmware-system delete secret event-router-config
 ```
 
@@ -160,7 +159,7 @@ snip
             name: ca-root-cert
 ```
 
-Step 4 - Edit `/root/config/event-router-config.yaml` and append the additional `certificates` section to the end of the file as shown in the snippet below.
+Step 4 - In the same file (step 3) append the additional `certificates` section to the end of the file as shown in the snippet below.
 
 ```console
 snip
