@@ -4,7 +4,7 @@ Function Process-Init {
    try {
       $jsonSecrets = ${env:TAG_SECRET} | ConvertFrom-Json
    } catch {
-      throw "`nK8s secrets `$env:TAG does not look to be defined"
+      throw "`nK8s secrets `$env:TAG_SECRET does not look to be defined"
    }
 
    # Extract all tag secrets for ease of use in function
@@ -56,7 +56,7 @@ Function Process-Handler {
    try {
       $jsonSecrets = ${env:TAG_SECRET} | ConvertFrom-Json
    } catch {
-      throw "`nK8s secrets `$env:TAG does not look to be defined"
+      throw "`nK8s secrets `$env:TAG_SECRET does not look to be defined"
    }
 
    if(${env:FUNCTION_DEBUG} -eq "true") {
