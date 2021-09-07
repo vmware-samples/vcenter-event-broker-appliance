@@ -1,0 +1,27 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+#@ load("@ytt:json", "json")
+#@ load("@ytt:regexp", "regexp")
+
+#@ hostname = json.decode(data.values.config)["HOSTNAME"]
+#@ syslogServer = json.decode(data.values.config)["SYSLOG_SERVER_HOSTNAME"]
+#@ syslogPort = json.decode(data.values.config)["SYSLOG_SERVER_PORT"]
+#@ syslogProtocol = json.decode(data.values.config)["SYSLOG_SERVER_PROTOCOL"]
+#@ syslogFormat = json.decode(data.values.config)["SYSLOG_SERVER_FORMAT"]
+
+#@ def syslog_replacements(old, _):
+#@   old = old.replace("SYSLOG_HOST_REPLACEME", syslogServer)
+#@   old = old.replace("SYSLOG_PORT_REPLACEME", syslogPort)
+#@   old = old.replace("SYSLOG_MODE_REPLACEME", syslogProtocol)
+#@   old = old.replace("SYSLOG_FORMAT_REPLACEME", syslogFormat)
+#@   return old
+#@ end
+
+#@overlay/match by=overlay.subset({"kind":"ConfigMap", "metadata": {"name": "fluent-bit-config"}})
+---
+data:
+  #@overlay/replace via=lambda old, _: old.replace("VEBA_INSTANCE_REPLACEME", hostname)
+  filter-record.conf:
+  #@overlay/replace via=syslog_replacements
+  output-syslog.conf:
+
