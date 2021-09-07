@@ -130,9 +130,9 @@
       <Category>Event Processor Configuration</Category>
         <Property ovf:qualifiers="ValueMap{&quot;Knative&quot;, &quot;OpenFaaS&quot;, &quot;AWS EventBridge&quot;}" ovf:userConfigurable="true" ovf:value="Knative" ovf:type="string" ovf:key="guestinfo.event_processor_type">
           <Label>Event Processor</Label>
-          <Description>Choose either Knative (default), OpenFaaS, or AWS EventBridge and only fill in the configuration for the select event processor below</Description>
+          <Description>Choose either Knative (default), OpenFaaS (deprecated), or AWS EventBridge (deprecated) and only fill in the configuration for the selected event processor below</Description>
         </Property>
-      <Category>Existing Knative Environment Configuration</Category>
+      <Category>Existing Knative Environment Configuration (deprecated)</Category>
         <Property ovf:key="guestinfo.knative_host" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Host</Label>
             <Description>Knative Host (e.g. mybroker.corp.local:8080)</Description>
@@ -149,7 +149,7 @@
             <Label>Path</Label>
             <Description>Additional path to append to the host if required (e.g. /default/default)</Description>
         </Property>
-      <Category>OpenFaaS Configuration</Category>
+      <Category>OpenFaaS Configuration (deprecated)</Category>
         <Property ovf:key="guestinfo.openfaas_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Password</Label>
             <Description>Password to login into OpenFaaS. Please use a secure password</Description>
@@ -158,7 +158,7 @@
             <Label>Advanced Settings</Label>
             <Description>Opaque string for applying advanced configurations for OpenFaaS Processor. For advanced use cases only, please see documentation for more details</Description>
         </Property>
-      <Category>AWS EventBridge Configuration</Category>
+      <Category>AWS EventBridge Configuration (deprecated)</Category>
         <Property ovf:key="guestinfo.aws_eb_access_key" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Access Key</Label>
             <Description>A valid AWS Access Key to AWS EventBridge</Description>
