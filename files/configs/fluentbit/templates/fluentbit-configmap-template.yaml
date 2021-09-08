@@ -55,13 +55,12 @@ data:
         Match               kube.*
         Operation           lift
         Nested_Under        kubernetes
-
   filter-record.conf: |
     [FILTER]
         Name                 record_modifier
         Match                *
-        Record veba_instance ${HOSTNAME}
-        Record veba_cluster  ${HOSTNAME}
+        Record veba_instance VEBA_INSTANCE_REPLACEME
+        Record veba_cluster  VEBA_INSTANCE_REPLACEME
 
     [FILTER]
         Name                nest
@@ -74,10 +73,10 @@ data:
     [OUTPUT]
         Name                 syslog
         Match                *
-        Host                 ${SYSLOG_SERVER_HOSTNAME}
-        Port                 ${SYSLOG_SERVER_PORT}
-        Mode                 ${SYSLOG_SERVER_PROTOCOL}
-        Syslog_Format        ${SYSLOG_SERVER_FORMAT}
+        Host                 SYSLOG_HOST_REPLACEME
+        Port                 SYSLOG_PORT_REPLACEME
+        Mode                 SYSLOG_MODE_REPLACEME
+        Syslog_Format        SYSLOG_FORMAT_REPLACEME
         Syslog_Hostname_key  veba_cluster
         Syslog_Appname_key   pod_name
         Syslog_Procid_key    container_name
