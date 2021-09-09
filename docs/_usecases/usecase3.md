@@ -3,7 +3,7 @@ title: Integration
 #subtitle: See Function
 redirect_from: /docs
 image: fas fa-cloud
-excerpt: Consume vCenter Events using the public cloud services of your choice
+excerpt: Consume system events using the public cloud services of your choice
 author_name: VEBA Team
 # author_avatar: https://placehold.it/64x64
 categories: ['cloud']

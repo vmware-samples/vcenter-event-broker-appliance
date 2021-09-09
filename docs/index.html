@@ -7,7 +7,7 @@ backgrounds:
   team: dark-blue
 hero:
   headline: Unlocking the Hidden Potential of Events in the VMware SDDC
-  content: Use event-driven automation and take your vSphere Events to the next level! Easily trigger custom or pre-built actions to deliver powerful integrations within your datacenter but also across public cloud services. Integrations like Slack, Pager Duty, Service Now, etc. has never been easier before
+  content: Use event-driven automation and take your system events to the next level! Easily trigger custom or pre-built actions to deliver powerful integrations within your datacenter but also across public cloud services. Integrations like Slack, Pager Duty, Service Now, etc. has never been easier before
   cta_link1:
     text: Download & Install
     external_url: https://flings.vmware.com/vmware-event-broker-appliance
@@ -18,31 +18,27 @@ hero:
     text: Write Functions
     external_url: https://github.com/vmware-samples/vcenter-event-broker-appliance
   promo1:
-    icon: /assets/img/cta-icons/vcenter-icon.png
-    title: Extend vCenter Actions
-    content: Simplify integrations and deliver new automated capabilities to vCenter
+    icon: /assets/img/cta-icons/vsphere_horizon.png
+    title: Extend your Systems
+    content: Event-driven interactions with vSphere and Horizon using Functions as a Service (FaaS).
   promo2:
     icon: /assets/img/cta-icons/scale-icon.png
-    title: Event-Driven Functions
-    content: Imagine new possibilities with functions triggered by vSphere Events.
+    title: Event-Driven Remediation
+    content: Automatically revert or fix system issues based on state changes.
   promo3:
     icon: /assets/img/cta-icons/functions-icon.png
     title: Bring Your Own Language
-    content: Build functions using the language of your choice
+    content: Build functions using the language of your choice.
+  promo4:
+    icon: /assets/img/cta-icons/webhook.png
+    title: Webhook Support
+    content: Use the webhook HTTPS endpoint to send CloudEvents from any external source to VEBA.
 secondary_ctas:
   cta1:
-    title: Appliance for VMware vSphere
-    url: /kb/install-knative
-    content: Deploy VEBA directly onto vSphere by using the ready-to-run appliance (OVA).
-  cta2:
-    title: Installation on Kubernetes with Knative
-    url: /kb/advanced-deploy-k8s
-    content: Deploy VEBA to an existing Kubernetes Knative installation with Helm.
-  cta3:
     title: Explore our documentation to help you get started quickly
     url: /kb
     content: Learn more about VMware Event Broker Appliance and its capabilities
-  cta4:
+  cta2:
     title: Get started quickly with community-sourced, prebuilt functions
     url: /examples
     content: Deploy the appliance and prebuilt functions in under 60 minutes
@@ -138,6 +134,23 @@ secondary_ctas:
           </div>
         </div>
       </div>
+      <div class="col-md">
+        <div class="card card-light mb-3 mb-md-0 shadow">
+          <div class="card-body match-height">
+            <figure>
+              <img src="{{ page.hero.promo4.icon | relative_url }}" alt="{{ page.hero.promo4.title }}"/>
+            </figure>
+            {% if page.hero.promo4.external_url or size > 0 %}
+            <h5><a href="{{ page.hero.promo4.external_url }}" target="_blank" class="dark">{{ page.hero.promo4.title }}</a></h5>
+            {% elsif page.hero.promo4.url or size > 0 %}
+            <h5><a href="{{ page.hero.promo4.url | relative_url }}" class="dark">{{ page.hero.promo4.title }}</a></h5>
+            {% else %}
+            <h5>{{ page.hero.promo4.title }}</h5>
+            {% endif %}
+            <p>{{ page.hero.promo4.content }}</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -168,37 +181,11 @@ secondary_ctas:
     </div>
   </div>
 </div>
-<div class="section section-grey">
-  <div class="section-content">
-    <div class="row bg-grey">
-      <div class="col-sm-5 mb-3 mb-sm-0">
-        <h6 class="mb-1">
-          {% if page.secondary_ctas.cta3.external_url or size > 0 %}
-          <a href="{{ page.secondary_ctas.cta3.external_url }}" target="_blank">{{ page.secondary_ctas.cta3.title }}</a>
-          {% else %}
-          <a href="{{ page.secondary_ctas.cta3.url | relative_url }}">{{ page.secondary_ctas.cta3.title }}</a>
-          {% endif %}
-        </h6>
-        <p class="mb-0">{{ page.secondary_ctas.cta3.content }}</p>
-      </div>
-      <div class="col-sm-5 offset-sm-2">
-        <h6 class="mb-1">
-          {% if page.secondary_ctas.cta4.external_url  or size > 0 %}
-          <a href="{{ page.secondary_ctas.cta4.external_url }}" target="_blank">{{ page.secondary_ctas.cta4.title }}</a>
-          {% else %}
-          <a href="{{ page.secondary_ctas.cta4.url | relative_url }}">{{ page.secondary_ctas.cta4.title }}</a>
-          {% endif %}
-        </h6>
-        <p class="mb-0">{{ page.secondary_ctas.cta4.content }}</p>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div class="section pt-3">
   <div class="section-content promo-cards">
     <div class="row">
-      <h2>Use Cases</h2>
+      <h2>#VEBA Use Cases</h2>
     </div>
     {% assign limit = 6 %}
     {% include usecase-posts.html %}
