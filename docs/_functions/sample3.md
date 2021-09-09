@@ -1,8 +1,8 @@
 ---
-title: Automate Ticket creation for SDDC issues
+title: Slack Notification Function
 icon: case-study-3.svg
 #subtitle: Subheading goes here
-links:  
- Deploy Function: https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/python/invoke-rest-api
+links:
+ Deploy Function: https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/development/examples/knative/python/kn-py-slack
 ---
-Automate Ticket creation with your Incident Management system of choice when you encounter an SDDC issue - function has been tested with Slack, JIRA, ServiceDesk, ServiceNow and PagerDuty
+Based on a Virtual Machine powered off event, this function will send a message to Slack with details about the virtual machine, e.g. when and by whom was this event triggered.

@@ -19,3 +19,4 @@ template
 # don't exclude this pkg by rule above
 !**/vendor/**/template
 checkpoints/
+.DS_Store
