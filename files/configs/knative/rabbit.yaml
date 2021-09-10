@@ -23,3 +23,6 @@ spec:
     kind: RabbitmqCluster
     name: veba-rabbit
     namespace: vmware-system
+  delivery:
+    retry: 2
+    backoffPolicy: linear
