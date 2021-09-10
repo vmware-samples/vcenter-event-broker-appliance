@@ -67,8 +67,16 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-slack-vsphere-alarm"
-  - title: Email Notification
-
+  - title: Telegram Notification
+    usecases:
+    - item: automation
+    - item: integration
+    - item: notification
+    id: kn-pcli-telegram-function
+    description: Function to send a Telegram notification triggered by a vMotion of VM.
+    links:
+    - language: powercli
+      url: "/tree/master/examples/knative/powercli/kn-pcli-telegram"
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 
