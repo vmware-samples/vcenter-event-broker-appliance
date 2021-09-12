@@ -102,28 +102,28 @@ else
 	fi
 
 	# Slicing of escaped variables needed to properly handle the double quotation issue
-	ESCAPED_VCENTER_SERVER=$(eval echo -n ${VCENTER_SERVER} | jq -Rs .)
-	ESCAPED_VCENTER_USERNAME=$(eval echo -n ${VCENTER_USERNAME} | jq -Rs .)
-	ESCAPED_VCENTER_PASSWORD=$(eval echo -n ${VCENTER_PASSWORD} | jq -Rs .)
-	ESCAPED_ROOT_PASSWORD=$(eval echo -n ${ROOT_PASSWORD} | jq -Rs .)
+	ESCAPED_VCENTER_SERVER=$(eval echo -n '${VCENTER_SERVER}' | jq -Rs .)
+	ESCAPED_VCENTER_USERNAME=$(eval echo -n '${VCENTER_USERNAME}' | jq -Rs .)
+	ESCAPED_VCENTER_PASSWORD=$(eval echo -n '${VCENTER_PASSWORD}' | jq -Rs .)
+	ESCAPED_ROOT_PASSWORD=$(eval echo -n '${ROOT_PASSWORD}' | jq -Rs .)
 
-	ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI=$(eval echo -n ${VCENTER_USERNAME_FOR_VEBA_UI} | jq -Rs .)
-	ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI=$(eval echo -n ${VCENTER_PASSWORD_FOR_VEBA_UI} | jq -Rs .)
+	ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI=$(eval echo -n '${VCENTER_USERNAME_FOR_VEBA_UI}' | jq -Rs .)
+	ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI=$(eval echo -n '${VCENTER_PASSWORD_FOR_VEBA_UI}' | jq -Rs .)
 
-	ESCAPED_HORIZON_SERVER=$(eval echo -n ${HORIZON_SERVER} | jq -Rs .)
-	ESCAPED_HORIZON_USERNAME=$(eval echo -n ${HORIZON_USERNAME} | jq -Rs .)
-	ESCAPED_HORIZON_PASSWORD=$(eval echo -n ${HORIZON_PASSWORD} | jq -Rs .)
-	ESCAPED_ROOT_PASSWORD=$(eval echo -n ${ROOT_PASSWORD} | jq -Rs .)
+	ESCAPED_HORIZON_SERVER=$(eval echo -n '${HORIZON_SERVER}' | jq -Rs .)
+	ESCAPED_HORIZON_USERNAME=$(eval echo -n '${HORIZON_USERNAME}' | jq -Rs .)
+	ESCAPED_HORIZON_PASSWORD=$(eval echo -n '${HORIZON_PASSWORD}' | jq -Rs .)
+	ESCAPED_ROOT_PASSWORD=$(eval echo -n '${ROOT_PASSWORD}' | jq -Rs .)
 
-	ESCAPED_WEBHOOK_USERNAME=$(eval echo -n ${WEBHOOK_USERNAME} | jq -Rs .)
-	ESCAPED_WEBHOOK_PASSWORD=$(eval echo -n ${WEBHOOK_PASSWORD} | jq -Rs .)
+	ESCAPED_WEBHOOK_USERNAME=$(eval echo -n '${WEBHOOK_USERNAME}' | jq -Rs .)
+	ESCAPED_WEBHOOK_PASSWORD=$(eval echo -n '${WEBHOOK_PASSWORD}' | jq -Rs .)
 
-	ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY=$(eval echo -n ${AWS_EVENTBRIDGE_ACCESS_KEY} | jq -Rs .)
-	ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET=$(eval echo -n ${AWS_EVENTBRIDGE_ACCESS_SECRET} | jq -Rs .)
-	ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS=$(eval echo -n ${AWS_EVENTBRIDGE_EVENT_BUS} | jq -Rs .)
-	ESCAPED_AWS_EVENTBRIDGE_RULE_ARN=$(eval echo -n ${AWS_EVENTBRIDGE_RULE_ARN} | jq -Rs .)
+	ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY=$(eval echo -n '${AWS_EVENTBRIDGE_ACCESS_KEY}' | jq -Rs .)
+	ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET=$(eval echo -n '${AWS_EVENTBRIDGE_ACCESS_SECRET}' | jq -Rs .)
+	ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS=$(eval echo -n '${AWS_EVENTBRIDGE_EVENT_BUS}' | jq -Rs .)
+	ESCAPED_AWS_EVENTBRIDGE_RULE_ARN=$(eval echo -n '${AWS_EVENTBRIDGE_RULE_ARN}' | jq -Rs .)
 
-	ESCAPED_OPENFAAS_PASSWORD=$(eval echo -n ${OPENFAAS_PASSWORD} | jq -Rs .)
+	ESCAPED_OPENFAAS_PASSWORD=$(eval echo -n '${OPENFAAS_PASSWORD}' | jq -Rs .)
 
 	cat > /root/config/veba-config.json <<EOF
 {
