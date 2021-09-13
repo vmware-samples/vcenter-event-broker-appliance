@@ -1,4 +1,6 @@
 Function Process-Init {
+   [CmdletBinding()]
+   param()
    Write-Host "$(Get-Date) - Processing Init`n"
 
    try {
@@ -17,10 +19,16 @@ Function Process-Init {
    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor [System.Net.SecurityProtocolType]::Tls12 -bor [System.Net.SecurityProtocolType]::Tls13
 
    Write-Host "$(Get-Date) - Configuring PowerCLI Configuration Settings`n"
-   Set-PowerCLIConfiguration -InvalidCertificateAction:${VCENTER_CERTIFICATE_ACTION} -ParticipateInCeip:$true -Confirm:$false | Out-Null
+   Set-PowerCLIConfiguration -InvalidCertificateAction:${VCENTER_CERTIFICATE_ACTION} -ParticipateInCeip:$true -Confirm:$false
 
    Write-Host "$(Get-Date) - Connecting to vCenter Server $VCENTER_SERVER`n"
-   Connect-VIServer -Server $VCENTER_SERVER -User $VCENTER_USERNAME -Password $VCENTER_PASSWORD | Out-Null
+
+   try {
+      Connect-VIServer -Server $VCENTER_SERVER -User $VCENTER_USERNAME -Password $VCENTER_PASSWORD
+   } catch {
+      Write-Error "$(Get-Date) - Failed to connect to vCenter Server"
+      throw $_
+   }
 
    Write-Host "$(Get-Date) - Successfully connected to $VCENTER_SERVER`n"
 
@@ -28,12 +36,14 @@ Function Process-Init {
 }
 
 Function Process-Shutdown {
+   [CmdletBinding()]
+   param()
    Write-Host "$(Get-Date) - Processing Shutdown`n"
 
    Write-Host "$(Get-Date) - Disconnecting from vCenter Server`n"
 
    try {
-      Disconnect-VIServer * -Confirm:$false | Out-Null
+      Disconnect-VIServer * -Confirm:$false
    } catch {
       Write-Error "$(Get-Date) - Failed to Disconnect from vCenter Server"
    }
@@ -42,6 +52,7 @@ Function Process-Shutdown {
 }
 
 Function Process-Handler {
+   [CmdletBinding()]
    param(
       [Parameter(Position=0,Mandatory=$true)][CloudNative.CloudEvents.CloudEvent]$CloudEvent
    )

@@ -1,16 +1,21 @@
 Function Process-Init {
+   [CmdletBinding()]
+   param()
    Write-Host "$(Get-Date) - Processing Init`n"
 
    Write-Host "$(Get-Date) - Init Processing Completed`n"
 }
 
 Function Process-Shutdown {
+   [CmdletBinding()]
+   param()
    Write-Host "$(Get-Date) - Processing Shutdown`n"
 
    Write-Host "$(Get-Date) - Shutdown Processing Completed`n"
 }
 
 Function Process-Handler {
+   [CmdletBinding()]
    param(
       [Parameter(Position=0,Mandatory=$true)][CloudNative.CloudEvents.CloudEvent]$CloudEvent
    )

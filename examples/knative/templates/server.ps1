@@ -84,7 +84,7 @@ $backgroundServer = Start-ThreadJob {
 
                         # Runs Shutdown function (defined in handler.ps1) to clean up connections from warm startup
                         try {
-                            Process-Shutdown
+                            Process-Shutdown -ErrorAction 'Stop'
                         }
                         catch {
                             Write-Error "`n$(Get-Date) - Shutdown Processing Error: $($_.Exception.ToString())"
@@ -98,7 +98,7 @@ $backgroundServer = Start-ThreadJob {
 
                     if ( $cloudEvent -ne $null ) {
                         try {
-                            Process-Handler -CloudEvent $cloudEvent | Out-Null
+                            Process-Handler -CloudEvent $cloudEvent -ErrorAction 'Stop'
                             $context.Response.StatusCode = [int]([System.Net.HttpStatusCode]::OK)
                         }
                         catch {
@@ -136,7 +136,7 @@ $backgroundServer = Start-ThreadJob {
 
     # Runs Init function (defined in handler.ps1) which can be used to enable warm startup
     try {
-        Process-Init
+        Process-Init -ErrorAction 'Stop'
     }
     catch {
         Write-Error "$(Get-Date) - Init Processing Error: $($_.Exception.ToString())"
@@ -155,8 +155,8 @@ $killEvent = new-object 'System.Threading.AutoResetEvent' -ArgumentList $false
 
 Start-ThreadJob {
     param($killEvent, $url, $serverStopMessage)
-    $killEvent.WaitOne() | Out-Null
-    Invoke-WebRequest -Uri $url -Body $serverStopMessage | Out-Null
+    $killEvent.WaitOne()
+    Invoke-WebRequest -Uri $url -Body $serverStopMessage
 } -ArgumentList $killEvent, $localUrl, $serverStopMessage
 
 try {
@@ -171,7 +171,7 @@ try {
 }
 finally {
     Write-Host "$(Get-Date) - PowerShell HTTP Server stop requested. Waiting for server to stop"
-    $killEvent.Set() | Out-Null
+    $killEvent.Set()
     Get-Job | Wait-Job | Receive-Job
     Write-Host "$(Get-Date) - PowerShell HTTP server is stopped"
 }
