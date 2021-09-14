@@ -39,9 +39,7 @@ Function Process-Handler {
       Write-Host "$(Get-Date) - DEBUG: CloudEventData`n $(${cloudEventData} | Out-String)`n"
    }
 
-   # Send VM changes
-   Write-Host "$(Get-Date) - Detected change to $($cloudEvent.Subject) ..."
-
+   # Construct Slack message object
    $payload = @{
       attachments = @(
          @{
@@ -67,6 +65,7 @@ Function Process-Handler {
       )
    }
 
+   # Convert Slack message object into JSON
    $body = $payload | ConvertTo-Json -Depth 5
 
    if(${env:FUNCTION_DEBUG} -eq "true") {
@@ -75,6 +74,12 @@ Function Process-Handler {
 
    Write-Host "$(Get-Date) - Sending Webhook payload to Slack ..."
    $ProgressPreference = "SilentlyContinue"
-   Invoke-WebRequest -Uri $(${jsonSecrets}.SLACK_WEBHOOK_URL) -Method POST -ContentType "application/json" -Body $body
+
+   try {
+      Invoke-WebRequest -Uri $(${jsonSecrets}.SLACK_WEBHOOK_URL) -Method POST -ContentType "application/json" -Body $body
+   } catch {
+      throw "$(Get-Date) - Failed to send Slack Message: $($_)"
+   }
+
    Write-Host "$(Get-Date) - Successfully sent Webhook ..."
 }
