@@ -1,0 +1,67 @@
+{
+	"Key": 5636626,
+	"ChainId": 5636613,
+	"CreatedTime": "2021-08-10T18:20:24.042999Z",
+	"UserName": "VSPHERE.LOCAL\\Administrator",
+	"Datacenter": {
+	  "Name": "Primp-Datacenter",
+	  "Datacenter": {
+		"Type": "Datacenter",
+		"Value": "datacenter-3"
+	  }
+	},
+	"ComputeResource": {
+	  "Name": "VEBA-Cluster",
+	  "ComputeResource": {
+		"Type": "ClusterComputeResource",
+		"Value": "domain-c15140"
+	  }
+	},
+	"Host": {
+	  "Name": "192.168.30.100",
+	  "Host": {
+		"Type": "HostSystem",
+		"Value": "host-15147"
+	  }
+	},
+	"Vm": {
+	  "Name": "TestVM-01",
+	  "Vm": {
+		"Type": "VirtualMachine",
+		"Value": "vm-15161"
+	  }
+	},
+	"Ds": {
+	  "Name": "vsanDatastore",
+	  "Datastore": {
+		"Type": "Datastore",
+		"Value": "datastore-15160"
+	  }
+	},
+	"Net": null,
+	"Dvs": null,
+	"FullFormattedMessage": "Virtual machine TestVM-01 was migrated from host 192.168.30.101, vsanDatastore in Primp-Datacenter to 192.168.30.100, vsanDatastore in Primp-Datacenter",
+	"ChangeTag": "",
+	"Template": false,
+	"SourceHost": {
+	  "Name": "192.168.30.101",
+	  "Host": {
+		"Type": "HostSystem",
+		"Value": "host-15150"
+	  }
+	},
+	"SourceDatacenter": {
+	  "Name": "Primp-Datacenter",
+	  "Datacenter": {
+		"Type": "Datacenter",
+		"Value": "datacenter-0"
+	  }
+	},
+	"SourceDatastore": {
+	  "Name": "vsanDatastore",
+	  "Datastore": {
+		"Type": "Datastore",
+		"Value": "datastore-15160"
+	  }
+	}
+  }
