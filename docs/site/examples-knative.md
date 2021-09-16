@@ -77,6 +77,15 @@ examples:
     links:
     - language: powercli
       url: "/tree/master/examples/knative/powercli/kn-pcli-telegram"
+  - title: SMS Notification
+    usecases:
+    - item: integration
+    - item: notification
+    id: kn-ps-twillio-sms-function
+    description: Function to send an SMS message using Twillio triggered by a VM Snapshot.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-twillio-sms"
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 
