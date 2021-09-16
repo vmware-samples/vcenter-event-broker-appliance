@@ -15,11 +15,11 @@ cta:
 
 # VMware Event Broker Appliance
 
-The [VMware Event Broker Appliance](https://flings.vmware.com/vmware-event-broker-appliance#summary){:target="_blank"} Fling enables customers to unlock the hidden potential of events in the SDDC to easily create [event-driven automation](https://octo.vmware.com/vsphere-power-event-driven-automation/){:target="_blank"} and take vCenter Server Events to the next level! Extending vSphere by easily triggering custom or prebuilt actions to deliver powerful integrations within your datacenter across public cloud has never been more easier before. 
+The [VMware Event Broker Appliance](https://flings.vmware.com/vmware-event-broker-appliance#summary) Fling enables customers to unlock the hidden potential of events in their SDDC to easily create [event-driven automation](https://octo.vmware.com/vsphere-power-event-driven-automation/). The VMware Event Broker Appliance includes support for vCenter Server and VMware Horizon events as well as any valid `CloudEvent` through the native webhook event provider. Easily triggering custom or prebuilt actions to deliver powerful integrations within your datacenter across public cloud has never been more easier before. A detailed list of use cases and possibilities with VMware Event Broker Appliance is available [here](https://vmweventbroker.io)
 
 VMware Event Broker Appliance is provided as a virtual appliance that can be deployed to any vSphere-based infrastructure, including an on-premises and/or any public cloud environment running on vSphere such as VMware Cloud on AWS or VMware Cloud on DellEMC.
 
-With this appliance, end-users, partners and independent software vendors only have to write minimal business logic without going through a steep learning curve of understanding vSphere APIs. We believe this solution offers a better user experience in solving existing problems for vSphere operators. More importantly, it will enable new integration use cases and workflows to grow the vSphere ecosystem and community, similar to what AWS has achieved with AWS Lambda.
+With this solution, end-users, partners and independent software vendors only have to write minimal business logic without going through a steep learning curve understanding the vSphere or Horizon APIs. As such, we believe this solution not only offers a better user experience in solving existing problems for VI/Cloud Admins, SRE/Operators, Automation Engineers and 3rd Party Vendors. More importantly, it will enable new integration use cases and workflows to grow the VMware ecosystem and community, similar to what AWS has achieved with AWS Lambda.
 
 ## Use Cases
 

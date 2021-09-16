@@ -21,10 +21,12 @@ The VMware Event Broker Appliance follows a highly modular approach, using Kuber
 - VMware Event Router ([Github](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/vmware-event-router){:target="_blank"})
   - Supported Event Stream Sources:
     - VMware vCenter ([Website](https://www.vmware.com/products/vcenter-server.html){:target="_blank"})
+    - VMware Horizon ([Website](https://www.vmware.com/products/horizon.html){:target="_blank"})
+    - Incoming Webhooks
   - Supported Event Stream Processors:
     - Knative ([Website](https://www.knative.dev/){:target="_blank"})
-    - OpenFaaS ([Website](https://www.openfaas.com/){:target="_blank"})
-    - AWS EventBridge ([Website](https://aws.amazon.com/eventbridge/){:target="_blank"})
+    - OpenFaaS ([Website](https://www.openfaas.com/){:target="_blank"}) (**deprecated** for VEBA appliance)
+    - AWS EventBridge ([Website](https://aws.amazon.com/eventbridge/){:target="_blank"}) (**deprecated** for VEBA appliance)
 - Contour ([Github](https://github.com/projectcontour/contour){:target="_blank"})
 - Kubernetes ([Github](https://github.com/kubernetes/kubernetes){:target="_blank"})
 - Photon OS ([Github](https://github.com/vmware/photon){:target="_blank"})

@@ -27,6 +27,8 @@ Currently, one VMware Event Router is deployed per appliance (1:1 mapping). Only
 
 - [VMware vCenter Server](https://www.vmware.com/products/vcenter-server.html){:target="_blank"}
 - vCenter Simulator [vcsim](https://github.com/vmware/govmomi/tree/master/vcsim){:target="_blank"} (for testing purposes only)
+- [VMware Horizon](https://www.vmware.com/products/horizon.html{:target="_blank"})
+- Incoming Webhooks
 
 ## Supported Event Processors
 
