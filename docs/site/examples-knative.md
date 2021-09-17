@@ -86,6 +86,16 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-twillio-sms"
+  - title: VMware Horizon Notification
+    usecases:
+    - item: integration
+    - item: notification
+    id: kn-ps-horizon-slack-function
+    description: Function to send a Slack notification triggered by a VMware Horizon Event.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-horizon-slack-function"
+
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 
