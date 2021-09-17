@@ -95,7 +95,7 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-horizon-slack-function"
-  - title: VMware Cloud Gateway Notification
+ - title: VMware Cloud Gateway Notification (Slack)
     usecases:
     - item: integration
     - item: notification
@@ -112,6 +112,15 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-webhook-function"
+  - title: VMware Cloud Gateway Notification (Teams)
+    usecases:
+    - item: integration
+    - item: notification
+    id: kn-ps-ngw-teams-function
+    description: Function to send a Microsoft Teams notification triggered by a VMware Cloud Notification Gateway SDDC Event.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-ngw-teams-function"
 
 ---
 
