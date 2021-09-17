@@ -95,7 +95,15 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-horizon-slack-function"
-
+  - title: VMware Cloud Gateway Notification
+    usecases:
+    - item: integration
+    - item: notification
+    id: kn-ps-ngw-slack-function
+    description: Function to send a Slack notification triggered by a VMware Cloud Notification Gateway SDDC Event.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-ngw-slack-function"
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 
