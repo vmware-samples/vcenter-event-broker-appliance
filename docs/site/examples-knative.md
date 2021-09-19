@@ -104,6 +104,15 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-ngw-slack-function"
+  - title: Custom Webhook Function
+    usecases:
+    - item: integration
+    id: kn-ps-webhook-function
+    description: Function to ingest a non-CloudEvent using a custom incoming webhook
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-webhook-function"
+
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 
