@@ -13,6 +13,8 @@ cta:
 
 # Deploy VMware Event Broker Appliance with AWS EventBridge
 
+**<font color="red">This Event Processor has been deprecated in the VMware Event Broker Appliance v0.7 release and will be removed in next release.</font>**
+
 Customers looking to seamlessly extend their vCenter through native AWS components (lambda, cloud watch etc) can get started quickly by deploying VMware Event Broker Appliance with AWS EventBridge as the Event Processor
 
 ## Appliance Deployment Steps

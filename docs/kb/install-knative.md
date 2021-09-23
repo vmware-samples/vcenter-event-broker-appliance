@@ -64,12 +64,30 @@ Deploy the VMware Event Broker Appliance OVA to your vCenter Server using the vS
 
 > **Note:** The minimum vSphere Privileges that is required for proper VEBA UI functionality are: **Register Extension**, **Update Extension** (Installing Plugins) and **Manage Plugins** (Updating Plugins)
 
+#### **Horizon** (**Optional**)
+
+  * Enable Horizon Event Provider - Enable Horizon Event Provider
+  * Horizon Server - IP Address or Hostname of Horizon Server
+  * Horizon Domain Name - Active Directory Domain the username to login to the Horizon Server belongs to (e.g. corp)
+  * Horizon Username - Username to login to Horizon Server (UPN-style not allowed)
+  * Horizon Password - Password to login to Horizon Server
+  * Disable Horizon Server TLS Verification - Disable TLS Verification for Horizon Server (required for self-sign certificate)
+
+> **Note:** The minimum Horizon Role that is required to retrieve events is the `"Collect Operation Logs"` Role (located under Logs)
+
+#### **Webhook** (**Optional**)
+
+ * Enable Webhook Event Provider - Enable Webhook Event Provider
+ * Basic Auth Username (Optional) - Username to login to webhook endpoint
+ * Basic Auth Password (Optional) - Password to login to webhook endpoint
 #### **Event Processor Configuration** (**Required**)
   * Event Processor - Choose Knative
 
 > **Note:** Selecting Knative here will default to using the Embedded Knative deployment within the VMware Event Broker Appliance.  If this is your intent, you **do not have to fill** in any of the settings for the Knative Configuration section below. The Knative Configuration section below is for use with **an External Knative** installation.
 
 #### **Existing Knative Environment Configuration** (**Optional**)
+
+**<font color="red">This configuration option has been deprecated in the VMware Event Broker Appliance v0.7 release in favor of the default embedded Knative installation and thus will be removed in next release.</font>**
 
 If you do want the Embedded Knative deployment in the VMware Event Broker Appliance and you have your own External Knative installation, the following settings are required.
 
@@ -81,8 +99,21 @@ If you do want the Embedded Knative deployment in the VMware Event Broker Applia
 
 > For more information on using the Knative Processor, please take a look at the [VMware Event Router documentation](https://github.com/vmware-samples/vcenter-event-broker-appliance/blob/development/vmware-event-router/README.MD){:target="_blank"}
 
+#### **Custom TLS Certificate Configuration** (Optional)
+
+  * Custom VMware Event Broker Appliance TLS Certificate Private Key (Base64) - Base64 encoded custom TLS certificate (.PEM) for the VMware Event Broker Appliance
+  * Custom VMware Event Broker Appliance TLS Certificate Authority Certificate (Base64) - Base64 encoded custom TLS certificate (.CER) for the VMware Event Broker Appliance
+
+#### **Syslog Server Configuration** (Optional)
+
+  * Hostname or IP Address - Specify the Hostname (FQDN) or IP Address of the Syslog Server
+  * Port - Syslog Server Port
+  * Protocol - Choose the Transport Protocol (TCP, TLS or UDP)
+  * Format - Choose the Syslog Protocol Format (RFC5424 or RFC3164)
+
 #### **zAdvanced** (Optional)
   * Debugging - When enabled, this will output a more verbose log file that can be used to troubleshoot failed deployments
+  * Docker Bridge CIDR Network - Customize Docker Bridge CIDR Network (Default 172.17.0.1/16)
   * POD CIDR Network - Customize POD CIDR Network (Default 10.99.0.0/20). Must not overlap with the appliance IP address
 
 ### Step 3
@@ -90,9 +121,17 @@ If you do want the Embedded Knative deployment in the VMware Event Broker Applia
 Power On the VMware Event Broker Appliance after successful deployment. Depending on your external network connectivity, it can take a few minutes while the system is being setup. You can open the VM Console to view the progress. Once everything is completed, you should see an updated login banner for the various endpoints:
 
 ```
-Appliance Status: https://[hostname]/status
+Appliance Configuration
+
 Install Logs: https://[hostname]/bootstrap
-Appliance Statistics: https://[hostname]/stats
+Resource Utilization: https://[hostname]/top
+Events: https://[hostname]/events
+Webhook: https://[hostname]/webhook
+
+Appliance Provider Stats
+
+vCenter: https://[hostname]/stats/vcenter
+Webhook: https://[hostname]/stats/webhook
 ```
 
 > NOTE: If you enable Debugging, the install logs endpoint will automatically contain the more verbose log entries.
