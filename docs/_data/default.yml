@@ -31,6 +31,9 @@ toc:
       - page: vCenter Events
         id: use-vcenter-events
         url: /kb/vcenter-events
+      - page: Horizon Events
+        id: use-horizon-events
+        url: /kb/horizon-events
       - page: Event Specification
         id: use-eventspec
         url: /kb/eventspec
