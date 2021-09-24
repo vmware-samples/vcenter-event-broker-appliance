@@ -28,15 +28,10 @@ If you're just starting out with containers and source control and are looking f
 
 You must create a [Github](https://github.com/join){:target="_blank"} account. You need to verify your email with Github in order to contribute to the VEBA repository.
 
-For Knative, the following tools are required:
+The following tools are required:
  * [Git](https://git-scm.com/downloads){:target="_blank"}
  * [Docker](https://docs.docker.com/){:target="_blank"}
  * [Knative CLI](https://knative.dev/docs/install/install-kn/){:target="_blank"}
-
-For OpenFaaS, the following tools are required:
- * [Git](https://git-scm.com/downloads){:target="_blank"}
- * [Docker](https://docs.docker.com/){:target="_blank"}
- * [OpenFaaS CLI](https://github.com/openfaas/faas-cli/releases){:target="_blank"}
 
 # Quickstart for Contributing
 
@@ -88,37 +83,60 @@ You can then submit a pull request (PR) to the VEBA maintainers - a step-by-step
 
 # Changing or contributing new functions
 
-The git commands are the same, but in order to change code, you must reference your own Docker image. The example YAML below comes from the OpenFaaS [datastore-usage-email](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/openfaas/powercli/datastore-usage-email){:target="_blank"} sample function. A similar workflow is also followed for Knative functions.
+The git commands are the same, but in order to change code, you must reference your own Docker image. The example YAML below comes from the Knative [kn-pcli-tag]](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative/powercli/kn-pcli-tag){:target="_blank"} sample function.
 
-> Note: The `image:` references the `vmware` docker account. You must change this to your own docker account. As always the `gateway:` must point to your own local VEBA appliance
-
+> Note: The `image:` references the `vmware` harbor registry account. You must change this to your own docker account.
 
 ```yaml
-provider:
-  name: openfaas
-  gateway: https://veba.primp-industries.com
-functions:
-  powershell-datastore-usage:
-    lang: powercli
-    handler: ./handler
-    image: vmware/veba-powercli-datastore-notification:latest
-    environment:
-      write_debug: true
-      read_debug: true
-      function_debug: false
-    secrets:
-      - vc-datastore-config
-    annotations:
-      topic: AlarmStatusChangedEvent
-
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-pcli-tag
+  labels:
+    app: veba-ui
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+spec:
+  template:
+    metadata:
+    spec:
+      containers:
+        - image: projects.registry.vmware.com/veba/kn-pcli-tag:1.1
+          envFrom:
+            - secretRef:
+                name: tag-secret
+          env:
+            - name: FUNCTION_DEBUG
+              value: "false"
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: veba-pcli-tag-trigger
+  labels:
+    app: veba-ui
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: com.vmware.event.router/event
+      subject: DrsVmPoweredOnEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-pcli-tag
 ```
 
-Once you've written or changed function code, you can push it to your local VEBA appliance for testing. 
+Once you've written or changed function code, you can deploy it to your VEBA appliance for testing.
 ```bash
-docker login
-faas-cli build -f stack.yml
-faas-cli push -f stack.yml
-faas-cli deploy -f stack.yml --tls-no-verify
+export TAG=<version>
+docker build -t <docker-username>/kn-pcli-tag:${TAG} .
+docker push <docker-username>/kn-pcli-tag:${TAG}
+kubectl -n vmware-functions apply -f function.yaml
 ```
 If everything works as expected, you can then commit your code and file a pull request for inclusion into the project.
 
