@@ -1,0 +1,38 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-ps-ngw-teams
+  labels:
+    app: veba-ui
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+        - image: projects.registry.vmware.com/veba/kn-ps-ngw-teams:1.0
+          envFrom:
+            - secretRef:
+                name: teams-secret
+          env:
+            - name: FUNCTION_DEBUG
+              value: "false"
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: veba-ps-ngw-teams-trigger
+  labels:
+    app: veba-ui
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: vmware.vmc.SDDC-PROVISION.v0
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-ps-ngw-teams
