@@ -127,7 +127,7 @@ $backgroundServer = Start-ThreadJob {
         }
         catch {
             Write-Error "$(Get-Date) - Listener Processing Error: $($_.Exception.ToString())"
-            exit 1
+            [Environment]::Exit(1)
         }
         finally {
             $listener.Stop()
@@ -140,7 +140,7 @@ $backgroundServer = Start-ThreadJob {
     }
     catch {
         Write-Error "$(Get-Date) - Init Processing Error: $($_.Exception.ToString())"
-        exit 1
+        [Environment]::Exit(1)
     }
 
     $breakSignal = Start-HttpCloudEventListener -Url $url
