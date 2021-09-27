@@ -1,5 +1,5 @@
-# golang:1.16.3-buster linux/amd64
-FROM golang@sha256:3fc96f3fc8a5566a07ac45759bad6381397f2f629bd9260ab0994ef0dc3b68ca AS builder
+# golang:1.17.1-buster linux/amd64
+FROM golang@sha256:2a0bd53951c1b1746c5adab10e1db1495cc6f2da0a3d21818466265e34a78597 AS builder
 ARG VERSION
 ARG COMMIT
 
@@ -19,8 +19,8 @@ COPY internal internal
 # build
 RUN CGO_ENABLED=0 GOOS=linux go build -mod=vendor -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o vmware-event-router cmd/router/main.go
 
-# ubuntu:bionic-20210325 linux/amd64
-FROM ubuntu@sha256:141d4a94a045f5b42bf6a6c74d9d868beab0ab5c5352de132f2a6068e1bd8d16
+# ubuntu:bionic-20210827 linux/amd64
+FROM ubuntu@sha256:b9caadbf898c50ce67da0ab5bafc4680997b010c3e17d2bb73d2ae5fe056e52b
 ARG VERSION
 ARG COMMIT
 LABEL maintainer="mgasch@vmware.com" \
