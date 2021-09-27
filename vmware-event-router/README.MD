@@ -3,14 +3,15 @@
 The VMware Event Router is used to connect to various VMware event `providers`
 (i.e. "sources") and forward these events to different event `processors` (i.e.
 "sinks"). This project is currently used by the [_VMware Event Broker
-Appliance_](https://www.vmweventbroker.io/) as the core logic to forward vCenter
-events to configurable event `processors` (see below).
+Appliance_](https://www.vmweventbroker.io/) as the core logic to forward
+[CloudEvents](https://cloudevents.io/), e.g. from vSphere, to configurable event
+`processors` (see below).
 
 **Supported Event `Providers`:**
 
 - [VMware vCenter Server](https://www.vmware.com/products/vcenter-server.html)
 - [VMware Horizon](https://www.vmware.com/products/horizon.html)
-- Webhook
+- Generic [CloudEvents](https://cloudevents.io/) Webhook
 - vCenter Simulator [vcsim](https://github.com/vmware/govmomi/tree/master/vcsim)
   (deprecated, see note [below](#provider-type-vcsim))
 
@@ -227,9 +228,10 @@ Horizon REST API and the respective type values and examples for these fields.
 
 #### Provider Type `webhook`
 
-The `webhook` event provider listens for incoming CloudEvents (binary or
-structured mode) on a configurable HTTP server in the VMware Event Router. The
-HTTP method used to send the CloudEvent must be `POST`.
+The `webhook` event provider listens for incoming
+[CloudEvents](https://cloudevents.io/) (binary or structured mode) on a
+configurable HTTP server in the VMware Event Router. The HTTP method used to
+send the CloudEvent must be `POST`.
 
 The following table lists allowed and required fields for setting up a webhook
 server.
