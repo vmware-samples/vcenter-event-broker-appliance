@@ -12,7 +12,7 @@ on:
       - 'vmware-event-router/**'
 
 env:
-  KIND_VERSION: v0.11.1 
+  KIND_VERSION: v0.11.1
   NAMESPACE: vmware
   KO_DOCKER_REPO: kind.local
 
@@ -23,10 +23,10 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - name: Set up Go 1.16.x
+      - name: Set up Go 1.17.x
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16
+          go-version: 1.17
 
       - name: Setup ko
         uses: imjasonh/setup-ko@v0.4 # will install latest ko version
@@ -130,10 +130,10 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - name: Set up Go 1.16.x
+      - name: Set up Go 1.17.x
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16
+          go-version: 1.17
 
       - name: Setup ko
         uses: imjasonh/setup-ko@v0.4 # will install latest ko version
