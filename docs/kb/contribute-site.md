@@ -56,52 +56,45 @@ permalink: /resources         # this is the short link for the page, if empty th
   - **page** - use this for the pages that needs to go on the base site
   - **resources** - specifically designed for the resources page
 
+## Run the website locally
+To validate changes to any file/folder to the website, please verify them locally before you push to the repo.
 
-## Build and Run the website locally
-To ensure the changes to any file or folder that power the website is valid, please setup this step below that allows you to build the website, verify changes locally before you push to the repo.
+### Pre-Reqs
+* Install [Docker Client for your operating system](https://docs.docker.com/get-docker/)
 
-### Dependencies for MacOS
+### Build and View Documentation
 
-Install the following for an easy to use dev environment:
+Step 1 - Change into the `docs` directory
 
-```bash
-brew install rbenv
-rbenv install 2.6.3
-gem install bundler
-```
-
-### Dependencies for Linux
-If you are running a build on Ubuntu you will need the following packages:
-* ruby
-* ruby-dev
-* ruby-bundler
-* build-essential
-* zlib1g-dev
-* nginx (or apache2)
-
-### Dependencies for Windows
-If you are on Windows, all hope is not lost. Follow the steps here to install the dependencies - [here](https://jekyllrb.com/docs/installation/windows/)
-
-### Local Development
-* Install Jekyll and plug-ins in one fell swoop. `gem install github-pages`
-This mirrors the plug-ins used by GitHub Pages on your local machine including Jekyll, Sass, etc.
-* Clone down your own fork, or clone the main repo and add your own remote.
+Step 2 - Run the following command to start the [Jekyll Docker container image](https://github.com/envygeeks/jekyll-docker/) and begin serving the documentation:
 
 ```bash
-git clone git@github.com:vmware-samples/vcenter-event-broker-appliance.git
-cd vcenter-event-broker-appliance/docs
-bundle install
+docker run --rm \
+  --volume="$PWD:/srv/jekyll" \
+  --publish 4000:4000 \
+  jekyll/jekyll \
+  jekyll serve
 ```
 
-* Serve the site and watch for markup/sass changes `jekyll serve --livereload --incremental`. You may need to run `bundle exec jekyll serve --livereload --incremental`.
-* View your website at http://127.0.0.1:4000/
-* Commit any changes and push everything to your fork.
-* Once you're ready, submit a PR of your changes. 
+Step 3 - Once the server is ready, you can open a browser to `http://localhost:4000` to review the documentation locally. If you need to change the default port (`4000`), modify the `--publish` arguments from step 2.
 
-## Troubleshooting
-* If you don't see your updates reflected on the website when running locally, try the following steps
+```bash
+<snip>
 
-```zsh
-    bundle exec jekyll clean
-    bundle exec jekyll serve --incremental --livereload
+Configuration file: /srv/jekyll/_config.yml
+   GitHub Metadata: No GitHub API authentication could be found. Some fields may be missing or have incorrect data.
+fatal: not a git repository (or any parent up to mount point /srv)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+            Source: /srv/jekyll
+       Destination: /srv/jekyll/_site
+ Incremental build: disabled. Enable with --incremental
+      Generating...
+YAML Exception reading /srv/jekyll/site/examples-knative.md: (<unknown>): did not find expected key while parsing a block mapping at line 2 column 1
+       Jekyll Feed: Generating feed for posts
+                    done in 7.926 seconds.
+ Auto-regeneration: enabled for '/srv/jekyll'
+    Server address: http://0.0.0.0:4000
+  Server running... press ctrl-c to stop.
 ```
+
+**Note:** To stop serving the documentation using the Jekyll container, press Ctrl+C
