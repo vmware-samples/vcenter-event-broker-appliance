@@ -119,10 +119,10 @@ $backgroundServer = Start-ThreadJob {
                             Write-Error "$(Get-Date) - Handler Processing Error: $($_.Exception.ToString())"
                             # TODO: Consider returning more specific HTTP status based on the Process-Handler error.
                             # The handler interface could be extended to provide expectations fot the event and to return HTTP 4xx.
-
                             $context.Response.StatusCode = [int]([System.Net.HttpStatusCode]::InternalServerError)
                         }
-                    } else {
+                    }
+                    else {
                         $context.Response.StatusCode = [int]([System.Net.HttpStatusCode]::BadRequest)
                     }
 
@@ -141,7 +141,7 @@ $backgroundServer = Start-ThreadJob {
         }
         catch {
             Write-Error "$(Get-Date) - Listener Processing Error: $($_.Exception.ToString())"
-           $ServerSharedState.ExitCode = 1
+            $ServerSharedState.ExitCode = 1
         }
         finally {
             $listener.Stop()
@@ -159,8 +159,8 @@ $backgroundServer = Start-ThreadJob {
         return
     }
 
+    Write-Host "$(Get-Date) - Starting HTTP CloudEvent listener"
     $breakSignal = Start-HttpCloudEventListener -Url $url -ServerSharedState $serverSharedState
-    Write-Host "$(Get-Date) - Listener Opened"
     if ($breakSignal) {
         Write-Host "$(Get-Date) - PowerShell HTTP server stop requested"
         break;
