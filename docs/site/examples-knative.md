@@ -3,7 +3,7 @@ layout: function
 id: functions
 type: knative
 title: Prebuilt Functions
-description: Community-sourced and validated prebuilt functions for OpenFaaS with VEBA.
+description: Community-sourced and validated prebuilt functions for Knative with VEBA.
 permalink: /examples-knative
 images:
   powercli: /assets/img/languages/powercli.png
@@ -95,7 +95,7 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-horizon-slack-function"
- - title: VMware Cloud Gateway Notification (Slack)
+  - title: VMware Cloud Gateway Notification (Slack)
     usecases:
     - item: integration
     - item: notification
@@ -121,7 +121,15 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-ngw-teams-function"
-
+  - title: Schedule VM Snapshot Retention Management
+    usecases:
+    - item: automation
+    - item: remediation
+    id: kn-pcli-snapshot-cron-function
+    description: Function to manage VM snapshots on a scheduled job (cron)
+    links:
+    - language: powercli
+      url: "/tree/master/examples/knative/powercli/kn-pcli-snapshot-cron"
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 
