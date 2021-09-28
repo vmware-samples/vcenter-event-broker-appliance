@@ -6,6 +6,20 @@ permalink: /evolution
 limit: 3
 entry:
 
+- title: VEBA [v0.7.0](https://williamlam.com/2021/10/whats-new-in-vmware-event-broker-appliance-veba-v0-7.html)
+  type: feature
+  date: Oct 2021
+  id: vzeroseven
+  detail:
+    subtitle: Features
+    text:
+    - New VMware Horizon Event Provider
+    - New Generic Webhook Event Provider
+    - Embedded cAdvisor for Monitoring
+    - Support for External Syslog
+    - Lots of new Knative PowerShell & PowerCLI Function Examples
+    - Deprecation of OpenFaaS & EventBridge Event Processors
+
 - title: Listed in IT Magazine
   type: milestone
   date: Jul 2021
@@ -14,11 +28,11 @@ entry:
 
 - title: VEBA [v0.6.1](https://williamlam.com/2021/06/vmware-event-broker-appliance-veba-v0-6-1.html)
   type: feature
-  date: Jun 2020
+  date: Jun 2021
   id: vzerosixone
-  detail: 
+  detail:
     subtitle: Features
-    text: 
+    text:
     - Knative PowerShell / PowerCLI Base Container Image Templates
     - New Knative PowerCLI, Python and Go Function Examples
     - Custom TLS Certificate support
@@ -30,9 +44,9 @@ entry:
   type: feature
   date: Apr 2021
   id: vzerosix
-  detail: 
+  detail:
     subtitle: Features
-    text: 
+    text:
     - Embedded Knative (new default Event Processor)​
     - vSphere UI integration (H5 Client Plugin)​
     - 1st class PowerShell Support in Knative​
@@ -48,9 +62,9 @@ entry:
   type: feature
   date: Dec 2020
   id: vzerofive
-  detail: 
+  detail:
     subtitle: Features
-    text: 
+    text:
     - Helm chart for simplified deployment experience
     - Introduced support for external Knative environment​ as the Event Processor
     - Implement at-least-once delivery semantics and improve resiliency across all processors
@@ -68,7 +82,7 @@ entry:
   id: vzerofour
   detail:
     subtitle: Features
-    text: 
+    text:
     - Introduced [Otto](https://www.virtuallyghetto.com/2020/05/new-veba-release-new-website-and-new-mascot.html)
     - Launched [vmweventbroker.io](https://vmweventbroker.io)
     - Easier deployment of router in a Kubernetes environment (non-appliance mode) → towards core vSphere integration (e.g. WCP)
@@ -78,9 +92,9 @@ entry:
   type: feature
   date: Mar 2020
   id: vzerothree
-  detail: 
+  detail:
     subtitle: Features
-    text: 
+    text:
     - Introduced VMware Event Router
     - Added support for AWS EventBridge as an Event Processor
     - Conformance with CloudEvents
@@ -92,9 +106,9 @@ entry:
   type: feature
   date: Jan 2020
   id: vzerotwo
-  detail: 
+  detail:
     subtitle: Features
-    text: 
+    text:
     - Added more enterprise details, e.g. proxy support, offline deployments
     - Documentation improvements and more samples from the community
 
@@ -103,9 +117,9 @@ entry:
   date: Nov 2019
   id: vzeroone
   description: VEBA Fling v0.1.0 released live at VMworld Europe - 'Do it, do it, do it\' chants when @embano1 and @lamw ask if they should release the vCenter Event Broker Appliance fling (powered by @openfaas) live during their [session!](https://twitter.com/bbrundert/status/1192366254570508288)
-  detail: 
+  detail:
     subtitle: Features
-    text: 
+    text:
     - Introduced VEBA v0.1.0 with OpenFaaS as the default Event Processor​ and vCenter as the Event Provider
 
 - title: Idea
