@@ -8,11 +8,11 @@
 
 Pre-built base PowerShell Image:
 
-* projects.registry.vmware.com/veba/ce-ps-base:1.3
+* projects.registry.vmware.com/veba/ce-ps-base:1.4
 
 Pre-built base PowerCLI Image:
 
-* projects.registry.vmware.com/veba/ce-pcli-base:1.3
+* projects.registry.vmware.com/veba/ce-pcli-base:1.4
 # Build
 
 Build Base PowerShell Image

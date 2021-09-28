@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: projects.registry.vmware.com/veba/kn-pcli-tag:1.3
+        - image: projects.registry.vmware.com/veba/kn-pcli-tag:1.4
           envFrom:
             - secretRef:
                 name: tag-secret
