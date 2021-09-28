@@ -1,4 +1,4 @@
-FROM projects.registry.vmware.com/veba/ce-ps-base:1.3
+FROM projects.registry.vmware.com/veba/ce-ps-base:1.4
 
 ARG MAILKIT_VERSION="3.1.0"
 
