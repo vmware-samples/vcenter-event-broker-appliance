@@ -7,15 +7,25 @@ else {
     $localUrl = "http://localhost:8080/"
 }
 
+if (${env:UNIT_TEST_SERVER}) {
+    $url = ${env:UNIT_TEST_SERVER}
+    $localUrl = ${env:UNIT_TEST_SERVER}
+}
+
 $serverStopMessage = 'break-signal-e2db683c-b8ff-4c4f-8158-c44f734e2bf1'
 
 . ./handler.ps1
 
+$serverSharedState = [hashtable]::Synchronized(@{})
+$serverSharedState.ExitCode = 0
+$serverSharedState.ListenerOpened = $false
+
 $backgroundServer = Start-ThreadJob {
-    param($url, $serverStopMessage)
+    param($url, $serverStopMessage, $serverSharedState)
 
     Import-Module 'Microsoft.PowerShell.Utility'
     Import-Module CloudEvents.Sdk
+
 
     . ./handler.ps1
 
@@ -43,7 +53,10 @@ $backgroundServer = Start-ThreadJob {
                 ValueFromPipelineByPropertyName = $false)]
             [ValidateNotNull()]
             [string]
-            $Url
+            $Url,
+
+            [Parameter()]
+            $ServerSharedState
         )
 
         $listener = New-Object -Type 'System.Net.HttpListener'
@@ -54,6 +67,7 @@ $backgroundServer = Start-ThreadJob {
 
         try {
             $listener.Start()
+            $serverSharedState.ListenerOpened = $true
 
             while ($true) {
                 $context = $listener.GetContext()
@@ -127,10 +141,11 @@ $backgroundServer = Start-ThreadJob {
         }
         catch {
             Write-Error "$(Get-Date) - Listener Processing Error: $($_.Exception.ToString())"
-            [Environment]::Exit(1)
+           $ServerSharedState.ExitCode = 1
         }
         finally {
             $listener.Stop()
+            $ServerSharedState.ListenerOpened = $false
         }
     }
 
@@ -140,24 +155,28 @@ $backgroundServer = Start-ThreadJob {
     }
     catch {
         Write-Error "$(Get-Date) - Init Processing Error: $($_.Exception.ToString())"
-        [Environment]::Exit(1)
+        $serverSharedState.ExitCode = 1
+        return
     }
 
-    $breakSignal = Start-HttpCloudEventListener -Url $url
+    $breakSignal = Start-HttpCloudEventListener -Url $url -ServerSharedState $serverSharedState
+    Write-Host "$(Get-Date) - Listener Opened"
     if ($breakSignal) {
         Write-Host "$(Get-Date) - PowerShell HTTP server stop requested"
         break;
     }
 
-} -ArgumentList $url, $serverStopMessage
+} -ArgumentList $url, $serverStopMessage, $serverSharedState
 
 $killEvent = new-object 'System.Threading.AutoResetEvent' -ArgumentList $false
 
 Start-ThreadJob {
-    param($killEvent, $url, $serverStopMessage)
+    param($killEvent, $url, $serverStopMessage, $serverSharedState)
     $killEvent.WaitOne()
-    Invoke-WebRequest -Uri $url -Body $serverStopMessage
-} -ArgumentList $killEvent, $localUrl, $serverStopMessage
+    if ($serverSharedState.ListenerOpened) {
+        Invoke-WebRequest -Uri $url -Body $serverStopMessage
+    }
+} -ArgumentList $killEvent, $localUrl, $serverStopMessage, $serverSharedState | Out-Null
 
 try {
     Write-Host "$(Get-Date) - PowerShell HTTP server start listening on '$url'"
@@ -171,7 +190,8 @@ try {
 }
 finally {
     Write-Host "$(Get-Date) - PowerShell HTTP Server stop requested. Waiting for server to stop"
-    $killEvent.Set()
+    $killEvent.Set() | Out-Null
     Get-Job | Wait-Job | Receive-Job
     Write-Host "$(Get-Date) - PowerShell HTTP server is stopped"
+    [Environment]::Exit($serverSharedState.ExitCode)
 }
