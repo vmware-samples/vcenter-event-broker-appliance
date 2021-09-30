@@ -1,0 +1,37 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-pcli-snapshot-cron
+  labels:
+    app: veba-ui
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+        - image: projects.registry.vmware.com/veba/kn-pcli-snapshot-cron:1.0
+          envFrom:
+            - secretRef:
+                name: snapshot-secret
+          env:
+            - name: FUNCTION_DEBUG
+              value: "true"
+---
+apiVersion: sources.knative.dev/v1beta2
+kind: PingSource
+metadata:
+  name: snapshot-mgmt-ping-source
+spec:
+  # cron job format
+  schedule: "0 0 * * *"
+  contentType: "application/json"
+  # snapshot management configuration
+  data: '{"dryRun": true,"retentionConfig": {"sizeGB": "", "days": "5"}, "virtualMachines": ["VM-1", "VM-2"]}'
+  sink:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: kn-pcli-snapshot-cron

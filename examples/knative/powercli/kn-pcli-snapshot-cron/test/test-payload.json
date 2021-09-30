@@ -1,0 +1,11 @@
+{
+	"dryRun": true,
+	"retentionConfig": {
+		"sizeGB": "",
+		"days": "5"
+	},
+	"virtualMachines": [
+		"VM-1",
+		"VM-2"
+	]
+}
