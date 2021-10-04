@@ -130,6 +130,14 @@ examples:
     links:
     - language: powercli
       url: "/tree/master/examples/knative/powercli/kn-pcli-snapshot-cron"
+  - title: Alert on vSphere Inventory Resource Deletion
+    usecases:
+    - item: notification
+    id: kn-ps-vsphere-inv-slack-function
+    description: Function to send Slack notification when a specific vSphere inventory resource has been deleted
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-vsphere-inv-slack"
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 

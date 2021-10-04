@@ -1,0 +1,54 @@
+{
+	"Key": 8480217,
+	"ChainId": 8480217,
+	"CreatedTime": "2021-10-01T17:25:33.63Z",
+	"UserName": "VSPHERE.LOCAL\\Administrator",
+	"Datacenter": {
+	  "Name": "Primp-Datacenter",
+	  "Datacenter": {
+		"Type": "Datacenter",
+		"Value": "datacenter-3"
+	  }
+	},
+	"ComputeResource": null,
+	"Host": null,
+	"Vm": null,
+	"Ds": null,
+	"Net": null,
+	"Dvs": null,
+	"FullFormattedMessage": "Task: Unregister and Delete",
+	"ChangeTag": "",
+	"Info": {
+	  "Key": "task-454510",
+	  "Task": {
+		"Type": "Task",
+		"Value": "task-454510"
+	  },
+	  "Description": null,
+	  "Name": "UnregisterAndDestroy_Task",
+	  "DescriptionId": "Folder.unregisterAndDestroy",
+	  "Entity": {
+		"Type": "Folder",
+		"Value": "group-v19022"
+	  },
+	  "EntityName": "Important-VM-Folder",
+	  "Locked": null,
+	  "State": "queued",
+	  "Cancelled": false,
+	  "Cancelable": true,
+	  "Error": null,
+	  "Result": null,
+	  "Progress": 0,
+	  "Reason": {
+		"UserName": "VSPHERE.LOCAL\\Administrator"
+	  },
+	  "QueueTime": "2021-10-01T17:25:33.630301Z",
+	  "StartTime": null,
+	  "CompleteTime": null,
+	  "EventChainId": 0,
+	  "ChangeTag": "",
+	  "ParentTaskKey": "",
+	  "RootTaskKey": "",
+	  "ActivationId": ""
+	}
+  }

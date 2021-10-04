@@ -1,0 +1,39 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-ps-vsphere-inv-slack
+  labels:
+    app: veba-ui
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+        - image: projects.registry.vmware.com/veba/kn-ps-vsphere-inv-slack:1.0
+          envFrom:
+            - secretRef:
+                name: slack-secret
+          env:
+            - name: FUNCTION_DEBUG
+              value: "false"
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: veba-kn-ps-vsphere-inv-slack-trigger
+  labels:
+    app: veba-ui
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: com.vmware.event.router/event
+      subject: TaskEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-ps-vsphere-inv-slack
