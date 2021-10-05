@@ -1,0 +1,60 @@
+{
+    "Key": 8480315,
+    "ChainId": 8480315,
+    "CreatedTime": "2021-10-01T17:27:18.777Z",
+    "UserName": "VSPHERE.LOCAL\\Administrator",
+    "Datacenter": {
+      "Name": "Primp-Datacenter",
+      "Datacenter": {
+        "Type": "Datacenter",
+        "Value": "datacenter-3"
+      }
+    },
+    "ComputeResource": {
+      "Name": "Supermicro-Cluster",
+      "ComputeResource": {
+        "Type": "ClusterComputeResource",
+        "Value": "domain-c8"
+      }
+    },
+    "Host": null,
+    "Vm": null,
+    "Ds": null,
+    "Net": null,
+    "Dvs": null,
+    "FullFormattedMessage": "Task: Delete resource pool",
+    "ChangeTag": "",
+    "Info": {
+      "Key": "task-454511",
+      "Task": {
+        "Type": "Task",
+        "Value": "task-454511"
+      },
+      "Description": null,
+      "Name": "Destroy_Task",
+      "DescriptionId": "ResourcePool.destroy",
+      "Entity": {
+        "Type": "ResourcePool",
+        "Value": "resgroup-19021"
+      },
+      "EntityName": "Important-ResourcePool",
+      "Locked": null,
+      "State": "queued",
+      "Cancelled": false,
+      "Cancelable": true,
+      "Error": null,
+      "Result": null,
+      "Progress": 0,
+      "Reason": {
+        "UserName": "VSPHERE.LOCAL\\Administrator"
+      },
+      "QueueTime": "2021-10-01T17:27:18.77766Z",
+      "StartTime": null,
+      "CompleteTime": null,
+      "EventChainId": 0,
+      "ChangeTag": "",
+      "ParentTaskKey": "",
+      "RootTaskKey": "",
+      "ActivationId": ""
+    }
+  }

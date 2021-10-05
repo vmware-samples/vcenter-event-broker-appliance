@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: projects.registry.vmware.com/veba/kn-ps-email:1.4
+        - image: us.gcr.io/daisy-284300/veba/kn-ps-email:1.4
           envFrom:
             - secretRef:
                 name: email-secret

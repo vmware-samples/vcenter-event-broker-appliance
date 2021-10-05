@@ -1,4 +1,4 @@
-FROM projects.registry.vmware.com/veba/ce-pcli-base:1.4
+FROM us.gcr.io/daisy-284300/veba/ce-pcli-base:1.4
 
 COPY handler.ps1 handler.ps1
 

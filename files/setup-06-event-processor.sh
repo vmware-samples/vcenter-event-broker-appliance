@@ -21,7 +21,7 @@ do
   if [ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]; then
     echo -e "\e[92mSetting up Knative Processor ..." > /dev/console
 
-    echo "Processor: Knative" >> /etc/veba-release
+    grep -q "Processor:" /etc/veba-release || echo "Processor: Knative" >> /etc/veba-release
   elif [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
     echo -e "\e[92mSetting up AWS Event Bridge Processor ..." > /dev/console
 

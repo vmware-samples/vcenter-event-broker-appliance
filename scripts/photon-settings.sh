@@ -118,4 +118,7 @@ cat > /etc/logrotate.d/contrackd << EOF
 }
 EOF
 
+#TODO - Temp fix until this is resolved in Photon OS 4.x
+sed -i '1,238d' /etc/conntrackd/conntrackd.conf
+
 echo '> Done'
