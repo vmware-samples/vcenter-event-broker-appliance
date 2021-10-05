@@ -1,4 +1,204 @@
 
+<a name="v0.7.0"></a>
+## [Release v0.7.0](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.6.1...v0.7.0)
+
+> Release Date: 2021-10-05
+
+### 🐞 Fix
+
+- [363bfa9]	Update conntrackd config to run properly in Photon OS 4.0 (#640) 
+- [ebcf411]	Update veba-dcui to handle pre-release versioning scheme (#634) 
+- [813f698]	Prevent duplicate Processor entries in /etc/veba-release (#633) 
+- [7fd4b69]	Formatting in server.ps1 (#623) 
+- [b918211]	Fix settings process exit code in server.ps1 (#578) 
+- [fa5a4d2]	Update Fluent Bit configuration to fix mem buf overlimit (#604) 
+- [4ad0d30]	Fix stopping behaviour in functions templates (#573) 
+- [038421c]	Prevent $ char from being eval in escaped variables (#591) 
+- [f9c27fd]	Set global retry policy on broker (#580) 
+- [b3da8d3]	Correct execption message for TAG_SECRET not being defined (#570) 
+- [dd2f4ab]	Update Fluentbit config using YTT overlay (#572) 
+- [b517128]	Fix advanced docs cert section (#567) 
+- [3d12b55]	Apply server.ps1 fixes to all PS/CLI container images (#549) 
+- [01124dc]	Add Horizon Ingress (#563) 
+- [eaa135c]	Update TERM env variable to properly output PS hashtable in logs (#553) 
+- [7c01575]	Return HTTP Bad Request on invalid CloudEvent
+- [f8d8491]	Use ConvertTo-Json to output CloudEvent Data in kn-ps-echo function (#544) 
+- [70f8e0b]	Prevent unexpected CLI argument quoting when using set -x (#538) 
+- [9d2ad87]	Disable cloud-init to preserve FQDN hostname upon reboot (#532) 
+- [d9e1001]	Update /etc/issue login banner (#528) 
+- [ba2a842]	Fix Docker credentials in action (#521) 
+- [6363acc]	Update Antrea to v1.2.0 to resolve deprecated k8s API resources (#502) 
+- [a5b8b76]	Improve variable escapes using jq instead of python snippets (#498) 
+- [8fa7085]	Replace is not with != as syntax is no longer valid for python 3.8+ (#497) 
+- [8603b55]	Updated files with missing characters + updated handler.ps1 (#480) 
+- [d42dd07]	Adjusted typos in tag_secret.json (#478) 
+- [3b859f4]	Increased disk space for the two vmdks from 12GB to 25GB each (#476) 
+- [c8678cb]	Adjusted the kubectl wait timeout values to address issue 468 (#468) 
+
+### 💫 Feature
+
+- [3582ac3]	Add example to monitor vSphere Inventory Resource deletion
+- [a8dafea]	Add Scheduled VM Snapshot Retention using PingSource Function Example (#627) 
+- [412d93f]	Update PS/PCLI images w/latest CE SDK/PowerCLI versions (#595) 
+- [519f2ff]	Adds full message to the kn-ps-slack payload, enabling function to be used for any event
+- [4b1828f]	Add VMware Cloud Notification Gateway example using Microsoft Teams (#590) 
+- [643826b]	Add webhook function to ingress custom events (#473) 
+- [b335164]	Add VMware Cloud Notification Gateway example using Slack (#589) 
+- [e3e8e7b]	Add VMware Horizon Slack example function (#588) 
+- [86a059f]	Add notification example using Telegram (#583) 
+- [da4938d]	Update kn-ps-slack with try/catch (#598) 
+- [81e945a]	Update PS/PCLI images with latest server.ps1 fixes (#594) 
+- [29c6812]	Update OVF labels with deprecated event processors (#500) 
+- [76838de]	Add Horizon event provider (#510) 
+- [1589e6d]	Adding Evolution of VEBA to the vmweventbroker.io/evolution
+- [2cd6056]	Integrate Horizon Event Provider into VEBA (#526) 
+- [2a6eaa0]	Enhanced VEBA DCUI to display endpoints from /etc/veba-endpoints (#490) 
+- [0180234]	Improve OVF debuggability (#537) 
+- [669a3ca]	Integrate Webhook Event Provider into VEBA (#496) 
+- [db815f2]	Update setup scripts to support multi-event providers (#516) 
+- [11cc593]	Replace grub splash screen with VEBA logo (#522) 
+- [b792c5f]	Templatize YAML downloads using YTT (#505) 
+- [70a6b0b]	Upgrade to Photon OS 4.0 GA (#493) 
+- [84efdf2]	Add YAML templating using Carvel YTT (#487) 
+- [2bed016]	Add scaling and concurrency settings to VEBA UI (#448) 
+- [2105c5c]	Add webhook provider (#462) 
+- [9c5e0bc]	Add example function triggered based on vSphere Alarm (#469) 
+- [f32cbca]	add resource usage and performance monitoring feature (#450) 
+- [95d1ad5]	add log forwarding feature (#451) 
+- [05caac1]	Add vsphereapiversion to CE context (#439) 
+
+### 📃 Documentation
+
+- [4c348f9]	Simplify docs testing/contribution using Jekyll Docker image (#618) 
+- [3cea87a]	Updated VEBA timeline with v0.7 release (#620) 
+- [da9611d]	Update event router web docs (#491) 
+- [1bcb8a5]	Updated Troubleshooting Function Guide w/Knative (#610) 
+- [c65d826]	Updated Getting Started Guide w/Knative (#611) 
+- [fa93f70]	Updated VEBA Appliance deployment guides (#536) 
+- [47eefc0]	Updated description for VEBA (#596) 
+- [cb92f02]	Update Github Photon OS badge to 4.0
+- [85b9c52]	highlighted new providers, updated featured functions (#561) 
+- [9da6490]	add deployment methods section to welcome page (#517) 
+- [def4cbe]	Update Architecture for v0.7 release (#535) 
+- [db2868a]	Update kn-pcli-tag README with instructions to change vm.name property before running a test, rename vm.name property to 'REPLACE-ME'
+- [b990435]	Add replace TLS cert instructions
+- [15efd97]	Fix YAML annotation for scale to 1 (#474) 
+- [d0fd42d]	Update PS/PCLI Images to latest v1.1 (#452) 
+
+### 🧹 Chore
+
+- [9ec9021]	Migrate kn examples to us.gcr.io (#644) 
+- [5178c85]	Add missing Helm v0.6.6-pre-release (#629) 
+- [dded4bf]	Add unit tests for server.ps1
+- [aa9b535]	Bump Event Router build versions (#616) 
+- [07f0930]	Update Helm chart for Horizon
+- [482466c]	Update deployment manifests
+- [b09e763]	Update Docker related actions (#518) 
+- [bd89626]	Update workflows to Go v1.16 (#514) 
+- [4aa89f3]	Update golangci-lint config (#511) 
+- [69af9e4]	Update Helm chart workflow (#464)  (#466)  (#467) 
+- [9c1de78]	Include commit details in BREAKING section (#445) 
+
+### ⚠️ BREAKING
+
+Add vsphereapiversion to CE context [05caac1]:
+This change sets the `timestamp` in the CloudEvent to the
+`CreatedTime` as set by vCenter in a vSphere event instead of
+`time.Now()`.
+
+### 📖 Commits
+
+- [c74a5e5]	Bump version to v0.7.0 for release
+- [9ec9021]	chore: Migrate kn examples to us.gcr.io (#644)
+- [3582ac3]	feat: Add example to monitor vSphere Inventory Resource deletion
+- [363bfa9]	fix: Update conntrackd config to run properly in Photon OS 4.0 (#640)
+- [ebcf411]	fix: Update veba-dcui to handle pre-release versioning scheme (#634)
+- [813f698]	fix: Prevent duplicate Processor entries in /etc/veba-release (#633)
+- [c9890cf]	Bump version to release-0.7.0
+- [a8dafea]	feat: Add Scheduled VM Snapshot Retention using PingSource Function Example (#627)
+- [5178c85]	chore: Add missing Helm v0.6.6-pre-release (#629)
+- [412d93f]	feat: Update PS/PCLI images w/latest CE SDK/PowerCLI versions (#595)
+- [519f2ff]	feat: Adds full message to the kn-ps-slack payload, enabling function to be used for any event
+- [4c348f9]	docs: Simplify docs testing/contribution using Jekyll Docker image (#618)
+- [7fd4b69]	fix: Formatting in server.ps1 (#623)
+- [3cea87a]	docs: Updated VEBA timeline with v0.7 release (#620)
+- [dded4bf]	chore: Add unit tests for server.ps1
+- [aa9b535]	chore: Bump Event Router build versions (#616)
+- [da9611d]	docs: Update event router web docs (#491)
+- [b918211]	fix: Fix settings process exit code in server.ps1 (#578)
+- [1bcb8a5]	docs: Updated Troubleshooting Function Guide w/Knative (#610)
+- [c65d826]	docs: Updated Getting Started Guide w/Knative (#611)
+- [4b1828f]	feat: Add VMware Cloud Notification Gateway example using Microsoft Teams (#590)
+- [643826b]	feat: Add webhook function to ingress custom events (#473)
+- [fa93f70]	docs: Updated VEBA Appliance deployment guides (#536)
+- [b335164]	feat: Add VMware Cloud Notification Gateway example using Slack (#589)
+- [fa5a4d2]	fix: Update Fluent Bit configuration to fix mem buf overlimit (#604)
+- [47eefc0]	docs: Updated description for VEBA (#596)
+- [e3e8e7b]	feat: Add VMware Horizon Slack example function (#588)
+- [be093dd]	Add PowerShell SMS example using Twillo (#582)
+- [86a059f]	feat: Add notification example using Telegram (#583)
+- [da4938d]	feat: Update kn-ps-slack with try/catch (#598)
+- [81e945a]	feat: Update PS/PCLI images with latest server.ps1 fixes (#594)
+- [4ad0d30]	fix: Fix stopping behaviour in functions templates (#573)
+- [038421c]	fix: Prevent $ char from being eval in escaped variables (#591)
+- [cb92f02]	docs: Update Github Photon OS badge to 4.0
+- [85b9c52]	docs: highlighted new providers, updated featured functions (#561)
+- [f9c27fd]	fix: Set global retry policy on broker (#580)
+- [9da6490]	docs: add deployment methods section to welcome page (#517)
+- [b3da8d3]	fix: Correct execption message for TAG_SECRET not being defined (#570)
+- [dd2f4ab]	fix: Update Fluentbit config using YTT overlay (#572)
+- [29c6812]	feat: Update OVF labels with deprecated event processors (#500)
+- [b517128]	fix: Fix advanced docs cert section (#567)
+- [3d12b55]	fix: Apply server.ps1 fixes to all PS/CLI container images (#549)
+- [def4cbe]	docs: Update Architecture for v0.7 release (#535)
+- [01124dc]	fix: Add Horizon Ingress (#563)
+- [07f0930]	chore: Update Helm chart for Horizon
+- [482466c]	chore: Update deployment manifests
+- [76838de]	feat: Add Horizon event provider (#510)
+- [db2868a]	docs: Update kn-pcli-tag README with instructions to change vm.name property before running a test, rename vm.name property to 'REPLACE-ME'
+- [eaa135c]	fix: Update TERM env variable to properly output PS hashtable in logs (#553)
+- [1589e6d]	feat: Adding Evolution of VEBA to the vmweventbroker.io/evolution
+- [7c01575]	fix: Return HTTP Bad Request on invalid CloudEvent
+- [2cd6056]	feat: Integrate Horizon Event Provider into VEBA (#526)
+- [2a6eaa0]	feat: Enhanced VEBA DCUI to display endpoints from /etc/veba-endpoints (#490)
+- [f8d8491]	fix: Use ConvertTo-Json to output CloudEvent Data in kn-ps-echo function (#544)
+- [70f8e0b]	fix: Prevent unexpected CLI argument quoting when using set -x (#538)
+- [0180234]	feat: Improve OVF debuggability (#537)
+- [9d2ad87]	fix: Disable cloud-init to preserve FQDN hostname upon reboot (#532)
+- [15e21d3]	Fix processing parallel requested events
+- [d9e1001]	fix: Update /etc/issue login banner (#528)
+- [669a3ca]	feat: Integrate Webhook Event Provider into VEBA (#496)
+- [db815f2]	feat: Update setup scripts to support multi-event providers (#516)
+- [ba2a842]	fix: Fix Docker credentials in action (#521)
+- [6363acc]	fix: Update Antrea to v1.2.0 to resolve deprecated k8s API resources (#502)
+- [11cc593]	feat: Replace grub splash screen with VEBA logo (#522)
+- [b09e763]	chore: Update Docker related actions (#518)
+- [bd89626]	chore: Update workflows to Go v1.16 (#514)
+- [4aa89f3]	chore: Update golangci-lint config (#511)
+- [b792c5f]	feat: Templatize YAML downloads using YTT (#505)
+- [a5b8b76]	fix: Improve variable escapes using jq instead of python snippets (#498)
+- [70a6b0b]	feat: Upgrade to Photon OS 4.0 GA (#493)
+- [8fa7085]	fix: Replace is not with != as syntax is no longer valid for python 3.8+ (#497)
+- [84efdf2]	feat: Add YAML templating using Carvel YTT (#487)
+- [4d66620]	Add Helm release v0.6.5 (#485)
+- [2bed016]	feat: Add scaling and concurrency settings to VEBA UI (#448)
+- [b990435]	docs: Add replace TLS cert instructions
+- [4a7bf8a]	Bump Helm chart version
+- [8603b55]	fix: Updated files with missing characters + updated handler.ps1 (#480)
+- [d42dd07]	fix: Adjusted typos in tag_secret.json (#478)
+- [3b859f4]	fix: Increased disk space for the two vmdks from 12GB to 25GB each (#476)
+- [15efd97]	docs: Fix YAML annotation for scale to 1 (#474)
+- [2105c5c]	feat: Add webhook provider (#462)
+- [9c5e0bc]	feat: Add example function triggered based on vSphere Alarm (#469)
+- [f32cbca]	feat: add resource usage and performance monitoring feature (#450)
+- [c8678cb]	fix: Adjusted the kubectl wait timeout values to address issue 468 (#468)
+- [95d1ad5]	feat: add log forwarding feature (#451)
+- [69af9e4]	chore: Update Helm chart workflow (#464) (#466) (#467)
+- [9267b2f]	Add `[BUG]` to issue template title
+- [d0fd42d]	docs: Update PS/PCLI Images to latest v1.1 (#452)
+- [9c1de78]	chore: Include commit details in BREAKING section (#445)
+- [05caac1]	feat: Add vsphereapiversion to CE context (#439)
+
 <a name="v0.6.1"></a>
 ## [Release v0.6.1](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.6.0...v0.6.1)
 
