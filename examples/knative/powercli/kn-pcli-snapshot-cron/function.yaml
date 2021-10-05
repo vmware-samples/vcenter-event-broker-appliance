@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: projects.registry.vmware.com/veba/kn-pcli-snapshot-cron:1.0
+        - image: us.gcr.io/daisy-284300/veba/kn-pcli-snapshot-cron:1.0
           envFrom:
             - secretRef:
                 name: snapshot-secret
