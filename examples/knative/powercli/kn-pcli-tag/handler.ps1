@@ -1,26 +1,34 @@
 Function Process-Init {
+   [CmdletBinding()]
+   param()
    Write-Host "$(Get-Date) - Processing Init`n"
 
    try {
       $jsonSecrets = ${env:TAG_SECRET} | ConvertFrom-Json
    } catch {
-      throw "`nK8s secrets `$env:TAG does not look to be defined"
+      throw "`nK8s secrets `$env:TAG_SECRET does not look to be defined"
    }
 
    # Extract all tag secrets for ease of use in function
    $VCENTER_SERVER = ${jsonSecrets}.VCENTER_SERVER
    $VCENTER_USERNAME = ${jsonSecrets}.VCENTER_USERNAME
    $VCENTER_PASSWORD = ${jsonSecrets}.VCENTER_PASSWORD
-   $VCENTER_CERTIFCATE_ACTION = ${jsonSecrets}.VCENTER_CERTIFCATE_ACTION
+   $VCENTER_CERTIFICATE_ACTION = ${jsonSecrets}.VCENTER_CERTIFICATE_ACTION
 
    # Configure TLS 1.2/1.3 support as this is required for latest vSphere release
    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor [System.Net.SecurityProtocolType]::Tls12 -bor [System.Net.SecurityProtocolType]::Tls13
 
    Write-Host "$(Get-Date) - Configuring PowerCLI Configuration Settings`n"
-   Set-PowerCLIConfiguration -InvalidCertificateAction:${VCENTER_CERTIFCATE_ACTION} -ParticipateInCeip:$true -Confirm:$false | Out-Null
+   Set-PowerCLIConfiguration -InvalidCertificateAction:${VCENTER_CERTIFICATE_ACTION} -ParticipateInCeip:$true -Confirm:$false
 
    Write-Host "$(Get-Date) - Connecting to vCenter Server $VCENTER_SERVER`n"
-   Connect-VIServer -Server $VCENTER_SERVER -User $VCENTER_USERNAME -Password $VCENTER_PASSWORD | Out-Null
+
+   try {
+      Connect-VIServer -Server $VCENTER_SERVER -User $VCENTER_USERNAME -Password $VCENTER_PASSWORD
+   } catch {
+      Write-Error "$(Get-Date) - Failed to connect to vCenter Server"
+      throw $_
+   }
 
    Write-Host "$(Get-Date) - Successfully connected to $VCENTER_SERVER`n"
 
@@ -28,12 +36,14 @@ Function Process-Init {
 }
 
 Function Process-Shutdown {
+   [CmdletBinding()]
+   param()
    Write-Host "$(Get-Date) - Processing Shutdown`n"
 
-   Write-Host "$(Get-Date) - Disconnecting from to vCenter Server`n"
+   Write-Host "$(Get-Date) - Disconnecting from vCenter Server`n"
 
    try {
-      Disconnect-VIServer * -Confirm:$false | Out-Null
+      Disconnect-VIServer * -Confirm:$false
    } catch {
       Write-Error "$(Get-Date) - Failed to Disconnect from vCenter Server"
    }
@@ -42,6 +52,7 @@ Function Process-Shutdown {
 }
 
 Function Process-Handler {
+   [CmdletBinding()]
    param(
       [Parameter(Position=0,Mandatory=$true)][CloudNative.CloudEvents.CloudEvent]$CloudEvent
    )
@@ -56,7 +67,7 @@ Function Process-Handler {
    try {
       $jsonSecrets = ${env:TAG_SECRET} | ConvertFrom-Json
    } catch {
-      throw "`nK8s secrets `$env:TAG does not look to be defined"
+      throw "`nK8s secrets `$env:TAG_SECRET does not look to be defined"
    }
 
    if(${env:FUNCTION_DEBUG} -eq "true") {
@@ -77,4 +88,8 @@ Function Process-Handler {
    } catch {
       throw "`nFailed to assign vSphere Tag"
    }
+
+   Write-Host "$(Get-Date) - vSphere Tag Operation complete ...`n"
+
+   Write-Host "$(Get-Date) - Handler Processing Completed ...`n"
 }

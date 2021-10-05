@@ -1,0 +1,94 @@
+[
+  {
+    "id": 98563,
+    "type": "REST_AUTH_LOGIN_SUCCESS",
+    "severity": "AUDIT_SUCCESS",
+    "module": "Rest",
+    "machine_dns_name": "Horizon-01.corp.local",
+    "time": 1627369939733,
+    "message": "User corp\\administrator has logged in to Horizon Server REST API"
+  },
+  {
+    "id": 98562,
+    "user_id": "S-1-5-21-4442515-1634369418-872054540-500",
+    "type": "VLSI_USERLOGGEDIN",
+    "severity": "AUDIT_SUCCESS",
+    "module": "Vlsi",
+    "machine_dns_name": "Horizon-01.corp.local",
+    "time": 1627369939490,
+    "message": "User corp\\administrator has logged in to View Administrator"
+  },
+  {
+    "id": 98561,
+    "type": "BROKER_SMALL_MEMORY",
+    "severity": "WARNING",
+    "module": "Broker",
+    "machine_dns_name": "Horizon-02.corp.local",
+    "time": 1627368981807,
+    "message": "Broker Horizon-02.corp.local has been detected as being configured with a small amount of physical memory. Please refer to the View Installation Guide."
+  },
+  {
+    "id": 98558,
+    "type": "BROKER_DAILY_MAX_APP_USERS",
+    "severity": "INFO",
+    "module": "Broker",
+    "machine_dns_name": "Horizon-01.corp.local",
+    "time": 1627368903620,
+    "message": "Over the past 24 hours, the maximum number of users with concurrent application sessions was 0"
+  },
+  {
+    "id": 98559,
+    "type": "BROKER_DAILY_MAX_CCU_USERS",
+    "severity": "INFO",
+    "module": "Broker",
+    "machine_dns_name": "Horizon-01.corp.local",
+    "time": 1627368903620,
+    "message": "Over the past 24 hours, the maximum number of concurrent connection sessions was 0"
+  },
+  {
+    "id": 98560,
+    "type": "BROKER_DAILY_MAX_NU_USERS",
+    "severity": "INFO",
+    "module": "Broker",
+    "machine_dns_name": "Horizon-01.corp.local",
+    "time": 1627368903620,
+    "message": "Over the past 24 hours, the maximum number of named user sessions was 23"
+  },
+  {
+    "id": 98557,
+    "type": "BROKER_DAILY_MAX_DESKTOP_SESSIONS",
+    "severity": "INFO",
+    "module": "Broker",
+    "machine_dns_name": "Horizon-01.corp.local",
+    "time": 1627368903617,
+    "message": "Over the past 24 hours, the maximum number of concurrent desktop sessions was 0"
+  },
+  {
+    "id": 98556,
+    "type": "BROKER_SMALL_MEMORY",
+    "severity": "WARNING",
+    "module": "Broker",
+    "machine_dns_name": "Horizon-01.corp.local",
+    "time": 1627367926447,
+    "message": "Broker Horizon-01.corp.local has been detected as being configured with a small amount of physical memory. Please refer to the View Installation Guide."
+  },
+  {
+    "id": 98555,
+    "type": "REST_AUTH_LOGOUT_SUCCESS",
+    "severity": "AUDIT_SUCCESS",
+    "module": "Rest",
+    "machine_dns_name": "Horizon-01.corp.local",
+    "time": 1627332342703,
+    "message": "User corp\\administrator has logged out from Horizon Server REST API"
+  },
+  {
+    "id": 98554,
+    "user_id": "S-1-5-21-4442515-1634369418-872054540-500",
+    "type": "ADMIN_USERLOGGEDOUT",
+    "severity": "AUDIT_SUCCESS",
+    "module": "Vlsi",
+    "machine_dns_name": "Horizon-01.corp.local",
+    "time": 1627332342687,
+    "message": "User corp\\administrator has logged out from View Administrator"
+  }
+]

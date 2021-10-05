@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: projects.registry.vmware.com/veba/kn-go-echo:1.0
+        - image: us.gcr.io/daisy-284300/veba/kn-go-echo:1.0
 ---
 apiVersion: eventing.knative.dev/v1
 kind: Trigger

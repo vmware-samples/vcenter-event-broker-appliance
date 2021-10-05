@@ -12,26 +12,29 @@ const (
 	// ProviderVCenter represents the vCenter event provider
 	ProviderVCenter ProviderType = "vcenter"
 	ProviderVCSIM   ProviderType = "vcsim"
+	ProviderWebhook ProviderType = "webhook"
+	ProviderHorizon ProviderType = "horizon"
 )
 
 // Provider configures the event provider
 type Provider struct {
 	// Type sets the event provider
-	// TODO: add vcd enum and vcd section once it's implemented
-	Type ProviderType `yaml:"type" json:"type" jsonschema:"enum=vcenter,enum=vcsim"`
+	Type ProviderType `yaml:"type" json:"type" jsonschema:"enum=vcenter,enum=webhook,enum=vcsim,enum=horizon"`
 	// Name is an identifier for the configured event provider
 	Name string `yaml:"name" json:"name" jsonschema:"required"`
 	// VCenter configuration settings
 	// +optional
 	VCenter *ProviderConfigVCenter `yaml:"vcenter,omitempty" json:"vcenter,omitempty" jsonschema:"oneof_required=vcenter"`
 	// VCenter simulator configuration settings
-	// DEPRECATED: use provider vcenter instead
+	// Deprecated: use provider vcenter instead
 	// +optional
 	VCSIM *ProviderConfigVCSIM `yaml:"vcsim,omitempty" json:"vcsim,omitempty" jsonschema:"oneof_required=vcsim"`
-	// VCD configuration settings
-	// TODO: uncomment once implemented
+	// Webhook configuration settings
 	// +optional
-	// VCD *ProviderConfigVCD `yaml:"vcd,omitempty" json:"vcd,omitempty" jsonschema:"oneof_required=vcd"`
+	Webhook *ProviderConfigWebhook `yaml:"webhook,omitempty" json:"webhook,omitempty" jsonschema:"oneof_required=webhook"`
+	// 	Horizon configuration settings
+	// +optional
+	Horizon *ProviderConfigHorizon `yaml:"horizon,omitempty" json:"horizon,omitempty" jsonschema:"oneof_required=horizon"`
 }
 
 // ProviderConfigVCenter configures the vCenter event provider
@@ -44,7 +47,8 @@ type ProviderConfigVCenter struct {
 	Checkpoint bool `yaml:"checkpoint" json:"checkpoint" jsonschema:"description=Enable checkpointing via checkpoint file for event recovery and replay purposes"`
 	// CheckpointDir sets the directory for persisting checkpoints (optional)
 	CheckpointDir string `yaml:"checkpointDir,omitempty" json:"checkpointDir,omitempty" jsonschema:"description=Directory where to persist checkpoints if enabled,default=./checkpoints"`
-	// Auth sets the vCenter authentication credentials
+	// Auth sets the vCenter authentication credentials. Only basic_auth is
+	// supported.
 	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"oneof_required=auth,description=Authentication configuration for this section"`
 }
 
@@ -54,13 +58,31 @@ type ProviderConfigVCSIM struct {
 	Address string `yaml:"address" json:"address" jsonschema:"required,default=https://my-vcenter01.domain.local/sdk"`
 	// InsecureSSL enables/disables TLS certificate validation
 	InsecureSSL bool `yaml:"insecureSSL" json:"insecureSSL" jsonschema:"required,default=false"`
-	// Auth sets the vCenter simulator authentication credentials
+	// Auth sets the vCenter simulator authentication credentials. Only basic_auth
+	// is supported.
 	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"oneof_required=auth,description=Authentication configuration for this section"`
 }
 
-// TODO: add fields if needed and jsonschema information, e.g. defaults, required
-/*type ProviderConfigVCD struct {
-	Address string `yaml:"address" json:"address" jsonschema:"required"`
-	// +optional
+// ProviderConfigWebhook configures the webhook event provider
+type ProviderConfigWebhook struct {
+	// BindAddress is the address where the webhook http server will listen for
+	// connections
+	BindAddress string `yaml:"bindAddress" json:"bindAddress" jsonschema:"required,default=0.0.0.0:8080"`
+	// Path is the relative URL path to accept incoming webhook CloudEvents
+	Path string `yaml:"path" json:"path" jsonschema:"required,default=/webhook"`
+	// Auth sets the webhook authentication credentials for incoming requests
+	// (optional). Only basic_auth is supported
+	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"description=Authentication configuration for this section"`
+	// 	TODO: concurrency (goroutines), inbound/outbound rate limit
+}
+
+// ProviderConfigHorizon configures the Horizon event provider
+type ProviderConfigHorizon struct {
+	// Address is the address of the Horizon API server
+	Address string `yaml:"address" json:"address" jsonschema:"required,default=https://api.myhorizon.domain.local"`
+	// InsecureSSL enables/disables TLS certificate validation
+	InsecureSSL bool `yaml:"insecureSSL" json:"insecureSSL" jsonschema:"required,default=false"`
+	// Auth sets the Horizon API authentication credentials. Only active_directory is
+	// supported.
 	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"oneof_required=auth,description=Authentication configuration for this section"`
-}*/
+}

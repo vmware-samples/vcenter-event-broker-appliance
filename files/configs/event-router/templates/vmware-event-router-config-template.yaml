@@ -1,0 +1,151 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@ load("@ytt:json", "json")
+#@ processor = json.decode(data.values.config)["EVENT_PROCESSOR_TYPE"]
+#@ type = json.decode(data.values.config)["KNATIVE_DEPLOYMENT_TYPE"]
+#@ vcenter = json.decode(data.values.config)["ESCAPED_VCENTER_SERVER"]
+#@ vcenterUsername = json.decode(data.values.config)["ESCAPED_VCENTER_USERNAME"]
+#@ vcenterPassword = json.decode(data.values.config)["ESCAPED_VCENTER_PASSWORD"]
+#@ vcenterTls = json.decode(data.values.config)["VCENTER_DISABLE_TLS"]
+
+#@ if processor == "Knative":
+#@ processorName = "knative"
+#@ elif processor == "AWS EventBridge":
+#@ processorName = "aws"
+#@ elif processor == "OpenFaaS":
+#@ processorName = "openfaas"
+#@ end
+#@ routerName = "vmware-event-router-config-" + processorName + "-" + data.values.eventProvider
+
+apiVersion: event-router.vmware.com/v1alpha1
+eventProcessor:
+  #@ if processor == "Knative":
+  #@ if type == "external":
+  #@ knativeHost = json.decode(data.values.config)["KNATIVE_HOST"]
+  #@ knativeScheme = json.decode(data.values.config)["KNATIVE_SCHEME"]
+  #@ knativePath = json.decode(data.values.config)["KNATIVE_PATH"]
+  #@ knativeTls = json.decode(data.values.config)["KNATIVE_DISABLE_TLS"]
+  name: veba-knative
+  type: knative
+  knative:
+    #@ if knativeTls == "True":
+    insecureSSL: true
+    #@ else:
+    insecureSSL: false
+    #@ end
+    encoding: binary
+    destination:
+      uri:
+        host: #@ knativeHost
+        scheme: #@ knativeScheme
+        path: #@ knativePath
+  #@ else:
+  name: veba-knative
+  type: knative
+  knative:
+    insecureSSL: false
+    encoding: binary
+    destination:
+      ref:
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+        name: default
+        namespace: vmware-functions
+  #@ end
+  #@ end
+  #@ if processor == "AWS EventBridge":
+  #@ accessKey = json.decode(data.values.config)["ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY"]
+  #@ secretKey = json.decode(data.values.config)["ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET"]
+  #@ eventBus = json.decode(data.values.config)["ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS"]
+  #@ awsRegion = json.decode(data.values.config)["AWS_EVENTBRIDGE_REGION"]
+  #@ ruleArn = json.decode(data.values.config)["ESCAPED_AWS_EVENTBRIDGE_RULE_ARN"]
+  name: veba-aws
+  awsEventBridge:
+    auth:
+      awsAccessKeyAuth:
+        accessKey: #@ accessKey
+        secretKey: #@ secretKey
+      type: aws_access_key
+    eventBus: #@ eventBus
+    region: #@ awsRegion
+    ruleARN: #@ ruleArn
+  type: aws_event_bridge
+  #@ end
+  #@ if processor == "OpenFaaS":
+  #@ openfaasPassword = json.decode(data.values.config)["ESCAPED_OPENFAAS_PASSWORD"]
+  name: veba-openfaas
+  openfaas:
+    address: http://gateway.openfaas:8080
+    async: false
+    auth:
+      basicAuth:
+        username: admin
+        password: #@ openfaasPassword
+      type: basic_auth
+  type: openfaas
+  #@ end
+eventProvider:
+  #@ if data.values.eventProvider == "vcenter":
+  name: veba-vc-01
+  type: vcenter
+  vcenter:
+    address: #@ "https://"+vcenter+"/sdk"
+    auth:
+      basicAuth:
+        username: #@ vcenterUsername
+        password: #@ vcenterPassword
+      type: basic_auth
+    #@ if vcenterTls == "True":
+    insecureSSL: true
+    #@ else:
+    insecureSSL: false
+    #@ end
+    checkpoint: false
+  #@ end
+  #@ if data.values.eventProvider == "horizon":
+  #@ horizon = json.decode(data.values.config)["ESCAPED_HORIZON_SERVER"]
+  #@ horizonDomain = json.decode(data.values.config)["HORIZON_DOMAIN"]
+  #@ horizonUsername = json.decode(data.values.config)["ESCAPED_HORIZON_USERNAME"]
+  #@ horizonPassword = json.decode(data.values.config)["ESCAPED_HORIZON_PASSWORD"]
+  #@ horizonNoTLS = json.decode(data.values.config)["HORIZON_DISABLE_TLS"]
+  name: veba-horizon-01
+  type: horizon
+  horizon:
+    address: #@ "https://"+horizon
+    auth:
+      type: active_directory
+      activeDirectoryAuth:
+        domain: #@ horizonDomain
+        username: #@ horizonUsername
+        password: #@ horizonPassword
+    #@ if horizonNoTLS == "True":
+    insecureSSL: true
+    #@ else:
+    insecureSSL: false
+    #@ end
+  #@ end
+  #@ if data.values.eventProvider == "webhook":
+  #@ webhookUsername = json.decode(data.values.config)["ESCAPED_WEBHOOK_USERNAME"]
+  #@ webhookPassword = json.decode(data.values.config)["ESCAPED_WEBHOOK_PASSWORD"]
+  name: veba-webhook-01
+  type: webhook
+  webhook:
+    bindAddress: 0.0.0.0:8080
+    path: /webhook
+    #@ if webhookUsername != "" and webhookPassword != "":
+    auth:
+      type: basic_auth
+      basicAuth:
+        username: #@ webhookUsername
+        password: #@ webhookPassword
+    #@ end
+  #@ end
+kind: RouterConfig
+metadata:
+  name: #@ routerName
+metricsProvider:
+  default:
+    bindAddress: 0.0.0.0:8082
+  name: veba-metrics
+  type: default

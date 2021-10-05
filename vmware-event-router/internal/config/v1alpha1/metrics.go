@@ -21,8 +21,9 @@ type MetricsProvider struct {
 // MetricsProviderConfigDefault configures the default metrics provider
 type MetricsProviderConfigDefault struct {
 	// BindAddress is the address where the default metrics provider http endpoint will listen for connections
-	BindAddress string `yaml:"bindAddress" json:"bindAddress" jsonschema:"required"`
-	// Auth when specified requires authentication for the http endpoint of the metrics provider
+	BindAddress string `yaml:"bindAddress" json:"bindAddress" jsonschema:"required,default=0.0.0.0:8082"`
+	// Auth when specified requires authentication for the http endpoint of the
+	// metrics provider. Only basic_auth is supported.
 	// +optional
 	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"description=Authentication configuration for this section"`
 }

@@ -1,91 +1,28 @@
 #!/bin/bash
-# Copyright 2019 VMware, Inc. All rights reserved.
+# Copyright 2021 VMware, Inc. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 # Setup VMware Event Router
 
 set -euo pipefail
 
-echo -e "\e[92mDeploying VMware Event Router ..." > /dev/console
-kubectl -n vmware-system create secret generic event-router-config --from-file=${EVENT_ROUTER_CONFIG}
+for EVENT_PROVIDER in ${EVENT_PROVIDERS[@]};
+do
+    echo -e "\e[92mDeploying VMware Event Router for ${EVENT_PROVIDER} ..." > /dev/console
+    EVENT_ROUTER_CONFIG=/root/config/event-router/vmware-event-router-config-${EVENT_PROVIDER}.yaml
 
-# Retrieve the VMware Event Router image
-VEBA_BOM_FILE=/root/config/veba-bom.json
-EVENT_ROUTER_IMAGE=$(jq -r < ${VEBA_BOM_FILE} '.["vmware-event-router"].containers[0].name')
-EVENT_ROUTER_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["vmware-event-router"].containers[0].version')
+    kubectl -n vmware-system create secret generic vmware-event-router-config-${EVENT_PROVIDER} --from-file=${EVENT_ROUTER_CONFIG}
 
-cat > /root/config/event-router-k8s.yaml << __EVENT_ROUTER_CONFIG__
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    app: vmware-event-router
-  name: vmware-event-router
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: vmware-event-router
-  template:
-    metadata:
-      labels:
-        app: vmware-event-router
-    spec:
-      serviceAccountName: vmware-event-router
-      containers:
-        - image: ${EVENT_ROUTER_IMAGE}:${EVENT_ROUTER_VERSION}
-          imagePullPolicy: IfNotPresent
-          args: [ "-config", "/etc/vmware-event-router/event-router-config.yaml", "-log-level", "info" ]
-          name: vmware-event-router
-          resources:
-            requests:
-              cpu: 200m
-              memory: 200Mi
-          volumeMounts:
-            - name: config
-              mountPath: /etc/vmware-event-router/
-              readOnly: true
-      volumes:
-        - name: config
-          secret:
-            secretName: event-router-config
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: vmware-event-router
-  name: vmware-event-router
-spec:
-  ports:
-    - port: 8082
-      protocol: TCP
-      targetPort: 8082
-  selector:
-    app: vmware-event-router
-  sessionAffinity: None
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: vmware-event-router
-__EVENT_ROUTER_CONFIG__
+    VEBA_BOM_FILE=/root/config/veba-bom.json
 
-cat > /root/config/event-router-clusterrole.yaml << EOF
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: veba-addressable-resolver
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: addressable-resolver
-subjects:
-- kind: ServiceAccount
-  name: vmware-event-router
-  namespace: vmware-system
-EOF
+    # Event Router Config files
+    EVENT_ROUTER_K8S_TEMPLATE=/root/config/event-router/templates/vmware-event-router-k8s-template.yaml
+    EVENT_ROUTER_K8S_CONFIG=/root/config/event-router/vmware-event-router-k8s-${EVENT_PROVIDER}.yaml
 
-kubectl apply -f /root/config/event-router-clusterrole.yaml
-kubectl -n vmware-system apply -f /root/config/event-router-k8s.yaml
-kubectl wait deployment --all --timeout=-1s --for=condition=Available -n vmware-system
+    # Apply YTT overlay
+    ytt --data-value eventProvider=${EVENT_PROVIDER} --data-value-file bom=${VEBA_BOM_FILE} -f ${EVENT_ROUTER_K8S_TEMPLATE} > ${EVENT_ROUTER_K8S_CONFIG}
+
+    kubectl apply -f /root/config/event-router/vmware-event-router-clusterrole.yaml
+    kubectl -n vmware-system apply -f ${EVENT_ROUTER_K8S_CONFIG}
+    kubectl wait deployment --all --timeout=3m --for=condition=Available -n vmware-system
+done

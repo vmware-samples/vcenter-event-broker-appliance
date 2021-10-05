@@ -5,12 +5,21 @@ metadata:
 {{ include "router.labels" . | indent 4 }}
   name: {{ include "router.name" . }}
 spec:
+  type: {{ .Values.eventrouter.metrics.type }}
   ports:
   {{- with .Values.eventrouter.metrics }}
   - port: {{ .port }}
+    name: metrics
     protocol: TCP
     targetPort: {{ .port }}
-  type: {{ .type }}
+  {{- end }}
+  {{- if eq .Values.eventrouter.eventProvider "webhook" }}
+  {{- with .Values.eventrouter.webhook }}
+  - port: {{ .port }}
+    name: webhook
+    protocol: TCP
+    targetPort: {{ .port }}
+  {{- end }}
   {{- end }}
   selector:
 {{ include "router.matchLabels" . | indent 4 }}

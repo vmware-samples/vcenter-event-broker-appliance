@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: kn-py-vm-attr-service
   labels:
-    app: kn-py-vm-attr
+    app: veba-ui
 spec:
   template:
     metadata:
@@ -13,7 +13,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-      - image: projects.registry.vmware.com/veba/kn-py-vm-attr:1.0
+      - image: us.gcr.io/daisy-284300/veba/kn-py-vm-attr:1.0
         envFrom:
         - secretRef:
             name: vcconfig-secret

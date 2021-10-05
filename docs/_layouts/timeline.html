@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include head.html %}
+
+<body id="evolution">
+    <div class="container-fluid site-outer-container">
+        <div class="site-container">
+            {% include site-header.html %}
+
+            <div class="post-single-hero  post-single-hero-short bg-color-{{ site.hero.background-color }}">
+                <div class="section">
+                    <div class="section-content">
+                        <h1>{{ page.title }}</h1>
+                    </div>
+                </div>
+            </div>
+
+            <center><h2>Timeline</h2></center>
+
+            <div class="timeline section section-card pt-4 pb-0">
+                <div class="container container-max">
+                {{ content }}
+                </div>
+            </div>
+
+            {% include footer.html %}
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>

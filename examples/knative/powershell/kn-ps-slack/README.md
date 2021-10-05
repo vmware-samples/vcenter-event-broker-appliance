@@ -7,7 +7,8 @@ Example Knative PowerShell function for sending to a Slack webhook when a Virtua
 Create the container image locally to test your function logic.
 
 ```
-docker build -t <docker-username>/kn-ps-slack:1.0 .
+export TAG=<version>
+docker build -t <docker-username>/kn-ps-slack:${TAG} .
 ```
 
 # Step 2 - Test
@@ -26,7 +27,7 @@ Update the following variable names within the `docker-test-env-variable` file
 Start the container image by running the following command:
 
 ```console
-docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 <docker-username>/kn-ps-slack:1.0
+docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 <docker-username>/kn-ps-slack:${TAG}
 ```
 
 In a separate terminal, run either `send-cloudevent-test.ps1` (PowerShell Script) or `send-cloudevent-test.sh` (Bash Script) to simulate a CloudEvent payload being sent to the local container image
@@ -63,7 +64,7 @@ RelationLink      : {}
 Push your container image to an accessible registry such as Docker once you're done developing and testing your function logic.
 
 ```console
-docker push <docker-username>/kn-ps-slack:1.0
+docker push <docker-username>/kn-ps-slack:${TAG}
 ```
 
 Update the `slack_secret.json` file with your Slack webhook configurations and then create the kubernetes secret which can then be accessed from within the function by using the environment variable named called `SLACK_SECRET`.

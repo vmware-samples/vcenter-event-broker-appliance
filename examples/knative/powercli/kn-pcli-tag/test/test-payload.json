@@ -25,7 +25,7 @@
 	  }
 	},
 	"Vm": {
-	  "Name": "K8s-User-Group-Test",
+	  "Name": "REPLACE-ME",
 	  "Vm": {
 		"Type": "VirtualMachine",
 		"Value": "vm-11099"

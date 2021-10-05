@@ -12,6 +12,8 @@ import (
 	"golang.org/x/sync/errgroup"
 	"knative.dev/pkg/signals"
 
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider/horizon"
+
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/metrics"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/processor"
@@ -21,6 +23,7 @@ import (
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider/vcenter"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider/vcsim"
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/provider/webhook"
 )
 
 var (
@@ -110,8 +113,24 @@ func main() {
 
 		log.Infow("connecting to vCenter", "address", cfg.EventProvider.VCenter.Address)
 
+	case config.ProviderWebhook:
+		prov, err = webhook.NewServer(ctx, cfg.EventProvider.Webhook, ms, logger.Sugar())
+		if err != nil {
+			log.Fatalf("could not create webhook server: %v", err)
+		}
+
+		log.Infow("starting webhook listener", "address", prov.(*webhook.Server).Address())
+
+	case config.ProviderHorizon:
+		prov, err = horizon.NewEventStream(ctx, cfg.EventProvider.Horizon, ms, logger.Sugar())
+		if err != nil {
+			log.Fatalf("could not connect to Horizon API server: %v", err)
+		}
+
+		log.Infow("connected to Horizon API server", "address", cfg.EventProvider.Horizon.Address)
+
 	case config.ProviderVCSIM:
-		log.Warn("%s is DEPRECATED and will be removed in future versions", config.ProviderVCSIM)
+		log.Warn("%s is deprecated and will be removed in future versions", config.ProviderVCSIM)
 		prov, err = vcsim.NewEventStream(ctx, cfg.EventProvider.VCSIM, ms, logger.Sugar())
 		if err != nil {
 			log.Fatalf("could not connect to vCenter simulator: %v", err)

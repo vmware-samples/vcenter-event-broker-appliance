@@ -12,13 +12,13 @@
       "vm_name": "{{ user `vm_name` }}",
       "guest_os_type": "Other",
       "version": "13",
-      "disk_size": "12288",
+      "disk_size": "25600",
       "disk_additional_size": [
-        "12288"
+        "25600"
       ],
       "boot_command": [
         "<esc><wait>",
-        "vmlinuz initrd=initrd.img root=/dev/ram0 loglevel=3 ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/photon-kickstart.json photon.media=cdrom",
+        "vmlinuz initrd=initrd.img root=/dev/ram0 loglevel=3 ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/photon-kickstart.json photon.media=cdrom insecure_installation=1",
         "<enter>"
       ],
       "boot_wait": "10s",
@@ -55,12 +55,17 @@
   "provisioners": [
     {
       "type": "shell",
-      "inline": ["mkdir -p /root/config"]
+      "inline": ["mkdir -p /root/config && mkdir -p /root/download"]
     },
     {
       "type": "file",
       "source": "veba-bom.json",
       "destination": "/root/config/veba-bom.json"
+    },
+    {
+      "type": "file",
+      "source": "files/downloads/",
+      "destination": "/root/download/"
     },
     {
       "type": "shell",
@@ -152,18 +157,23 @@
     },
     {
       "type": "file",
-      "source": "files/setup-011-banner.sh",
-      "destination": "/root/setup/setup-011-banner.sh"
+      "source": "files/setup-011-fluentbit.sh",
+      "destination": "/root/setup/setup-011-fluentbit.sh"
     },
     {
       "type": "file",
-      "source": "files/tinywww.yml",
-      "destination": "/root/config/tinywww.yml"
+      "source": "files/setup-012-cadvisor.sh",
+      "destination": "/root/setup/setup-012-cadvisor.sh"
     },
     {
       "type": "file",
-      "source": "files/tinywww-debug.yml",
-      "destination": "/root/config/tinywww-debug.yml"
+      "source": "files/setup-098-dcui-endpoints.sh",
+      "destination": "/root/setup/setup-098-dcui-endpoints.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/setup-099-banner.sh",
+      "destination": "/root/setup/setup-099-banner.sh"
     },
     {
       "type": "file",
@@ -172,28 +182,13 @@
     },
     {
       "type": "file",
-      "source": "files/knative-embedded-veba-ui-ingressroute-gateway.yaml",
-      "destination": "/root/config/knative-embedded-veba-ui-ingressroute-gateway.yaml"
+      "source": "logo/veba_otto_the_orca_320x320.png",
+      "destination": "/boot/grub/themes/photon/photon.png"
     },
     {
       "type": "file",
-      "source": "files/knative-embedded-ingressroute-gateway.yaml",
-      "destination": "/root/config/knative-embedded-ingressroute-gateway.yaml"
-    },
-    {
-      "type": "file",
-      "source": "files/knative-external-ingressroute-gateway.yaml",
-      "destination": "/root/config/knative-external-ingressroute-gateway.yaml"
-    },
-    {
-      "type": "file",
-      "source": "files/eventbridge-ingressroute-gateway.yaml",
-      "destination": "/root/config/eventbridge-ingressroute-gateway.yaml"
-    },
-    {
-      "type": "file",
-      "source": "files/openfaas-ingressroute-gateway.yaml",
-      "destination": "/root/config/openfaas-ingressroute-gateway.yaml"
+      "source": "files/configs/",
+      "destination": "/root/config/"
     }
   ],
   "post-processors": [

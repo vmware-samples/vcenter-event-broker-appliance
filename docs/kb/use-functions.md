@@ -19,10 +19,11 @@ The steps below describe a generalized deployment step of a function on the VMwa
 ## Table of Contents
 - [Knative](#knative)
   - [Knative Prerequisites](#knative-prerequisites)
-  - [Knative Function Deployment](#knative-function-deloyment)
+  - [Knative Function Deployment using kubectl](#knative-function-deployment-using-kubectl)
+  - [Knative Function Deployment using vSphere UI](#knative-function-deployment-using-vsphere-ui)
 - [OpenFaaS](#openfaas)
   - [OpenFaaS Prerequisites](#openfaas-prerequisites)
-  - [OpenFaaS Function Deployment](#openfaas-function-deloyment)
+  - [OpenFaaS Function Deployment](#openfaas-function-deployment)
 
 ## Knative
 
@@ -33,7 +34,7 @@ For this walk-through, the [`kn-ps-echo`](/examples-knative) function from the e
 Before proceeding to deploy a function, you must have VMware Event Broker Appliance deployed and be able to SSH to the appliance or have access to the kubernetes configuration file (/root/.kube/config) locally on your desktop to authenticate
 
 
-### Knative Function Deployment
+### Knative Function Deployment using kubectl
 Step 1 - Clone repo
 
 ```
@@ -87,6 +88,47 @@ kubectl -n vmware-functions apply -f function.yaml
 Step 4 - Test your functions
 
 * Your function is now deployed and available for the VMware Event Router to invoke when it sees a matching event
+
+### Knative Function Deployment using vSphere UI
+
+Step 1 - Login to the vSphere UI and navigate to the VMware Event Broker Appliance UI by going to `Menu->VMware Event Broker`.
+
+Step 2 (Optional) - If a secret is required for a function. Select the `Secrets` tab and then click Add to create a new Kubernetes secret.
+
+Step 3 - Under the `Events` tab, search and filter for the specific vSphere Event to deploy a function. One an event has been identified, click on the `>>` icon to expand and click on Deploy button to begin the guided wizard.
+
+Step 4 - In the `Function` section of the wizard, users will need to provide the following required parameters:
+
+* `Function name` - A name for the function to be deployed
+
+* `Docker Image` - The Docker image that contains the function logic
+
+Step 5 - (optional) In the `Configuration` section of the wizard, users can control the concurrency and scale bounds for the function:
+
+* `Container concurrency:` - Specifies the maximum allowed in-flight (concurrent) requests per container of the Revision. Defaults to 0 which means concurrency to the application is not limited, and the system decides the target concurrency for the autoscaler.
+
+* `Minimum scale:` - Controls the minimum number of replicas that each Revision should have. Knative will attempt to never have less than this number of replicas at any one point in time. Defaults to 0 which means scale to zero.
+
+* `Maximum scale:` - Controls the maximum number of replicas that each revision should have. Knative will attempt to never have more than this number of replicas running, or in the process of being created, at any one point in time. Defaults to 0 which means unlimited scale.
+
+Step 6 - (optional) In the `Configure Variables` section of the wizard, users can define new environment variables that can be used within their function
+
+* `Name` - The name should begin with an uppercase letter and contain only uppercase letters(A-Z), numbers(0-9) and underscores(_)
+
+* `Value` - The value for the environment variable
+
+Step 7 - (optional) In the `4 Configure Secrets` section of the wizard, users can select specific Kubernetes Secrets that were created earlier in Step 2 for use within their function
+
+Step 8 - Finally, review the summary for the function deployment and click `Finish` to begin the function deployment.
+
+To verify the function deployment was successful, click on the `Functions` tab and ensure the function status `True` for the following:
+
+* `ConfigurationsReady` : True
+
+* `Ready` : True
+
+* `RoutesReady` : True
+
 
 ## OpenFaaS
 

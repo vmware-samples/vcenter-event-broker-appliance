@@ -7,6 +7,7 @@ metadata:
 eventProvider:
   type: {{ .Values.eventrouter.eventProvider }}
   name: {{ .Release.Name }}-{{ .Values.eventrouter.eventProvider }}
+  {{- if eq .Values.eventrouter.eventProvider "vcenter" }}
   vcenter:
     {{- with .Values.eventrouter.vcenter }}
     address: {{ .address }}
@@ -18,6 +19,34 @@ eventProvider:
         username: {{ .username }}
         password: {{ .password }}
     {{- end }}
+  {{- end }}
+  {{- if eq .Values.eventrouter.eventProvider "webhook" }}
+  webhook:
+    {{- with .Values.eventrouter.webhook }}
+    bindAddress: 0.0.0.0:{{ .port }}
+    path: {{ .path }}
+    {{- if .username }}
+    auth:
+      type: basic_auth
+      basicAuth:
+        username: {{ .username }}
+        password: {{ .password }}
+    {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- if eq .Values.eventrouter.eventProvider "horizon" }}
+  horizon:
+    {{- with .Values.eventrouter.horizon }}
+    address: {{ .address }}
+    insecureSSL: {{ .insecure }}
+    auth:
+      type: active_directory
+      activeDirectoryAuth:
+        domain: {{ .domain }}
+        username: {{ .username }}
+        password: {{ .password }}
+    {{- end }}
+  {{- end }}
 eventProcessor:
   type: {{ .Values.eventrouter.eventProcessor }}
   name: {{ .Release.Name }}-{{ .Values.eventrouter.eventProcessor }}

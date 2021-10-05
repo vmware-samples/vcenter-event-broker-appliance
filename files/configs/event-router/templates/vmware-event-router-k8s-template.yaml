@@ -1,0 +1,72 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@ load("@ytt:json", "json")
+#@ name = json.decode(data.values.bom)["vmware-event-router"]["containers"][0]["name"]
+#@ version = json.decode(data.values.bom)["vmware-event-router"]["containers"][0]["version"]
+#@ image = name + ":" + version
+
+#@ routerName = "vmware-event-router-" + data.values.eventProvider
+#@ routerConfig = "vmware-event-router-config-" + data.values.eventProvider
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: vmware-event-router
+  name: #@ routerName
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: #@ routerName
+  template:
+    metadata:
+      labels:
+        app: #@ routerName
+    spec:
+      serviceAccountName: vmware-event-router
+      containers:
+        - image: #@ image
+          imagePullPolicy: IfNotPresent
+          args: #@ [ "-config", "/etc/vmware-event-router/" + routerConfig + ".yaml", "-log-level", "info" ]
+          name: #@ routerName
+          resources:
+            requests:
+              cpu: 200m
+              memory: 200Mi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/vmware-event-router/
+              readOnly: true
+      volumes:
+        - name: config
+          secret:
+            secretName: #@ routerConfig
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: #@ routerName
+  name: #@ routerName
+spec:
+  ports:
+    - port: 8082
+      name: metrics
+      protocol: TCP
+      targetPort: 8082
+    #@ if data.values.eventProvider == "webhook":
+    - port: 8080
+      name: webhook
+      protocol: TCP
+      targetPort: 8080
+    #@ end
+  selector:
+    app: #@ routerName
+  sessionAffinity: None
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vmware-event-router

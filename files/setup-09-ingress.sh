@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2019 VMware, Inc. All rights reserved.
+# Copyright 2021 VMware, Inc. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 # Setup Contour / Ingress
@@ -38,29 +38,14 @@ if [ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]; then
   kubectl patch configmap -n knative-serving config-domain -p "{\"data\": {\"$CN_NAME\": \"\"}}"
 fi
 
-# Ingress Route Configuration for OpenFaaS
-if [ "${EVENT_PROCESSOR_TYPE}" == "OpenFaaS" ]; then
-  INGRESS_CONFIG_YAML=/root/config/openfaas-ingressroute-gateway.yaml
-# Ingress Route Configuration for AWS EventBridge
-elif [ "${EVENT_PROCESSOR_TYPE}" == "AWS EventBridge" ]; then
-  INGRESS_CONFIG_YAML=/root/config/eventbridge-ingressroute-gateway.yaml
-# Ingress Route Configuration for Knative External
-elif [[ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]] && [[ "${KNATIVE_DEPLOYMENT_TYPE}" == "external" ]]; then
-  INGRESS_CONFIG_YAML=/root/config/knative-external-ingressroute-gateway.yaml
-# Ingress Route Configuration for Knative Embedded w/VEBA UI
-elif [[ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]] && [[ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]] && [[ ! -z ${VCENTER_USERNAME_FOR_VEBA_UI} ]] && [[ ! -z ${VCENTER_PASSWORD_FOR_VEBA_UI} ]]; then
-  INGRESS_CONFIG_YAML=/root/config/knative-embedded-veba-ui-ingressroute-gateway.yaml
-# Ingress Route Configuration for Knative Embedded w/o VEBA UI
-elif [[ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]] && [[ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]]; then
-  INGRESS_CONFIG_YAML=/root/config/knative-embedded-ingressroute-gateway.yaml
-fi
+echo -e "\e[92mDeploying Ingress ..." > /dev/console
 
-if [ ! -z ${INGRESS_CONFIG_YAML} ]; then
-  echo -e "\e[92mDeploying Ingress using configuration ${INGRESS_CONFIG_YAML} ..." > /dev/console
-  sed -i "s/##HOSTNAME##/${HOSTNAME}/g" ${INGRESS_CONFIG_YAML}
-  sed -i "s/##CERT_NAME##/${CERT_NAME}/g" ${INGRESS_CONFIG_YAML}
-  kubectl create -f ${INGRESS_CONFIG_YAML}
-else
-  echo -e "\e[91mUnable to match a supported Ingress configuration ..." > /dev/console
-  exit 1
-fi
+VEBA_CONFIG_FILE=/root/config/veba-config.json
+
+# Ingress Config files
+INGRESS_TEMPLATE=/root/config/ingress/templates/ingressroute-gateway-template.yaml
+INGRESS_CONFIG=/root/config/ingress/$(basename ${INGRESS_TEMPLATE} | sed 's/-template//g')
+
+# Apply YTT overlay
+ytt --data-value secretName=${CERT_NAME} --data-value-file config=${VEBA_CONFIG_FILE} -f ${INGRESS_TEMPLATE} > ${INGRESS_CONFIG}
+kubectl create -f ${INGRESS_CONFIG}

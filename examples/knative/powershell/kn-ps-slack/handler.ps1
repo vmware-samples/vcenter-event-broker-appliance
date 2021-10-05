@@ -1,16 +1,21 @@
 Function Process-Init {
+   [CmdletBinding()]
+   param()
    Write-Host "$(Get-Date) - Processing Init`n"
 
    Write-Host "$(Get-Date) - Init Processing Completed`n"
 }
 
 Function Process-Shutdown {
+   [CmdletBinding()]
+   param()
    Write-Host "$(Get-Date) - Processing Shutdown`n"
 
    Write-Host "$(Get-Date) - Shutdown Processing Completed`n"
 }
 
 Function Process-Handler {
+   [CmdletBinding()]
    param(
       [Parameter(Position=0,Mandatory=$true)][CloudNative.CloudEvents.CloudEvent]$CloudEvent
    )
@@ -34,13 +39,11 @@ Function Process-Handler {
       Write-Host "$(Get-Date) - DEBUG: CloudEventData`n $(${cloudEventData} | Out-String)`n"
    }
 
-   # Send VM changes
-   Write-Host "$(Get-Date) - Detected change to $($cloudEvent.Subject) ..."
-
+   # Construct Slack message object
    $payload = @{
       attachments = @(
          @{
-            pretext = ":rotating_light: Virtual Machine PoweredOff Alert from :veba: Knative Function :rotating_light:";
+            pretext = ":rotating_light: Virtual Machine Alert from :veba: Knative Function :rotating_light:";
             fields = @(
                @{
                      title = "VM";
@@ -57,11 +60,17 @@ Function Process-Handler {
                      value = $cloudEventData.CreatedTime;
                      short = "false";
                }
+               @{
+                  title = "Full Message";
+                  value = $cloudEventData.FullFormattedMessage ;
+                  short = "false";
+               }
             )
          }
       )
    }
 
+   # Convert Slack message object into JSON
    $body = $payload | ConvertTo-Json -Depth 5
 
    if(${env:FUNCTION_DEBUG} -eq "true") {
@@ -70,6 +79,12 @@ Function Process-Handler {
 
    Write-Host "$(Get-Date) - Sending Webhook payload to Slack ..."
    $ProgressPreference = "SilentlyContinue"
-   Invoke-WebRequest -Uri $(${jsonSecrets}.SLACK_WEBHOOK_URL) -Method POST -ContentType "application/json" -Body $body
+
+   try {
+      Invoke-WebRequest -Uri $(${jsonSecrets}.SLACK_WEBHOOK_URL) -Method POST -ContentType "application/json" -Body $body
+   } catch {
+      throw "$(Get-Date) - Failed to send Slack Message: $($_)"
+   }
+
    Write-Host "$(Get-Date) - Successfully sent Webhook ..."
 }

@@ -1,0 +1,9 @@
+{
+	"org_id": "b12345e8-48f1-4517-99fe-0bddc753e999",
+	"org_name": "Production",
+	"resource_id": "315a4b5a-25d2-476f-879e-4c6b27224e1b",
+	"resource": "SDDC",
+	"resource_name": "VEBA-SDDC",
+	"message_username": "provisioning@vmc.vmware.com",
+	"message": "Deployment of SDDC"
+}

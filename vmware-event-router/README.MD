@@ -3,16 +3,19 @@
 The VMware Event Router is used to connect to various VMware event `providers`
 (i.e. "sources") and forward these events to different event `processors` (i.e.
 "sinks"). This project is currently used by the [_VMware Event Broker
-Appliance_](https://www.vmweventbroker.io/) as the core logic to forward vCenter
-events to configurable event `processors` (see below).
+Appliance_](https://www.vmweventbroker.io/) as the core logic to forward
+[CloudEvents](https://cloudevents.io/), e.g. from vSphere, to configurable event
+`processors` (see below).
 
-**Supported event providers:**
+**Supported Event `Providers`:**
 
 - [VMware vCenter Server](https://www.vmware.com/products/vcenter-server.html)
+- [VMware Horizon](https://www.vmware.com/products/horizon.html)
+- Generic [CloudEvents](https://cloudevents.io/) Webhook
 - vCenter Simulator [vcsim](https://github.com/vmware/govmomi/tree/master/vcsim)
-  (DEPRECATED, see note [below](#provider-type-vcsim))
+  (deprecated, see note [below](#provider-type-vcsim))
 
-**Supported event processors:**
+**Supported Event `Processors`:**
 
 - [Knative](https://knative.dev/)
 - [OpenFaaS](https://www.openfaas.com/)
@@ -22,13 +25,21 @@ The VMware Event Router uses the [CloudEvents](https://cloudevents.io/) standard
 to normalize events from the supported event `providers`. See
 [below](#example-event-structure) for an example.
 
-**Event Delivery Guarantees:**
+**Event `Provider` Delivery Guarantees:**
 
 - At-least-once event delivery
   -  with the [vCenter event provider](#provider-type-vcenter) option `checkpoint: true`
 - At-most-once event delivery
   - with the [vCenter event provider](#provider-type-vcenter) option `checkpoint: false`
+  - with the [Webhook event provider](#provider-type-webhook)
+  - with the [Horizon event provider](#provider-type-horizon)
   - with the [vcsim event provider](#provider-type-vcsim)
+
+**Note:** All implemented event `processors` use built-in retry mechanisms so
+your function might still be involved multiple times depending on its response
+code. However, if an event `provider` crashes before sending an event to the
+configured `processor` or when the `processor` returns an error, the event is
+not retried and discarded.
 
 **Current limitations:**
 
@@ -45,7 +56,8 @@ to normalize events from the supported event `providers`. See
   OpenFaaS [issue](https://github.com/openfaas/nats-queue-worker/issues/84))
 
 > **Note:** It is possible though to run **multiple instances** of the event
-> router with different configurations to address multi-vCenter scenarios
+> router with different configurations to address multi-vCenter scenarios. This
+> decision was made for scalability and resource/tenancy isolation purposes.
 
 > **Note:** Event Processors, like Knative, support Dead Letter Queues when
 > using `Broker` mode.
@@ -156,7 +168,7 @@ The following table lists allowed and required fields with their respective type
 values and examples for these fields.
 
 | Field             | Type              | Description                                     | Required | Example                            |
-| ----------------- | ----------------- | ----------------------------------------------- | -------- | ---------------------------------- |
+|-------------------|-------------------|-------------------------------------------------|----------|------------------------------------|
 | `apiVersion`      | String            | API Version used for this configuration file    | true     | `event-router.vmware.com/v1alpha1` |
 | `kind`            | String            | Type of this API resource                       | true     | `RouterConfig`                     |
 | `metadata`        | Object            | Additional metadata for this configuration file | true     |                                    |
@@ -169,7 +181,7 @@ The following table lists allowed and required fields with their respective type
 values and examples for these fields.
 
 | Field             | Type   | Description                            | Required | Example                                    |
-| ----------------- | ------ | -------------------------------------- | -------- | ------------------------------------------ |
+|-------------------|--------|----------------------------------------|----------|--------------------------------------------|
 | `type`            | String | Type of the event provider             | true     | `vcenter`                                  |
 | `name`            | String | Name identifier for the event provider | true     | `vc-01-PROD`                               |
 | `<provider_type>` | Object | Provider specific configuration        | true     | (see specific provider type section below) |
@@ -187,16 +199,55 @@ The following table lists allowed and required fields for connecting to a
 vCenter Server and the respective type values and examples for these fields.
 
 | Field           | Type    | Description                                                                                           | Required | Example                          |
-| --------------- | ------- | ----------------------------------------------------------------------------------------------------- | -------- | -------------------------------- |
+|-----------------|---------|-------------------------------------------------------------------------------------------------------|----------|----------------------------------|
 | `address`       | String  | URI of the VMware vCenter Server                                                                      | true     | `https://10.0.0.1:443/sdk`       |
 | `insecureSSL`   | Boolean | Skip TSL verification                                                                                 | true     | `true` (i.e. ignore errors)      |
 | `checkpoint`    | Boolean | Configure checkpointing via checkpoint file for event recovery/replay purposes                        | true     | `true`                           |
 | `checkpointDir` | Boolean | **Optional:** Configure an alternative location for persisting checkpoints (default: `./checkpoints`) | false    | `/var/local/checkpoints`         |
 | `<auth>`        | Object  | vCenter credentials                                                                                   | true     | (see `basic_auth` example below) |
 
+#### Provider Type `horizon`
+
+VMware Horizon is a platform for delivering virtual desktops and apps
+efficiently and securely across hybrid cloud for the best end-user digital
+workspace experience.
+
+This provider supports all audit events (model `AuditEventSummary`) exposed
+through the Horizon REST API starting with
+[version](https://code.vmware.com/apis/1169/view-rest-api#/External/listAuditEvents)
+`2106`.
+
+The following table lists allowed and required fields for connecting to the
+Horizon REST API and the respective type values and examples for these fields.
+
+| Field         | Type    | Description                 | Required | Example                                |
+|---------------|---------|-----------------------------|----------|----------------------------------------|
+| `address`     | String  | URI of the Horizon REST API | true     | `https://api.myhorizon.corp.local`     |
+| `insecureSSL` | Boolean | Skip TSL verification       | true     | `true` (i.e. ignore errors)            |
+| `<auth>`      | Object  | Horizon domain credentials  | true     | (see `active_directory` example below) |
+
+#### Provider Type `webhook`
+
+The `webhook` event provider listens for incoming
+[CloudEvents](https://cloudevents.io/) (binary or structured mode) on a
+configurable HTTP server in the VMware Event Router. The HTTP method used to
+send the CloudEvent must be `POST`.
+
+The following table lists allowed and required fields for setting up a webhook
+server.
+
+| Field         | Type   | Description                                                                    | Required | Example                          |
+|---------------|--------|--------------------------------------------------------------------------------|----------|----------------------------------|
+| `bindAddress` | String | TCP/IP socket and port to listen on (**do not** add any URI scheme or slashes) | true     | `0.0.0.0:8080`                   |
+| `path`        | String | Webhook endpoint path (must not be `/`)                                        | true     | `/webhook`                       |
+| `<auth>`      | Object | Configure `basic_auth` for incoming requests                                   | false    | (see `basic_auth` example below) |
+
+**Note:** When the VMware Event Router log level is `DEBUG` incoming webhook
+requests (method, path, headers, remote address) will be logged.
+
 #### Provider Type `vcsim`
 
-⚠️ This provider is **DEPRECATED** and will be removed in future versions. The
+⚠️ This provider is **deprecated** and will be removed in future versions. The
 `vcenter` provider will work correctly against a `vcsim` instance.
 
 The following table lists allowed and required fields for connecting to the
@@ -205,7 +256,7 @@ govmomi vCenter Simulator
 type values and examples for these fields.
 
 | Field         | Type    | Description                           | Required | Example                          |
-| ------------- | ------- | ------------------------------------- | -------- | -------------------------------- |
+|---------------|---------|---------------------------------------|----------|----------------------------------|
 | `address`     | String  | URI of the govmomi vCenter simulator  | true     | `https://127.0.0.1:8989/sdk`     |
 | `insecureSSL` | Boolean | Skip TSL verification                 | true     | `true` (i.e. ignore errors)      |
 | `<auth>`      | Object  | govmomi vCenter simulator credentials | true     | (see `basic_auth` example below) |
@@ -221,11 +272,10 @@ The following table lists allowed and required fields with their respective type
 values and examples for these fields.
 
 | Field              | Type   | Description                             | Required | Example                                     |
-| ------------------ | ------ | --------------------------------------- | -------- | ------------------------------------------- |
+|--------------------|--------|-----------------------------------------|----------|---------------------------------------------|
 | `type`             | String | Type of the event processor             | true     | `knative`, `openfaas` or `aws_event_bridge` |
 | `name`             | String | Name identifier for the event processor | true     | `knative-broker-PROD`                       |
 | `<processor_type>` | Object | Processor specific configuration        | true     | (see specific processor type section below) |
-
 
 #### Processor Type `knative`
 
@@ -247,7 +297,7 @@ The following table lists allowed and optional fields for using Knative as an
 event `processor`.
 
 | Field           | Type    | Description                                                                                                                                                | Required | Example                           |
-| --------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------------- |
+|-----------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|-----------------------------------|
 | `<destination>` | Object  | Knative *addressable* Destination to send events to.                                                                                                       | true     | (see `destination` section below) |
 | `encoding`      | Boolean | Cloud Events message [encoding](https://github.com/cloudevents/spec/blob/v1.0/spec.md#message)                                                             | true     | `structured` or `binary`          |
 | `insecureSSL`   | Boolean | Skip TSL verification                                                                                                                                      | true     | `true` (i.e. ignore errors)       |
@@ -271,7 +321,7 @@ The following table lists the available destination types for the `destination` 
 the router configuration when targeting a URI.
 
 | Field        | Type   | Description                                                    | Required              | Example                       |
-| ------------ | ------ | -------------------------------------------------------------- | --------------------- | ----------------------------- |
+|--------------|--------|----------------------------------------------------------------|-----------------------|-------------------------------|
 | `<uri>`      | Object | URI can be used to send events to an external HTTP(S) endpoint | one_of `uri` or `ref` |                               |
 | `uri.scheme` | String | URI scheme                                                     | `true`                | `http` or `https`             |
 | `uri.host`   | String | URI target host                                                | `true`                | `gateway-external.corp.local` |
@@ -280,7 +330,7 @@ The following table lists the available destination types for the `destination` 
 the router configuration when targeting a URI.
 
 | Field            | Type   | Description                                                                           | Required              | Example                                               |
-| ---------------- | ------ | ------------------------------------------------------------------------------------- | --------------------- | ----------------------------------------------------- |
+|------------------|--------|---------------------------------------------------------------------------------------|-----------------------|-------------------------------------------------------|
 | `<ref>`          | Object | Ref can be used to send events to a *addressable* Kubernetes or Knative target (sink) | one_of `uri` or `ref` |                                                       |
 | `ref.apiVersion` | String | Kubernetes API version of the target                                                  | `true`                | `eventing.knative.dev/v1` or `serving.knative.dev/v1` |
 | `ref.kind`       | String | Kubernetes Kind of the target                                                         | `true`                | `Broker` or `Service`                                 |
@@ -316,7 +366,7 @@ The following table lists allowed and optional fields for using OpenFaaS as an
 event `processor`.
 
 | Field     | Type    | Description                                                                                                       | Required | Example                                          |
-| --------- | ------- | ----------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------ |
+|-----------|---------|-------------------------------------------------------------------------------------------------------------------|----------|--------------------------------------------------|
 | `address` | String  | URI of the OpenFaaS gateway                                                                                       | true     | `http://gateway.openfaas:8080`                   |
 | `async`   | Boolean | Specify how to invoke functions (synchronously or asynchronously)                                                 | true     | `false` (i.e. use sync function invocation mode) |
 | `<auth>`  | Object  | **Optional:** authentication data (see auth section below). Omit section if OpenFaaS gateway auth is not enabled. | false    | (see `basic_auth` example below)                 |
@@ -363,7 +413,7 @@ The following table lists allowed and optional fields for using AWS EventBridge
 as an event `processor`.
 
 | Field      | Type   | Description                                                                                                                             | Required | Example                                                                |
-| ---------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
+|------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------|----------|------------------------------------------------------------------------|
 | `region`   | String | AWS region to use, see [regions doc](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html). | true     | `us-west-1`                                                            |
 | `eventBus` | String | Name of the event bus to use                                                                                                            | true     | `default` or `arn:aws:events:us-west-1:1234567890:event-bus/customBus` |
 | `ruleARN`  | String | Rule ARN to use for event pattern matching                                                                                              | true     | `arn:aws:events:us-west-1:1234567890:rule/vmware-event-router`         |
@@ -386,7 +436,7 @@ Supported providers/processors:
 - `default` metrics server (see below) (required: `false`, i.e. optional)
 
 | Field                | Type   | Description                             | Required | Example      |
-| -------------------- | ------ | --------------------------------------- | -------- | ------------ |
+|----------------------|--------|-----------------------------------------|----------|--------------|
 | `type`               | String | Authentication method to use            | true     | `basic_auth` |
 | `basicAuth`          | Object | Use when `basic_auth` type is specified | true     |              |
 | `basicAuth.username` | String | Username                                | true     | `admin`      |
@@ -399,7 +449,7 @@ Supported providers/processors:
 - `aws_event_bridge`
 
 | Field                        | Type   | Description                                 | Required | Example          |
-| ---------------------------- | ------ | ------------------------------------------- | -------- | ---------------- |
+|------------------------------|--------|---------------------------------------------|----------|------------------|
 | `type`                       | String | Authentication method to use                | true     | `aws_access_key` |
 | `awsAccessKeyAuth`           | Object | Use when `aws_access_key` type is specified | true     |                  |
 | `awsAccessKeyAuth.accessKey` | String | Access Key ID for the IAM role used         | true     | `ABCDEFGHIJK`    |
@@ -435,6 +485,23 @@ permissions ("Action"):
 }
 ```
 
+#### Type `active_directory`
+
+Supported providers/processors:
+
+- `horizon` (required: `true`)
+
+| Field                          | Type   | Description                                   | Required | Example            |
+|--------------------------------|--------|-----------------------------------------------|----------|--------------------|
+| `type`                         | String | Authentication method to use                  | true     | `active_directory` |
+| `activeDirectoryAuth`          | Object | Use when `active_directory` type is specified | true     |                    |
+| `activeDirectoryAuth.domain`   | String | Domain                                        | true     | `corp`             |
+| `activeDirectoryAuth.username` | String | Username                                      | true     | `administrator`    |
+| `activeDirectoryAuth.password` | String | Password                                      | true     | `P@ssw0rd`         |
+
+> **Note:** UPN authentication, e.g. `administrator@corp.local` as `username`,
+> is not supported.
+
 ### The `metricsProvider` section
 
 The VMware Event Router currently only exposes a default ("internal" or "embedded") metrics
@@ -442,7 +509,7 @@ endpoint. In the future, support for more providers is planned, e.g. Wavefront,
 Prometheus, etc.
 
 | Field             | Type   | Description                     | Required | Example                                 |
-| ----------------- | ------ | ------------------------------- | -------- | --------------------------------------- |
+|-------------------|--------|---------------------------------|----------|-----------------------------------------|
 | `type`            | String | Type of the metrics provider    | true     | `default`                               |
 | `name`            | String | Name of the metrics provider    | true     | `metrics-server-veba`                   |
 | `<provider_type>` | Object | Provider specific configuration | true     | See metrics provider type section below |
@@ -454,7 +521,7 @@ listener, e.g. `http://<bindAddress>/stats`. The following table lists allowed
 and optional fields for configuring the `default` metrics server.
 
 | Field         | Type   | Description                                                                                 | Required | Example                    |
-| ------------- | ------ | ------------------------------------------------------------------------------------------- | -------- | -------------------------- |
+|---------------|--------|---------------------------------------------------------------------------------------------|----------|----------------------------|
 | `bindAddress` | String | TCP/IP socket and port to listen on (**do not** add any URI scheme or slashes)              | true     | `"0.0.0.0:8082"`           |
 | `<auth>`      | Object | **Optional:** authentication data (see auth section). Omit section if auth is not required. | false    | (see `basic_auth` example) |
 
@@ -579,7 +646,8 @@ The chart should now show up in the search:
 ```console
 $ helm search repo event-router
 NAME                      CHART VERSION   APP VERSION     DESCRIPTION
-vmware-veba/event-router  v0.6.2          v0.6.0          The VMware Event Router is used to connect to v...
+vmware-veba/event-router  v0.6.4          v0.6.1          The VMware Event Router is used to connect to v...
+[snip]
 ```
 
 > **Note:** To list/install development releases add the `--devel` flag to the Helm CLI.
@@ -592,7 +660,7 @@ automatically created if it does not exist:
 ```console
 $ helm install -n vmware --create-namespace veba vmware-veba/event-router -f override.yaml
 NAME: veba
-LAST DEPLOYED: Mon Nov  9 16:27:27 2020
+LAST DEPLOYED: Mon Jun  28 16:27:27 2020
 NAMESPACE: vmware
 STATUS: deployed
 REVISION: 1
@@ -619,7 +687,6 @@ To uninstall the release run:
 ```console
 $ helm -n vmware uninstall veba
 ```
-
 
 ##### Creating/Updating the Chart
 
@@ -680,16 +747,17 @@ Knative environment with `Serving` and `Eventing` CRDs installed.
 
 ```console
 # only for Knative-based deployments
-$ kubectl create clusterrolebinding veba-addressable-resolver --clusterrole=addressable-resolver --serviceaccount=vmware:vmware-event-router
+$ kubectl create clusterrolebinding veba-addressable-resolver --clusterrole=knative-serving-aggregated-addressable-resolver --serviceaccount=vmware:vmware-event-router
 ```
 
 <details><summary>Addressable Resolver Permissions</summary>
 
 ```console
 $ kubectl describe clusterrole addressable-resolver
-Name:                                            addressable-resolver
-Labels:                                          eventing.knative.dev/release=v0.18.4
-Annotations:                                     PolicyRule:
+Name:         knative-serving-aggregated-addressable-resolver
+Labels:       serving.knative.dev/release=v0.23.0
+Annotations:  <none>
+PolicyRule:
   Resources                                      Non-Resource URLs  Resource Names  Verbs
   ---------                                      -----------------  --------------  -----
   services                                       []                 []              [get list watch]

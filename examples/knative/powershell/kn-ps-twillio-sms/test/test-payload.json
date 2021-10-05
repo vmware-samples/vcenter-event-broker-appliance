@@ -1,0 +1,72 @@
+{
+	"Key": 4671568,
+	"ChainId": 4671568,
+	"CreatedTime": "2021-07-12T15:42:53.220999Z",
+	"UserName": "VSPHERE.LOCAL\\Administrator",
+	"Datacenter": {
+	  "Name": "Primp-Datacenter",
+	  "Datacenter": {
+		"Type": "Datacenter",
+		"Value": "datacenter-3"
+	  }
+	},
+	"ComputeResource": {
+	  "Name": "Supermicro-Cluster",
+	  "ComputeResource": {
+		"Type": "ClusterComputeResource",
+		"Value": "domain-c8"
+	  }
+	},
+	"Host": {
+	  "Name": "192.168.30.5",
+	  "Host": {
+		"Type": "HostSystem",
+		"Value": "host-11"
+	  }
+	},
+	"Vm": {
+	  "Name": "Ubuntu-18.04",
+	  "Vm": {
+		"Type": "VirtualMachine",
+		"Value": "vm-11158"
+	  }
+	},
+	"Ds": null,
+	"Net": null,
+	"Dvs": null,
+	"FullFormattedMessage": "Task: Create virtual machine snapshot",
+	"ChangeTag": "",
+	"Info": {
+	  "Key": "task-444942",
+	  "Task": {
+		"Type": "Task",
+		"Value": "task-444942"
+	  },
+	  "Description": null,
+	  "Name": "CreateSnapshot_Task",
+	  "DescriptionId": "VirtualMachine.createSnapshot",
+	  "Entity": {
+		"Type": "VirtualMachine",
+		"Value": "vm-11158"
+	  },
+	  "EntityName": "Ubuntu-18.04",
+	  "Locked": null,
+	  "State": "queued",
+	  "Cancelled": false,
+	  "Cancelable": true,
+	  "Error": null,
+	  "Result": null,
+	  "Progress": 0,
+	  "Reason": {
+		"UserName": "VSPHERE.LOCAL\\Administrator"
+	  },
+	  "QueueTime": "2021-07-12T15:42:53.221142Z",
+	  "StartTime": null,
+	  "CompleteTime": null,
+	  "EventChainId": 0,
+	  "ChangeTag": "",
+	  "ParentTaskKey": "",
+	  "RootTaskKey": "",
+	  "ActivationId": ""
+	}
+  }

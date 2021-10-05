@@ -4,18 +4,15 @@ metadata:
   name: kn-py-echo
   labels:
     app: veba-ui
+spec:
   template:
     metadata:
       annotations:
         autoscaling.knative.dev/maxScale: "1"
         autoscaling.knative.dev/minScale: "1"
-spec:
-  template:
-    metadata:
     spec:
       containers:
-        - image: projects.registry.vmware.com/veba/kn-py-echo:1.0
-          
+        - image: us.gcr.io/daisy-284300/veba/kn-py-echo:1.0
 ---
 apiVersion: eventing.knative.dev/v1
 kind: Trigger

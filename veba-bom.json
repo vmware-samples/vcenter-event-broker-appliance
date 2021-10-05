@@ -1,26 +1,26 @@
 {
     "veba": {
-        "version": "v0.6.1"
+        "version": "v0.7.0"
     },
     "vmware-event-router": {
-        "gitRepoTag": "v0.6.1",
+        "gitRepoTag": "v0.7.0",
         "containers": [{
             "name": "vmware/veba-event-router",
-            "version": "v0.6.1"
+            "version": "v0.7.0"
         }]
     },
     "veba-ui": {
         "gitRepoTag": "v0.6.0",
         "containers": [{
             "name": "projects.registry.vmware.com/veba/veba-ui",
-            "version": "ff40f863"
+            "version": "3e1f828b"
         }]
     },
     "antrea": {
-        "gitRepoTag": "v0.6.0",
+        "gitRepoTag": "v1.2.0",
         "containers": [{
-            "name": "antrea/antrea-ubuntu",
-            "version": "v0.6.0"
+            "name": "projects.registry.vmware.com/antrea/antrea-ubuntu",
+            "version": "v1.2.0"
         }]
     },
     "contour": {
@@ -32,8 +32,21 @@
             {
                 "name": "envoyproxy/envoy",
                 "version": "v1.15.1"
-            }
-        ]
+            }]
+    },
+    "fluentbit": {
+        "gitRepoTag": "v1.7.9",
+        "containers": [{
+                "name": "fluent/fluent-bit",
+                "version": "1.7.9"
+            }]
+    },
+    "cadvisor": {
+        "gitRepoTag": "v0.37.5",
+        "containers": [{
+                "name": "gcr.io/cadvisor/cadvisor",
+                "version": "v0.37.5"
+            }]
     },
     "kubernetes": {
         "gitRepoTag": "v1.20.2",
@@ -207,5 +220,8 @@
             "name": "docker.io/n3wscott/sockeye:v0.7.0@sha256",
             "version": "e603d8494eeacce966e57f8f508e4c4f6bebc71d095e3f5a0a1abaf42c5f0e48"
         }]
+    },
+    "ytt-cli": {
+        "version": "v0.35.1"
     }
 }

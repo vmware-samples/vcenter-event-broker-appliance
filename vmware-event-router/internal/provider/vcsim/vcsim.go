@@ -100,7 +100,7 @@ func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCSIM, ms met
 }
 
 // Stream implements the event provider interface and starts the event stream
-func (vcsim *EventStream) Stream(ctx context.Context, processor processor.Processor) error {
+func (vcsim *EventStream) Stream(ctx context.Context, p processor.Processor) error {
 	mgr := event.NewManager(vcsim.client.Client)
 	defer func() {
 		// ignore error against vcsim
@@ -115,7 +115,7 @@ func (vcsim *EventStream) Stream(ctx context.Context, processor processor.Proces
 
 	// get events for all objects
 	ref := vcsim.client.ServiceContent.RootFolder
-	handler := eventHandler(ctx, vcsim, processor)
+	handler := eventHandler(ctx, vcsim, p)
 
 	// blocks
 	return mgr.Events(ctx, []types.ManagedObjectReference{ref}, pageSize, tail, force, handler)
@@ -135,7 +135,7 @@ func eventHandler(ctx context.Context, vcsim *EventStream, proc processor.Proces
 		// reverse slice because vcsim sends events in descending key order
 		reverse(baseEvents)
 		for _, e := range baseEvents {
-			ce, err := events.NewCloudEvent(e, source)
+			ce, err := events.NewFromVSphere(e, source)
 			if err != nil {
 				vcsim.Errorw("skipping event because it could not be converted to CloudEvent format", "event", e, "error", err)
 				errCount++
@@ -163,10 +163,10 @@ func eventHandler(ctx context.Context, vcsim *EventStream, proc processor.Proces
 }
 
 // reverse reverses the order of the given slice
-func reverse(events []types.BaseEvent) {
-	for i := len(events)/2 - 1; i >= 0; i-- {
-		opp := len(events) - 1 - i
-		events[i], events[opp] = events[opp], events[i]
+func reverse(ev []types.BaseEvent) {
+	for i := len(ev)/2 - 1; i >= 0; i-- {
+		opp := len(ev) - 1 - i
+		ev[i], ev[opp] = ev[opp], ev[i]
 	}
 }
 

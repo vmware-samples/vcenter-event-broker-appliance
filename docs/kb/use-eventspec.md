@@ -1,8 +1,8 @@
 ---
 layout: docs
 toc_id: use-eventspec
-title: VMware Event Broker Appliance - Architecture
-description: VMware Event Broker Appliance Architecture
+title: VMware Event Broker Appliance - Event Schema
+description: VMware Event Broker Appliance Event Schema
 permalink: /kb/eventspec
 cta:
  title: Get Started
@@ -14,45 +14,100 @@ cta:
 
 # The Event Specification
 
-The event payload structure used by the VMware Event Broker Appliance follows the [CloudEvents](https://github.com/cloudevents/sdk-go/blob/master/pkg/cloudevents/eventcontext_v1.go){:target="_blank"} v1 specification for cross-cloud portability. The current data content type which is sent as payload to a supported event processor is JSON.
+The event payload structure used by the VMware Event Broker Appliance uses the
+[CloudEvents](https://cloudevents.io/){:target="_blank"} v1 specification for
+cross-cloud portability. 
 
-The following example shows the event structure sent as JSON to a supported event processor (trimmed for better readability):
+Events produced by the supported event `providers`, e.g. `vcenter` and `horizon`
+are JSON-encoded and injected into the CloudEvents `data` attribute. The current
+data content-type, which is sent as payload to a supported event processor, is
+`application/json`.
+
+Based on defined `triggers`, the `broker` in the VMware Event Broker Appliance
+sends these events to registered event `processors` (i.e. functions). By
+default, the `broker` sends CloudEvents via the HTTP protocol using `binary`
+encoding. That is, the key CloudEvent attributes, e.g. `id`, `source`, `type`,
+etc. are set via HTTP headers. The HTTP body contains the event as emitted by
+the event `provider`, e.g. `vcenter`.
+
+Please use one of the provided CloudEvents [SDKs](https://cloudevents.io/) to
+ease the consumption and handling of these events.
+
+## Example
+
+The following example shows a converted CloudEvent published by the `vcenter`
+event provider (optimized for readability) using CloudEvent HTTP `binary` mode
+transport encoding.
+
+### HTTP Headers
+
+Key HTTP headers used:
 
 ```json
 {
-  "id": "08179137-b8e0-4973-b05f-8f212bf5003b",
-  "source": "https://vcenter-01:443/sdk",
-  "specversion": "1.0",
-  "type": "com.vmware.event.router/event",
-  "subject": "VmPoweredOffEvent",
-  "time": "2020-02-11T21:29:54.9052539Z",
-  "data": {
-    "Key": 9902,
-    "ChainId": 9895,
-    [.....]
-  },
-  "datacontenttype": "application/json"
+  "Ce-Id": "08179137-b8e0-4973-b05f-8f212bf5003b",
+  "Ce-Source": "https://vcenter-01:443/sdk",
+  "Ce-Specversion": "1.0",
+  "Ce-Subject": "VmPoweredOnEvent",
+  "Ce-Time": "2021-09-27T19:02:54.063Z",
+  "Ce-Type": "com.vmware.event.router/event",
+  "Content-Type": "application/json",
 }
 ```
 
-`id:` The unique ID ([UUID](https://tools.ietf.org/html/rfc4122){:target="_blank"}) of the event
+#### Description
 
-`source:` The vCenter emitting the embedded vSphere event (FQDN resolved when available)
+- `id:` The unique ID ([UUID v4](https://tools.ietf.org/html/rfc4122){:target="_blank"}) of the event
+- `source:` The vCenter emitting the embedded vSphere event (FQDN resolved when available)
+- `specversion:` The CloudEvent specification the used
+- `subject:` The vCenter event name (CamelCase)
+- `type:` The canonical name of the event class in "." dot notation 
+- `time:` Timestamp when this event was produced by the event `provider` (`vcenter`)
+- `content-type:` Data (payload) encoding scheme used (JSON)
 
-`specversion:` The event specification the appliances uses (can be used for schema handling)
+### HTTP Body
 
-`type:` The canonical name of the event class in "." dot notation 
+The event as emitted by vCenter:
 
-`subject:` The vCenter event name (CamelCase)
-
-`time:` Timestamp when this event was produced by the appliance
-
-`data:` Original vCenter event
-
-`data.Key:` Monotonically increasing value set by vCenter (the lower the key, the older the message as being created by vCenter)
-
-`data.CreatedTime:` When the embedded event was created by vCenter
-
-`datacontenttype:` Encoding used (JSON)
-
-Please see the section on function [best practices](contribute-functions.md) below how you can make use of these fields for advanced requirements.
+```json
+{
+  "Key": 23192,
+  "ChainId": 23182,
+  "CreatedTime": "2021-09-27T19:02:54.063Z",
+  "UserName": "VSPHERE.LOCAL\\Administrator",
+  "Datacenter": {
+    "Name": "vcqaDC",
+    "Datacenter": {
+      "Type": "Datacenter",
+      "Value": "datacenter-2"
+    }
+  },
+  "ComputeResource": {
+    "Name": "cls",
+    "ComputeResource": {
+      "Type": "ClusterComputeResource",
+      "Value": "domain-c7"
+    }
+  },
+  "Host": {
+    "Name": "10.78.209.131",
+    "Host": {
+      "Type": "HostSystem",
+      "Value": "host-33"
+    }
+  },
+  "Vm": {
+    "Name": "test-vm-1",
+    "Vm": {
+      "Type": "VirtualMachine",
+      "Value": "vm-45"
+    }
+  },
+  "Ds": null,
+  "Net": null,
+  "Dvs": null,
+  "FullFormattedMessage": "test-vm-1 on  10.78.209.131 in vcqaDC is powered on",
+  "ChangeTag": "",
+  "Template": false
+}
+```

@@ -1,0 +1,36 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@ ds = overlay.subset({"kind":"DaemonSet"})
+#@ dep = overlay.subset({"kind":"Deployment"})
+
+#@overlay/match by=overlay.subset({"kind":"Deployment", "metadata": {"name": "antrea-controller"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+        #@overlay/match by=overlay.subset({"name": "antrea-controller"})
+        -
+          #@overlay/match missing_ok=True
+          imagePullPolicy: IfNotPresent
+
+#@overlay/match by=overlay.subset({"kind":"DaemonSet", "metadata": {"name": "antrea-agent"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+        #@overlay/match by=overlay.subset({"name": "antrea-agent"})
+        -
+          #@overlay/match missing_ok=True
+          imagePullPolicy: IfNotPresent
+        #@overlay/match by=overlay.subset({"name": "antrea-ovs"})
+        -
+          #@overlay/match missing_ok=True
+          imagePullPolicy: IfNotPresent
+      initContainers:
+        #@overlay/match by=overlay.subset({"name": "install-cni"})
+        -
+          #@overlay/match missing_ok=True
+          imagePullPolicy: IfNotPresent

@@ -4,14 +4,14 @@ import (
 	"context"
 	"expvar"
 	"fmt"
-	"net"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
+
+	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/util"
 
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/logger"
@@ -56,7 +56,7 @@ func NewServer(cfg *config.MetricsProviderConfigDefault, log logger.Logger) (*Se
 	basicAuth := true
 
 	if cfg.Auth == nil || cfg.Auth.BasicAuth == nil {
-		metricLog.Warnf("no credentials found, disabling authentication for metrics server")
+		metricLog.Warnf("disabling basic auth: no authentication data provided")
 		basicAuth = false
 	}
 
@@ -69,7 +69,7 @@ func NewServer(cfg *config.MetricsProviderConfigDefault, log logger.Logger) (*Se
 		mux.Handle(endpoint, expvar.Handler())
 	}
 
-	err := validateAddress(cfg.BindAddress)
+	err := util.ValidateAddress(cfg.BindAddress)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not validate bind address")
 	}
@@ -85,39 +85,6 @@ func NewServer(cfg *config.MetricsProviderConfigDefault, log logger.Logger) (*Se
 	}
 
 	return srv, nil
-}
-
-// validateAddress validates the given address and will return an error if the
-// format is not <IP>:<PORT>
-func validateAddress(address string) error {
-	// TODO: this list is not extensive and needs to be changed once we allow DNS
-	// names for external metrics endpoints
-	const invalidChars = `abcdefghijklmnopqrstuvwxyz/\ `
-
-	address = strings.ToLower(address)
-	if strings.ContainsAny(address, invalidChars) {
-		return errors.New("invalid character detected (required format: <IP>:<PORT>)")
-	}
-
-	// 	check if port if specified
-	if !strings.Contains(address, ":") {
-		return errors.New("no port specified")
-	}
-
-	h, p, err := net.SplitHostPort(address)
-	if err != nil {
-		return err
-	}
-
-	if h == "" {
-		return errors.New("no IP listen address specified")
-	}
-
-	if p == "" {
-		return errors.New("no port specified")
-	}
-
-	return nil
 }
 
 // Run starts the metrics server until the context is cancelled or an error
@@ -156,7 +123,7 @@ func (s *Server) Run(ctx context.Context) error {
 
 // withBasicAuth enforces basic auth as a middleware for the given username and
 // password
-func withBasicAuth(logger logger.Logger, next http.Handler, u, p string) http.HandlerFunc {
+func withBasicAuth(log logger.Logger, next http.Handler, u, p string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user, password, ok := r.BasicAuth()
 
@@ -167,7 +134,7 @@ func withBasicAuth(logger logger.Logger, next http.Handler, u, p string) http.Ha
 			_, err := w.Write([]byte("invalid credentials"))
 
 			if err != nil {
-				logger.Errorf("could not write http response: %v", err)
+				log.Errorf("could not write http response: %v", err)
 			}
 
 			return

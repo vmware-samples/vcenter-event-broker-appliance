@@ -6,7 +6,8 @@ Example Knative PowerCLI function for applying a vSphere Tag when a Virtual Mach
 Create the container image locally to test your function logic.
 
 ```
-docker build -t <docker-username>/kn-pcli-tag:1.0 .
+export TAG=<version>
+docker build -t <docker-username>/kn-pcli-tag:${TAG} .
 ```
 
 # Step 2 - Test
@@ -30,9 +31,20 @@ Update the following variable names within the `docker-test-env-variable` file
 Start the container image by running the following command:
 
 ```console
-docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 <docker-username>/kn-pcli-tag:1.0
+docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 <docker-username>/kn-pcli-tag:${TAG}
 ```
 
+In the `test` directory, edit `test-payload.json`. Locate the `Vm` section of the JSON file. Change the `Name:` property from `REPLACE-ME` to the name of a test VM currently in your vCenter inventory. If you do not make this change, the function will still be invoked, but the tag operation will fail because the VM will not be found.
+
+```json
+"Vm": {
+  "Name": "REPLACE-ME",
+  "Vm": {
+	"Type": "VirtualMachine",
+	"Value": "vm-11099"
+  }
+}
+```
 In a separate terminal, run either `send-cloudevent-test.ps1` (PowerShell Script) or `send-cloudevent-test.sh` (Bash Script) to simulate a CloudEvent payload being sent to the local container image
 
 ```console
@@ -96,7 +108,7 @@ Dvs
 Push your container image to an accessible registry such as Docker once you're done developing and testing your function logic.
 
 ```console
-docker push <docker-username>/kn-pcli-tag:1.0
+docker push <docker-username>/kn-pcli-tag:${TAG}
 ```
 
 Update the `tag_secret.json` file with your vCenter Server credentials and configurations and then create the kubernetes secret which can then be accessed from within the function by using the environment variable named called `TAG_SECRET`.

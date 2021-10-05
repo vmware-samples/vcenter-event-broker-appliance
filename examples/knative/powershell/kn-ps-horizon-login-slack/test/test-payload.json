@@ -1,0 +1,9 @@
+{
+	"id": 166419,
+	"machine_dns_name": "hz-01.vmware.corp",
+	"message": "User vmware.corp\\badguy has failed to authenticate to Horizon REST API",
+	"module": "Vlsi",
+	"severity": "AUDIT_FAIL",
+	"time": 1630684828187,
+	"type": "VLSI_USERLOGIN_REST_FAILED"
+}

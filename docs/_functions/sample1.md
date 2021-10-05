@@ -1,8 +1,8 @@
 ---
-title: Infrastructure Self Service + Automatic Remediations
+title: vSphere Alarm Function
 icon: case-study-2.svg
 #subtitle: Subheading goes here
-links:  
- Deploy Function: https://github.com/pksrc/vebafn/tree/master/vm-self-service-app
+links:
+ Deploy Function: https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/development/examples/knative/powershell/kn-ps-slack-vsphere-alarm
 ---
-A complete App which enables Business Stakeholders to interact with VMware's Software-Defined Data Center (SDDC) and manage a VM through Slack slash commands. Additionally, enables you to handle certain crises automatically to increase your operational efficiency.
+vSphere alarm events do not provide metadata about defined triggers and thresholds. This example demonstrates how Knative flows can be used to enrich events and send it to other functions for consumption.

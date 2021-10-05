@@ -48,7 +48,7 @@ func (f *VCenter) Stream(ctx context.Context, p processor.Processor) error {
 				// process slice in reverse order to maintain Event.Key ordering
 				event := baseEvent[len(baseEvent)-1-idx]
 
-				ce, err := events.NewCloudEvent(event, source)
+				ce, err := events.NewFromVSphere(event, source)
 				if err != nil {
 					f.Logger.Errorw("skipping event because it could not be converted to CloudEvent format", "event", event, "error", err)
 					continue

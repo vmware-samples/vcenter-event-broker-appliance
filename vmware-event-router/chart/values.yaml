@@ -4,6 +4,7 @@ replicaCount: 1
 image:
   repository: vmware/veba-event-router
   pullPolicy: Always
+  fullImage: "" # repo/image:tag format to easily overwrite default for testing
 
 imagePullSecrets: []
 nameOverride: ""
@@ -75,6 +76,21 @@ eventrouter:
     password: ReplaceMe
     # ignore TLS certificate warnings (e.g. self-signed certificate)
     insecure: false
+
+  # webhook event provider default settings
+  webhook:
+    port: 8080
+    path: "/webhook"
+    username: "" # empty disables basic_auth
+    password: ""
+  
+  # horizon event provider default settings
+  horizon:
+    address: https://api.myhorizon.corp.local
+    insecure: false
+    domain: "corp"
+    username: "administrator"
+    password: "ReplaceMe"
     
   # openfaas event processor default settings
   openfaas:

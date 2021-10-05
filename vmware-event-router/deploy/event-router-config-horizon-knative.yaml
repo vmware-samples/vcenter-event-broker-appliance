@@ -1,0 +1,41 @@
+apiVersion: event-router.vmware.com/v1alpha1
+kind: RouterConfig
+metadata:
+  name: router-config-horizon-knative
+  labels:
+    key: value
+eventProvider:
+  type: horizon
+  name: veba-demo-horizon
+  horizon:
+    address: https://api.myhorizon.corp.local
+    insecureSSL: false
+    auth:
+      type: active_directory
+      activeDirectoryAuth:
+        domain: corp
+        username: administrator
+        password: ReplaceMe
+eventProcessor:
+  name: veba-demo-knative
+  type: knative
+  knative:
+    encoding: binary
+    insecureSSL: false
+    destination:
+      ref:
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+        name: rabbit
+        namespace: default
+metricsProvider:
+  type: default
+  name: veba-demo-metrics
+  default:
+    bindAddress: "0.0.0.0:8082"
+# disabling auth for the metrics endpoint
+#    auth:
+#      type: basic_auth
+#      basicAuth:
+#        username: admin
+#        password: ReplaceMe

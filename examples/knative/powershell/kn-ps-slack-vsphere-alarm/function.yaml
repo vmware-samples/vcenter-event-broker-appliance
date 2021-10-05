@@ -1,0 +1,75 @@
+# Powershell vSphere Alarm Slack Notification
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-ps-slack-vsphere-alarm
+  labels:
+    app: veba-ui
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+        - image: us.gcr.io/daisy-284300/veba/kn-ps-slack-vsphere-alarm:1.3
+          envFrom:
+            - secretRef:
+                name: slack-secret
+          env:
+            - name: FUNCTION_DEBUG
+              value: "true"
+---
+# Trigger which fires off to a sequence
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: alarmsequence-trigger
+spec:
+  broker: default
+  subscriber:
+    ref:
+      apiVersion: flows.knative.dev/v1
+      kind: Sequence
+      name: alarminfo-enricher
+---
+# sequence which will send event to alarm server for pre-filtering
+# and any enriched AlarmEvent returned will be sent to second step (parallel)
+apiVersion: flows.knative.dev/v1
+kind: Sequence
+metadata:
+  name: alarminfo-enricher
+spec:
+  channelTemplate:
+    apiVersion: messaging.knative.dev/v1
+    kind: InMemoryChannel
+  steps:
+    - ref:
+        apiVersion: v1
+        kind: Service
+        name: vsphere-alarm-server
+    - ref:
+        apiVersion: flows.knative.dev/v1
+        kind: Parallel
+        name: alarminfo-parallel
+---
+apiVersion: flows.knative.dev/v1
+kind: Parallel
+metadata:
+  name: alarminfo-parallel
+spec:
+  channelTemplate:
+    apiVersion: messaging.knative.dev/v1
+    kind: InMemoryChannel
+  branches:
+    - subscriber:
+        ref:
+          apiVersion: v1
+          kind: Service
+          name: sockeye
+    - subscriber:
+        ref:
+          apiVersion: serving.knative.dev/v1
+          kind: Service
+          name: kn-ps-slack-vsphere-alarm

@@ -17,19 +17,20 @@ echo '> Applying latest Updates...'
 cd /etc/yum.repos.d/
 sed -i 's/dl.bintray.com\/vmware/packages.vmware.com\/photon\/$releasever/g' photon.repo photon-updates.repo photon-extras.repo photon-debuginfo.repo
 tdnf -y update photon-repos
+tdnf -y remove minimal # TODO: required due to bug in Photon 4 GA
+rpm -e --noscripts systemd-udev-247.3-1.ph4 # TODO: required due to bug in Photon 4 GA
 tdnf clean all
 tdnf makecache
 tdnf -y update
 
 echo '> Installing Additional Packages...'
+# TODO: minimal required due to bug in Photon 4 GA
 tdnf install -y \
-  less \
+  minimal \
   logrotate \
-  curl \
   wget \
   git \
   unzip \
-  awk \
   tar \
   jq \
   parted
@@ -55,6 +56,12 @@ KNATIVE_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["knative"].gitRepoTag')
 wget https://github.com/knative/client/releases/download/${KNATIVE_VERSION}/kn-linux-amd64
 chmod +x kn-linux-amd64
 mv kn-linux-amd64 /usr/local/bin/kn
+
+echo '> Downloading YTT CLI'
+YTT_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["ytt-cli"].version')
+wget https://github.com/vmware-tanzu/carvel-ytt/releases/download/${YTT_VERSION}/ytt-linux-amd64
+chmod +x ytt-linux-amd64
+mv ytt-linux-amd64 /usr/local/bin/ytt
 
 echo '> Creating directory for setup scripts and configuration files'
 mkdir -p /root/setup
@@ -110,5 +117,8 @@ cat > /etc/logrotate.d/contrackd << EOF
 	copytruncate
 }
 EOF
+
+#TODO - Temp fix until this is resolved in Photon OS 4.x
+sed -i '1,238d' /etc/conntrackd/conntrackd.conf
 
 echo '> Done'

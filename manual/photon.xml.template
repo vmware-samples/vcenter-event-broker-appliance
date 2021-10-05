@@ -89,12 +89,50 @@
             <Label>Disable vCenter Server TLS Verification</Label>
             <Description>Disable TLS Verification for vCenter Server (required for self-sign certificate)</Description>
         </Property>
+     <Category>Horizon</Category>
+        <Property ovf:key="guestinfo.horizon" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+            <Label>Enable Horizon Event Provider</Label>
+            <Description>Enable Horizon Event Provider</Description>
+        </Property>
+        <Property ovf:key="guestinfo.horizon_server" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Horizon Server</Label>
+            <Description>IP Address or Hostname of Horizon Server</Description>
+        </Property>
+        <Property ovf:key="guestinfo.horizon_domain" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Horizon Domain Name</Label>
+            <Description>Active Directory Domain the username to login to the Horizon Server belongs to (e.g. corp)</Description>
+        </Property>
+        <Property ovf:key="guestinfo.horizon_username" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Horizon Username</Label>
+            <Description>Username to login to Horizon Server (UPN-style not allowed)</Description>
+        </Property>
+        <Property ovf:key="guestinfo.horizon_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Horizon Password</Label>
+            <Description>Password to login to Horizon Server</Description>
+        </Property>
+        <Property ovf:key="guestinfo.horizon_disable_tls_verification" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+            <Label>Disable Horizon Server TLS Verification</Label>
+            <Description>Disable TLS Verification for Horizon Server (required for self-sign certificate)</Description>
+        </Property>
+      <Category>Webhook</Category>
+        <Property ovf:key="guestinfo.webhook" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+            <Label>Enable Webhook Event Provider</Label>
+            <Description>Enable Webhook Event Provider</Description>
+        </Property>
+        <Property ovf:key="guestinfo.webhook_username" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Basic Auth Username (Optional)</Label>
+            <Description>Username to login to webhook endpoint</Description>
+        </Property>
+        <Property ovf:key="guestinfo.webhook_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Basic Auth Password (Optional)</Label>
+            <Description>Password to login to webhook endpoint</Description>
+        </Property>
       <Category>Event Processor Configuration</Category>
         <Property ovf:qualifiers="ValueMap{&quot;Knative&quot;, &quot;OpenFaaS&quot;, &quot;AWS EventBridge&quot;}" ovf:userConfigurable="true" ovf:value="Knative" ovf:type="string" ovf:key="guestinfo.event_processor_type">
           <Label>Event Processor</Label>
-          <Description>Choose either Knative (default), OpenFaaS, or AWS EventBridge and only fill in the configuration for the select event processor below</Description>
+          <Description>Choose either Knative (default), OpenFaaS (deprecated), or AWS EventBridge (deprecated) and only fill in the configuration for the selected event processor below</Description>
         </Property>
-      <Category>Existing Knative Environment Configuration</Category>
+      <Category>Existing Knative Environment Configuration (deprecated)</Category>
         <Property ovf:key="guestinfo.knative_host" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Host</Label>
             <Description>Knative Host (e.g. mybroker.corp.local:8080)</Description>
@@ -111,7 +149,7 @@
             <Label>Path</Label>
             <Description>Additional path to append to the host if required (e.g. /default/default)</Description>
         </Property>
-      <Category>OpenFaaS Configuration</Category>
+      <Category>OpenFaaS Configuration (deprecated)</Category>
         <Property ovf:key="guestinfo.openfaas_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Password</Label>
             <Description>Password to login into OpenFaaS. Please use a secure password</Description>
@@ -120,7 +158,7 @@
             <Label>Advanced Settings</Label>
             <Description>Opaque string for applying advanced configurations for OpenFaaS Processor. For advanced use cases only, please see documentation for more details</Description>
         </Property>
-      <Category>AWS EventBridge Configuration</Category>
+      <Category>AWS EventBridge Configuration (deprecated)</Category>
         <Property ovf:key="guestinfo.aws_eb_access_key" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Access Key</Label>
             <Description>A valid AWS Access Key to AWS EventBridge</Description>
@@ -153,6 +191,23 @@
         <Property ovf:key="guestinfo.custom_tls_ca_cert" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Custom VMware Event Broker Appliance TLS Certificate Authority Certificate (Base64)</Label>
             <Description>Base64 encoded custom TLS certificate (.CER) for the VMware Event Broker Appliance</Description>
+        </Property>
+      <Category>Syslog Server Configuration</Category>
+        <Property ovf:key="guestinfo.syslog_server_hostname" ovf:type="string" ovf:userConfigurable="true">
+            <Label>Hostname or IP Address</Label>
+            <Description>Specify the Hostname (FQDN) or IP Address of the Syslog Server</Description>
+        </Property>
+        <Property ovf:key="guestinfo.syslog_server_port" ovf:type="string" ovf:userConfigurable="true" ovf:value="514">
+            <Label>Port</Label>
+            <Description>Syslog Server Port</Description>
+        </Property>
+        <Property ovf:key="guestinfo.syslog_server_protocol" ovf:qualifiers="ValueMap{&quot;TCP&quot;,&quot;TLS&quot;,&quot;UDP&quot;}" ovf:userConfigurable="true" ovf:type="string" ovf:value="TCP">
+            <Label>Protocol</Label>
+            <Description>Choose the Transport Protocol</Description>
+        </Property>
+        <Property ovf:key="guestinfo.syslog_server_format" ovf:qualifiers="ValueMap{&quot;RFC5424&quot;,&quot;RFC3164&quot;}" ovf:userConfigurable="true" ovf:type="string" ovf:value="RFC5424">
+            <Label>Format</Label>
+            <Description>Choose the Syslog Protocol Format</Description>
         </Property>
       <Category>zAdvanced</Category>
         <Property ovf:key="guestinfo.debug" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">

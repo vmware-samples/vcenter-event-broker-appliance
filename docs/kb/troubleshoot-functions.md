@@ -5,13 +5,13 @@ title: VMware Event Broker Function Troubleshooting
 description: Troubleshooting guide for general function issues
 permalink: /kb/troubleshoot-functions
 cta:
- title: Still having trouble? 
+ title: Still having trouble?
  description: Please submit bug reports and feature requests by using our GitHub [Issues](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues){:target="_blank"} page or Join us on slack [#vcenter-event-broker-appliance](https://vmwarecode.slack.com/archives/CQLT9B5AA){:target="_blank"} on vmwarecode.slack.com.
 ---
 
-## OpenFaaS Function Troubleshooting
+## Knative Function Troubleshooting
 
-If a function is not behaving as expected, you can look at the logs to troubleshoot. First, SSH or console to the appliance as shown in the Requirements section.
+If a function is not behaving as expected, you can look at the logs to troubleshoot. You can either perform this operation remotely by copying the `/root/.kube/config` onto your local desktop and you can interact with VEBA using your local kubectl client or SSH to the appliance using the local kubectl client.
 
 List out the pods.
 
@@ -19,164 +19,99 @@ List out the pods.
 kubectl get pods -A
 ```
 
-This is the function output:
+This is an example output:
 
 ```
-NAMESPACE        NAME                                   READY   STATUS      RESTARTS   AGE
-kube-system      coredns-584795fc57-4bp2s               1/1     Running     1          6d4h
-kube-system      coredns-584795fc57-76pwr               1/1     Running     1          6d4h
-kube-system      etcd-veba01                            1/1     Running     2          6d4h
-kube-system      kube-apiserver-veba01                  1/1     Running     2          6d4h
-kube-system      kube-controller-manager-veba01         1/1     Running     3          6d4h
-kube-system      kube-proxy-fvf2n                       1/1     Running     2          6d4h
-kube-system      kube-scheduler-veba01                  1/1     Running     2          6d4h
-kube-system      weave-net-v9jss                        2/2     Running     6          6d4h
-openfaas-fn      powercli-entermaint-d84fd8d85-sjdgl    1/1     Running     1          6d4h
-openfaas         alertmanager-58f8d787d9-nqwm8          1/1     Running     1          6d4h
-openfaas         basic-auth-plugin-dd49cd66b-rv6n7      1/1     Running     1          6d4h
-openfaas         faas-idler-59ff9778fd-84szz            1/1     Running     4          6d4h
-openfaas         gateway-74f6f9489b-btgz8               2/2     Running     5          6d4h
-openfaas         nats-6dfbf45d77-9swph                  1/1     Running     1          6d4h
-openfaas         prometheus-5f5494b54f-srs2d            1/1     Running     1          6d4h
-openfaas         queue-worker-59b67bf4-wqhm5            1/1     Running     4          6d4h
-projectcontour   contour-5cddfc8f6-hpzn8                1/1     Running     1          6d4h
-projectcontour   contour-5cddfc8f6-tdv2r                1/1     Running     2          6d4h
-projectcontour   contour-certgen-wrgnb                  0/1     Completed   0          6d4h
-projectcontour   envoy-8mdhb                            1/1     Running     2          6d4h
-vmware           tinywww-7fcfc6fb94-v7ncj               1/1     Running     1          6d4h
-vmware           vmware-event-router-5dd9c8f858-9g44h   1/1     Running     4          6d4h
+NAMESPACE            NAME                                                READY   STATUS      RESTARTS   AGE
+contour-external     contour-5869594b-b5tqk                              1/1     Running     0          22h
+contour-external     contour-5869594b-q94vd                              1/1     Running     0          22h
+contour-external     contour-certgen-v1.10.0-hm65q                       0/1     Completed   0          22h
+contour-external     envoy-6p2bv                                         2/2     Running     0          22h
+contour-internal     contour-5d47766fd8-5skt7                            1/1     Running     0          22h
+contour-internal     contour-5d47766fd8-6r5g4                            1/1     Running     0          22h
+contour-internal     contour-certgen-v1.10.0-rdd6z                       0/1     Completed   0          22h
+contour-internal     envoy-wwxct                                         2/2     Running     0          22h
+knative-eventing     eventing-controller-658f454d9d-mnqjb                1/1     Running     0          22h
+knative-eventing     eventing-webhook-69fdcdf8d4-mljtb                   1/1     Running     0          22h
+knative-eventing     rabbitmq-broker-controller-88fc96b44-bbvnb          1/1     Running     0          22h
+knative-serving      activator-85cd6f6f9-wl7rf                           1/1     Running     0          22h
+knative-serving      autoscaler-7959969587-z9rtq                         1/1     Running     0          22h
+knative-serving      contour-ingress-controller-6d5777577c-f5qzn         1/1     Running     0          22h
+knative-serving      controller-577558f799-mdjpt                         1/1     Running     0          22h
+knative-serving      webhook-78f446786-bn7xm                             1/1     Running     0          22h
+kube-system          antrea-agent-vbr5d                                  2/2     Running     0          22h
+kube-system          antrea-controller-85c944dc84-jc28b                  1/1     Running     0          22h
+kube-system          coredns-74ff55c5b-rqm7c                             1/1     Running     0          22h
+kube-system          coredns-74ff55c5b-vq827                             1/1     Running     0          22h
+kube-system          etcd-sjc-veba-01.tshirts.inc                        1/1     Running     0          22h
+kube-system          kube-apiserver-sjc-veba-01.tshirts.inc              1/1     Running     0          22h
+kube-system          kube-controller-manager-sjc-veba-01.tshirts.inc     1/1     Running     0          22h
+kube-system          kube-proxy-mwpxs                                    1/1     Running     0          22h
+kube-system          kube-scheduler-sjc-veba-01.tshirts.inc              1/1     Running     0          22h
+local-path-storage   local-path-provisioner-5696dbb894-7x626             1/1     Running     0          22h
+rabbitmq-system      rabbitmq-cluster-operator-7bbbb8d559-dqd85          1/1     Running     0          22h
+vmware-functions     default-broker-ingress-5c98bf68bc-2zpc6             1/1     Running     0          22h
+vmware-functions     kn-pcli-tag-00001-deployment-c845447d4-lnmrq        2/2     Running     0          7h41m
+vmware-functions     sockeye-65697bdfc4-cmfxc                            1/1     Running     0          22h
+vmware-functions     sockeye-trigger-dispatcher-7f4dbd7f78-n589p         1/1     Running     0          22h
+vmware-functions     veba-pcli-tag-trigger-dispatcher-7b477dd84d-zl2vm   1/1     Running     0          7h41m
+vmware-system        cadvisor-sk4j9                                      1/1     Running     0          22h
+vmware-system        tinywww-dd88dc7db-dqnnc                             1/1     Running     0          22h
+vmware-system        veba-rabbit-server-0                                1/1     Running     0          22h
+vmware-system        veba-ui-54967b4bf4-lpjrn                            1/1     Running     0          22h
+vmware-system        vmware-event-router-vcenter-6b76959df5-6mrb4        1/1     Running     3          22h
+vmware-system        vmware-event-router-webhook-6b48cc5b8c-sjzx8        1/1     Running     0          22h
 ```
 
-First, we want to see if the event router is capturing events and forwarding them on to a function. 
+First, we want to see if the event router is capturing events and forwarding them on to a function.
 
 Use this command to follow the live Event Router log.
 
 ```bash
-kubectl logs -n vmware vmware-event-router-5dd9c8f858-9g44h --follow
+kubectl logs -n vmware-system deploy/vmware-event-router-vcenter
 ```
 
-For this sample troubleshooting, we have the sample hostmaintenance alarms function running. To see if the appliance is properly handling the event, we put a host into maintenance mode. 
+For this sample troubleshooting, we have the sample [PowerCLI Tagging function](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative/powercli/kn-pcli-tag) running which will react to a VM powered on Event (`DrsVmPoweredOnEvent`). To see if the appliance is properly handling the event, create a test VM and power it on before proceeding with the next steps.
 
-When we look at the log output, we see various entries regarding EnteredMaintenanceModeEvent, ending with the following:
+When we look at the log output, we see various entries regarding `DrsVmPoweredOnEvent`, ending with the following:
 
 ```
-[OpenFaaS] 2020/03/11 22:15:09 invoking function(s) on topic: EnteredMaintenanceModeEvent
-[OpenFaaS] 2020/03/11 22:15:09 successfully invoked function powercli-entermaint for topic EnteredMaintenanceModeEvent
+2021-09-24T13:57:05.015Z	INFO	[KNATIVE]	knative/knative.go:181	sending event	{"eventID": "c6d61d55-8100-459e-a1e7-7a936bac6e43", "subject": "DrsVmPoweredOnEvent"}
+2021-09-24T13:57:05.015Z	INFO	[KNATIVE]	knative/knative.go:193	successfully sent event	{"eventID": "c6d61d55-8100-459e-a1e7-7a936bac6e43"}
+2021-09-24T13:57:06.017Z	INFO	[VCENTER]	vcenter/vcenter.go:343	invoking processor	{"eventID": "87af3e86-6516-4377-9a9b-86c4c9b00b05"}
 ```
 
 This lets us know that the function was invoked. If we still don't see the expected result, we need to look at the function logs.
 
-Each OpenFaaS function will have its own pod running in the openfaas-fn namespace. We can examine the logs with the following command.
+Each Knative function will have its own pod running in the vmware-functions namespace. If you have deployed the provided tagging function example from the VEBA examples, you can examine the logs with the following command.
+
 
 ```bash
-kubectl logs -n openfaas-fn powercli-entermaint-d84fd8d85-sjdgl
+kubectl logs -n vmware-functions deployment/kn-pcli-tag-00001-deployment user-container
 ```
 
-We don't need the --follow switch because we are just trying to look at recent logs, but --follow would work too.  
-Some other useful switches are `--since` and `--tail`. 
+> **Note:** Replace the name of the deployment in the examples with the name within your environment.
+
+We don't need the `--follow` switch because we are just trying to look at recent logs, but `--follow` would work too.
 
 This command will show you the last 5 minutes worth of logs.
 
 ```bash
-kubectl logs -n openfaas-fn powercli-entermaint-d84fd8d85-sjdgl --since=5m
+kubectl logs -n vmware-functions deployment/kn-pcli-tag-00001-deployment user-container --since=5m
 ```
 
 This command will show you the last 20 lines of logs.
 
 ```bash
-kubectl logs -n openfaas-fn powercli-entermaint-d84fd8d85-sjdgl --tail=20
+kubectl logs -n vmware-functions deployment/kn-pcli-tag-00001-deployment user-container --tail=20
 ```
 
-Log output showing a succesful function invocation: 
+Log output showing a successful function invocation:
 
 ```
-Connecting to vCenter Server ...
+09/24/2021 13:57:05 - Applying vSphere Tag "VEBA" to My-VEBA-Test-VM ...
 
-Disabling alarm actions on host: esx01.labad.int
-Disconnecting from vCenter Server ...
+09/24/2021 13:57:09 - vSphere Tag Operation complete ...
 
-2020/03/11 22:15:15 Duration: 6.085448 seconds
-```
-
-An alternative way to troubleshoot OpenFaaS logs is to use `faas-cli`.
-
-This faas-cli command will show all available functions in the appliance. ```--tls-no-verify``` bypasses SSL certificate validation
-
-```bash
-faas-cli list --tls-no-verify
-```
-
-The command output is:
-
-```
-Function                        Invocations     Replicas
-powercli-entermaint             3               1
-```
-
-We can  look at the logs with this command.
-
-```bash
-faas-cli logs powercli-entermaint --tls-no-verify
-```
-
-The logs are the same: 
-
-```
-2020-03-11T22:15:15Z Connecting to vCenter Server ...
-2020-03-11T22:15:15Z
-2020-03-11T22:15:15Z Disabling alarm actions on host: esx01.labad.int
-2020-03-11T22:15:15Z Disconnecting from vCenter Server ...
-2020-03-11T22:15:15Z
-2020-03-11T22:15:15Z 2020/03/11 22:15:15 Duration: 6.085448 seconds
-```
-
-All of the same switches shown in the kubectl commands such as `--tail` and `--since` work with `faas-cli`.
-
-> **Note:** `faas-cli` will stop tailing the log after a fixed period.
-
-## OpenFaaS Gateway not available
-
-### Self-signed certificate errors
-
-The most common issue with OpenFaaS is related to certificates. The appliance certificate is self-signed. Attempting to connect to it without ignoring certificate errors results in an error, shown below
-
-```bash
-faas-cli secret list
-```
-
-The command output is:
-```bash
-Cannot connect to OpenFaaS on URL: https://veba02.lab.int
-```
-
-Adding the switch `--tls-no-verify` allows you to bypass SSL errors
-```bash
-faas-cli secret list --tls-no-verify
-```
-
-The command output is:
-```bash
-NAME
-vc-hostmaint-config
-```
-Alternatively, you can replace the self-signed certificate with a signed certificate
-
-### Requirements
-* Root access to the appliance
-* A public/private key pair copied to a folder on the appliance filesystem
-
-Run the following commands
-
-```bash
-cd /path/to/your/cert/files
-CERT_NAME=eventrouter-tls 
-KEY_FILE=yourkeyfile.pem
-CERT_FILE=yourcertfile.cer
-
-#recreate the tls secret
-kubectl --kubeconfig /root/.kube/config -n vmware delete secret ${CERT_NAME}
-kubectl --kubeconfig /root/.kube/config -n vmware create secret tls ${CERT_NAME} --key ${KEY_FILE} --cert ${CERT_FILE}
-
-#reapply the config to take the new certificate
-kubectl --kubeconfig /root/.kube/config apply -f /root/ingressroute-gateway.yaml
+09/24/2021 13:57:09 - Handler Processing Completed ...
 ```
