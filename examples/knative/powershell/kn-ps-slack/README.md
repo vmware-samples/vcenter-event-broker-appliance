@@ -1,5 +1,5 @@
 # kn-ps-slack
-Example Knative PowerShell function for sending to a Slack webhook when a Virtual Machine is powered off.
+Example Knative PowerShell function for sending to a Slack webhook when a Virtual Machine is powered off. A video tutorial is available [here](https://youtu.be/vLyeZrm0jk4).
 
 # Step 1 - Build
 
