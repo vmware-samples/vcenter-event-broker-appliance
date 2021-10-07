@@ -22,9 +22,6 @@ toc:
       - page: VEBA (OpenFaaS)
         id: install-openfaas
         url: /kb/install-openfaas
-      - page: VEBA (AWS EventBridge)
-        id: install-eventbridge
-        url: /kb/install-eventbridge
 
   - title: Use
     subfolderitems:

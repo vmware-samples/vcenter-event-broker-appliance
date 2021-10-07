@@ -10,7 +10,6 @@ cta:
  actions:
     - text: Install the [Appliance with Knative](install-knative) to extend your SDDC with our [community-sourced functions](/examples-knative)
     - text: Install the [Appliance with OpenFaaS](install-openfaas) to extend your SDDC with our [community-sourced functions](/examples)
-    - text: Install the [Appliance with AWS EventBridge](install-eventbridge) to extend your SDDC leveraging native AWS capabilities. 
 ---
 
 # VMware Event Broker Appliance

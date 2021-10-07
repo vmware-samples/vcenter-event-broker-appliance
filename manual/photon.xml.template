@@ -158,31 +158,6 @@
             <Label>Advanced Settings</Label>
             <Description>Opaque string for applying advanced configurations for OpenFaaS Processor. For advanced use cases only, please see documentation for more details</Description>
         </Property>
-      <Category>AWS EventBridge Configuration (deprecated)</Category>
-        <Property ovf:key="guestinfo.aws_eb_access_key" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
-            <Label>Access Key</Label>
-            <Description>A valid AWS Access Key to AWS EventBridge</Description>
-        </Property>
-        <Property ovf:key="guestinfo.aws_eb_access_secret" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
-            <Label>Access Secret</Label>
-            <Description>A valid AWS Access Secret to AWS EventBridge</Description>
-        </Property>
-        <Property ovf:key="guestinfo.aws_eb_event_bus" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
-            <Label>Event Bus Name</Label>
-            <Description>Name of the AWS Event Bus to use</Description>
-        </Property>
-        <Property ovf:key="guestinfo.aws_eb_region" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
-            <Label>Region</Label>
-            <Description>Region where Event Bus is running (e.g. us-west-2)</Description>
-        </Property>
-        <Property ovf:key="guestinfo.aws_eb_arn" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
-            <Label>Rule ARN</Label>
-            <Description>ID of the Rule ARN created in AWS EventBridge</Description>
-        </Property>
-        <Property ovf:key="guestinfo.aws_eb_advanced_options" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
-            <Label>Advanced Settings</Label>
-            <Description>Opaque string for applying advanced configurations for AWS EventBridge Processor. For advanced use cases only, please see documentation for more details</Description>
-        </Property>
       <Category>Custom TLS Certificate Configuration</Category>
         <Property ovf:key="guestinfo.custom_tls_private_key" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Custom VMware Event Broker Appliance TLS Certificate Private Key (Base64)</Label>

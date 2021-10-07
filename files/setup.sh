@@ -42,12 +42,6 @@ KNATIVE_HOST=$(/root/setup/getOvfProperty.py "guestinfo.knative_host")
 KNATIVE_SCHEME=$(/root/setup/getOvfProperty.py "guestinfo.knative_scheme" | tr [:upper:] [:lower:])
 KNATIVE_DISABLE_TLS=$(/root/setup/getOvfProperty.py "guestinfo.knative_disable_tls_verification")
 KNATIVE_PATH=$(/root/setup/getOvfProperty.py "guestinfo.knative_path")
-AWS_EVENTBRIDGE_ACCESS_KEY=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_access_key")
-AWS_EVENTBRIDGE_ACCESS_SECRET=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_access_secret")
-AWS_EVENTBRIDGE_EVENT_BUS=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_event_bus")
-AWS_EVENTBRIDGE_REGION=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_region")
-AWS_EVENTBRIDGE_RULE_ARN=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_arn")
-AWS_EVENTBRIDGE_ADV_OPTION=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_advanced_options")
 CUSTOM_VEBA_TLS_PRIVATE_KEY=$(/root/setup/getOvfProperty.py "guestinfo.custom_tls_private_key")
 CUSTOM_VEBA_TLS_CA_CERT=$(/root/setup/getOvfProperty.py "guestinfo.custom_tls_ca_cert")
 DOCKER_NETWORK_CIDR=$(/root/setup/getOvfProperty.py "guestinfo.docker_network_cidr")
@@ -118,11 +112,6 @@ else
 	ESCAPED_WEBHOOK_USERNAME=$(eval echo -n '${WEBHOOK_USERNAME}' | jq -Rs .)
 	ESCAPED_WEBHOOK_PASSWORD=$(eval echo -n '${WEBHOOK_PASSWORD}' | jq -Rs .)
 
-	ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY=$(eval echo -n '${AWS_EVENTBRIDGE_ACCESS_KEY}' | jq -Rs .)
-	ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET=$(eval echo -n '${AWS_EVENTBRIDGE_ACCESS_SECRET}' | jq -Rs .)
-	ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS=$(eval echo -n '${AWS_EVENTBRIDGE_EVENT_BUS}' | jq -Rs .)
-	ESCAPED_AWS_EVENTBRIDGE_RULE_ARN=$(eval echo -n '${AWS_EVENTBRIDGE_RULE_ARN}' | jq -Rs .)
-
 	ESCAPED_OPENFAAS_PASSWORD=$(eval echo -n '${OPENFAAS_PASSWORD}' | jq -Rs .)
 
 	cat > /root/config/veba-config.json <<EOF
@@ -165,12 +154,6 @@ else
 	"KNATIVE_SCHEME": "${KNATIVE_SCHEME}",
 	"KNATIVE_DISABLE_TLS": "${KNATIVE_DISABLE_TLS}",
 	"KNATIVE_PATH": "${KNATIVE_PATH}",
-	"ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY": ${ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY},
-	"ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET": ${ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET},
-	"ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS": ${ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS},
-	"AWS_EVENTBRIDGE_REGION": "${AWS_EVENTBRIDGE_REGION}",
-	"ESCAPED_AWS_EVENTBRIDGE_RULE_ARN": ${ESCAPED_AWS_EVENTBRIDGE_RULE_ARN},
-	"AWS_EVENTBRIDGE_ADV_OPTION": "${AWS_EVENTBRIDGE_ADV_OPTION}",
 	"CUSTOM_VEBA_TLS_PRIVATE_KEY": "${CUSTOM_VEBA_TLS_PRIVATE_KEY}",
 	"CUSTOM_VEBA_TLS_CA_CERT": "${CUSTOM_VEBA_TLS_CA_CERT}",
 	"DOCKER_NETWORK_CIDR": "${DOCKER_NETWORK_CIDR}",
