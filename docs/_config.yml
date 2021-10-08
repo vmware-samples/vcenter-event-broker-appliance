@@ -70,7 +70,7 @@ tipue_search:
   include:
     pages: true
   exclude:
-    files: [README.md, search.html, site/resources.md, assets/css/fonts/Metropolis/Open Font License.md, assets/css/fonts/Metropolis/README.md, zcleanup/DESIGN.md, zcleanup/getting-started-build.md, zcleanup/getting-started.md, assets/css/fonts/Metropolis/README.md, zcleanup/advanced-deploy-k8s.md]
+    files: [README.md, search.html, site/resources.md, assets/css/fonts/Metropolis/Open Font License.md, assets/css/fonts/Metropolis/README.md, assets/css/fonts/Metropolis/README.md]
 
 # Build settings
 permalink: /blog/:title/
