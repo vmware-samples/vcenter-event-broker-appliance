@@ -61,11 +61,21 @@ Step 1 - Change into the `docs` directory
 
 Step 2 - Run the following command to start the [Jekyll Docker container image](https://github.com/envygeeks/jekyll-docker/) and begin serving the documentation:
 
+Linux/Mac:
 ```bash
 docker run --rm \
   --volume="$PWD:/srv/jekyll" \
   --publish 4000:4000 \
   jekyll/jekyll \
+  jekyll serve
+```
+
+Windows:
+```powershell
+docker run --rm `
+  --volume="${PWD}:/srv/jekyll" `
+  --publish 4000:4000 `
+  jekyll/jekyll `
   jekyll serve
 ```
 
