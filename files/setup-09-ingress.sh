@@ -23,14 +23,12 @@ fi
 kubectl -n vmware-system create secret tls ${CERT_NAME} --key ${KEY_FILE} --cert ${CERT_FILE}
 
 # Knative Contour for Knative Embedded Broker
-if [ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]; then
-  echo -e "\e[92mDeploying Knative Contour ..." > /dev/console
+echo -e "\e[92mDeploying Knative Contour ..." > /dev/console
 
-  kubectl create -n contour-external secret tls default-cert --key ${KEY_FILE} --cert ${CERT_FILE}
-  kubectl apply -f /root/download/contour-delegation.yaml
-  kubectl patch configmap -n knative-serving config-contour -p '{"data":{"default-tls-secret":"contour-external/default-cert"}}'
-  kubectl patch configmap -n knative-serving config-domain -p "{\"data\": {\"$CN_NAME\": \"\"}}"
-fi
+kubectl create -n contour-external secret tls default-cert --key ${KEY_FILE} --cert ${CERT_FILE}
+kubectl apply -f /root/download/contour-delegation.yaml
+kubectl patch configmap -n knative-serving config-contour -p '{"data":{"default-tls-secret":"contour-external/default-cert"}}'
+kubectl patch configmap -n knative-serving config-domain -p "{\"data\": {\"$CN_NAME\": \"\"}}"
 
 echo -e "\e[92mDeploying Ingress ..." > /dev/console
 

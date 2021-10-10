@@ -4,7 +4,7 @@ id: functions
 type: knative
 title: Prebuilt Functions
 description: Community-sourced and validated prebuilt functions for Knative with VEBA.
-permalink: /examples-knative
+permalink: /examples
 images:
   powercli: /assets/img/languages/powercli.png
   python: /assets/img/languages/python.png

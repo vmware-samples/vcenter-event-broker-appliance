@@ -127,28 +127,6 @@
             <Label>Basic Auth Password (Optional)</Label>
             <Description>Password to login to webhook endpoint</Description>
         </Property>
-      <Category>Event Processor Configuration</Category>
-        <Property ovf:qualifiers="ValueMap{&quot;Knative&quot;, &quot;OpenFaaS&quot;, &quot;AWS EventBridge&quot;}" ovf:userConfigurable="true" ovf:value="Knative" ovf:type="string" ovf:key="guestinfo.event_processor_type">
-          <Label>Event Processor</Label>
-          <Description>Choose either Knative (default), OpenFaaS (deprecated), or AWS EventBridge (deprecated) and only fill in the configuration for the selected event processor below</Description>
-        </Property>
-      <Category>Existing Knative Environment Configuration (deprecated)</Category>
-        <Property ovf:key="guestinfo.knative_host" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
-            <Label>Host</Label>
-            <Description>Knative Host (e.g. mybroker.corp.local:8080)</Description>
-        </Property>
-        <Property ovf:key="guestinfo.knative_scheme" ovf:qualifiers="ValueMap{&quot;HTTP&quot;,&quot;HTTPS&quot;}" ovf:userConfigurable="true" ovf:type="string" ovf:value="HTTP">
-            <Label>Scheme</Label>
-            <Description>Knative Scheme - HTTP or HTTPS protocol the broker is using</Description>
-        </Property>
-        <Property ovf:key="guestinfo.knative_disable_tls_verification" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
-            <Label>Disable Knative host TLS Verification</Label>
-            <Description>Disable TLS Verification for Knative host (only applicable if Knative Scheme is HTTPS and for self-sign certificate)</Description>
-        </Property>
-        <Property ovf:key="guestinfo.knative_path" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
-            <Label>Path</Label>
-            <Description>Additional path to append to the host if required (e.g. /default/default)</Description>
-        </Property>
       <Category>Custom TLS Certificate Configuration</Category>
         <Property ovf:key="guestinfo.custom_tls_private_key" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Custom VMware Event Broker Appliance TLS Certificate Private Key (Base64)</Label>

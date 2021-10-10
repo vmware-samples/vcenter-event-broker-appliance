@@ -80,24 +80,6 @@ Deploy the VMware Event Broker Appliance OVA to your vCenter Server using the vS
  * Enable Webhook Event Provider - Enable Webhook Event Provider
  * Basic Auth Username (Optional) - Username to login to webhook endpoint
  * Basic Auth Password (Optional) - Password to login to webhook endpoint
-#### **Event Processor Configuration** (**Required**)
-  * Event Processor - Choose Knative
-
-> **Note:** Selecting Knative here will default to using the Embedded Knative deployment within the VMware Event Broker Appliance.  If this is your intent, you **do not have to fill** in any of the settings for the Knative Configuration section below. The Knative Configuration section below is for use with **an External Knative** installation.
-
-#### **Existing Knative Environment Configuration** (**Optional**)
-
-**<font color="red">This configuration option has been deprecated in the VMware Event Broker Appliance v0.7 release in favor of the default embedded Knative installation and thus will be removed in next release.</font>**
-
-If you do want the Embedded Knative deployment in the VMware Event Broker Appliance and you have your own External Knative installation, the following settings are required.
-
-  * Host - Knative host (e.g. mybroker.corp.local:8080)
-    * Leave `host` field blank to automatically enable the embedded Knative broker
-  * Scheme - HTTP or HTTPS protocol the broker is using
-  * Disable Knative host TLS Verification - Only applicable for HTTPs scheme. If you have a self-signed SSL Certificate, you will need to check this box.
-  * Path - Additional path to append to the host if required, e.g. "/default/broker"
-
-> For more information on using the Knative Processor, please take a look at the [VMware Event Router documentation](https://github.com/vmware-samples/vcenter-event-broker-appliance/blob/development/vmware-event-router/README.MD){:target="_blank"}
 
 #### **Custom TLS Certificate Configuration** (Optional)
 
