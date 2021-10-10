@@ -1,5 +1,0 @@
-[vcenter]
-server = "10.0.0.1"
-user = "administrator@vsphere.local"
-password = "DontUseThisPassword"
-insecure = true

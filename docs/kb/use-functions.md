@@ -21,9 +21,6 @@ The steps below describe a generalized deployment step of a function on the VMwa
   - [Knative Prerequisites](#knative-prerequisites)
   - [Knative Function Deployment using kubectl](#knative-function-deployment-using-kubectl)
   - [Knative Function Deployment using vSphere UI](#knative-function-deployment-using-vsphere-ui)
-- [OpenFaaS](#openfaas)
-  - [OpenFaaS Prerequisites](#openfaas-prerequisites)
-  - [OpenFaaS Function Deployment](#openfaas-function-deployment)
 
 ## Knative
 
@@ -128,61 +125,6 @@ To verify the function deployment was successful, click on the `Functions` tab a
 * `Ready` : True
 
 * `RoutesReady` : True
-
-
-## OpenFaaS
-
-For this walk-through, the [`host-maint-alarms`](/examples) function from the example folder is used.
-
-### OpenFaaS Prerequisites
-
-Before proceeding to deploy a function, you must have VMware Event Broker Appliance deployed and be able to login to OpenFaaS.
-
-```bash
-#Use your appliance URL and OpenFaaS password 
-export OPENFAAS_URL='https://veba.primp-industries.com'
-faas-cli login -p YourPassword
-```
-> **NOTE:** You may have to use the `--tls-no-verify` flag as the appliance utilizes self-signed certificates by default. You can update the certificates following this guide [here](advanced-certificates)
-
-An alternative way to log in if you don't want your password showing up in command history is to put the password in a text file and use this command:
-```bash
-cat password.txt | faas-cli login --password-stdin
-```
-
-### OpenFaaS Function Deployment
-
-Step 1 - Clone repo
-
-```
-git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
-cd vcenter-event-broker-appliance/examples/openfaas/powercli/hostmaint-alarms
-git checkout master
-```
-
-Step 2 - Edit the configuration files
-
-* Edit `stack.yml` to update `gateway:` with the specific appliance URL in your environment. Notice event(s) next to `topics:` - all available events can be reviewed in the [vCenter Event Mapping](https://github.com/lamw/vcenter-event-mapping){:target="_blank"} document.
-
-```yaml
-version: 1.0
-provider:
-  name: openfaas
-  gateway: https://veba.primp-industries.com
-functions:
-  powercli-entermaint:
-    lang: powercli
-    handler: ./handler
-    image: vmware/veba-powercli-esx-maintenance:latest
-    environment:
-      write_debug: true
-      read_debug: true
-      function_debug: false
-    secrets:
-      - vc-hostmaint-config
-    annotations:
-      topic: EnteredMaintenanceModeEvent,ExitMaintenanceModeEvent
-```
 
 * Most functions also have a secrets configuration file that you must edit to match your environment. For the `hostmaint-alarms` function, the file is named `vc-hostmaint-config.json`
 ```json

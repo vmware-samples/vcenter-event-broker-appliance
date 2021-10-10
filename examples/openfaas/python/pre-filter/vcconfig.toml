@@ -1,4 +1,0 @@
-[vcenter]
-server = "VCENTER_FQDN/IP"
-user = "ro-user@vsphere.local"
-pass = "DontUseThisPassword"

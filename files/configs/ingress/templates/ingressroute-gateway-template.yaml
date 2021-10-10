@@ -95,10 +95,6 @@ spec:
   #@ end
   - name: cadvisor
     namespace: vmware-system
-  #@ if processorType == "OpenFaaS":
-  - name: gateway
-    namespace: openfaas
-  #@ end
 #@ if processorType == "Knative":
 ---
 apiVersion: projectcontour.io/v1
@@ -154,18 +150,3 @@ spec:
     services:
     - name: cadvisor
       port: 8080
-#@ if processorType == "OpenFaaS":
----
-apiVersion: projectcontour.io/v1
-kind: HTTPProxy
-metadata:
-  name: gateway
-  namespace: openfaas
-spec:
-  routes:
-  - conditions:
-    - prefix: /
-    services:
-    - name: gateway
-      port: 8080
-#@ end

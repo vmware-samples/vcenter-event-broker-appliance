@@ -19,9 +19,6 @@ toc:
       - page: VEBA (Knative)
         id: install-knative
         url: /kb/install-knative
-      - page: VEBA (OpenFaaS)
-        id: install-openfaas
-        url: /kb/install-openfaas
 
   - title: Use
     subfolderitems:
