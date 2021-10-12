@@ -6,7 +6,7 @@ set -euo pipefail
 
 # Extract all OVF Properties
 VEBA_DEBUG=$(/root/setup/getOvfProperty.py "guestinfo.debug")
-HOSTNAME=$(/root/setup/getOvfProperty.py "guestinfo.hostname")
+HOSTNAME=$(/root/setup/getOvfProperty.py "guestinfo.hostname" | tr '[:upper:]' '[:lower:]')
 IP_ADDRESS=$(/root/setup/getOvfProperty.py "guestinfo.ipaddress")
 NETMASK=$(/root/setup/getOvfProperty.py "guestinfo.netmask" | awk -F ' ' '{print $1}')
 GATEWAY=$(/root/setup/getOvfProperty.py "guestinfo.gateway")
