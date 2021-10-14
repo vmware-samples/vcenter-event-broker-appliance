@@ -14,3 +14,25 @@ spec:
 ---
 spec:
   type: NodePort
+
+#@overlay/match by=overlay.subset({"kind":"Job", "metadata": {"namespace": "contour-external"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by=overlay.all, expects="1+"
+      -
+        #@overlay/match missing_ok=True
+        imagePullPolicy: IfNotPresent
+
+#@overlay/match by=overlay.subset({"kind":"Job", "metadata": {"namespace": "contour-internal"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by=overlay.all, expects="1+"
+      -
+        #@overlay/match missing_ok=True
+        imagePullPolicy: IfNotPresent
