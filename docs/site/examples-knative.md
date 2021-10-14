@@ -50,6 +50,14 @@ examples:
     links:
     - language: powercli
       url: "/tree/master/examples/knative/powercli/kn-pcli-tag"
+  - title: vSphere to NSX-T Tag Synchronization
+    usecases:
+    - item: automation
+    id: kn-pcli-nsx-tag-sync
+    description: Automatically synchronize VM tags to NSX-T.
+    links:
+    - language: powercli
+      url: "/tree/master/examples/knative/powercli/kn-pcli-nsx-tag-sync"
   - title: vSphere Custom Attributes
     usecases:
     - item: automation
