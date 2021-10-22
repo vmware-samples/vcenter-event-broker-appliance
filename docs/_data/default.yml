@@ -1,7 +1,7 @@
 toc:
   - title: Introduction
     subfolderitems:
-      - page: About
+      - page: Use Cases
         id: intro-about
         url: /kb/
       - page: Architecture
