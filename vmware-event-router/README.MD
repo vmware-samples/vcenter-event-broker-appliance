@@ -537,9 +537,12 @@ run in a Kubernetes cluster for increased availability and ease of scaling out.
 ### Assisted Deployment
 
 For your convenience we provide a Helm Chart which can be used to easily install
-the VMware Event Router into an **existing** OpenFaaS ("faas-netes") or Knative
-environment. See [below](#openfaas-helm-deployment) for an example how to set up
-OpenFaaS in a development environment.
+the VMware Event Router into an **existing** Knative or OpenFaaS ("faas-netes")
+environment. 
+
+⚠️ The OpenFaaS deployment method is unmaintained in the VEBA project and
+will be deprecated in a future release. The recommended deployment method is
+using the Knative backend.
 
 #### Helm Deployment
 
@@ -548,7 +551,38 @@ file contains the allowed parameters and parameter descriptions which map to the
 VMware Event Router [configuration](#overview-configuration-file-structure-yaml)
 file.
 
-##### Option 1: Configuration with OpenFaaS
+##### Option 1: Configuration with Knative
+
+If you don't have a working Knative installation, follow the steps described in
+the [official](https://knative.dev/docs/install/prerequisites/) documentation to
+deploy Knative Serving **and** Eventing.
+
+Now create a Helm `override.yaml` file with your environment specific settings,
+e.g.:
+
+```yaml
+eventrouter:
+  config:
+    logLevel: debug
+  vcenter:
+    address: https://vcenter.corp.local
+    username: administrator@vsphere.local
+    password: replaceMe
+    insecure: true # if required ignore TLS certs
+  eventProcessor: knative
+  knative:
+    destination: # follows Knative convention for ref/uri
+      ref:
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+        name: default
+        namespace: default
+```
+
+> **Note:** Please ensure the correct formatting/indentation which follows the
+> Helm `values.yaml` file.
+
+##### Option 2: Configuration with OpenFaaS
 
 The following steps can be used to quickly install OpenFaaS as a requirement for
 the Helm installation instructions of the VMware Event Router below. Skip this
@@ -591,39 +625,7 @@ eventrouter:
 > **Note:** Please ensure the correct formatting/indentation which follows the
 > Helm `values.yaml` file.
 
-##### Option 2: Configuration with Knative
-
-If you don't have a working Knative installation, follow the steps described in
-the [official](https://knative.dev/docs/install/prerequisites/) documentation to
-deploy Knative Serving **and** Eventing.
-
-Now create a Helm `override.yaml` file with your environment specific settings,
-e.g.:
-
-```yaml
-eventrouter:
-  config:
-    logLevel: debug
-  vcenter:
-    address: https://vcenter.corp.local
-    username: administrator@vsphere.local
-    password: replaceMe
-    insecure: true # if required ignore TLS certs
-  eventProcessor: knative
-  knative:
-    destination: # follows Knative convention for ref/uri
-      ref:
-        apiVersion: eventing.knative.dev/v1
-        kind: Broker
-        name: default
-        namespace: default
-```
-
-> **Note:** Please ensure the correct formatting/indentation which follows the
-> Helm `values.yaml` file.
-
 ##### Deploy the VMware Event Router Helm Chart
-
 
 Add the VMware Event Router Helm release to your Helm repository:
 
@@ -646,7 +648,7 @@ The chart should now show up in the search:
 ```console
 $ helm search repo event-router
 NAME                      CHART VERSION   APP VERSION     DESCRIPTION
-vmware-veba/event-router  v0.6.4          v0.6.1          The VMware Event Router is used to connect to v...
+vmware-veba/event-router  v0.7.0          v0.7.0          The VMware Event Router is used to connect to v...
 [snip]
 ```
 
