@@ -130,11 +130,10 @@ page](https://vmweventbroker.io/kb/architecture).
 ### Community Calls
 
 Public VEBA community meetings are held every **last Tuesday** in the month at
-**5PM Pacific Time**.
+**8AM Pacific Time (US)**.
 
 - **Zoom:** https://via.vmw.com/veba-ama
 - **Notes**: https://via.vmw.com/veba-notes
-
 
 ### Other Channels
 
