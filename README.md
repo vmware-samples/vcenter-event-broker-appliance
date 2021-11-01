@@ -19,7 +19,7 @@ Follow](https://img.shields.io/twitter/follow/lamw?style=social)](https://twitte
 Follow](https://img.shields.io/twitter/follow/embano1?style=social)](https://twitter.com/embano1)
 
 
-<img src="logo/veba_otto_the_orca_320x320.png" align="right" height="320px"/>
+<img src="logo/veba_otto_the_orca_320x320_v2.png" align="right" height="320px"/>
 
 ## Table of Contents
 
