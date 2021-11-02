@@ -26,18 +26,18 @@ cd test
 
 Update the following variable names within the `docker-test-env-variable` file
 
-* VCENTER_SERVER - IP Address or FQDN of the vCenter Server to connect to for
+* `VCENTER_SERVER` - IP Address or FQDN of the vCenter Server to connect to for
   vSphere Tagging
-* VCENTER_USERNAME - vCenter account with permission to apply vSphere Tagging
-* VCENTER_PASSWORD - vCenter account password
-* VCENTER_CERTIFCATE_ACTION - Set-PowerCLIConfiguration Action to configure when
+* `VCENTER_USERNAME` - vCenter account with permission to apply vSphere Tagging
+* `VCENTER_PASSWORD` - vCenter account password
+* `VCENTER_CERTIFCATE_ACTION` - Set-PowerCLIConfiguration Action to configure when
   connection fails due to certificate error, default is Fail. (Possible values:
   `"Fail"`, `"Ignore"` or `"Warn"`)
-* NSX_SERVER - IP Address or FQDN of the NSX-T manager Server to connect to for
+* `NSX_SERVER` - IP Address or FQDN of the NSX-T manager Server to connect to for
   Tagging
-* NSX_USERNAME - NSX-T manager account with permission to apply vSphere Tagging
-* NSX_PASSWORD - NSX-T manager account password
-* NSX_SKIP_CERT_CHECK - (Possible values: `"true"`, `"false"`)
+* `NSX_USERNAME` - NSX-T manager account with permission to apply vSphere Tagging
+* `NSX_PASSWORD` - NSX-T manager account password
+* `NSX_SKIP_CERT_CHECK` - (Possible values: `"true"`, `"false"`)
 
 Start the container image by running the following command:
 
