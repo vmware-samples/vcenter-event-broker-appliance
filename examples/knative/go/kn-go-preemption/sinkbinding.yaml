@@ -1,0 +1,16 @@
+apiVersion: sources.knative.dev/v1
+kind: SinkBinding
+metadata:
+  name: vsphere-preemption-binding
+spec:
+  subject:
+    apiVersion: serving.knative.dev/v1
+    kind: Service
+    selector:
+      matchLabels:
+        workflow: vsphere-preemption
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: default
