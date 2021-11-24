@@ -1,0 +1,3 @@
+{
+  "WEBHOOK_SINK_URL": "http://default-broker-ingress.vmware-functions.svc.cluster.local"
+}
