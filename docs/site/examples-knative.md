@@ -50,6 +50,8 @@ examples:
     links:
     - language: powercli
       url: "/tree/master/examples/knative/powercli/kn-pcli-tag"
+    - language: go
+      url: "/tree/master/examples/knative/go/kn-go-tagging"
   - title: vSphere to NSX-T Tag Synchronization
     usecases:
     - item: automation
@@ -62,7 +64,7 @@ examples:
     usecases:
     - item: automation
     id: kn-py-vm-attr-function
-    description: Add Custom Attribute to VM upon a vCenter event.
+    description: Add Custom Attribute to a VM upon a vCenter event.
     links:
     - language: python
       url: "/tree/master/examples/knative/python/kn-py-vm-attr"
@@ -81,7 +83,7 @@ examples:
     - item: integration
     - item: notification
     id: kn-pcli-telegram-function
-    description: Function to send a Telegram notification triggered by a vMotion of VM.
+    description: Function to send a Telegram notification triggered by a vMotion of a VM.
     links:
     - language: powercli
       url: "/tree/master/examples/knative/powercli/kn-pcli-telegram"
@@ -102,7 +104,7 @@ examples:
     description: Function to send a Slack notification triggered by a VMware Horizon Event.
     links:
     - language: powershell
-      url: "/tree/master/examples/knative/powershell/kn-ps-horizon-slack-function"
+      url: "/tree/master/examples/knative/powershell/kn-ps-horizon-login-slack"
   - title: VMware Cloud Gateway Notification (Slack)
     usecases:
     - item: integration
@@ -111,7 +113,7 @@ examples:
     description: Function to send a Slack notification triggered by a VMware Cloud Notification Gateway SDDC Event.
     links:
     - language: powershell
-      url: "/tree/master/examples/knative/powershell/kn-ps-ngw-slack-function"
+      url: "/tree/master/examples/knative/powershell/kn-ps-ngw-slack"
   - title: Custom Webhook Function
     usecases:
     - item: integration
@@ -119,7 +121,7 @@ examples:
     description: Function to ingest a non-CloudEvent using a custom incoming webhook
     links:
     - language: powershell
-      url: "/tree/master/examples/knative/powershell/kn-ps-webhook-function"
+      url: "/tree/master/examples/knative/powershell/kn-ps-webhook"
   - title: VMware Cloud Gateway Notification (Teams)
     usecases:
     - item: integration
@@ -128,7 +130,7 @@ examples:
     description: Function to send a Microsoft Teams notification triggered by a VMware Cloud Notification Gateway SDDC Event.
     links:
     - language: powershell
-      url: "/tree/master/examples/knative/powershell/kn-ps-ngw-teams-function"
+      url: "/tree/master/examples/knative/powershell/kn-ps-ngw-teams"
   - title: Schedule VM Snapshot Retention Management
     usecases:
     - item: automation
@@ -142,10 +144,38 @@ examples:
     usecases:
     - item: notification
     id: kn-ps-vsphere-inv-slack-function
-    description: Function to send Slack notification when a specific vSphere inventory resource has been deleted
+    description: Function to send a Slack notification when a specific vSphere inventory resource has been deleted
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-vsphere-inv-slack"
+  
+  - title: Trigger vSphere Virtual Machine Preemption
+    usecases:
+    - item: integration
+    id: kn-go-preemption-function
+    description: Function for triggering vSphere virtual machine preemption (power off) using a workflow engine and the vsphere-preemption prototype
+    links:
+    - language: go
+      url: "/tree/master/examples/knative/go/kn-go-preemption"
+
+  - title: vRealize Network Insight Databus Incoming Webhook
+    usecases:
+    - item: notification
+    id: kn-ps-vrni-databus-function
+    description: Function that accepts an incoming webhook from the vRealize Network Insight Databus, constructs a CloudEvent and sends it to the VMware Event Router
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-vrni-databus"
+
+  - title: vRealize Orchestrator
+    usecases: 
+    - item: integration
+    - item: remediation
+    id: kn-py-vro-function
+    description: Trigger a vRealize Orchestrator workflow, passing all CloudEvent data as native vRO datatypes, using the vRO REST API.
+    links: 
+    - language: python
+      url: "/tree/master/examples/knative/python/kn-py-vro"
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 
