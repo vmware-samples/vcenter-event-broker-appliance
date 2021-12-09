@@ -6,6 +6,8 @@ set -euo pipefail
 
 # Sample Shell Script to test deployment of VEBA w/Knative Processor
 
+# To run this on Windows, you can use a terminal like Git BASH or WSL Ubuntu
+# OVFTOOL_BIN_PATH="/C/Program Files/VMware/VMware OVF Tool/ovftool.exe"
 OVFTOOL_BIN_PATH="/Applications/VMware OVF Tool/ovftool"
 VEBA_OVA="../output-vmware-iso/VMware_Event_Broker_Appliance_v0.7.0.ova"
 
