@@ -10,13 +10,13 @@
 
     .day-label {
         font-weight: bold;
-        text-shadow: 2px 0px #011a4c;
+        text-shadow: 1px 0px #011a4c;
     }
 
     .night-label {
-        opacity: 0.6;
+        opacity: 0.7;
         font-weight: bold;
-        text-shadow: 2px 0px #000;
+        text-shadow: 1px 0px #000;
     }
 
     .container {
@@ -32,7 +32,7 @@
 
     #night-content
     {
-        opacity: 0.5;
+        opacity: 1;
     }
 
     .inner-shadow
