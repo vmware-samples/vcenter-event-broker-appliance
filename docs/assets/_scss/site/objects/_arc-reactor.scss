@@ -43,8 +43,8 @@
         }
 
         .reactor-container {
-            width: 425px;
-            height: 425px;
+            width: 400px;
+            height: 400px;
             margin: auto;
             position: relative;
             border-radius: 50%;
@@ -54,15 +54,15 @@
         }
     
         .reactor-container-inner {
-            height: 415px;
-            width: 415px;
+            height: 395px;
+            width: 395px;
             background-color: #384c5000;
             //box-shadow: 0px 0px 1px 2px #384c50 inset;
         }
     
         .tunnel {
-            width: 405px;
-            height: 405px;
+            width: 390px;
+            height: 390px;
             //background-color: #2b3b3e00;
             //box-shadow: 0px 0px 3px 3px #454d4e, 0px 0px 2px 1px #454d4e inset;
         }
@@ -77,20 +77,20 @@
 
     #otto {
         position: absolute;
-        top: 25px;
-        left: 25px;
+        top: -79px;
+        left: -68px;
+        height: 535px;
+        width: 535px;
         z-index: 2;
-        height: 375px;
-        width: 375px;
     }
 
     #otto-pride {
         position: absolute;
-        top: 25px;
-        left: 25px;
+        top: -79px;
+        left: -68px;
         z-index: 1;
-        height: 375px;
-        width: 375px;
+        height: 535px;
+        width: 535px;
     }
 
     .fullpage-wrapper {
@@ -98,8 +98,8 @@
         top: 0px;
         left: 0px;
         z-index: 0;
-        width: 425px;
-        height: 425px;
+        width: 400px;
+        height: 400px;
     }
 
     .circle {
@@ -126,10 +126,10 @@ div#reactor {
     left: 202px;
     */
 
-    width: 40px;
-    height: 40px;
-    top: 310px;
-    left: 200px;
+    width: 200px;
+    height: 200px;
+    top: 99px;
+    left: 101px;
     opacity: 1;
     
     &.flicker { 
@@ -139,17 +139,17 @@ div#reactor {
 
     .core {
         box-shadow: 0px 0px 3px 3px #52FEFE, 0px 0px 4px 2px #52FEFE inset;
-        background-color: #073c4bc2;
+        background-color: #073c4b4d;
         animation: 3s linear text-flicker; 
     }
    
     .coil {
         position: absolute;
-        width: 4px;
-        height: 6px;
-        top: calc(50% - 4px);
-        left: calc(50% - 15px);
-        transform-origin: 15px 4px;
+        width: 8px;
+        height: 10px;
+        top: calc(50% - 6px);
+        left: calc(50% - 50px);
+        transform-origin: 50px 6px;
         background-color: #073c4b;
         box-shadow: 0px 0px 3px #52FEFE inset;
     }

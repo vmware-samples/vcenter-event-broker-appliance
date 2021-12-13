@@ -3,13 +3,13 @@
 # Site settings
 title: VMware Event Broker Appliance
 email: dl-veba@vmware.com
-author: VEBA Authors
+author: 
 show_downloads: false
 description: The VMware Event Broker Appliance Fling enables customers to easily create event-driven automation based on vCenter Server Events.
 #url: veba.io
-logo: veba-logo.png
-banner_main: assets/img/heroes/veba_banner_md.png
-banner_alt: assets/img/heroes/veba_otto_the_orca_md.png
+logo: veba-header-logo.svg
+banner_main: assets/img/heroes/veba_hero.svg
+banner_alt: assets/img/heroes/veba_hero.svg
 people: true
 people_limit: 12
 twitter:
@@ -21,14 +21,14 @@ repository: vmware-samples/vcenter-event-broker-appliance
 google_analytics: UA-164266140-1
 
 hero:
-  background-color: cornflower-blue
+  background-color: ocean
 footer:
   title: Getting Started
   content: To help you get started, see the documentation.
   cta_title: ''
   cta_url: /kb/
   cta_text: Documentation
-  vm-link: https://flings.vmware.com/
+  vm-link: https://github.com/vmware
 
 footer_social_links:
   Twitter:
