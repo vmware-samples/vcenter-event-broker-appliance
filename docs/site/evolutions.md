@@ -16,7 +16,7 @@ entry:
     - Fix special character handling for VEBA vSphere UI plugin
     - Fix imagePullPolicy for knative-contour in air-gap deployment
     - Improved website documentation
-    - More Knative PowerShell & PowerCLI Function Examples
+    - More Knative Function Examples
 
 - title: VEBA [v0.7.0](https://williamlam.com/2021/10/whats-new-in-vmware-event-broker-appliance-veba-v0-7.html)
   type: feature
