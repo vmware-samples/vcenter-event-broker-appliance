@@ -51,3 +51,7 @@ VMware Event Broker Appliance enables customers to quickly get started with pre-
 ### Analytics:
 - Reduce the number of connections and/or users to vCenter Server by providing access to events in an external system like CMDB or data warehouse solution
 - Enable teams to better understand workload and infrastructure behaviors by identifying trends observed in the events data including duration of events, users generating specific operations or the commonly used workflows
+
+### Community Use Cases
+
+Please see [this list here](https://github.com/vmware-samples/vcenter-event-broker-appliance/USECASES.md) for a collection of use cases from the VMware Event Broker Appliance community.

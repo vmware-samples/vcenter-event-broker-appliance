@@ -1,6 +1,6 @@
     <ProductSection ovf:required="true">
     <Info>Information about the installed software</Info>
-      <Product>vCenter Event Broker Appliance</Product>
+      <Product>VMware Event Broker Appliance</Product>
       <Vendor>VMware</Vendor>
       <Version>{{VERSION}}</Version>
       <ProductUrl>https://github.com/vmware-samples/vcenter-event-broker-appliance</ProductUrl>

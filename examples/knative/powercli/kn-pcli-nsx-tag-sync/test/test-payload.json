@@ -1,0 +1,36 @@
+{
+  "ChangeTag": "",
+  "UserName": "VSPHERE.LOCAL\\Administrator",
+  "FullFormattedMessage": "User VSPHERE.LOCAL\\Administrator attached tag example-tag to object example-vm",
+  "ObjectName": "",
+  "EventTypeId": "com.vmware.cis.tagging.attach",
+  "Severity": "info",
+  "Fault": null,
+  "Dvs": null,
+  "Message": "",
+  "Key": 326221,
+  "Vm": null,
+  "ChainId": 326221,
+  "Host": null,
+  "CreatedTime": "2021-10-14T09:47:57.491999Z",
+  "Net": null,
+  "ComputeResource": null,
+  "ObjectType": "",
+  "ObjectId": "",
+  "Datacenter": null,
+  "Arguments": [
+    {
+      "Key": "Tag",
+      "Value": "example-tag"
+    },
+    {
+      "Key": "Object",
+      "Value": "example-vm"
+    },
+    {
+      "Key": "User",
+      "Value": "VSPHERE.LOCAL\\Administrator"
+    }
+  ],
+  "Ds": null
+}

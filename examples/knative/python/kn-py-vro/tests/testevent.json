@@ -1,0 +1,50 @@
+{
+    "specversion": "0.3",
+    "id": "42516969-218a-406f-9ccc-db387befc4bf",
+    "source": "/blah?stuff",
+    "type": "com.vmware.event.router/event",
+    "datacontenttype": "application/json",
+    "subject": "DrsVmPoweredOnEvent",
+    "time": "2021-05-04T07:33:33.773581268Z",
+    "knativearrivaltime": "2021-05-04T07:33:33.772937393Z",
+    "data": {
+      "Key": 992270,
+      "ChainId": 992267,
+      "CreatedTime": "2021-05-04T07:33:32.759Z",
+      "UserName": "VSPHERE.LOCAL\\test-user",
+      "Datacenter": {
+        "Name": "Datacenter",
+        "Datacenter": {
+          "Type": "Datacenter",
+          "Value": "datacenter-21"
+        }
+      },
+      "ComputeResource": {
+        "Name": "Cluster01",
+        "ComputeResource": {
+          "Type": "ClusterComputeResource",
+          "Value": "domain-c84"
+        }
+      },
+      "Host": {
+        "Name": "esxi1.local",
+        "Host": {
+          "Type": "HostSystem",
+          "Value": "host-34"
+        }
+      },
+      "Vm": {
+        "Name": "TestVM",
+        "Vm": {
+          "Type": "VirtualMachine",
+          "Value": "vm-596"
+        }
+      },
+      "Ds": null,
+      "Net": null,
+      "Dvs": null,
+      "FullFormattedMessage": "DRS powered On TestVM on esxi1.local in Datacenter",
+      "ChangeTag": "",
+      "Template": false
+    }
+  }

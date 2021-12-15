@@ -5,7 +5,6 @@
   }
   .icon {
     min-height: 150px;
-    background: cornflowerblue; // default
     text-align: center;
     
     img {
@@ -39,9 +38,10 @@
 
   .bash {
     background-color: black;
-    background-image: radial-gradient(
+    background-image: none;
+    /*radial-gradient(
       #6495ED, black 120%
-    );
+    );*/
     margin: 0;
     overflow: hidden;
     padding: 1rem;

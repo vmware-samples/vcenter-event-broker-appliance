@@ -1,6 +1,6 @@
 {
-  "description": "Photon Build for vCenter Event Broker Appliance",
-  "vm_name": "vCenter_Event_Broker_Appliance",
+  "description": "Photon Build for VMware Event Broker Appliance",
+  "vm_name": "VMware_Event_Broker_Appliance",
   "iso_checksum": "2221ab214b517a15c60bd5e2aacdb9388581bcd9",
   "iso_url": "https://packages.vmware.com/photon/4.0/GA/iso/photon-4.0-1526e30ba.iso",
   "numvcpus": "4",

@@ -1,0 +1,168 @@
+{
+	"EntityMessageList": [
+		{
+			"this_is_a_test_message": "yes!",
+			"entity": {
+				"event_type": "ProblemEvent",
+				"message": "Back-off restarting failed the container.",
+				"name": "KubernetesBaseEvent",
+				"event_tags": [
+					"Kubernetes"
+				],
+				"anchor_entities": [
+					{
+						"entity_id": "10000:1505:3076518514136731289"
+					}
+				],
+				"admin_state": "ENABLED",
+				"archived": false,
+				"event_time_epoch_ms": 1631531936194,
+				"entity_id": "10000:1510:1039284196565982187",
+				"severity": "WARNING",
+				"related_entities": [
+					{
+						"entity_id": "10000:1501:5145790984500168159"
+					},
+					{
+						"entity_id": "10000:1502:3802573404612644068"
+					},
+					{
+						"entity_id": "10000:1503:7665789610641156226"
+					},
+					{
+						"entity_id": "10000:1505:3076518514136731289"
+					},
+					{
+						"entity_type": "KubernetesService",
+						"entity_id": "10000:1504:500602708279611077"
+					}
+				],
+				"entity_type": "ProblemEvent"
+			},
+			"status": "UPDATE"
+		},
+		{
+			"this_is_a_test_message": "yes!",
+			"entity": {
+				"entity_type": "ProblemEvent",
+				"entity_id": "10000:80245:5859298202830249904"
+			},
+			"status": "CLOSE",
+			"deleted_at": 1635851149136
+		}
+	],
+	"ApplicationMessageList": [
+		{
+			"this_is_a_test_message": "yes!",
+			"info": {
+				"created_by": "tmm@local.com",
+				"tiers": [
+					{
+						"entity_type": "TIER",
+						"members": [
+							{
+								"entity_type": "VirtualMachine",
+								"vendor_infos": [
+									{
+										"vendor_ids": [
+											{
+												"id_type": "name",
+												"id_value": "3TierApp02-DB-VM01"
+											},
+											{
+												"id_type": "moid",
+												"id_value": "vm-473"
+											},
+											{
+												"id_type": "uuid",
+												"id_value": "500662a8-025b-a8f0-3121-6ad18091932f"
+											},
+											{
+												"id_type": "cidr",
+												"id_value": "172.16.21.21/24"
+											}
+										],
+										"manager": {
+											"entity_type": "VCenterManager",
+											"entity_id": "10000:8:4248917770889216506"
+										}
+									}
+								],
+								"entity_id": "10000:1:7649050661823893175"
+							}
+						],
+						"name": "DB",
+						"entity_id": "10000:562:2648255473305130567"
+					},
+					{
+						"entity_type": "TIER",
+						"members": [
+							{
+								"entity_type": "VirtualMachine",
+								"vendor_infos": [
+									{
+										"vendor_ids": [
+											{
+												"id_type": "name",
+												"id_value": "3TierApp02-App-VM02"
+											},
+											{
+												"id_type": "moid",
+												"id_value": "vm-474"
+											},
+											{
+												"id_type": "uuid",
+												"id_value": "5006e2e5-9f60-af4b-9db3-f591472b49fa"
+											},
+											{
+												"id_type": "cidr",
+												"id_value": "172.16.20.22/24"
+											}
+										],
+										"manager": {
+											"entity_type": "VCenterManager",
+											"entity_id": "10000:8:4248917770889216506"
+										}
+									}
+								],
+								"entity_id": "10000:1:4425914358164206625"
+							},
+							{
+								"entity_type": "VirtualMachine",
+								"vendor_infos": [
+									{
+										"vendor_ids": [
+											{
+												"id_type": "name",
+												"id_value": "3TierApp02-App-VM01"
+											},
+											{
+												"id_type": "moid",
+												"id_value": "vm-472"
+											},
+											{
+												"id_type": "uuid",
+												"id_value": "5006334a-c7dc-6319-d5be-e20dba110034"
+											},
+											{
+												"id_type": "cidr",
+												"id_value": "172.16.20.21/24"
+											}
+										],
+										"manager": {
+											"entity_type": "VCenterManager",
+											"entity_id": "10000:8:4248917770889216506"
+										}
+									}
+								],
+								"entity_id": "10000:1:5182501967504843016"
+							}
+						],
+						"name": "App",
+						"entity_id": "10000:562:4214620791920308603"
+					}
+				]
+			}
+		}
+	]
+}

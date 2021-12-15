@@ -13,7 +13,7 @@ cta:
     - text: Learn more about Functions in this overview [here](functions).
 ---
 
-# VMware Event Router
+# Introduction to VMware Event Router
 
 The VMware Event Router is used to connect to various VMware event `providers`
 (i.e. "sources") and forward these events to different event `processors` (i.e.
@@ -26,7 +26,7 @@ Appliance_](https://www.vmweventbroker.io/) as the core logic to forward
 
 - [VMware vCenter Server](https://www.vmware.com/products/vcenter-server.html)
 - [VMware Horizon](https://www.vmware.com/products/horizon.html)
-- Webhook
+- Generic [CloudEvents](https://cloudevents.io/) Webhook
 - vCenter Simulator [vcsim](https://github.com/vmware/govmomi/tree/master/vcsim)
   (deprecated, see note [below](#provider-type-vcsim))
 
@@ -79,40 +79,40 @@ not retried and discarded.
 
 <!-- omit in toc -->
 ## Table of Contents
-- [VMware Event Router](#vmware-event-router)
-  - [Configuration](#configuration)
-    - [Overview: Configuration File Structure (YAML)](#overview-configuration-file-structure-yaml)
-    - [JSON Schema Validation](#json-schema-validation)
-    - [API Version, Kind and Metadata](#api-version-kind-and-metadata)
-    - [The `eventProvider` section](#the-eventprovider-section)
-      - [Provider Type `vcenter`](#provider-type-vcenter)
-      - [Provider Type `horizon`](#provider-type-horizon)
-      - [Provider Type `webhook`](#provider-type-webhook)
-      - [Provider Type `vcsim`](#provider-type-vcsim)
-    - [The `eventProcessor` section](#the-eventprocessor-section)
-      - [Processor Type `knative`](#processor-type-knative)
-        - [Destination](#destination)
-      - [Processor Type `openfaas`](#processor-type-openfaas)
-      - [Processor Type `aws_event_bridge`](#processor-type-aws_event_bridge)
-    - [The `auth` section](#the-auth-section)
-      - [Type `basic_auth`](#type-basic_auth)
-      - [Type `aws_access_key`](#type-aws_access_key)
-      - [Type `active_directory`](#type-active_directory)
-    - [The `metricsProvider` section](#the-metricsprovider-section)
-      - [Provider Type `default`](#provider-type-default)
-  - [Deployment](#deployment)
-    - [Assisted Deployment](#assisted-deployment)
-      - [Helm Deployment](#helm-deployment)
-        - [Option 1: Configuration with OpenFaaS](#option-1-configuration-with-openfaas)
-        - [Option 2: Configuration with Knative](#option-2-configuration-with-knative)
-        - [Deploy the VMware Event Router Helm Chart](#deploy-the-vmware-event-router-helm-chart)
-        - [Creating/Updating the Chart](#creatingupdating-the-chart)
-      - [Manual Deployment](#manual-deployment)
-        - [Create Knative ClusterRoleBinding (skip if not using Knative)](#create-knative-clusterrolebinding-skip-if-not-using-knative)
-        - [Create the VMware Event Router Deployment](#create-the-vmware-event-router-deployment)
-    - [CLI Flags](#cli-flags)
+- [Introduction to VMware Event Router](#introduction-to-vmware-event-router)
+- [Configuration](#configuration)
+  - [Overview: Configuration File Structure (YAML)](#overview-configuration-file-structure-yaml)
+  - [JSON Schema Validation](#json-schema-validation)
+  - [API Version, Kind and Metadata](#api-version-kind-and-metadata)
+  - [The `eventProvider` section](#the-eventprovider-section)
+    - [Provider Type `vcenter`](#provider-type-vcenter)
+    - [Provider Type `horizon`](#provider-type-horizon)
+    - [Provider Type `webhook`](#provider-type-webhook)
+    - [Provider Type `vcsim`](#provider-type-vcsim)
+  - [The `eventProcessor` section](#the-eventprocessor-section)
+    - [Processor Type `knative`](#processor-type-knative)
+      - [Destination](#destination)
+    - [Processor Type `openfaas`](#processor-type-openfaas)
+    - [Processor Type `aws_event_bridge`](#processor-type-aws_event_bridge)
+  - [The `auth` section](#the-auth-section)
+    - [Type `basic_auth`](#type-basic_auth)
+    - [Type `aws_access_key`](#type-aws_access_key)
+    - [Type `active_directory`](#type-active_directory)
+  - [The `metricsProvider` section](#the-metricsprovider-section)
+    - [Provider Type `default`](#provider-type-default)
+- [Deployment](#deployment)
+  - [Assisted Deployment](#assisted-deployment)
+    - [Helm Deployment](#helm-deployment)
+      - [Option 1: Configuration with Knative](#option-1-configuration-with-knative)
+      - [Option 2: Configuration with OpenFaaS](#option-2-configuration-with-openfaas)
+      - [Deploy the VMware Event Router Helm Chart](#deploy-the-vmware-event-router-helm-chart)
+      - [Creating/Updating the Chart](#creatingupdating-the-chart)
+    - [Manual Deployment](#manual-deployment)
+      - [Create Knative ClusterRoleBinding (skip if not using Knative)](#create-knative-clusterrolebinding-skip-if-not-using-knative)
+      - [Create the VMware Event Router Deployment](#create-the-vmware-event-router-deployment)
+  - [CLI Flags](#cli-flags)
 
-## Configuration
+# Configuration
 
 The VMware Event Router can be run standalone (statically linked binary) or
 deployed as a Docker container, e.g. in a Kubernetes environment. See
@@ -151,7 +151,7 @@ endpoint. Configuration examples are provided [here](deploy/).
 > the event router with different configurations to address
 > multi-provider/processor scenarios.
 
-### Overview: Configuration File Structure (YAML)
+## Overview: Configuration File Structure (YAML)
 
 The following file, using `vcenter` as the event `provider` and `knative` as
 the `processor` shows an example of the configuration file syntax:
@@ -194,7 +194,7 @@ metricsProvider:
     bindAddress: "0.0.0.0:8082"
 ```
 
-### JSON Schema Validation
+## JSON Schema Validation
 
 In order to simplify the configuration and validation of the YAML configuration
 file a JSON schema [file](README.MD) is provided. Many editors/IDEs offer
@@ -208,7 +208,7 @@ Code](https://code.visualstudio.com/docs/languages/json#_json-schemas-and-settin
 > [raw](https://help.data.world/hc/en-us/articles/115006300048-GitHub-how-to-find-the-sharable-download-URL-for-files-on-GitHub)
 > URL pointing to the aforementioned JSON schema file.
 
-### API Version, Kind and Metadata
+## API Version, Kind and Metadata
 
 The following table lists allowed and required fields with their respective type
 values and examples for these fields.
@@ -221,7 +221,7 @@ values and examples for these fields.
 | `metadata.name`   | String            | Name of this configuration file                 | true     | `config-vc-openfaas-PROD`          |
 | `metadata.labels` | map[String]String | Optional key/value pairs                        | false    | `env: PROD`                        |
 
-### The `eventProvider` section
+## The `eventProvider` section
 
 The following table lists allowed and required fields with their respective type
 values and examples for these fields.
@@ -232,7 +232,7 @@ values and examples for these fields.
 | `name`            | String | Name identifier for the event provider | true     | `vc-01-PROD`                               |
 | `<provider_type>` | Object | Provider specific configuration        | true     | (see specific provider type section below) |
 
-#### Provider Type `vcenter`
+### Provider Type `vcenter`
 
 VMware vCenter Server is advanced server management software that provides a
 centralized platform for controlling your VMware vSphere environments, allowing
@@ -252,7 +252,7 @@ vCenter Server and the respective type values and examples for these fields.
 | `checkpointDir` | Boolean | **Optional:** Configure an alternative location for persisting checkpoints (default: `./checkpoints`) | false    | `/var/local/checkpoints`         |
 | `<auth>`        | Object  | vCenter credentials                                                                                   | true     | (see `basic_auth` example below) |
 
-#### Provider Type `horizon`
+### Provider Type `horizon`
 
 VMware Horizon is a platform for delivering virtual desktops and apps
 efficiently and securely across hybrid cloud for the best end-user digital
@@ -272,7 +272,7 @@ Horizon REST API and the respective type values and examples for these fields.
 | `insecureSSL` | Boolean | Skip TSL verification       | true     | `true` (i.e. ignore errors)            |
 | `<auth>`      | Object  | Horizon domain credentials  | true     | (see `active_directory` example below) |
 
-#### Provider Type `webhook`
+### Provider Type `webhook`
 
 The `webhook` event provider listens for incoming
 [CloudEvents](https://cloudevents.io/) (binary or structured mode) on a
@@ -291,7 +291,7 @@ server.
 **Note:** When the VMware Event Router log level is `DEBUG` incoming webhook
 requests (method, path, headers, remote address) will be logged.
 
-#### Provider Type `vcsim`
+### Provider Type `vcsim`
 
 ⚠️ This provider is **deprecated** and will be removed in future versions. The
 `vcenter` provider will work correctly against a `vcsim` instance.
@@ -312,7 +312,7 @@ type values and examples for these fields.
 > [#2134](https://github.com/vmware/govmomi/issues/2134). This provider is for
 > prototyping/testing purposes only.
 
-### The `eventProcessor` section
+## The `eventProcessor` section
 
 The following table lists allowed and required fields with their respective type
 values and examples for these fields.
@@ -323,7 +323,7 @@ values and examples for these fields.
 | `name`             | String | Name identifier for the event processor | true     | `knative-broker-PROD`                       |
 | `<processor_type>` | Object | Processor specific configuration        | true     | (see specific processor type section below) |
 
-#### Processor Type `knative`
+### Processor Type `knative`
 
 Knative is a Kubernetes-based platform to deploy and manage modern serverless
 workloads. Knative has two core building blocks, that is Serving (Knative
@@ -352,7 +352,7 @@ event `processor`.
 > **Note:** When sending events to a Knative `Broker`, the Knative broker will always
 > send `binary` encoded cloud events to the Knative sinks, e.g. triggered `Service`.
 
-##### Destination
+#### Destination
 
 Knative abstracts event receivers ("sinks") in a very flexible way via
 *addressable* `Destinations`. The VMware Event Router technically supports all
@@ -391,7 +391,7 @@ the router configuration when targeting a URI.
 > `Ref` as the destination type. Use `v1` in the `apiVersion` section.
 
 
-#### Processor Type `openfaas`
+### Processor Type `openfaas`
 
 OpenFaaS functions can subscribe to the event stream via function `"topic"`
 annotations in the function stack configuration (see OpenFaaS documentation for
@@ -417,7 +417,7 @@ event `processor`.
 | `async`   | Boolean | Specify how to invoke functions (synchronously or asynchronously)                                                 | true     | `false` (i.e. use sync function invocation mode) |
 | `<auth>`  | Object  | **Optional:** authentication data (see auth section below). Omit section if OpenFaaS gateway auth is not enabled. | false    | (see `basic_auth` example below)                 |
 
-#### Processor Type `aws_event_bridge`
+### Processor Type `aws_event_bridge`
 
 Amazon EventBridge is a serverless event bus that makes it easy to connect
 applications together using data from your own applications, integrated
@@ -465,14 +465,14 @@ as an event `processor`.
 | `ruleARN`  | String | Rule ARN to use for event pattern matching                                                                                              | true     | `arn:aws:events:us-west-1:1234567890:rule/vmware-event-router`         |
 | `<auth>`   | Object | AWS IAM role credentials                                                                                                                | true     | (see `aws_access_key` example below)                                   |
 
-### The `auth` section
+## The `auth` section
 
 The following table lists allowed and required fields with their respective type
 values and examples for these fields. Since the various `processors` and
 `providers` use different authentication mechanisms (or none at all) this
 section describes the various options.
 
-#### Type `basic_auth`
+### Type `basic_auth`
 
 Supported providers/processors:
 
@@ -488,7 +488,7 @@ Supported providers/processors:
 | `basicAuth.username` | String | Username                                | true     | `admin`      |
 | `basicAuth.password` | String | Password                                | true     | `P@ssw0rd`   |
 
-#### Type `aws_access_key`
+### Type `aws_access_key`
 
 Supported providers/processors:
 
@@ -531,7 +531,7 @@ permissions ("Action"):
 }
 ```
 
-#### Type `active_directory`
+### Type `active_directory`
 
 Supported providers/processors:
 
@@ -548,7 +548,7 @@ Supported providers/processors:
 > **Note:** UPN authentication, e.g. `administrator@corp.local` as `username`,
 > is not supported.
 
-### The `metricsProvider` section
+## The `metricsProvider` section
 
 The VMware Event Router currently only exposes a default ("internal" or "embedded") metrics
 endpoint. In the future, support for more providers is planned, e.g. Wavefront,
@@ -560,7 +560,7 @@ Prometheus, etc.
 | `name`            | String | Name of the metrics provider    | true     | `metrics-server-veba`                   |
 | `<provider_type>` | Object | Provider specific configuration | true     | See metrics provider type section below |
 
-#### Provider Type `default`
+### Provider Type `default`
 
 The VMware Event Router exposes metrics in JSON format on a configurable HTTP
 listener, e.g. `http://<bindAddress>/stats`. The following table lists allowed
@@ -571,7 +571,7 @@ and optional fields for configuring the `default` metrics server.
 | `bindAddress` | String | TCP/IP socket and port to listen on (**do not** add any URI scheme or slashes)              | true     | `"0.0.0.0:8082"`           |
 | `<auth>`      | Object | **Optional:** authentication data (see auth section). Omit section if auth is not required. | false    | (see `basic_auth` example) |
 
-## Deployment
+# Deployment
 
 VMware Event Router can be deployed and run as standalone binary (see
 [below](#build-from-source)). However, it is designed (and recommended) to be
@@ -580,21 +580,55 @@ run in a Kubernetes cluster for increased availability and ease of scaling out.
 > **Note:** Docker images are available
 > [here](https://hub.docker.com/r/vmware/veba-event-router).
 
-### Assisted Deployment
+## Assisted Deployment
 
 For your convenience we provide a Helm Chart which can be used to easily install
-the VMware Event Router into an **existing** OpenFaaS ("faas-netes") or Knative
-environment. See [below](#openfaas-helm-deployment) for an example how to set up
-OpenFaaS in a development environment.
+the VMware Event Router into an **existing** Knative or OpenFaaS ("faas-netes")
+environment. 
 
-#### Helm Deployment
+⚠️ The OpenFaaS deployment method is unmaintained in the VEBA project and
+will be deprecated in a future release. The recommended deployment method is
+using the Knative backend.
+
+### Helm Deployment
 
 The Helm files are located in the [chart](chart/) directory. The `values.yaml`
 file contains the allowed parameters and parameter descriptions which map to the
 VMware Event Router [configuration](#overview-configuration-file-structure-yaml)
 file.
 
-##### Option 1: Configuration with OpenFaaS
+#### Option 1: Configuration with Knative
+
+If you don't have a working Knative installation, follow the steps described in
+the [official](https://knative.dev/docs/install/prerequisites/) documentation to
+deploy Knative Serving **and** Eventing.
+
+Now create a Helm `override.yaml` file with your environment specific settings,
+e.g.:
+
+```yaml
+eventrouter:
+  config:
+    logLevel: debug
+  vcenter:
+    address: https://vcenter.corp.local
+    username: administrator@vsphere.local
+    password: replaceMe
+    insecure: true # if required ignore TLS certs
+  eventProcessor: knative
+  knative:
+    destination: # follows Knative convention for ref/uri
+      ref:
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+        name: default
+        namespace: default
+```
+
+> **Note:** Please ensure the correct formatting/indentation which follows the
+> Helm `values.yaml` file.
+
+#### Option 2: Configuration with OpenFaaS
 
 The following steps can be used to quickly install OpenFaaS as a requirement for
 the Helm installation instructions of the VMware Event Router below. Skip this
@@ -637,39 +671,7 @@ eventrouter:
 > **Note:** Please ensure the correct formatting/indentation which follows the
 > Helm `values.yaml` file.
 
-##### Option 2: Configuration with Knative
-
-If you don't have a working Knative installation, follow the steps described in
-the [official](https://knative.dev/docs/install/prerequisites/) documentation to
-deploy Knative Serving **and** Eventing.
-
-Now create a Helm `override.yaml` file with your environment specific settings,
-e.g.:
-
-```yaml
-eventrouter:
-  config:
-    logLevel: debug
-  vcenter:
-    address: https://vcenter.corp.local
-    username: administrator@vsphere.local
-    password: replaceMe
-    insecure: true # if required ignore TLS certs
-  eventProcessor: knative
-  knative:
-    destination: # follows Knative convention for ref/uri
-      ref:
-        apiVersion: eventing.knative.dev/v1
-        kind: Broker
-        name: default
-        namespace: default
-```
-
-> **Note:** Please ensure the correct formatting/indentation which follows the
-> Helm `values.yaml` file.
-
-##### Deploy the VMware Event Router Helm Chart
-
+#### Deploy the VMware Event Router Helm Chart
 
 Add the VMware Event Router Helm release to your Helm repository:
 
@@ -692,7 +694,7 @@ The chart should now show up in the search:
 ```console
 $ helm search repo event-router
 NAME                      CHART VERSION   APP VERSION     DESCRIPTION
-vmware-veba/event-router  v0.6.4          v0.6.1          The VMware Event Router is used to connect to v...
+vmware-veba/event-router  v0.7.0          v0.7.0          The VMware Event Router is used to connect to v...
 [snip]
 ```
 
@@ -734,7 +736,7 @@ To uninstall the release run:
 $ helm -n vmware uninstall veba
 ```
 
-##### Creating/Updating the Chart
+#### Creating/Updating the Chart
 
 Before running the following commands make the appropriate changes to the chart,
 e.g. bumping up `version` and/or `appVersion` in `Chart.yaml`.
@@ -746,7 +748,7 @@ $ helm package -d releases .
 
 Then upload the created `.tgz` file inside `releases/` to your Helm chart repo.
 
-#### Manual Deployment
+### Manual Deployment
 
 Create a namespace where the VMware Event Router will be deployed to:
 
@@ -784,7 +786,7 @@ If you have configured `knative` as your event `processor` you must also create
 a `ClusterRoleBinding` for the VMware Event Router so it can lookup Knative
 `destinations`.
 
-##### Create Knative ClusterRoleBinding (skip if not using Knative)
+#### Create Knative ClusterRoleBinding (skip if not using Knative)
 
 The following commands creates the `ClusterRoleBinding` assuming the VMware
 Event Router will be deployed into the `vmware` namespace using the predefined
@@ -826,7 +828,7 @@ PolicyRule:
   channels.messaging.knative.dev/finalizers      []                 []              [update]
 ```
 
-##### Create the VMware Event Router Deployment
+#### Create the VMware Event Router Deployment
 
 Now we can deploy the VMware Event Router:
 
@@ -856,7 +858,7 @@ earlier:
 $ kubectl delete namespace vmware
 ```
 
-### CLI Flags
+## CLI Flags
 
 By default the VMware Event Router binary will look for a YAML configuration
 file named `/etc/vmware-event-router/config`. The default log level is `info`

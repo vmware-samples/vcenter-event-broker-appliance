@@ -1,0 +1,77 @@
+{
+    "Null": null,
+    "Int": 56,
+    "Float": 1.56,
+    "String": "String data",
+    "String Number": "5.6",
+    "String Date": "2021-05-04T07:33:33.773581268Z",
+    "Boolean": false,
+    "SDK Dict Vm": {
+        "Name": "TestVM",
+        "Vm": {
+          "Type": "VirtualMachine",
+          "Value": "vm-596"
+        }
+    },
+    "SDK Dict Host": {
+        "Name": "esxi1.local",
+        "Host": {
+          "Type": "HostSystem",
+          "Value": "host-34"
+        }
+    },
+    "Raw Dict": {
+        "Test String": "foo bar",
+        "Test Number": 0.56,
+        "Test List": [
+            1,
+            "two",
+            {
+                "Three": 4.1
+            }
+        ],
+        "Test Dict": {
+            "One": 1,
+            "Two": -2,
+            "Three": 0.3
+        }
+    },
+    "List Key Value Dicts": [
+        {
+            "Key": "Test string", 
+            "Value": "String value" 
+        },
+        { 
+            "Key": "Test number", 
+            "Value": 123 
+        },
+        { 
+            "Key": "Test date", 
+            "Value": "2021-05-04T07:33:33.773581268Z"
+        }
+    ],
+    "List Tuple": [
+        ["String key", "String value"],
+        ["Number key", 1234],
+        ["Date key", "2021-05-04T07:33:33.773581268Z"]
+    ],
+    "List String": [
+        "Value 1", 
+        "Value 2", 
+        "foo", 
+        "bar"
+    ],
+    "List Number": [
+        123, 
+        -456, 
+        0,
+        1.2
+    ],
+    "List Mixed": [
+        "Value 1", 
+        123, 
+        {
+            "foo": "bar"
+        }
+    ]
+}

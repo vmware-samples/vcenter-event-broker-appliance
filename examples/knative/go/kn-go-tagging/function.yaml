@@ -1,0 +1,53 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-go-tagging
+  labels:
+    app: veba-ui
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+        - image: us.gcr.io/daisy-284300/veba/kn-go-tagging:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: VCENTER_INSECURE
+              value: "false"
+            - name: VCENTER_URL
+              value: "https://FILL-ME-IN"
+            # - name: VCENTER_SECRET_PATH
+            #   value: "/var/bindings/vsphere"
+            - name: DEBUG
+              value: "true"
+            - name: TAG_NAME
+              value: "FILL-ME-IN"
+            - name: TAG_ACTION
+              value: "FILL-ME-IN" # can be "attach" or "detach"
+          volumeMounts:
+            - name: credentials
+              mountPath: /var/bindings/vsphere
+              readOnly: true
+      volumes:
+        - name: credentials
+          secret:
+            secretName: vsphere-credentials
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: kn-go-tagging-trigger
+spec:
+  broker: default
+  filter:
+    attributes:
+      subject: VmPoweredOffEvent
+      type: com.vmware.event.router/event
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: kn-go-tagging

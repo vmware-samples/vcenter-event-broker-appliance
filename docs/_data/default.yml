@@ -1,7 +1,7 @@
 toc:
   - title: Introduction
     subfolderitems:
-      - page: About
+      - page: Use Cases
         id: intro-about
         url: /kb/
       - page: Architecture
@@ -63,10 +63,10 @@ toc:
     subfolderitems:
       - page: Deploy VEBA to Kubernetes
         id: advanced-deploy-k8s
-        url: /kb/advanced-deploy-k8s
-      - page: Using vCenter Simulator for local function development
+        url: /kb/event-router#deployment
+      - page: Deploy Event Router to Kind
         id: site-resources
-        external_url: https://rguske.github.io/post/spin-up-a-local-veba-environment-with-kind-and-vcenter-simulator/
+        url: /kb/deploy-event-router-kind
       - page: Replace TLS Certificates on VEBA
         id: advanced-certificates
         url: /kb/advanced-certificates

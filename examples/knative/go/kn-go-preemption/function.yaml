@@ -1,0 +1,47 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-go-preemption
+  labels:
+    app: veba-ui
+    workflow: vsphere-preemption
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+        - image: us.gcr.io/daisy-284300/veba/kn-go-preemption:1.0
+          env:
+            - name: TEMPORAL_URL
+              value: "FILL_ME_IN"
+            - name: TEMPORAL_NAMESPACE
+              value: "FILL_ME_IN"
+            - name: TEMPORAL_TASKQUEUE
+              value: "FILL_ME_IN"
+            - name: VSPHERE_PREEMPTION_TAG
+              value: "FILL_ME_IN"
+            - name: VSPHERE_ALARM_NAME
+              value: "FILL_ME_IN"
+            - name: DEBUG
+              value: "true"
+---              
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: vsphere-preemption
+  labels:
+    app: veba-ui
+    workflow: vsphere-preemption
+spec:
+  broker: default
+  filter:
+    attributes:
+      subject: AlarmStatusChangedEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-go-preemption

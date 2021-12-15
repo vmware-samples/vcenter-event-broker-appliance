@@ -10,12 +10,12 @@ echo -e "\e[92mSetting up VEBA UI RBAC ..." > /dev/console
 kubectl apply -f /root/config/veba-ui/veba-ui-rbac.yaml
 
 echo -e "\e[92mSetting up VEBA UI Secret ..." > /dev/console
-eval "kubectl -n vmware-system create secret generic veba-ui-secret \
-    --from-literal=VCENTER_FQDN=${ESCAPED_VCENTER_SERVER} \
+kubectl -n vmware-system create secret generic veba-ui-secret \
+    --from-literal=VCENTER_FQDN=${VCENTER_SERVER} \
     --from-literal=VCENTER_PORT=443 \
-    --from-literal=VCENTER_USER=${ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI} \
-    --from-literal=VCENTER_PASS=${ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI} \
-    --from-literal=VEBA_FQDN=${HOSTNAME}"
+    --from-literal=VCENTER_USER=${VCENTER_USERNAME_FOR_VEBA_UI} \
+    --from-literal=VCENTER_PASS=${VCENTER_PASSWORD_FOR_VEBA_UI} \
+    --from-literal=VEBA_FQDN=${HOSTNAME}
 
 VEBA_BOM_FILE=/root/config/veba-bom.json
 

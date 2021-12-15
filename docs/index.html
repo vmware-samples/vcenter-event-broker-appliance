@@ -3,8 +3,8 @@ layout: default
 id: home
 description: vCenter Event-driven Functions as a Service Platform
 backgrounds:
-  case_study: cornflower-blue
-  team: dark-blue
+  case_study: ocean
+  team: indigo
 hero:
   headline: Unlocking the Hidden Potential of Events in the VMware SDDC
   content: Use event-driven automation and take your system events to the next level! Easily trigger custom or pre-built actions to deliver powerful integrations within your datacenter but also across public cloud services. Integrations like Slack, Pager Duty, Service Now, etc. has never been easier before
@@ -18,27 +18,35 @@ hero:
     text: Write Functions
     external_url: https://github.com/vmware-samples/vcenter-event-broker-appliance
   promo1:
-    icon: /assets/img/cta-icons/vsphere_horizon.png
+    icon: /assets/img/cta-icons/extend.svg
     title: Extend your Systems
     content: Event-driven interactions with vSphere and Horizon using Functions as a Service (FaaS).
   promo2:
-    icon: /assets/img/cta-icons/scale-icon.png
+    icon: /assets/img/cta-icons/events.svg
     title: Event-Driven Remediation
     content: Automatically revert or fix system issues based on state changes.
   promo3:
-    icon: /assets/img/cta-icons/functions-icon.png
+    icon: /assets/img/cta-icons/functions.svg
     title: Bring Your Own Language
     content: Build functions using the language of your choice.
   promo4:
-    icon: /assets/img/cta-icons/webhook.png
+    icon: /assets/img/cta-icons/webhook.svg
     title: Webhook Support
     content: Use the webhook HTTPS endpoint to send CloudEvents from any external source to VEBA.
 secondary_ctas:
   cta1:
+    title: Appliance for VMware vSphere
+    url: /kb/install-knative
+    content: Deploy VEBA directly onto vSphere by using the ready-to-run appliance (OVA).
+  cta2:
+    title: Installation on Kubernetes with Knative
+    url: /kb/advanced-deploy-k8s
+    content: Deploy VEBA to an existing Kubernetes Knative installation with Helm.
+  cta3:
     title: Explore our documentation to help you get started quickly
     url: /kb
     content: Learn more about VMware Event Broker Appliance and its capabilities
-  cta2:
+  cta4:
     title: Get started quickly with community-sourced, prebuilt functions
     url: /examples
     content: Deploy the appliance and prebuilt functions in under 60 minutes
@@ -177,6 +185,32 @@ secondary_ctas:
           {% endif %}
         </h6>
         <p class="mb-0">{{ page.secondary_ctas.cta2.content }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section section-grey">
+  <div class="section-content">
+    <div class="row bg-grey">
+      <div class="col-sm-5 mb-3 mb-sm-0">
+        <h6 class="mb-1">
+          {% if page.secondary_ctas.cta3.external_url or size > 0 %}
+          <a href="{{ page.secondary_ctas.cta3.external_url }}" target="_blank">{{ page.secondary_ctas.cta3.title }}</a>
+          {% else %}
+          <a href="{{ page.secondary_ctas.cta3.url | relative_url }}">{{ page.secondary_ctas.cta3.title }}</a>
+          {% endif %}
+        </h6>
+        <p class="mb-0">{{ page.secondary_ctas.cta3.content }}</p>
+      </div>
+      <div class="col-sm-5 offset-sm-2">
+        <h6 class="mb-1">
+          {% if page.secondary_ctas.cta4.external_url  or size > 0 %}
+          <a href="{{ page.secondary_ctas.cta4.external_url }}" target="_blank">{{ page.secondary_ctas.cta4.title }}</a>
+          {% else %}
+          <a href="{{ page.secondary_ctas.cta4.url | relative_url }}">{{ page.secondary_ctas.cta4.title }}</a>
+          {% endif %}
+        </h6>
+        <p class="mb-0">{{ page.secondary_ctas.cta4.content }}</p>
       </div>
     </div>
   </div>
