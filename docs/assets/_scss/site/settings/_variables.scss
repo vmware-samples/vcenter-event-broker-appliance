@@ -10,6 +10,13 @@ $light: $white;
 $pink:    #A41458;
 $darkest-blue: #1D428A;
 $dark-grey: #717074;
+$indigo: #172F77;
+$plum: #6A1BA3;
+$ocean: #0F7CD1;
+$aqua: #17B5CB;
+$leaf: #67B519;
+$tangerine: #E56207;
+$crimson: #8C1733;
 // Bootstrap overrides
 
 $body-bg: #bbb;
@@ -72,7 +79,7 @@ $card-dark-link: $white;
 $card-dark-link-hover: $white;
 
 $card-light-background: $white;
-$card-light-link: $link-color;
+$card-light-link: $ocean;
 
 // alternating cards
 $field-backgrounds: (
@@ -80,6 +87,13 @@ $field-backgrounds: (
   'med-blue': #0091DA,
   'dark-blue': #1D428A,
   'darkest-blue': #002538,
+  'indigo': #172F77,
+  'plum': #6A1BA3,
+  'ocean': #0F7CD1,
+  'aqua': #17B5CB,
+  'leaf': #67B519,
+  'tangerine': #E56207,
+  'crimson': #8C1733, 
   'cornflower-blue': #6495ED,
   'green': #78BE20
 );
@@ -104,16 +118,16 @@ $field-backgrounds: (
 // Buttons
 
 $button-primary-background: $white;
-$button-primary-background-hover: $darkest-blue;
-$button-primary-foreground: $darkest-blue;
+$button-primary-background-hover: $indigo;
+$button-primary-foreground: $indigo;
 $button-primary-border: $white;
 $button-primary-border-hover: $white;
 
-$button-secondary-background: $darkest-blue;
+$button-secondary-background: $indigo;
 $button-secondary-background-hover: $white;
 $button-secondary-foreground: $white;
 $button-secondary-border: $white;
-$button-secondary-border-hover: $darkest-blue;
+$button-secondary-border-hover: $indigo;
 
 // Posts
 $post-hero-gradient-start: #fafafa;

@@ -1,4 +1,89 @@
 
+<a name="v0.7.1"></a>
+## [Release v0.7.1](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.7.0...v0.7.1)
+
+> Release Date: 2021-12-15
+
+### 🐞 Fix
+
+- [8c16b92]	Ensure $ character is properly handled for veba-ui secret (#688) 
+- [80985e3]	Update imagePullPolicy for knative-contour for air-gap deployments (#689) 
+
+### 💫 Feature
+
+- [be2a10f]	Add Knative vRO function (#728) 
+- [39fd850]	Add Knative Go Tagging example (#729) 
+- [cc7c245]	Add vRNI webhook function (#723) 
+- [1e35d96]	Add VM Preemption Example (#696) 
+- [da053d5]	update website with new veba logo version (#709) 
+- [ed4fbd8]	replace tanzu symbol on veba logo (#707) 
+- [d7c10d3]	Add Knative NSX tag sync example (#684) 
+- [178283e]	Support handling hostname when using all caps
+
+### 📃 Documentation
+
+- [8ea0cb7]	Minor update to the VEBA timeline for v0.7.1 release (#745) 
+- [01dcc02]	Add v0.7.1 release to VEBA timeline (#742) 
+- [f8c0bc8]	Add Windows instructions to OVA deployment scripts
+- [cf33f1e]	Add new functions to website
+- [a16cf18]	Update style headers
+- [f64091b]	Update Event Router installation on Kind (#698) 
+- [d8c355c]	Fix variable rendering in PCLI tag sync (#711) 
+- [388b1c2]	Add correct VMware Fling URl to VEBA website (#704) 
+- [2851b3c]	Update website adv install (#676) 
+- [d4affc1]	Fix community meeting time (#701) 
+- [08c7ac8]	Default to Knative Function examples on VEBA website (#699) 
+- [b635047]	Add a Community Use Cases document (#687) 
+- [11cd0eb]	Update website README to include Windows instructions for Jekyll container
+- [d9441f0]	Removing unused zcleanup dir/files (#654) 
+- [2b58e3c]	Add video tutorial link to kn-ps-slack README
+
+### 🧹 Chore
+
+- [afd35d6]	Updating website styling per branding guidelines
+- [e80f0af]	Update VEBA logo in packer build to v2 (#718) 
+- [9aefd3c]	Add VEBA OVA deployment scripts for Knative (#714) 
+- [e69a7f4]	Update VEBA OVA filename to use VMware instead of vCenter (#685) 
+- [40214b8]	Add note on community calls (#649) 
+
+### ⚠️ BREAKING
+
+### 📖 Commits
+
+- [4e5b6ac]	Bump version to v0.7.1 for release
+- [8ea0cb7]	docs: Minor update to the VEBA timeline for v0.7.1 release (#745)
+- [afd35d6]	chore: Updating website styling per branding guidelines
+- [01dcc02]	docs: Add v0.7.1 release to VEBA timeline (#742)
+- [f8c0bc8]	docs: Add Windows instructions to OVA deployment scripts
+- [f36ec71]	Bump version to release-0.7.1
+- [cf33f1e]	docs: Add new functions to website
+- [be2a10f]	feat: Add Knative vRO function (#728)
+- [39fd850]	feat: Add Knative Go Tagging example (#729)
+- [a16cf18]	docs: Update style headers
+- [cc7c245]	feat: Add vRNI webhook function (#723)
+- [f64091b]	docs: Update Event Router installation on Kind (#698)
+- [1e35d96]	feat: Add VM Preemption Example (#696)
+- [e80f0af]	chore: Update VEBA logo in packer build to v2 (#718)
+- [9aefd3c]	chore: Add VEBA OVA deployment scripts for Knative (#714)
+- [da053d5]	feat: update website with new veba logo version (#709)
+- [d8c355c]	docs: Fix variable rendering in PCLI tag sync (#711)
+- [ed4fbd8]	feat: replace tanzu symbol on veba logo (#707)
+- [388b1c2]	docs: Add correct VMware Fling URl to VEBA website (#704)
+- [2851b3c]	docs: Update website adv install (#676)
+- [d4affc1]	docs: Fix community meeting time (#701)
+- [08c7ac8]	docs: Default to Knative Function examples on VEBA website (#699)
+- [b635047]	docs: Add a Community Use Cases document (#687)
+- [d7c10d3]	feat: Add Knative NSX tag sync example (#684)
+- [8c16b92]	fix: Ensure $ character is properly handled for veba-ui secret (#688)
+- [80985e3]	fix: Update imagePullPolicy for knative-contour for air-gap deployments (#689)
+- [e69a7f4]	chore: Update VEBA OVA filename to use VMware instead of vCenter (#685)
+- [178283e]	feat: Support handling hostname when using all caps
+- [8974bc6]	bug: Add deployment methods section back to website (#667)
+- [11cd0eb]	docs: Update website README to include Windows instructions for Jekyll container
+- [d9441f0]	docs: Removing unused zcleanup dir/files (#654)
+- [40214b8]	chore: Add note on community calls (#649)
+- [2b58e3c]	docs: Add video tutorial link to kn-ps-slack README
+
 <a name="v0.7.0"></a>
 ## [Release v0.7.0](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.6.1...v0.7.0)
 
