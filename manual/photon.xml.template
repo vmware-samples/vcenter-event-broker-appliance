@@ -149,15 +149,6 @@
             <Label>Path</Label>
             <Description>Additional path to append to the host if required (e.g. /default/default)</Description>
         </Property>
-      <Category>OpenFaaS Configuration (deprecated)</Category>
-        <Property ovf:key="guestinfo.openfaas_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
-            <Label>Password</Label>
-            <Description>Password to login into OpenFaaS. Please use a secure password</Description>
-        </Property>
-        <Property ovf:key="guestinfo.openfaas_advanced_options" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
-            <Label>Advanced Settings</Label>
-            <Description>Opaque string for applying advanced configurations for OpenFaaS Processor. For advanced use cases only, please see documentation for more details</Description>
-        </Property>
       <Category>Custom TLS Certificate Configuration</Category>
         <Property ovf:key="guestinfo.custom_tls_private_key" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Custom VMware Event Broker Appliance TLS Certificate Private Key (Base64)</Label>

@@ -36,8 +36,6 @@ WEBHOOK_ENABLED=$(/root/setup/getOvfProperty.py "guestinfo.webhook")
 WEBHOOK_USERNAME=$(/root/setup/getOvfProperty.py "guestinfo.webhook_username")
 WEBHOOK_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.webhook_password")
 EVENT_PROCESSOR_TYPE=$(/root/setup/getOvfProperty.py "guestinfo.event_processor_type")
-OPENFAAS_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.openfaas_password")
-OPENFAAS_ADV_OPTION=$(/root/setup/getOvfProperty.py "guestinfo.openfaas_advanced_options")
 KNATIVE_HOST=$(/root/setup/getOvfProperty.py "guestinfo.knative_host")
 KNATIVE_SCHEME=$(/root/setup/getOvfProperty.py "guestinfo.knative_scheme" | tr [:upper:] [:lower:])
 KNATIVE_DISABLE_TLS=$(/root/setup/getOvfProperty.py "guestinfo.knative_disable_tls_verification")
@@ -112,8 +110,6 @@ else
 	ESCAPED_WEBHOOK_USERNAME=$(eval echo -n '${WEBHOOK_USERNAME}' | jq -Rs .)
 	ESCAPED_WEBHOOK_PASSWORD=$(eval echo -n '${WEBHOOK_PASSWORD}' | jq -Rs .)
 
-	ESCAPED_OPENFAAS_PASSWORD=$(eval echo -n '${OPENFAAS_PASSWORD}' | jq -Rs .)
-
 	cat > /root/config/veba-config.json <<EOF
 {
 	"VEBA_DEBUG": "${VEBA_DEBUG}",
@@ -148,8 +144,6 @@ else
 	"ESCAPED_WEBHOOK_PASSWORD": ${ESCAPED_WEBHOOK_PASSWORD},
 	"EVENT_PROCESSOR_TYPE": "${EVENT_PROCESSOR_TYPE}",
 	"KNATIVE_DEPLOYMENT_TYPE": "${KNATIVE_DEPLOYMENT_TYPE}",
-	"ESCAPED_OPENFAAS_PASSWORD": ${ESCAPED_OPENFAAS_PASSWORD},
-	"OPENFAAS_ADV_OPTION": "${OPENFAAS_ADV_OPTION}",
 	"KNATIVE_HOST": "${KNATIVE_HOST}",
 	"KNATIVE_SCHEME": "${KNATIVE_SCHEME}",
 	"KNATIVE_DISABLE_TLS": "${KNATIVE_DISABLE_TLS}",

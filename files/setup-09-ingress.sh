@@ -6,12 +6,6 @@
 
 set -euo pipefail
 
-# Standard Contour for OpenFaaS and Knative w/External Broker
-if [[ "${KNATIVE_DEPLOYMENT_TYPE}" == "na" ]] || [[ "${KNATIVE_DEPLOYMENT_TYPE}" == "external" ]]; then
-  echo -e "\e[92mDeploying Contour ..." > /dev/console
-  kubectl create -f /root/download/contour/examples/contour/
-fi
-
 KEY_FILE=/root/config/eventrouter.key
 CERT_FILE=/root/config/eventrouter.crt
 CERT_NAME=eventrouter-tls

@@ -1,6 +1,0 @@
-[vcenter]
-server = "veba.local.corp"
-user = "admin@vsphere.local"
-password = "password1234"
-insecure = true
-version = "7.0.0"

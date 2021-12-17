@@ -11,8 +11,6 @@
 
 #@ if processor == "Knative":
 #@ processorName = "knative"
-#@ elif processor == "OpenFaaS":
-#@ processorName = "openfaas"
 #@ end
 #@ routerName = "vmware-event-router-config-" + processorName + "-" + data.values.eventProvider
 
@@ -51,19 +49,6 @@ eventProcessor:
         name: default
         namespace: vmware-functions
   #@ end
-  #@ end
-  #@ if processor == "OpenFaaS":
-  #@ openfaasPassword = json.decode(data.values.config)["ESCAPED_OPENFAAS_PASSWORD"]
-  name: veba-openfaas
-  openfaas:
-    address: http://gateway.openfaas:8080
-    async: false
-    auth:
-      basicAuth:
-        username: admin
-        password: #@ openfaasPassword
-      type: basic_auth
-  type: openfaas
   #@ end
 eventProvider:
   #@ if data.values.eventProvider == "vcenter":

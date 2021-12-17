@@ -172,41 +172,6 @@
             }
         ]
     },
-    "openfaas": {
-        "gitRepoTag": "0.12.15",
-        "containers": [{
-                "name": "ghcr.io/openfaas/faas-netes",
-                "version": "0.12.13"
-            },
-            {
-                "name": "openfaas/gateway",
-                "version": "0.20.2"
-            },
-            {
-                "name": "openfaas/basic-auth-plugin",
-                "version": "0.20.1"
-            },
-            {
-                "name": "openfaas/queue-worker",
-                "version": "0.11.2"
-            },
-            {
-                "name": "prom/prometheus",
-                "version": "v2.11.0"
-            },
-            {
-                "name": "prom/alertmanager",
-                "version": "v0.18.0"
-            },
-            {
-                "name": "nats-streaming",
-                "version": "0.17.0"
-            }
-        ],
-        "faas-cli": {
-            "version": "0.13.0"
-        }
-    },
     "tinywww": {
         "gitRepoTag": "master",
         "containers": [{
