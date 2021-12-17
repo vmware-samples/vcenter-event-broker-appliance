@@ -113,8 +113,6 @@ appliance:
     - Knative [(Website)](https://knative.dev/)
     - OpenFaaS ([Website](https://www.openfaas.com/)) (**deprecated** for VEBA
       appliance)
-    - AWS EventBridge ([Website](https://aws.amazon.com/eventbridge/))
-      (**deprecated** for VEBA appliance)
 - Contour ([Github](https://github.com/projectcontour/contour))
 - Kubernetes ([Github](https://github.com/kubernetes/kubernetes))
 - Photon OS ([Github](https://github.com/vmware/photon))

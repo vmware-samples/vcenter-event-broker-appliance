@@ -11,8 +11,6 @@
 
 #@ if processor == "Knative":
 #@ processorName = "knative"
-#@ elif processor == "AWS EventBridge":
-#@ processorName = "aws"
 #@ elif processor == "OpenFaaS":
 #@ processorName = "openfaas"
 #@ end
@@ -53,24 +51,6 @@ eventProcessor:
         name: default
         namespace: vmware-functions
   #@ end
-  #@ end
-  #@ if processor == "AWS EventBridge":
-  #@ accessKey = json.decode(data.values.config)["ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY"]
-  #@ secretKey = json.decode(data.values.config)["ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET"]
-  #@ eventBus = json.decode(data.values.config)["ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS"]
-  #@ awsRegion = json.decode(data.values.config)["AWS_EVENTBRIDGE_REGION"]
-  #@ ruleArn = json.decode(data.values.config)["ESCAPED_AWS_EVENTBRIDGE_RULE_ARN"]
-  name: veba-aws
-  awsEventBridge:
-    auth:
-      awsAccessKeyAuth:
-        accessKey: #@ accessKey
-        secretKey: #@ secretKey
-      type: aws_access_key
-    eventBus: #@ eventBus
-    region: #@ awsRegion
-    ruleARN: #@ ruleArn
-  type: aws_event_bridge
   #@ end
   #@ if processor == "OpenFaaS":
   #@ openfaasPassword = json.decode(data.values.config)["ESCAPED_OPENFAAS_PASSWORD"]
