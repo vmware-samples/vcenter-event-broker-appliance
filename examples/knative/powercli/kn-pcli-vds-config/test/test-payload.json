@@ -1,0 +1,59 @@
+{
+	"Key": 511447,
+	"ChainId": 511446,
+	"CreatedTime": "2021-12-17T16:15:38.503999Z",
+	"UserName": "VSPHERE.LOCAL\\Administrator",
+	"Datacenter": {
+	  "Name": "HomeLab",
+	  "Datacenter": {
+		"Type": "Datacenter",
+		"Value": "datacenter-47"
+	  }
+	},
+	"ComputeResource": null,
+	"Host": null,
+	"Vm": null,
+	"Ds": null,
+	"Net": null,
+	"Dvs": {
+	  "Name": "dvsTest",
+	  "Dvs": {
+		"Type": "DistributedVirtualSwitch",
+		"Value": "dvs-7005"
+	  }
+	},
+	"FullFormattedMessage": "The vSphere Distributed Switch dvsTest in HomeLab was reconfigured. \n \nModified:  \n \nconfig.configVersion: \"4\" -> \"5\"; \n\nconfig.maxMtu: 1501 -> 1500; \n\n Added:  \n \n Deleted:  \n \n",
+	"ChangeTag": "",
+	"ConfigSpec": {
+	  "ConfigVersion": "4",
+	  "Name": "",
+	  "NumStandalonePorts": 0,
+	  "MaxPorts": 0,
+	  "UplinkPortPolicy": null,
+	  "UplinkPortgroup": null,
+	  "DefaultPortConfig": null,
+	  "Host": null,
+	  "ExtensionKey": "",
+	  "Description": "",
+	  "Policy": null,
+	  "VendorSpecificConfig": null,
+	  "Contact": null,
+	  "SwitchIpAddress": "",
+	  "DefaultProxySwitchMaxNumPorts": 0,
+	  "InfrastructureTrafficResourceConfig": null,
+	  "NetResourcePoolTrafficResourceConfig": null,
+	  "NetworkResourceControlVersion": "",
+	  "PvlanConfigSpec": null,
+	  "VspanConfigSpec": null,
+	  "MaxMtu": 1500,
+	  "LinkDiscoveryProtocolConfig": null,
+	  "IpfixConfig": null,
+	  "LacpApiVersion": "",
+	  "MulticastFilteringMode": ""
+	},
+	"ConfigChanges": {
+	  "Modified": "config.configVersion: \"4\" -> \"5\"; \n\nconfig.maxMtu: 1501 -> 1500; \n\n",
+	  "Added": "",
+	  "Deleted": ""
+	}
+  }
