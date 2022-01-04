@@ -23,22 +23,23 @@ import (
 )
 
 func TestParseEventMoRef(t *testing.T) {
-	type vm struct {
-		vmType string
-		Value  string
-	}
+	t.Parallel()
+
+	const (
+		moType = "VirtualMachine"
+	)
 
 	var tests = []struct {
-		name      string
-		path      string
-		expectErr bool
-		want      *vm
+		name    string
+		path    string
+		wantErr bool
+		want    *types.ManagedObjectReference
 	}{
 		{
 			"Test that event is readable",
 			"testdata/event.json",
 			false,
-			&vm{vmType: "VirtualMachine", Value: "vm-10000"},
+			&types.ManagedObjectReference{Type: moType, Value: "vm-56"},
 		},
 		{
 			"Event should return error if vm type and value are null",
@@ -71,14 +72,8 @@ func TestParseEventMoRef(t *testing.T) {
 			e := jsonFileToEvent(tt.path)
 			moRef, err := parseEventMoRef(e)
 
-			if tt.expectErr && err == nil {
-				t.Error("expected error, but got none")
-			}
-
-			if !tt.expectErr && err != nil {
-				assert.Equal(t, moRef.Type, tt.want.vmType)
-				assert.Equal(t, moRef.Value, tt.want.Value)
-			}
+			assert.Equal(t, tt.wantErr, err != nil)
+			assert.DeepEqual(t, tt.want, moRef)
 		})
 	}
 }
@@ -120,10 +115,7 @@ func TestRun(t *testing.T) {
 			ctx = logging.WithLogger(ctx, zaptest.NewLogger(t).Sugar())
 
 			_, err = NewClient(ctx)
-			if err != nil {
-				msg := "SOAP session manager login: ServerFaultCode: Login failure"
-				assert.ErrorContains(t, err, msg)
-			}
+			assert.ErrorContains(t, err, "SOAP session manager login: ServerFaultCode: Login failure")
 
 			return nil
 		}, model)
@@ -132,6 +124,7 @@ func TestRun(t *testing.T) {
 	t.Run("attach a tag to eventing vm", func(t *testing.T) {
 		model := simulator.VPX()
 		defer model.Remove()
+
 		err := model.Create()
 		assert.NilError(t, err, "create vcsim model")
 		model.Service.Listen = &url.URL{
@@ -147,7 +140,7 @@ func TestRun(t *testing.T) {
 				TagAction:  "attach",
 				VCAddress:  client.URL().String(),
 			}
-			err := setEnv(defaultEnv)
+			err = setEnv(defaultEnv)
 			assert.NilError(t, err, "set environment variables")
 
 			ctx, cancel := context.WithCancel(ctx)
@@ -172,9 +165,7 @@ func TestRun(t *testing.T) {
 
 			attached, err := isTagAttached(t, ctx, goTagClient.tagMgr, vmMoRef, testTagID)
 			assert.NilError(t, err, "checking if tag", defaultEnv.TagName, "is attached to", vmMoRef.Value)
-			if !attached {
-				t.Errorf("expect tag %q to be attached to %q but it is not", testTagID, vmMoRef.Value)
-			}
+			assert.Equal(t, attached, true)
 
 			return nil
 		}, model)
@@ -197,7 +188,7 @@ func TestRun(t *testing.T) {
 				TagAction:  "detach",
 				VCAddress:  client.URL().String(),
 			}
-			err := setEnv(defaultEnv)
+			err = setEnv(defaultEnv)
 			assert.NilError(t, err, "set environment variables")
 
 			ctx, cancel := context.WithCancel(ctx)
@@ -221,19 +212,15 @@ func TestRun(t *testing.T) {
 
 			attached, err := isTagAttached(t, ctx, goTagClient.tagMgr, vmMoRef, testTagID)
 			assert.NilError(t, err, "checking if tag ", defaultEnv.TagName, "is attached to", vmMoRef.Value)
-			if !attached {
-				t.Errorf("expected tag %q to be attached to %q, but it is not", testTagID, vmMoRef.Value)
-			}
+			assert.Equal(t, attached, true)
 
-			event := jsonFileToEvent("testdata/event2.json")
-			result := goTagClient.handler(ctx, event)
+			e := jsonFileToEvent("testdata/event2.json")
+			result := goTagClient.handler(ctx, e)
 			assert.NilError(t, result, "expect nil result")
 
 			attached, err = isTagAttached(t, ctx, goTagClient.tagMgr, vmMoRef, testTagID)
 			assert.NilError(t, err, "checking if tag ", defaultEnv.TagName, "is attached to", vmMoRef.Value)
-			if attached {
-				t.Errorf("expected tag %q to be detached from %q, but it is not", testTagID, vmMoRef.Value)
-			}
+			assert.Equal(t, attached, false)
 
 			return nil
 		}, model)
