@@ -35,11 +35,6 @@ HORIZON_DISABLE_TLS=$(/root/setup/getOvfProperty.py "guestinfo.horizon_disable_t
 WEBHOOK_ENABLED=$(/root/setup/getOvfProperty.py "guestinfo.webhook")
 WEBHOOK_USERNAME=$(/root/setup/getOvfProperty.py "guestinfo.webhook_username")
 WEBHOOK_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.webhook_password")
-EVENT_PROCESSOR_TYPE=$(/root/setup/getOvfProperty.py "guestinfo.event_processor_type")
-KNATIVE_HOST=$(/root/setup/getOvfProperty.py "guestinfo.knative_host")
-KNATIVE_SCHEME=$(/root/setup/getOvfProperty.py "guestinfo.knative_scheme" | tr [:upper:] [:lower:])
-KNATIVE_DISABLE_TLS=$(/root/setup/getOvfProperty.py "guestinfo.knative_disable_tls_verification")
-KNATIVE_PATH=$(/root/setup/getOvfProperty.py "guestinfo.knative_path")
 CUSTOM_VEBA_TLS_PRIVATE_KEY=$(/root/setup/getOvfProperty.py "guestinfo.custom_tls_private_key")
 CUSTOM_VEBA_TLS_CA_CERT=$(/root/setup/getOvfProperty.py "guestinfo.custom_tls_ca_cert")
 DOCKER_NETWORK_CIDR=$(/root/setup/getOvfProperty.py "guestinfo.docker_network_cidr")
@@ -75,17 +70,6 @@ else
 
 	if [ ${HORIZON_ENABLED} == "True" ]; then
 		EVENT_PROVIDERS+=("horizon")
-	fi
-
-	# Determine Knative deployment model
-	if [ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]; then
-		if [ ! -z ${KNATIVE_HOST} ]; then
-			KNATIVE_DEPLOYMENT_TYPE="external"
-		else
-			KNATIVE_DEPLOYMENT_TYPE="embedded"
-		fi
-	else
-		KNATIVE_DEPLOYMENT_TYPE="na"
 	fi
 
 	# Customize the POD CIDR Network if provided or else default to 10.10.0.0/16
@@ -142,12 +126,6 @@ else
 	"WEBHOOK_ENABLED": "${WEBHOOK_ENABLED}",
 	"ESCAPED_WEBHOOK_USERNAME": ${ESCAPED_WEBHOOK_USERNAME},
 	"ESCAPED_WEBHOOK_PASSWORD": ${ESCAPED_WEBHOOK_PASSWORD},
-	"EVENT_PROCESSOR_TYPE": "${EVENT_PROCESSOR_TYPE}",
-	"KNATIVE_DEPLOYMENT_TYPE": "${KNATIVE_DEPLOYMENT_TYPE}",
-	"KNATIVE_HOST": "${KNATIVE_HOST}",
-	"KNATIVE_SCHEME": "${KNATIVE_SCHEME}",
-	"KNATIVE_DISABLE_TLS": "${KNATIVE_DISABLE_TLS}",
-	"KNATIVE_PATH": "${KNATIVE_PATH}",
 	"CUSTOM_VEBA_TLS_PRIVATE_KEY": "${CUSTOM_VEBA_TLS_PRIVATE_KEY}",
 	"CUSTOM_VEBA_TLS_CA_CERT": "${CUSTOM_VEBA_TLS_CA_CERT}",
 	"DOCKER_NETWORK_CIDR": "${DOCKER_NETWORK_CIDR}",
@@ -173,10 +151,8 @@ EOF
 	echo -e "\e[92mStarting Kubernetes Configuration ..." > /dev/console
 	. /root/setup/setup-04-kubernetes.sh
 
-	if [ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]; then
-		echo -e "\e[92mStarting Knative Configuration ..." > /dev/console
-		. /root/setup/setup-05-knative.sh
-	fi
+	echo -e "\e[92mStarting Knative Configuration ..." > /dev/console
+	. /root/setup/setup-05-knative.sh
 
 	echo -e "\e[92mStarting VMware Event Processor Configuration ..." > /dev/console
 	. /root/setup/setup-06-event-processor.sh
@@ -190,7 +166,7 @@ EOF
 	echo -e "\e[92mStarting Ingress Router Configuration ..." > /dev/console
 	. /root/setup/setup-09-ingress.sh
 
-	if [[ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]] && [[ ! -z ${VCENTER_USERNAME_FOR_VEBA_UI} ]] && [[ ! -z ${VCENTER_PASSWORD_FOR_VEBA_UI} ]]; then
+	if [[ ! -z ${VCENTER_USERNAME_FOR_VEBA_UI} ]] && [[ ! -z ${VCENTER_PASSWORD_FOR_VEBA_UI} ]]; then
 		echo -e "\e[92mStarting Knative UI Configuration ..." > /dev/console
 		. /root/setup/setup-010-veba-ui.sh
 	fi

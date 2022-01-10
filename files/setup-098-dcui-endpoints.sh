@@ -11,12 +11,8 @@ DCUI_ENDPOINTS_FILE=/etc/veba-endpoints
 cat > ${DCUI_ENDPOINTS_FILE} <<EOF
 Appliance Configuration,Install Logs,/bootstrap
 Appliance Configuration,Resource Utilization,/top
+Appliance Configuration,Events,/events
 EOF
-
-# For Knative deployment, Sockeye is deployed and exposes via /events endpoint
-if [ ${EVENT_PROCESSOR_TYPE} == "Knative" ]; then
-    echo "Appliance Configuration,Events,/events" >> ${DCUI_ENDPOINTS_FILE}
-fi
 
 # For Webhook Provider
 if [ ${WEBHOOK_ENABLED} == "True" ]; then

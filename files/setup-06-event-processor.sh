@@ -12,17 +12,14 @@ kubectl -n vmware-system create secret generic basic-auth \
 
 VEBA_CONFIG_FILE=/root/config/veba-config.json
 
+echo -e "\e[92mSetting up Knative Processor ..." > /dev/console
+grep -q "Processor:" /etc/veba-release || echo "Processor: Knative" >> /etc/veba-release
+
 for EVENT_PROVIDER in ${EVENT_PROVIDERS[@]};
 do
   # Setup Event Processor Configuration File
   EVENT_ROUTER_CONFIG_TEMPLATE=/root/config/event-router/templates/vmware-event-router-config-template.yaml
   EVENT_ROUTER_CONFIG=/root/config/event-router/vmware-event-router-config-${EVENT_PROVIDER}.yaml
-
-  if [ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]; then
-    echo -e "\e[92mSetting up Knative Processor ..." > /dev/console
-
-    grep -q "Processor:" /etc/veba-release || echo "Processor: Knative" >> /etc/veba-release
-  fi
 
   ytt --data-value eventProvider=${EVENT_PROVIDER} --data-value-file config=${VEBA_CONFIG_FILE} -f ${EVENT_ROUTER_CONFIG_TEMPLATE} > ${EVENT_ROUTER_CONFIG}
 done
