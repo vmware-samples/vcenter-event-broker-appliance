@@ -3,13 +3,15 @@ package main
 import (
 	"testing"
 
+	"gotest.tools/assert"
+
 	"github.com/vmware-samples/vcenter-event-broker-appliance/examples/knative/go/kn-go-tagging/tagging"
 )
 
 func TestValidateEnvConfig(t *testing.T) {
 	tests := []struct {
-		config tagging.EnvConfig
-		isErr  bool
+		config  tagging.EnvConfig
+		wantErr bool
 	}{
 		{
 			tagging.EnvConfig{TagAction: "attach"},
@@ -27,11 +29,6 @@ func TestValidateEnvConfig(t *testing.T) {
 
 	for _, tc := range tests {
 		err := validateEnvConfig(tc.config)
-		if tc.isErr && err == nil {
-			t.Error("expected error but got none")
-		}
-		if !tc.isErr && err != nil {
-			t.Errorf("did not expect error but got %v", err)
-		}
+		assert.Equal(t, tc.wantErr, err != nil)
 	}
 }

@@ -48,13 +48,11 @@ do
     sleep 10
 done
 
-if [ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]; then
-  echo -e "\e[92mDeploying Local Storage Provisioner ..." > /dev/console
-  mkdir -p ${LOCAL_STOARGE_VOLUME_PATH}/local-path-provisioner
-  chmod 777 ${LOCAL_STOARGE_VOLUME_PATH}/local-path-provisioner
-  kubectl apply -f /root/download/local-path-storage.yaml
-  kubectl patch sc local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-fi
+echo -e "\e[92mDeploying Local Storage Provisioner ..." > /dev/console
+mkdir -p ${LOCAL_STOARGE_VOLUME_PATH}/local-path-provisioner
+chmod 777 ${LOCAL_STOARGE_VOLUME_PATH}/local-path-provisioner
+kubectl apply -f /root/download/local-path-storage.yaml
+kubectl patch sc local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 
 echo -e "\e[92mCreating VMware namespaces ..." > /dev/console
 kubectl create namespace vmware-system

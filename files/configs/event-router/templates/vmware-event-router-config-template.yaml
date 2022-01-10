@@ -2,41 +2,15 @@
 #@ load("@ytt:data", "data")
 
 #@ load("@ytt:json", "json")
-#@ processor = json.decode(data.values.config)["EVENT_PROCESSOR_TYPE"]
-#@ type = json.decode(data.values.config)["KNATIVE_DEPLOYMENT_TYPE"]
 #@ vcenter = json.decode(data.values.config)["ESCAPED_VCENTER_SERVER"]
 #@ vcenterUsername = json.decode(data.values.config)["ESCAPED_VCENTER_USERNAME"]
 #@ vcenterPassword = json.decode(data.values.config)["ESCAPED_VCENTER_PASSWORD"]
 #@ vcenterTls = json.decode(data.values.config)["VCENTER_DISABLE_TLS"]
 
-#@ if processor == "Knative":
-#@ processorName = "knative"
-#@ end
-#@ routerName = "vmware-event-router-config-" + processorName + "-" + data.values.eventProvider
+#@ routerName = "vmware-event-router-config-knative-" + data.values.eventProvider
 
 apiVersion: event-router.vmware.com/v1alpha1
 eventProcessor:
-  #@ if processor == "Knative":
-  #@ if type == "external":
-  #@ knativeHost = json.decode(data.values.config)["KNATIVE_HOST"]
-  #@ knativeScheme = json.decode(data.values.config)["KNATIVE_SCHEME"]
-  #@ knativePath = json.decode(data.values.config)["KNATIVE_PATH"]
-  #@ knativeTls = json.decode(data.values.config)["KNATIVE_DISABLE_TLS"]
-  name: veba-knative
-  type: knative
-  knative:
-    #@ if knativeTls == "True":
-    insecureSSL: true
-    #@ else:
-    insecureSSL: false
-    #@ end
-    encoding: binary
-    destination:
-      uri:
-        host: #@ knativeHost
-        scheme: #@ knativeScheme
-        path: #@ knativePath
-  #@ else:
   name: veba-knative
   type: knative
   knative:
@@ -48,8 +22,6 @@ eventProcessor:
         kind: Broker
         name: default
         namespace: vmware-functions
-  #@ end
-  #@ end
 eventProvider:
   #@ if data.values.eventProvider == "vcenter":
   name: veba-vc-01
