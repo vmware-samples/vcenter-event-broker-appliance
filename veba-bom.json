@@ -48,35 +48,42 @@
                 "version": "v0.37.5"
             }]
     },
+    "kind": {
+        "gitRepoTag": "main",
+        "containers": [{
+            "name": "kindest/node",
+            "version": "v1.21.2"
+        }]
+    },
     "kubernetes": {
-        "gitRepoTag": "v1.20.2",
+        "gitRepoTag": "v1.21.5",
         "containers": [{
                 "name": "k8s.gcr.io/kube-apiserver",
-                "version": "v1.20.2"
+                "version": "v1.21.5"
             },
             {
                 "name": "k8s.gcr.io/kube-controller-manager",
-                "version": "v1.20.2"
+                "version": "v1.21.5"
             },
             {
                 "name": "k8s.gcr.io/kube-scheduler",
-                "version": "v1.20.2"
+                "version": "v1.21.5"
             },
             {
                 "name": "k8s.gcr.io/kube-proxy",
-                "version": "v1.20.2"
+                "version": "v1.21.5"
             },
             {
                 "name": "k8s.gcr.io/pause",
-                "version": "3.2"
+                "version": "3.4.1"
             },
             {
                 "name": "k8s.gcr.io/etcd",
                 "version": "3.4.13-0"
             },
             {
-                "name": "k8s.gcr.io/coredns",
-                "version": "1.7.0"
+                "name": "k8s.gcr.io/coredns/coredns",
+                "version": "v1.8.0"
             }
         ]
     },
@@ -188,5 +195,8 @@
     },
     "ytt-cli": {
         "version": "v0.35.1"
+    },
+    "containerd": {
+        "version": "1.5.7"
     }
 }

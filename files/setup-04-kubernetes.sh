@@ -2,14 +2,13 @@
 # Copyright 2021 VMware, Inc. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
-# Setup Docker and Kubernetes
+# Setup Containerd and Kubernetes
 
 set -euo pipefail
 
-echo -e "\e[92mStarting Docker ..." > /dev/console
-systemctl daemon-reload
-systemctl start docker.service
-systemctl enable docker.service
+echo -e "\e[92mStarting Containerd ..." > /dev/console
+systemctl enable containerd
+systemctl start containerd
 
 echo -e "\e[92mDisabling/Stopping IP Tables  ..." > /dev/console
 systemctl stop iptables
