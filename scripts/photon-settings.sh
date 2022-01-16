@@ -18,6 +18,7 @@ cd /etc/yum.repos.d/
 sed -i 's/dl.bintray.com\/vmware/packages.vmware.com\/photon\/$releasever/g' photon.repo photon-updates.repo photon-extras.repo photon-debuginfo.repo
 tdnf -y update photon-repos
 tdnf -y remove minimal # TODO: required due to bug in Photon 4 GA
+tdnf -y remove docker
 rpm -e --noscripts systemd-udev-247.3-1.ph4 # TODO: required due to bug in Photon 4 GA
 tdnf clean all
 tdnf makecache
@@ -62,6 +63,37 @@ YTT_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["ytt-cli"].version')
 wget https://github.com/vmware-tanzu/carvel-ytt/releases/download/${YTT_VERSION}/ytt-linux-amd64
 chmod +x ytt-linux-amd64
 mv ytt-linux-amd64 /usr/local/bin/ytt
+
+echo '> Downloading Containerd'
+CONTAINERD_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["containerd"].version')
+curl -L https://github.com/containerd/containerd/releases/download/v${CONTAINERD_VERSION}/containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz -o /root/download/containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz
+tar -zxvf /root/download/containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz -C /usr
+rm -f /root/download/containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz
+containerd config default > /etc/containerd/config.toml
+cat > /usr/lib/systemd/system/containerd.service <<EOF
+[Unit]
+Description=containerd container runtime
+Documentation=https://containerd.io
+After=network.target
+[Service]
+ExecStartPre=-/sbin/modprobe overlay
+ExecStart=/usr/bin/containerd
+Restart=always
+RestartSec=5
+KillMode=process
+Delegate=yes
+OOMScoreAdjust=-999
+LimitNOFILE=1048576
+# Having non-zero Limit*s causes performance problems due to accounting overhead
+# in the kernel. We recommend using cgroups to do container-local accounting.
+LimitNPROC=infinity
+LimitCORE=infinity
+TasksMax=infinity
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl enable containerd
+systemctl start containerd
 
 echo '> Creating directory for setup scripts and configuration files'
 mkdir -p /root/setup

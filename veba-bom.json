@@ -195,5 +195,8 @@
     },
     "ytt-cli": {
         "version": "v0.35.1"
+    },
+    "containerd": {
+        "version": "1.5.7"
     }
 }

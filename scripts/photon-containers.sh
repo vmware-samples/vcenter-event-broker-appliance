@@ -14,7 +14,7 @@ do
             value=$(jq -r ".$component_name.containers[$i]" ${VEBA_BOM_FILE});
             container_name=$(jq -r '.name' <<< "$value");
             container_version=$(jq -r '.version' <<< "$value");
-            docker pull "$container_name:$container_version"
+            crictl pull "$container_name:$container_version"
         done
     fi
 done

@@ -95,7 +95,6 @@ Deploy the VMware Event Broker Appliance OVA to your vCenter Server using the vS
 
 #### **zAdvanced** (Optional)
   * Debugging - When enabled, this will output a more verbose log file that can be used to troubleshoot failed deployments
-  * Docker Bridge CIDR Network - Customize Docker Bridge CIDR Network (Default 172.17.0.1/16)
   * POD CIDR Network - Customize POD CIDR Network (Default 10.99.0.0/20). Must not overlap with the appliance IP address
 
 ### Step 3
