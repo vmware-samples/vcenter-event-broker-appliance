@@ -35,6 +35,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 1
+    
+      - name: Get short COMMIT and TAG (used by ko)
+        run: |
+          echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
 
       - name: Setup KinD Cluster
         run: |
@@ -59,7 +64,7 @@ jobs:
         working-directory: ./vmware-event-router
         run: |
           # loads image into kind
-          ko publish -B github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/cmd/router 
+          ko resolve -BRf deploy/event-router-k8s.yaml
 
       - name: Install OpenFaaS with Helm
         run: |
@@ -143,6 +148,11 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Get short COMMIT and TAG (used by ko)
+        run: |
+          echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
+
       - name: Setup KinD Cluster
         run: |
           set -x
@@ -166,7 +176,7 @@ jobs:
         working-directory: ./vmware-event-router
         run: |
           # loads image into kind
-          ko publish -B github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/cmd/router 
+          ko resolve -BRf deploy/event-router-k8s.yaml
 
       - name: Setup Knative Serving
         run: |

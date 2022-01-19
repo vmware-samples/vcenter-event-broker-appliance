@@ -1,0 +1,161 @@
+name: Release
+
+on:
+  # release will only be created when ref is a tag starting with "v"
+  push:
+    tags:
+      - "v*"
+
+# run all jobs with these defaults, unless specified otherwise
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  release:
+    name: Create Release
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        go-version: ["1.17"]
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: "master"
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Create CHANGELOG for Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE: quay.io/git-chglog/git-chglog
+          # https://quay.io/repository/git-chglog/git-chglog from tag v0.14.2
+          IMAGE_SHA: 998e89dab8dd8284cfff5f8cfb9e9af41fe3fcd4671f2e86a180e453c20959e3
+        run: |
+          # update CHANGELOG
+          docker run --rm -v $PWD:/workdir ${IMAGE}@sha256:${IMAGE_SHA} -o vmware-event-router/RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
+
+      - name: GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
+          workdir: vmware-event-router
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
+
+  pull-request:
+    needs: release
+    name: Create CHANGELOG PR
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    continue-on-error: true # errors caused by this job won't stop workflow
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          # for changelog
+          fetch-depth: 0
+          ref: "master"
+
+      - name: Create CHANGELOG commit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE: quay.io/git-chglog/git-chglog
+          # https://quay.io/repository/git-chglog/git-chglog from tag v0.14.2
+          IMAGE_SHA: 998e89dab8dd8284cfff5f8cfb9e9af41fe3fcd4671f2e86a180e453c20959e3
+        run: |
+          # update CHANGELOG
+          docker run --rm -v $PWD:/workdir ${IMAGE}@sha256:${IMAGE_SHA} -o CHANGELOG.md
+
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+
+          git add CHANGELOG.md
+          git commit -m "Update CHANGELOG for $(basename ${{ github.ref }})"
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          delete-branch: true
+          reviewers: embano1
+          title: "Update CHANGELOG"
+          body: |
+            Update CHANGELOG.md for new release
+
+      - name: Check outputs
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+
+  images:
+    needs: release
+    name: Create GCR image and release.yaml
+    timeout-minutes: 30
+    env:
+      KO_DOCKER_REPO: us.gcr.io/daisy-284300/veba # .../router@sha256:
+    strategy:
+      matrix:
+        go-version: ["1.17"]
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Setup ko
+        uses: imjasonh/setup-ko@v0.4
+        
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+        
+      - uses: actions/checkout@v2
+
+      - name: Login to GCP
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_email: ${{ secrets.GCP_EMAIL }}
+          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker --quiet
+
+      - name: Get short COMMIT and TAG
+        run: |
+          echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
+
+      - name: Get Release URL
+        id: get_release_url
+        uses: bruceadams/get-release@v1.2.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Build and push multi-arch image
+        working-directory: ./vmware-event-router
+        run: |
+          # build and push with pre-release tag
+          ko resolve --platform=linux/arm64,linux/amd64 --tags ${KO_COMMIT},${KO_TAG},latest -BRf deploy/event-router-k8s.yaml > release.yaml
+
+      - name: Upload Release Assets
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_release_url.outputs.upload_url }}
+          asset_path: ./vmware-event-router/release.yaml
+          asset_name: release.yaml
+          asset_content_type: text/plain

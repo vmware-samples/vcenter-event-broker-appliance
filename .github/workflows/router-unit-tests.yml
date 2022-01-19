@@ -18,14 +18,36 @@ defaults:
     working-directory: ./vmware-event-router
 
 jobs:
-  unit-tests:
-    runs-on: ubuntu-latest
+  test:
+    name: Unit Tests
+    strategy:
+      matrix:
+        go-version: ["1.17"]
+        platform: ["ubuntu-latest"]
+
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 10
+
     steps:
-      - name: Set up Go 1.17.x
+      - name: Set up Go ${{ matrix.go-version }}
         uses: actions/setup-go@v2
         with:
-          go-version: 1.17
-      - name: checkout source
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code
         uses: actions/checkout@v2
+
       - name: run unit tests
         run: make unit-test
+
+      - name: Verify git clean
+        shell: bash
+        run: |
+          if [[ -z "$(git status --porcelain)" ]]; then
+            echo "${{ github.repository }} up to date."
+          else
+            echo "${{ github.repository }} is dirty."
+            echo "::error:: $(git status)"
+            exit 1
+          fi
