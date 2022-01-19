@@ -1,90 +1,37 @@
-BOM_FILE='../veba-bom.json'
-JQBIN=jq -r
-COMMIT := $(shell git rev-parse --short HEAD)
-VERSION := $(shell $(JQBIN) ".veba.version" $(BOM_FILE))
-
-# fail fast
-$(if $(value COMMIT),,$(error COMMIT must be set (.git project?)))
-$(if $(value VERSION),,$(error VERSION must be set))
-
-IMAGE_REPO=vmware
-IMAGE_NAME=$(IMAGE_REPO)/veba-event-router
-DIST_FOLDER=dist
-BINARY=vmware-event-router
-BUILD_TAG=$(IMAGE_NAME):$(COMMIT)
-VERSION_TAG=$(IMAGE_NAME):$(VERSION)
-LATEST_TAG=$(IMAGE_NAME):latest
-
-GIT_BRANCH := $(shell git branch --show-current)
-GIT_NOT_CLEAN_CHECK := $(shell git status --porcelain)
-export GO111MODULE=on
-
 TEST_TIMEOUT = 20
 
-.PHONY: release tidy build tag push output vendor test
+.DEFAULT_GOAL := help
 
-default: build
+.PHONY: help
+help: ## Display usage
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make [target] \033[36m\033[0m\n\nTargets:\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
-release: build tag push output
-	$(info Make: Making new release for image "$(IMAGE_NAME)" based on commit "$(COMMIT)".)
 
-vendor: tidy
-	$(info Make: syncing Go dependencies with vendor folder.)
-	go mod vendor -v
-
-tidy:
-	$(info Make: syncing and cleaning up Go dependencies.)
-	go mod tidy -v
+.PHONY: tidy
+tidy: ## Sync and clean up Go dependencies
+	@go mod tidy -v
 
 # intended for local dev use (won't check for unclean git)
-binary: unit-test 
+.PHONY: build
+build: unit-test ## Build binary
 	$(info Make: Building binary "$(DIST_FOLDER)/$(BINARY)".)
-	CGO_ENABLED=0 go build -mod=vendor -a -installsuffix nocgo -ldflags="-X main.version=${VERSION} -X main.commit=${COMMIT}" -o $(DIST_FOLDER)/$(BINARY) cmd/router/main.go
+	@goreleaser release --rm-dist --snapshot
 
-build: unit-test tidy
-	$(info Make: Building image "$(IMAGE_NAME)".)
-	$(if $(GIT_NOT_CLEAN_CHECK), $(error "Dirty Git repository!"))
-	docker build -t $(LATEST_TAG) --build-arg COMMIT=$(COMMIT) --build-arg VERSION=$(VERSION) .
-
-gofmt:
-	$(info Make: Checking code is gofmted.)
+.PHONY: gofmt
+gofmt: ## Check code is gofmted
 	$(eval PKGS=$(shell go list -f {{.Dir}} ./...))
 	@test -z "$(shell gofmt -s -l -d -e ${PKGS} | tee /dev/stderr)"
 
-lint:
-	$(info Make: Running linter.)
-	@golangci-lint run --build-tags unit,integration  -v
-
-unit-test: gofmt
-	$(info Make: Running unit tests.)
+.PHONY: unit-test
+unit-test: gofmt tidy ## Run unit tests
 	$(eval TAG=unit)
-	@go test -mod=vendor -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover -v ./...
+	@go test -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover -v ./...
 
-# requires running Kubernetes/OpenFaaS environment - or use
-# hack/run_integration_tests.sh (requires kind)
-integration-test: gofmt
+.PHONY: integration-test
+integration-test: gofmt ## Run integration tests (requires Kubernetes cluster w/ OpenFaaS or use hack/run_integration_tests.sh)
 	$(info Make: Running integration tests.)
 	$(eval TAG=integration,openfaas)
-	@go test -mod=vendor -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover -v ./... -ginkgo.v
+	@go test -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover -v ./... -ginkgo.v
 
-test: unit-test integration-test
-
-tag: 
-	$(info Make: Tagging image "$(LATEST_TAG)" with "$(BUILD_TAG)" and "$(VERSION_TAG)".)
-	@docker tag $(LATEST_TAG) $(BUILD_TAG) 
-	@docker tag $(LATEST_TAG) $(VERSION_TAG)
-
-push: tag
-	$(info Make: Pushing image "$(IMAGE_NAME)".)
-ifneq ($(GIT_BRANCH),master)
-	$(error "Not on master branch, won't push!")
-endif
-
-	docker push $(BUILD_TAG)
-	docker push $(VERSION_TAG)
-	docker push $(LATEST_TAG)
-
-output:
-	@echo Docker Image: $(BUILD_TAG)
-	@echo Docker Image: $(VERSION_TAG)
-	@echo Docker Image: $(LATEST_TAG)
+.PHONY: test
+test: unit-test integration-test ## Run unit and integration tests
