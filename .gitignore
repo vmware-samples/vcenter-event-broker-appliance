@@ -20,3 +20,6 @@ template
 !**/vendor/**/template
 checkpoints/
 .DS_Store
+
+# ignore RELEASE-specific CHANGELOG
+RELEASE_CHANGELOG.md

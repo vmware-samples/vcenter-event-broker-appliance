@@ -2,7 +2,7 @@
 replicaCount: 1
 
 image:
-  repository: vmware/veba-event-router
+  repository: us.gcr.io/daisy-284300/veba/router
   pullPolicy: Always
   fullImage: "" # repo/image:tag format to easily overwrite default for testing
 
