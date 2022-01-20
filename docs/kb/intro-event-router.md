@@ -830,10 +830,24 @@ PolicyRule:
 
 #### Create the VMware Event Router Deployment
 
-Now we can deploy the VMware Event Router:
+Now we can deploy the VMware Event Router.
+
+Download the latest deployment manifest (release.yaml) file from the Github
+[release](https://github.com/vmware-samples/vcenter-event-broker-appliance/releases)
+page. Then save the file under the same name (to follow along with the
+commands).
+
+Example Download with `curl`:
 
 ```console
-$ kubectl -n vmware create -f deploy/event-router-k8s.yaml
+curl -L -O https://github.com/vmware-samples/vcenter-event-broker-appliance/releases/latest/download/release.yaml
+```
+
+Deploy the VMware Event Router:
+
+```console
+$ kubectl -n vmware create -f release.yaml
+```
 ```
 
 Check the logs of the VMware Event Router to validate it started correctly:
