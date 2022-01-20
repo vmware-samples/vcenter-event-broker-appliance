@@ -1,0 +1,27 @@
+name: Verify GCR Login
+
+on:
+  schedule:
+    - cron: "5 1 * * *" # daily
+
+  workflow_dispatch:
+
+jobs:
+  login:
+    name: Verify GCR Login
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Login to GCP
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_email: ${{ secrets.GCP_EMAIL }}
+          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker --quiet

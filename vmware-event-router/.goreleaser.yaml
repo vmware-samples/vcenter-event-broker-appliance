@@ -1,0 +1,36 @@
+---
+builds:
+  - id: router
+    goos: &goos-defs
+      - linux
+      - darwin
+      - windows
+    goarch: &goarch-defs
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    main: ./cmd/router
+    binary: router
+    ldflags:
+      - "-X main.version={{.Version}} -X main.commit={{.ShortCommit}}"
+
+archives:
+  - id: router
+    builds:
+      - router
+    name_template: "router_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    replacements: &replacements
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      amd64: x86_64
+    format_overrides:
+      - goos: windows
+        format: zip
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+checksum:
+  name_template: "checksums.txt"

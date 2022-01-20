@@ -1,0 +1,100 @@
+name: VMware Event Router Build Verification
+
+# triggered on every PRs to verify builds but only when changes inside
+# vmware-event-router (sub)dir(s)
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'vmware-event-router/**'
+  schedule:
+  # runs daily
+  - cron: '0 0 * * *'
+
+# run all jobs with these defaults, unless specified otherwise
+defaults:
+  run:
+    shell: bash
+    working-directory: ./vmware-event-router
+
+jobs:
+  binaries:
+    name: Build binaries
+    strategy:
+      matrix:
+        go-version: ["1.17"]
+        platform: ["ubuntu-latest"]
+
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 20
+
+    steps:
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+        
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: GoReleaser Snapshot
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release --rm-dist --snapshot
+          workdir: vmware-event-router
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Archive run artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: |
+            vmware-event-router/dist/router_Linux_*.tar.gz
+            vmware-event-router/dist/checksums.txt
+          retention-days: 1
+
+  image:
+    name: Verify Release ko artifact (no upload)
+    strategy:
+      matrix:
+        go-version: ["1.17"]
+        platform: ["ubuntu-latest"]
+
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 20
+    env:
+      KO_DOCKER_REPO: us.gcr.io/daisy-284300/veba # .../router@sha256:
+
+    steps:
+      - name: Setup ko
+        uses: imjasonh/setup-ko@v0.4
+
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+        
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Get short COMMIT and TAG
+        run: |
+          echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
+          
+      - name: Build image (no push)
+        run: |
+          # build, push and create release YAML
+          ko resolve --platform=linux/arm64,linux/amd64 --push=false --tags ${KO_TAG},${KO_COMMIT},latest -BRf deploy/event-router-k8s.yaml > release.yaml
+
+      - name: Archive run artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: release
+          path: |
+            ./vmware-event-router/release.yaml
+          retention-days: 1
