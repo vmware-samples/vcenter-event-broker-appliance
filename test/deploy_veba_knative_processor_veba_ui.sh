@@ -37,7 +37,6 @@ VEBA_UI_PASSWORD="VMware1!"
 VEBA_VCENTER_USERNAME="veba@vsphere.local"
 VEBA_VCENTER_PASSWORD="VMware1!"
 VEBA_VCENTER_DISABLE_TLS="True"
-VEBA_DOCKER_NETWORK="172.26.0.1/16"
 VEBA_HTTP_PROXY=""
 VEBA_HTTPS_PROXY=""
 VEBA_PROXY_USERNAME=""
@@ -75,8 +74,6 @@ VEBA_NOPROXY=""
     --prop:guestinfo.vcenter_veba_ui_username=${VEBA_UI_USERNAME} \
     --prop:guestinfo.vcenter_veba_ui_password=${VEBA_UI_PASSWORD} \
     --prop:guestinfo.vcenter_disable_tls_verification=${VEBA_VCENTER_DISABLE_TLS} \
-    --prop:guestinfo.event_processor_type="Knative" \
     --prop:guestinfo.debug=${VEBA_DEBUG} \
-    --prop:guestinfo.docker_network_cidr=${VEBA_DOCKER_NETWORK} \
     "${VEBA_OVA}" \
     "vi://${DEPLOYMENT_TARGET_USERNAME}:${DEPLOYMENT_TARGET_PASSWORD}@${DEPLOYMENT_TARGET_ADDRESS}/${DEPLOYMENT_TARGET_DATACENTER}/host/${DEPLOYMNET_TARGET_CLUSTER}"
