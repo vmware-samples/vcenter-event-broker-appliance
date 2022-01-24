@@ -21,19 +21,6 @@ done
 
 cd /root/download
 
-echo '> Downloading Contour...'
-CONTOUR_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["contour"].gitRepoTag')
-git clone https://github.com/projectcontour/contour.git
-cd contour
-git checkout ${CONTOUR_VERSION}
-sed -i "s/latest/${CONTOUR_VERSION}/g" examples/contour/02-job-certgen.yaml
-cat >> examples/contour/03-envoy.yaml << EOF
-      dnsPolicy: ClusterFirstWithHostNet
-      hostNetwork: true
-EOF
-sed -i 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' examples/contour/*.yaml
-cd ..
-
 echo '> Downloading Antrea...'
 mkdir -p /root/download/antrea/templates
 ANTREA_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["antrea"].gitRepoTag')
@@ -44,14 +31,15 @@ curl -L https://github.com/vmware-tanzu/antrea/releases/download/${ANTREA_VERSIO
 ytt -f ${ANTREA_OVERLAY} -f ${ANTREA_TEMPLATE} > ${ANTREA_CONFIG}
 
 echo '> Downloading Knative...'
-KNATIVE_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["knative"].gitRepoTag')
-curl -L https://github.com/knative/serving/releases/download/${KNATIVE_VERSION}/serving-crds.yaml -o /root/download/serving-crds.yaml
-curl -L https://github.com/knative/serving/releases/download/${KNATIVE_VERSION}/serving-core.yaml -o /root/download/serving-core.yaml
+KNATIVE_SERVING_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["knative-serving"].gitRepoTag')
+curl -L https://github.com/knative/serving/releases/download/knative-${KNATIVE_SERVING_VERSION}/serving-crds.yaml -o /root/download/serving-crds.yaml
+curl -L https://github.com/knative/serving/releases/download/knative-${KNATIVE_SERVING_VERSION}/serving-core.yaml -o /root/download/serving-core.yaml
 
-curl -L https://github.com/knative/eventing/releases/download/${KNATIVE_VERSION}/eventing-crds.yaml -o /root/download/eventing-crds.yaml
-curl -L https://github.com/knative/eventing/releases/download/${KNATIVE_VERSION}/eventing-core.yaml -o /root/download/eventing-core.yaml
+KNATIVE_EVENTING_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["knative-eventing"].gitRepoTag')
+curl -L https://github.com/knative/eventing/releases/download/knative-${KNATIVE_EVENTING_VERSION}/eventing-crds.yaml -o /root/download/eventing-crds.yaml
+curl -L https://github.com/knative/eventing/releases/download/knative-${KNATIVE_EVENTING_VERSION}/eventing-core.yaml -o /root/download/eventing-core.yaml
 
-echo '> Downloading RabbitMQ...'
+echo '> Downloading RabbitMQ Broker/Operator...'
 mkdir -p /root/download/rabbitmq-operator/templates
 RABBITMQ_OPERATOR_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["rabbitmq-operator"].gitRepoTag')
 RABBITMQ_OPERATOR_TEMPLATE=/root/download/rabbitmq-operator/templates/cluster-operator-template.yml
@@ -61,17 +49,36 @@ curl -L https://github.com/rabbitmq/cluster-operator/releases/download/${RABBITM
 ytt -f ${RABBITMQ_OPERATOR_OVERLAY} -f ${RABBITMQ_OPERATOR_TEMPLATE} > ${RABBITMQ_OPERATOR_CONFIG}
 
 RABBITMQ_BROKER_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["rabbitmq-broker"].gitRepoTag')
-curl -L https://github.com/knative-sandbox/eventing-rabbitmq/releases/download/${RABBITMQ_BROKER_VERSION}/rabbitmq-broker.yaml -o /root/download/rabbitmq-broker.yaml
+curl -L https://github.com/knative-sandbox/eventing-rabbitmq/releases/download/knative-${RABBITMQ_BROKER_VERSION}/rabbitmq-broker.yaml -o /root/download/rabbitmq-broker.yaml
+
+echo '> Downloading RabbitMQ Messaging Operator...'
+mkdir -p /root/download/rabbitmq-messaging-operator/templates
+RABBITMQ_MESSAGING_OPERATOR_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["rabbitmq-messaging-topology-operator"].gitRepoTag')
+RABBITMQ_MESSAGING_OPERATOR_TEMPLATE=/root/download/rabbitmq-messaging-operator/templates/messaging-topology-operator-with-certmanager-template.yaml
+curl -L https://github.com/rabbitmq/messaging-topology-operator/releases/download/${RABBITMQ_MESSAGING_OPERATOR_VERSION}/messaging-topology-operator-with-certmanager.yaml -o ${RABBITMQ_MESSAGING_OPERATOR_TEMPLATE}
+RABBITMQ_MESSAGING_OPERATOR_OVERLAY=/root/download/rabbitmq-messaging-operator/overlay.yaml
+RABBITMQ_MESSAGING_OPERATOR_CONFIG=/root/download/messaging-topology-operator-with-certmanager.yaml
+ytt -f ${RABBITMQ_MESSAGING_OPERATOR_OVERLAY} -f ${RABBITMQ_MESSAGING_OPERATOR_TEMPLATE} > ${RABBITMQ_MESSAGING_OPERATOR_CONFIG}
+
+echo '> Downloading Cert-Manager...'
+mkdir -p /root/download/cert-manager/templates
+CERT_MANAGER_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["cert-manager"].gitRepoTag')
+CERT_MANAGER_TEMPLATE=/root/download/cert-manager/templates/cert-manager-template.yaml
+curl -L https://github.com/jetstack/cert-manager/releases/download/${CERT_MANAGER_VERSION}/cert-manager.yaml -o ${CERT_MANAGER_TEMPLATE}
+CERT_MANAGER_OVERLAY=/root/download/cert-manager/overlay.yaml
+CERT_MANAGER_CONFIG=/root/download/cert-manager.yaml
+ytt -f ${CERT_MANAGER_OVERLAY} -f ${CERT_MANAGER_TEMPLATE} > ${CERT_MANAGER_CONFIG}
 
 echo '> Downloading Knative Contour...'
+KNATIVE_CONTOUR_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["knative-contour"].gitRepoTag')
 mkdir -p /root/download/knative-contour/templates
 KNATIVE_CONTOUR_TEMPLATE=/root/download/knative-contour/templates/knative-contour.yaml
 KNATIVE_CONTOUR_OVERLAY=/root/download/knative-contour/overlay.yaml
 KNATIVE_CONTOUR_CONFIG=/root/download/knative-contour.yaml
-curl -L https://github.com/knative/net-contour/releases/download/${KNATIVE_VERSION}/contour.yaml -o ${KNATIVE_CONTOUR_TEMPLATE}
+curl -L https://github.com/knative/net-contour/releases/download/knative-${KNATIVE_CONTOUR_VERSION}/contour.yaml -o ${KNATIVE_CONTOUR_TEMPLATE}
 ytt -f ${KNATIVE_CONTOUR_OVERLAY} -f ${KNATIVE_CONTOUR_TEMPLATE} > ${KNATIVE_CONTOUR_CONFIG}
 
-curl -L https://github.com/knative/net-contour/releases/download/${KNATIVE_VERSION}/net-contour.yaml -o /root/download/net-contour.yaml
+curl -L https://github.com/knative/net-contour/releases/download/knative-${KNATIVE_CONTOUR_VERSION}/net-contour.yaml -o /root/download/net-contour.yaml
 
 echo '> Downloading Local Path Provisioner...'
 mkdir -p /root/download/local-provisioner/templates

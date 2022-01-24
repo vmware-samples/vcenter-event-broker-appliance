@@ -24,6 +24,14 @@ kubectl wait pod --timeout=3m --for=condition=Ready -l '!job-name' -n knative-ev
 echo -e "\e[92mDeploying RabbitMQ Cluster Operator ..." > /dev/console
 kubectl apply -f /root/download/cluster-operator.yml
 
+echo -e "\e[92mDeploying Cert-Manager ..." > /dev/console
+kubectl apply -f /root/download/cert-manager.yaml
+kubectl wait deployment --all --timeout=3m --for=condition=Available -n cert-manager
+
+echo -e "\e[92mDeploying RabbitMQ Messaging Operator ..." > /dev/console
+kubectl apply -f /root/download/messaging-topology-operator-with-certmanager.yaml
+kubectl wait deployment --all --timeout=3m --for=condition=Available -n rabbitmq-system
+
 echo -e "\e[92mDeploying RabbitMQ Broker ..." > /dev/console
 kubectl apply -f /root/download/rabbitmq-broker.yaml
 kubectl apply -f /root/config/knative/rabbit.yaml
