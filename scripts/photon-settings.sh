@@ -53,8 +53,8 @@ K8S_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["kubernetes"].gitRepoTag' | sed 's/v//
 tdnf install -y kubelet-${K8S_VERSION} kubectl-${K8S_VERSION} kubeadm-${K8S_VERSION}
 
 echo '> Downloading Kn CLI'
-KNATIVE_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["knative"].gitRepoTag')
-wget https://github.com/knative/client/releases/download/${KNATIVE_VERSION}/kn-linux-amd64
+KNATIVE_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["knative-cli"].version')
+wget https://github.com/knative/client/releases/download/knative-${KNATIVE_VERSION}/kn-linux-amd64
 chmod +x kn-linux-amd64
 mv kn-linux-amd64 /usr/local/bin/kn
 

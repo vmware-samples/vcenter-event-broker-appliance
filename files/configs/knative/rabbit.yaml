@@ -3,6 +3,8 @@ kind: RabbitmqCluster
 metadata:
   name: veba-rabbit
   namespace: vmware-system
+  annotations:
+    rabbitmq.com/topology-allowed-namespaces: "vmware-functions"
 spec:
   resources:
     requests:
