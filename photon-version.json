@@ -3,7 +3,7 @@
   "vm_name": "VMware_Event_Broker_Appliance",
   "iso_checksum": "2221ab214b517a15c60bd5e2aacdb9388581bcd9",
   "iso_url": "https://packages.vmware.com/photon/4.0/GA/iso/photon-4.0-1526e30ba.iso",
-  "numvcpus": "4",
+  "numvcpus": "6",
   "ramsize": "8192",
   "guest_username": "root",
   "guest_password": "##FILL-IN-SECURE-PASSWORD##"
