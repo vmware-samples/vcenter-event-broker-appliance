@@ -1,0 +1,112 @@
+{
+	"Key": 632963,
+	"ChainId": 632962,
+	"CreatedTime": "2022-02-03T22:37:13.505Z",
+	"UserName": "VSPHERE.LOCAL\\Administrator",
+	"Datacenter": {
+	  "Name": "HomeLab",
+	  "Datacenter": {
+		"Type": "Datacenter",
+		"Value": "datacenter-47"
+	  }
+	},
+	"ComputeResource": null,
+	"Host": null,
+	"Vm": null,
+	"Ds": null,
+	"Net": {
+	  "Name": "REPLACE-ME",
+	  "Network": {
+		"Type": "DistributedVirtualPortgroup",
+		"Value": "dvportgroup-7007"
+	  }
+	},
+	"Dvs": {
+	  "Name": "REPLACE-ME",
+	  "Dvs": {
+		"Type": "DistributedVirtualSwitch",
+		"Value": "dvs-7005"
+	  }
+	},
+	"FullFormattedMessage": "dvPort group DPortGroup in HomeLab was reconfigured.  \n \n Modified: \n \nconfig.defaultPortConfig.uplinkTeamingPolicy.notifySwitches.value: true -> false; \n\n Added: \n \n Deleted: \n \n",
+	"ChangeTag": "",
+	"ConfigSpec": {
+	  "ConfigVersion": "24",
+	  "Name": "",
+	  "NumPorts": 0,
+	  "PortNameFormat": "",
+	  "DefaultPortConfig": {
+		"Blocked": null,
+		"VmDirectPathGen2Allowed": null,
+		"InShapingPolicy": null,
+		"OutShapingPolicy": null,
+		"VendorSpecificConfig": null,
+		"NetworkResourcePoolKey": null,
+		"FilterPolicy": null,
+		"Vlan": null,
+		"QosTag": null,
+		"UplinkTeamingPolicy": {
+		  "Inherited": false,
+		  "Policy": {
+			"Inherited": false,
+			"Value": "loadbalance_loadbased"
+		  },
+		  "ReversePolicy": null,
+		  "NotifySwitches": {
+			"Inherited": false,
+			"Value": false
+		  },
+		  "RollingOrder": {
+			"Inherited": false,
+			"Value": false
+		  },
+		  "FailureCriteria": {
+			"Inherited": false,
+			"CheckSpeed": null,
+			"Speed": null,
+			"CheckDuplex": null,
+			"FullDuplex": null,
+			"CheckErrorPercent": null,
+			"Percentage": null,
+			"CheckBeacon": {
+			  "Inherited": false,
+			  "Value": false
+			}
+		  },
+		  "UplinkPortOrder": {
+			"Inherited": false,
+			"ActiveUplinkPort": [
+			  "Uplink 1",
+			  "Uplink 2",
+			  "Uplink 3",
+			  "Uplink 4"
+			],
+			"StandbyUplinkPort": null
+		  }
+		},
+		"SecurityPolicy": null,
+		"IpfixEnabled": null,
+		"TxUplink": null,
+		"LacpPolicy": null,
+		"MacManagementPolicy": null,
+		"VNI": null
+	  },
+	  "Description": "",
+	  "Type": "",
+	  "BackingType": "",
+	  "Scope": null,
+	  "Policy": null,
+	  "VendorSpecificConfig": null,
+	  "AutoExpand": null,
+	  "VmVnicNetworkResourcePoolKey": "",
+	  "TransportZoneUuid": "",
+	  "TransportZoneName": "",
+	  "LogicalSwitchUuid": "",
+	  "SegmentId": ""
+	},
+	"ConfigChanges": {
+	  "Modified": "config.defaultPortConfig.uplinkTeamingPolicy.notifySwitches.value: true -> false; \n\n",
+	  "Added": "",
+	  "Deleted": ""
+	}
+  }
