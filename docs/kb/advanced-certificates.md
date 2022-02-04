@@ -5,7 +5,7 @@ title: VMware Event Broker Appliance - Certificates
 description: Updating Certificates
 permalink: /kb/advanced-certificates
 cta:
- description: Replacing the default self-signed TLS certificate in VMware Event Broke Appliance.
+ description: Replacing the default self-signed TLS certificate in VMware Event Broker Appliance.
 ---
 
 ## Updating the TLS Certificate on VEBA
@@ -74,14 +74,15 @@ If you need to replace the default self-signed certificate, or replace an expire
 
 ### Steps
 
-Step 1 - Transfer or copy the contents of the root certificate to the VMware Event Broker Appliance
+Step 1 - Transfer or copy the contents of the root certificate to the VMware Event Broker Appliance. If you need a free, publicly signed certificate, see the [Let's Encrypt](#letsencrypt) section below.
 
+<a id="replacestep2"></a>
 Step 2 - Delete the existing Event Router TLS secret
 ```console
 kubectl -n vmware-system delete secret eventrouter-tls
 ```
 
-Step 3 - Create a new Event Router TLS secret with the new certificate keypair
+Step 3 - Create a new Event Router TLS secret with the new certificate keypair.
 ```console
 kubectl -n vmware-system create secret tls eventrouter-tls --key privkey.pem --cert pubkey.pem
 ```
@@ -91,7 +92,7 @@ Step 4 - Delete the existing Contour TLS secret
 kubectl -n contour-external delete secret default-cert
 ```
 
-Step 5 - Create a new Contour TLS secret with the new certificate keypair
+Step 5 - Create a new Contour TLS secret with the new certificate keypair.
 ```console
 kubectl -n contour-external create secret tls default-cert --key privkey.pem --cert pubkey.pem
 ```
@@ -202,4 +203,84 @@ kubectl -n vmware-system logs vmware-event-router-7759d8bffc-kt2jm
 
 DEBUG   [VCENTER]       vcenter/vcenter.go:136  setting custom root CAs {"certificates": "/etc/ssl/certs/ca-certificates.crt:/etc/vmware-event-router/ssl/ca-root.crt"}
 ```
+## <a id="letsencrypt"></a>Obtaining a Signed SSL certificate from Let's Encrypt
 
+This section demonstrates installation of the Let's Encrypt Certbot Docker image onto the VEBA appliance, then uses DNS validation to verify domain ownership.
+
+### Steps
+
+Step 1 - Pull the Certbot Docker image
+```console
+docker pull certbot/certbot
+```
+
+Step 2 - Run certbot. For the `-d` (domain) switch, use your VEBA FQDN. You will be prompted for an e-mail address as well as some yes/no questions.
+```console
+ docker run -it --rm --name certbot -v "/etc/letsencrypt:/etc/letsencrypt" `
+ -v "/var/lib/letsencrypt:/var/lib/letsencrypt" `
+ -v "/var/log/letsencrypt:/var/log/letsencrypt" `
+ certbot/certbot certonly --manual -d veba02.vmweventbroker.io --preferred-challenges dns
+ ```
+```
+Enter email address (used for urgent renewal and security notices)
+ (Enter 'c' to cancel): certificates@vmweventbroker.io
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Please read the Terms of Service at
+https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf. You must
+agree in order to register with the ACME server. Do you agree?
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+(Y)es/(N)o: Y
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Would you be willing, once your first certificate is successfully issued, to
+share your email address with the Electronic Frontier Foundation, a founding
+partner of the Let's Encrypt project and the non-profit organization that
+develops Certbot? We'd like to send you email about our work encrypting the web,
+EFF news, campaigns, and ways to support digital freedom.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+(Y)es/(N)o: n
+Account registered.
+Requesting a certificate for veba02.vmweventbroker.io
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Please deploy a DNS TXT record under the name:
+
+_acme-challenge.veba02.vmweventbroker.io.
+
+with the following value:
+
+KfqRahey6wChxY_cZgNbRAlRpS34KQhjvQvTXnzRXgo
+
+Before continuing, verify the TXT record has been deployed. Depending on the DNS
+provider, this may take some time, from a few seconds to multiple minutes. You can
+check if it has finished deploying with aid of online tools, such as the Google
+Admin Toolbox: https://toolbox.googleapps.com/apps/dig/#TXT/_acme-challenge.veba02.vmweventbroker.io.
+Look for one or more bolded line(s) below the line ';ANSWER'. It should show the
+value(s) you've just added.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Press Enter to Continue
+```
+
+Step 3 - Using your public DNS provider's tools, configure the required TXT record as prompted in Step 2.
+
+Step 4 - Press Enter to continue. If you have configured DNS properly, the certificate PEM files will be saved in the location specified.
+
+```
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Press Enter to Continue
+
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/veba02.vmweventbroker.io/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/veba02.vmweventbroker.io/privkey.pem
+This certificate expires on 2022-04-12.
+These files will be updated when the certificate renews.
+
+NEXT STEPS:
+- This certificate will not be renewed automatically. Autorenewal of --manual certificates requires the use of an authentication hook script (--manual-auth-hook) but one was not provided. To renew this certificate, repeat this same certbot command before the certificate's expiry date.
+```
+
+Step 5 - Install the certificate - follow the instructions starting with step 2 of [Replacing an Existing Cert on VEBA](#replacestep2).  Note from the output above that the public key file is named `fullchain.pem` - you will need to pass this value for the `--cert` argument when creating the Kubernetes TLS certificates.
+
+Step 6 (optional) - If you want to automate renewals, this is an excellent blog on configuring [automated certificate renewals](https://chariotsolutions.com/blog/post/automating-lets-encrypt-certificate-renewal-using-dns-challenge-type/) using DNS validation. 
