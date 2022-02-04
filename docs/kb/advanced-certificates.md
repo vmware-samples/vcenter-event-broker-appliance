@@ -181,7 +181,7 @@ certificates:
 Step 5 - Recreate the VMware Event Router configuration and redeploy the VMware Event Router deployment.
 
 ```console
-kubectl -n vmware-system create secret generic event-router-config --from-file=/root/config/event-router-config.yaml
+kubectl -n vmware-system create secret generic event-router-config --from-file=/root/config/event-router/vmware-event-router-config-vcenter.yaml
 kubectl -n vmware-system apply -f /root/config/event-router-k8s.yaml
 ```
 
