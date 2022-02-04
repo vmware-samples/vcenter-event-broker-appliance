@@ -35,6 +35,8 @@ and test files.
 mkdir tag-fn && cd tag-fn
 ```
 
+A template for Knative PowerCLI functions is available in [kn-pcli-template](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/development/examples/knative/powercli/kn-pcli-template). If you do not want to build all of the required files from scratch, you can copy all of the files from this template directory, then follow the instructions in the README.
+
 Before we start looking at the actual function business logic (inside
 `handler.ps1`), let's discuss how `secrets`, such as credentials, are injected
 and used inside a function.
