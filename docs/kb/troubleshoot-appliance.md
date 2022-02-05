@@ -99,7 +99,7 @@ Here is the command output:
 The error message shows us that we made a mistake when we configured our username or password. We must now edit the Event Router JSON configuration file to fix the mistake.
 
 ```bash
-vi /root/config/event-router-config.yaml
+vi /root/config/event-router/vmware-event-router-config-vcenter.yaml
 ```
 
 Here is some of the YAML from the config file - you can see the mistake in the credentials. Fix the credentials and save the file.
