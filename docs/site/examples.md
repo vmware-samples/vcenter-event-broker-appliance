@@ -23,6 +23,16 @@ examples:
       url: "/tree/master/examples/knative/python/kn-py-echo"
     - language: go
       url: "/tree/master/examples/knative/go/kn-go-echo"
+
+  - title: Email Notification
+    usecases:
+    - item: notification
+    id: kn-ps-email-function
+    description: Powershell function to send an Email.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-email"
+
   - title: Slack Notification
     usecases:
     - item: integration
@@ -34,49 +44,17 @@ examples:
       url: "/tree/master/examples/knative/powershell/kn-ps-slack"
     - language: python
       url: "/tree/master/examples/knative/python/kn-py-slack"
-  - title: Email Notification
-    usecases:
-    - item: notification
-    id: kn-ps-email-function
-    description: Powershell function to send an Email.
-    links:
-    - language: powershell
-      url: "/tree/master/examples/knative/powershell/kn-ps-email"
-  - title: vSphere Tagging
-    usecases:
-    - item: automation
-    id: kn-pcli-tag-function
-    description: Automatically tag a VM upon a vCenter event (ex. a VM can be tagged during a poweron event).
-    links:
-    - language: powercli
-      url: "/tree/master/examples/knative/powercli/kn-pcli-tag"
-    - language: go
-      url: "/tree/master/examples/knative/go/kn-go-tagging"
-  - title: vSphere to NSX-T Tag Synchronization
-    usecases:
-    - item: automation
-    id: kn-pcli-nsx-tag-sync
-    description: Automatically synchronize VM tags to NSX-T.
-    links:
-    - language: powercli
-      url: "/tree/master/examples/knative/powercli/kn-pcli-nsx-tag-sync"
-  - title: vSphere Custom Attributes
-    usecases:
-    - item: automation
-    id: kn-py-vm-attr-function
-    description: Add Custom Attribute to a VM upon a vCenter event.
-    links:
-    - language: python
-      url: "/tree/master/examples/knative/python/kn-py-vm-attr"
-  - title: Enhancing vSphere Alarm Actions
+
+  - title: SMS Notification
     usecases:
     - item: integration
     - item: notification
-    id: kn-ps-slack-vsphere-alarm-function
-    description: Function to send a Slack notification triggered by a vSphere Alarm.
+    id: kn-ps-twillio-sms-function
+    description: Function to send an SMS message using Twillio triggered by a VM Snapshot.
     links:
     - language: powershell
-      url: "/tree/master/examples/knative/powershell/kn-ps-slack-vsphere-alarm"
+      url: "/tree/master/examples/knative/powershell/kn-ps-twillio-sms"
+
   - title: Telegram Notification
     usecases:
     - item: automation
@@ -87,41 +65,7 @@ examples:
     links:
     - language: powercli
       url: "/tree/master/examples/knative/powercli/kn-pcli-telegram"
-  - title: SMS Notification
-    usecases:
-    - item: integration
-    - item: notification
-    id: kn-ps-twillio-sms-function
-    description: Function to send an SMS message using Twillio triggered by a VM Snapshot.
-    links:
-    - language: powershell
-      url: "/tree/master/examples/knative/powershell/kn-ps-twillio-sms"
-  - title: VMware Horizon Notification
-    usecases:
-    - item: integration
-    - item: notification
-    id: kn-ps-horizon-slack-function
-    description: Function to send a Slack notification triggered by a VMware Horizon Event.
-    links:
-    - language: powershell
-      url: "/tree/master/examples/knative/powershell/kn-ps-horizon-login-slack"
-  - title: VMware Cloud Gateway Notification (Slack)
-    usecases:
-    - item: integration
-    - item: notification
-    id: kn-ps-ngw-slack-function
-    description: Function to send a Slack notification triggered by a VMware Cloud Notification Gateway SDDC Event.
-    links:
-    - language: powershell
-      url: "/tree/master/examples/knative/powershell/kn-ps-ngw-slack"
-  - title: Custom Webhook Function
-    usecases:
-    - item: integration
-    id: kn-ps-webhook-function
-    description: Function to ingest a non-CloudEvent using a custom incoming webhook
-    links:
-    - language: powershell
-      url: "/tree/master/examples/knative/powershell/kn-ps-webhook"
+
   - title: VMware Cloud Gateway Notification (Teams)
     usecases:
     - item: integration
@@ -131,32 +75,92 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-ngw-teams"
-  - title: Schedule VM Snapshot Retention Management
-    usecases:
-    - item: automation
-    - item: remediation
-    id: kn-pcli-snapshot-cron-function
-    description: Function to manage VM snapshots on a scheduled job (cron)
-    links:
-    - language: powercli
-      url: "/tree/master/examples/knative/powercli/kn-pcli-snapshot-cron"
-  - title: Alert on vSphere Inventory Resource Deletion
-    usecases:
-    - item: notification
-    id: kn-ps-vsphere-inv-slack-function
-    description: Function to send a Slack notification when a specific vSphere inventory resource has been deleted
-    links:
-    - language: powershell
-      url: "/tree/master/examples/knative/powershell/kn-ps-vsphere-inv-slack"
-  
-  - title: Trigger vSphere Virtual Machine Preemption
+
+  - title: VMware Cloud Gateway Notification (Slack)
     usecases:
     - item: integration
-    id: kn-go-preemption-function
-    description: Function for triggering vSphere virtual machine preemption (power off) using a workflow engine and the vsphere-preemption prototype
+    - item: notification
+    id: kn-ps-ngw-slack-function
+    description: Function to send a Slack notification triggered by a VMware Cloud Notification Gateway SDDC Event.
     links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-ngw-slack"
+
+  - title: VMware Horizon Notification
+    usecases:
+    - item: integration
+    - item: notification
+    id: kn-ps-horizon-slack-function
+    description: Function to send a Slack notification triggered by a VMware Horizon Event.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-horizon-login-slack"
+
+  - title: Distributed Virtual Switch configuration enforcement
+    usecases:
+    - item: remediation
+    id: kn-pcli-vds-config
+    description: Function to enforce `MTU` values on a distributed virtual switch. Any `MTU` changes will be intercepted by the function and reset to the desired value.
+    links:
+    - language: powercli
+      url: "/tree/master/knative/powercli/kn-pcli-vds-config"
+
+  - title: Distributed Virtual Switch portgroup configuration enforcement
+    usecases:
+    - item: remediation
+    id: kn-pcli-vds-pg-config
+    description: Function to enforce the `Notify Switches` value on a distributed virtual switch portgroup. Any changes to the `Notify Switches` value will be intercepted by the function and reset to the desired value.
+    links:
+    - language: powercli
+      url: "/tree/master/knative/powercli/kn-pcli-vds-pg-config"      
+
+  - title: Enhancing vSphere Alarm Actions
+    usecases:
+    - item: integration
+    - item: notification
+    id: kn-ps-slack-vsphere-alarm-function
+    description: Function to send a Slack notification triggered by a vSphere Alarm.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-slack-vsphere-alarm"
+
+  - title: vSphere Custom Attributes
+    usecases:
+    - item: automation
+    id: kn-py-vm-attr-function
+    description: Add Custom Attribute to a VM upon a vCenter event.
+    links:
+    - language: python
+      url: "/tree/master/examples/knative/python/kn-py-vm-attr"
+
+  - title: vSphere to NSX-T Tag Synchronization
+    usecases:
+    - item: automation
+    id: kn-pcli-nsx-tag-sync
+    description: Automatically synchronize VM tags to NSX-T.
+    links:
+    - language: powercli
+      url: "/tree/master/examples/knative/powercli/kn-pcli-nsx-tag-sync"
+
+  - title: vSphere Tagging
+    usecases:
+    - item: automation
+    id: kn-pcli-tag-function
+    description: Automatically tag a VM upon a vCenter event (ex. a VM can be tagged during a poweron event).
+    links:
+    - language: powercli
+      url: "/tree/master/examples/knative/powercli/kn-pcli-tag"
     - language: go
-      url: "/tree/master/examples/knative/go/kn-go-preemption"
+      url: "/tree/master/examples/knative/go/kn-go-tagging"
+
+  - title: Custom Webhook Function
+    usecases:
+    - item: integration
+    id: kn-ps-webhook-function
+    description: Function to ingest a non-CloudEvent using a custom incoming webhook
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-webhook"
 
   - title: vRealize Network Insight Databus Incoming Webhook
     usecases:
@@ -166,6 +170,34 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-vrni-databus"
+
+  - title: Alert on vSphere Inventory Resource Deletion
+    usecases:
+    - item: notification
+    id: kn-ps-vsphere-inv-slack-function
+    description: Function to send a Slack notification when a specific vSphere inventory resource has been deleted
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-vsphere-inv-slack"
+
+  - title: Schedule VM Snapshot Retention Management
+    usecases:
+    - item: automation
+    - item: remediation
+    id: kn-pcli-snapshot-cron-function
+    description: Function to manage VM snapshots on a scheduled job (cron)
+    links:
+    - language: powercli
+      url: "/tree/master/examples/knative/powercli/kn-pcli-snapshot-cron"
+
+  - title: Trigger vSphere Virtual Machine Preemption
+    usecases:
+    - item: integration
+    id: kn-go-preemption-function
+    description: Function for triggering vSphere virtual machine preemption (power off) using a workflow engine and the vsphere-preemption prototype
+    links:
+    - language: go
+      url: "/tree/master/examples/knative/go/kn-go-preemption"
 
   - title: vRealize Orchestrator
     usecases: 
