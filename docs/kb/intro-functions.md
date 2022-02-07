@@ -15,7 +15,7 @@ cta:
 
 # Functions
 
-The VMware Event Broker Appliance can be deployed using either Knative or OpenFaaS event processor to provides customers with a Function-as-a-Service (FaaS) platform.
+The VMware Event Broker Appliance can be deployed using the Knative event processor to provide customers with a Function-as-a-Service (FaaS) platform.
 
 ## Table of Contents
 - [Knative](#knative)

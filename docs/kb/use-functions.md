@@ -11,29 +11,15 @@ cta:
     - text: See our complete list of prebuilt functions - [here](/examples)
     - text: Learn how to write your own function - [here](contribute-functions).
 ---
-
 # Getting started with using functions
 
 The steps below describe a generalized deployment step of a function on the VMware Event Broker Appliance. For customers looking to get started quickly, please look at deploying from our growing list of [Prebuilt Functions](/examples). The functions are organized by the language that they are written in and have well-documented README.md files with detailed deployment steps.
 
 Deployment or development of functions can require the use of the following development tools: `git`, `docker`, and `kubectl`.  If you would like some help in how to setup your workstation to use those tools, an in-depth tutorial is available that shows how to do that and to modify and deploy the [kn-ps-slack](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative/powershell/kn-ps-slack) function (Knative powershell slack notification function) as an example.  The tutorial can be found here: [in-depth function tutorial](function-tutorial-intro).
 
+### Deployment Prerequisites
 
-## Table of Contents
-- [Knative](#knative)
-  - [Knative Prerequisites](#knative-prerequisites)
-  - [Knative Function Deployment using kubectl](#knative-function-deployment-using-kubectl)
-  - [Knative Function Deployment using vSphere UI](#knative-function-deployment-using-vsphere-ui)
-
-## Knative
-
-For this walk-through, the [`kn-ps-echo`](/examples-knative) function from the example folder is used.
-
-### Knative Prerequisites
-
-Before proceeding to deploy a function, you must have VMware Event Broker Appliance deployed and be able to SSH to the appliance or have access to the kubernetes configuration file (/root/.kube/config) locally on your desktop to authenticate
-
-
+Before proceeding to deploy a function, you must have VMware Event Broker Appliance deployed and be able to SSH to the appliance or have access to the kubernetes configuration file (`/root/.kube/config`) locally on your desktop to authenticate.
 ### Knative Function Deployment using kubectl
 Step 1 - Clone repo
 
@@ -129,27 +115,63 @@ To verify the function deployment was successful, click on the `Functions` tab a
 
 * `RoutesReady` : True
 
-* Most functions also have a secrets configuration file that you must edit to match your environment. For the `hostmaint-alarms` function, the file is named `vc-hostmaint-config.json`
+Step 9 - Test and Invoke your functions
+
+* Your function is now deployed and available for VMware Event Router to invoke when it sees a matching event
+
+### Function Deployment with Kubernetes Secrets
+
+Although the previous examples using the `kn-ps-echo` function did not require configuration parameters, most functions do require parameters to work correctly. A function author can hard code parameter values inside the function. However, any changes to the configuration parameters means the function's container image must be rebuilt. By using configuration parameters stored in a Kubernetes secret, a function can be reconfigured by simply changing the secret. This walk-through uses the [`kn-ps-email`](/examples) function from the examples folder to demonstrate working with secrets.
+
+You can verify whether a function requires a secret by looking at the function's `function.yaml`. Below is part of the `function.yaml` for `kn-ps-email`. Note the `secretRef:` section specifying the name of the secret the function expects.
+```yaml
+      containers:
+        - image: us.gcr.io/daisy-284300/veba/kn-ps-email:1.4
+          envFrom:
+            - secretRef:
+                name: email-secret
+          env:
+            - name: FUNCTION_DEBUG
+              value: "false"
+```
+
+The `kn-ps-email` function uses several configuration parameters. The secrets file for `kn-ps-email` is named `email_secrets.json`. 
+
 ```json
 {
-    "VC" : "https://veba.primp-industries.com",
-    "VC_USERNAME" : "veba@vsphere.local",
-    "VC_PASSWORD" : "FillMeIn"
+    "SMTP_SERVER" : "smtp.primp-industries.com",
+    "SMTP_PORT" : "587",
+    "SMTP_USERNAME" : "email@primp-industries.com",
+    "SMTP_PASSWORD" : "FILE-ME-IN-PLEASE",
+    "EMAIL_SUBJECT" : "⚠️ [VM Delete Notification] ⚠️",
+    "EMAIL_TO": "admins@primp-industries.com,sre@primp-industries.com",
+    "EMAIL_FROM" : "notification-do-not-reply@primp-industries.com"
 }
 ```
-Then create the secret in OpenFaaS with this command:
+### Kubernetes Secrets - Command Line
+
+To create the Kubernetes secret via the command line, modify the secrets file with configuration data specific to your environment. Then run this command:
 ```bash
-faas-cli secret create vc-hostmaint-config --from-file=vc-hostmaint-config.json
+kubectl -n vmware-functions create secret generic email-secret --from-file=EMAIL_SECRET=email_secret.json
 ```
 
+`email-secret`, the argument just before `--from-file=`, is the name that Kubernetes uses to refer to the secret. This name must match the `secretRef` in `function.yaml`. 
 
-Step 3 - Deploy function to VMware Event Broker Appliance
+`EMAIL_SECRET`, the value just after `--from-file=`, is the function environment variable that the secret gets loaded into. You can find the environment variable the function expects by looking at `handler.ps1`. 
 
+```powershell
+try {
+    $jsonSecrets = ${env:EMAIL_SECRET} | ConvertFrom-Json
+} catch {
+    throw "`nK8s secrets `$env:EMAIL_SECRET does not look to be defined"
+}
 ```
-faas-cli deploy -f stack.yml
-```
 
-Step 4 - Test and Invoke your functions
+### Kubernetes Secrets - vCenter UI
+If you deployed VEBA with the vCenter UI option, you can create the secret by clicking on the `Secrets` section, then clicking `Add`. The `Secret Name` must match the `secretRef` in `function.yaml`. The `Secret Key` must match the environment variable the function expects, as shown in `handler.ps1` above. The `Secret Value` is the JSON copied from `email_secret.json`, modified with configuration data specific to your environment. Once all fields are filled out, click `Add Secret`.
 
-* Your function is now deployed to OpenFaaS and available for VMware Event Router to invoke when it sees a matching event
-* You can also test or invoke your functions using the http endpoint for the function that OpenFaaS makes available. Pass the expected CloudEvents to the function as the http request parameter
+![Adding a secret](img/veba-secret-ui-1.png)
+
+The secret has been created.
+
+![Secret added](img/veba-secret-ui-2.png)
