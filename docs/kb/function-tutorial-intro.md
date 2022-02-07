@@ -43,7 +43,7 @@ All VEBA functions have the same relative format regardless of what programming 
 - **Dockerfile** contains the instructions for the Docker application on how to build the Docker image.  You most likely will not need to modify this file.
 - **README.md** is the default web page you see at [kn-ps-slack](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative/powershell/kn-ps-slack).  It is written in markdown language.
 - **function.yaml** contains the instructions to load the VEBA function into the Kubernetes cluster.  This file has two pieces of information that you may want to change:
-  1. The vCenter Event that triggers the function.  The default event is: **VmPoweredOffEvent** but this may be modified to suit your requirements.
+  1. The vCenter Event that triggers the function.  The default event is: `VmPoweredOffEvent` but this may be modified to suit your requirements.
   2. The location of the Docker image to load into Kubernetes.  If the PowerShell code will not be modified, you can leave the default image as is.  If you modify the PowerShell code in the handler file, you will need to build a new Docker image and specify the name/location in this file.
 - **handler.ps1** contains the PowerShell code that runs when the specified vCenter event triggers it.  The handler.ps1 file is injected into the Docker image which must be rebuilt every time the code changes.
 - **slack_secret.json** contains the Slack key for your Slack channel.  This file will be used to create a Kubernetes secret that the function will read.  Most functions will include a secret file that contains: usernames/passwords, keys, or other sensitive information that will be used to create a Kubernetes secret.
@@ -69,7 +69,7 @@ Install instructions for the required tools follow:
 
 {% tab install#macOS%}
 
-### Install git and clone the repo to your workstation
+### Install `git` and clone the repo to your workstation
 
 The following commands will all be run from a macOS terminal (Applications --> Utilities --> Terminal.app).  
 Install Homebrew if needed.  Homebrew is a package manager for macOS.
@@ -77,12 +77,12 @@ Install Homebrew if needed.  Homebrew is a package manager for macOS.
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Install `git` using Homebrew
+Install `git` using Homebrew:
 ```
 brew install git
 ```
 
-Test by retrieving the version and set your username and email (replace with your own)
+Test by retrieving the version and set your username and email (replace with your own):
 ```
 git --version
 git config --global user.name "Donald Duck"
@@ -103,14 +103,14 @@ First, you will need to sign up for a Docker account here: [DockerHub sign up](h
 
 Next, download the Docker dmg from: [Docker download](https://hub.docker.com/editions/community/docker-ce-desktop-mac/) and install.
 
-Now login using the Docker account you just signed up with (replace dduck/VMware1! with your own account info below).  Open a Terminal window and submit:
+Now login using the Docker account you just signed up with (replace dduck username and VMware1! password with your own account info below).  Open a Terminal window and submit:
 ```
 docker login --username dduck --password VMware1!
 ```
 
 ### Install and Configure `kubectl`
 
-`kubectl` is the command line utility used to access a Kubernetes cluster.  With `kubectl`, you can deploy the VEBA function in the form of Kubernetes secrets and pods, check logs, and troubleshoot the health of the Kubernetes cluster and VEBA application.  The `kubectl` command line utility determines which Kubernetes cluster to access and which certificate to use for authentication by reading a config file.  The default config file resides at: ~/.kube/config on the VEBA appliance.
+`kubectl` is the command line utility used to access a Kubernetes cluster.  With `kubectl`, you can deploy the VEBA function in the form of Kubernetes secrets and pods, check logs, and troubleshoot the health of the Kubernetes cluster and VEBA application.  The `kubectl` command line utility determines which Kubernetes cluster to access and which certificate to use for authentication by reading a config file.  The default config file resides at: `~/.kube/config` on the VEBA appliance.
 
 Install `kubectl` with brew:
 
@@ -119,7 +119,7 @@ brew install kubectl
 kubectl version
 ```
 
-Next we will copy the .kube config file from the VEBA appliance to the local workstation.  You will need to know the IP address and root password of the deployed VEBA appliance and also verify that ssh has been enabled.  These parameters will have been set during the VEBA appliance deployment.  Once the config file is copied locally, we will export it so that it becomes the default `kubectl` config file.  You can switch which Kubernetes cluster `kubectl` points at by changing the "export KUBECONFIG" file link.  This example creates a "veba" folder to store the config file in and uses scp to copy the file from the VEBA appliance.  Replace <VEBA IP> below with the VEBA appliance IP address.  You will be prompted for the VEBA appliance root password.
+Next we will copy the `.kube/config` file from the VEBA appliance to the local workstation.  You will need to know the IP address and root password of the deployed VEBA appliance and also verify that SSH has been enabled.  These parameters will have been set during the VEBA appliance deployment.  Once the config file is copied locally, we will export it so that it becomes the default `kubectl` config file.  You can switch which Kubernetes cluster `kubectl` points at by changing the `export KUBECONFIG` file link.  This example creates a "veba" folder to store the config file in and uses `scp` to copy the file from the VEBA appliance.  Replace <VEBA IP> below with the VEBA appliance IP address.  You will be prompted for the VEBA appliance root password.
 
 
 ```
@@ -142,11 +142,11 @@ kubectl cluster-info
 kubectl get ns
 ```
 
-You should see something similar to the below image:
+You should see something similar to the below output:
 
 ```
-➜  ~
-➜  ~ kubectl config view
+kubectl config view
+
 apiVersion: v1
 clusters:
 - cluster:
@@ -166,14 +166,16 @@ users:
   user:
     client-certificate-data: REDACTED
     client-key-data: REDACTED
-➜  ~
-➜  ~ kubectl cluster-info
+
+kubectl cluster-info
+
 Kubernetes control plane is running at https://10.161.98.24:6443
 KubeDNS is running at https://10.161.98.24:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
-➜  ~
-➜  ~ kubectl get ns
+
+kubectl get ns
+
 NAME                 STATUS   AGE
 contour-external     Active   14d
 contour-internal     Active   14d
@@ -187,7 +189,7 @@ local-path-storage   Active   14d
 rabbitmq-system      Active   14d
 vmware-functions     Active   14d
 vmware-system        Active   14d
-➜  ~
+
 ```
 
 
@@ -203,13 +205,13 @@ Before we install `git`, lets look at two applications that are recommended:
 
 **Chocolatey** is a package manager for Windows that is similar in function to Homebrew on a MacOS.  We will use Chocolatey to simplify the install of `git`, `docker`, and `kubectl` in the instructions below.  The install link for Chocolately is here: [Chocolatey](https://chocolatey.org/)
 
-The following commands will all be run from a PowerShell window in Administrator mode (right click on the PowerShell icon and select "Run as administrator").
+The following commands will all be run from a PowerShell window in Administrator mode (right click on the PowerShell icon and select `Run as administrator`).
 
 ```
 choco install git
 ```
 
-Test by retrieving the version and set your username and email (replace with your own)
+Test by retrieving the version and set your username and email (replace with your own):
 ```
 git --version
 git config --global user.name "Donald Duck"
@@ -234,14 +236,14 @@ Next, install Docker with Chocolatey from a PowerShell window in Administrator m
 choco install docker
 ```
 
-Now login using the Docker account you just signed up with (replace dduck with your own account info below).  Open a PowerShell window and submit:
+Now login using the Docker account you just signed up with (replace dduck with your own username below).  Open a PowerShell window and submit:
 ```
 docker login --username dduck
 ```
 
 ### Install and Configure `kubectl`
 
-`kubectl` is the command line utility used to access a Kubernetes cluster.  With `kubectl`, you can deploy the VEBA function in the form of Kubernetes secrets and pods, check logs, and troubleshoot the health of the Kubernetes cluster and VEBA application.  The `kubectl` command line utility determines which Kubernetes cluster to access and which certificate to use for authentication by reading a config file.  The default config file resides at: ~/.kube/config on the VEBA appliance.
+`kubectl` is the command line utility used to access a Kubernetes cluster.  With `kubectl`, you can deploy the VEBA function in the form of Kubernetes secrets and pods, check logs, and troubleshoot the health of the Kubernetes cluster and VEBA application.  The `kubectl` command line utility determines which Kubernetes cluster to access and which certificate to use for authentication by reading a config file.  The default config file resides at: `~/.kube/config` on the VEBA appliance.
 
 Install `kubectl` with Chocolately from a PowerShell window in Administrator mode:
 
@@ -250,8 +252,7 @@ choco install kubernetes-cli
 kubectl version
 ```
 
-Next we will copy the .kube config file from the VEBA appliance to the local workstation.  You will need to know the IP address and root password of the deployed VEBA appliance and also verify that ssh has been enabled.  These parameters will have been set during the VEBA appliance deployment.  Once the config file is copied locally, we will export it so that it becomes the default `kubectl` config file.  You can switch which Kubernetes cluster `kubectl` points at by changing the "Env:KUBECONFIG" file link.  This example creates a "veba" folder to store the config file in and uses scp to copy the file from the VEBA appliance.  SCP is a secure copy utility and was installed as part of the Chocolately install of git earlier.  Replace "VEBA IP" below with the VEBA appliance IP address.  You will be prompted for the VEBA appliance root password.
-
+Next we will copy the `.kube/config` file from the VEBA appliance to the local workstation.  You will need to know the IP address and root password of the deployed VEBA appliance and also verify that SSH has been enabled.  These parameters will have been set during the VEBA appliance deployment.  Once the config file is copied locally, we will export it so that it becomes the default `kubectl` config file.  You can switch which Kubernetes cluster `kubectl` points at by changing the `Env:KUBECONFIG` file link.  This example creates a "veba" folder to store the config file in and uses `scp` to copy the file from the VEBA appliance.  `scp` is a secure copy utility and was installed as part of the Chocolately install of `git` earlier.  Replace "VEBA IP" below with the VEBA appliance IP address.  You will be prompted for the VEBA appliance root password.
 
 ```
 cd ~
@@ -273,11 +274,11 @@ kubectl cluster-info
 kubectl get ns
 ```
 
-You should see something similar to the below image:
+You should see something similar to the below output:
 
 ```
-➜  ~
-➜  ~ kubectl config view
+kubectl config view
+
 apiVersion: v1
 clusters:
 - cluster:
@@ -297,14 +298,16 @@ users:
   user:
     client-certificate-data: REDACTED
     client-key-data: REDACTED
-➜  ~
-➜  ~ kubectl cluster-info
+
+kubectl cluster-info
+
 Kubernetes control plane is running at https://10.161.98.24:6443
 KubeDNS is running at https://10.161.98.24:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
-➜  ~
-➜  ~ kubectl get ns
+
+kubectl get ns
+
 NAME                 STATUS   AGE
 contour-external     Active   14d
 contour-internal     Active   14d
@@ -318,7 +321,7 @@ local-path-storage   Active   14d
 rabbitmq-system      Active   14d
 vmware-functions     Active   14d
 vmware-system        Active   14d
-➜  ~
+
 ```
 
 
