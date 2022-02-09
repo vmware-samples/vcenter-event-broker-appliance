@@ -129,7 +129,7 @@ jobs:
     name: Knative Event Processor
     runs-on: ubuntu-latest
     env:
-      KNATIVE_VERSION: v0.23.0
+      KNATIVE_VERSION: knative-v1.1.0 # same as VEBA BOM
       BROKER_NAMESPACE: default
       BROKER_NAME: default
     timeout-minutes: 15
