@@ -10,4 +10,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check WIP in PR Title
-        uses: embano1/wip@v1
+        uses: embano1/wip@e83c03c8f4696b0cef273d83115521b26ebb8bec # v1
