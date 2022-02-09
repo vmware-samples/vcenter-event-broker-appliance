@@ -23,13 +23,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
         with:
           fetch-depth: 0
           ref: "master"
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@424fc82d43fa5a37540bae62709ddcc23d9520d4 # v2.1.5
         with:
           go-version: ${{ matrix.go-version }}
 
@@ -44,7 +44,7 @@ jobs:
           docker run --rm -v $PWD:/workdir ${IMAGE}@sha256:${IMAGE_SHA} -o vmware-event-router/RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
 
       - name: GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@79d4afbba1b4eff8b9a98e3d2e58c4dbaf094e2b # v2.8.1
         with:
           args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
           workdir: vmware-event-router
@@ -61,7 +61,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
         with:
           # for changelog
           fetch-depth: 0
@@ -85,7 +85,7 @@ jobs:
 
       - name: Create Pull Request
         id: cpr
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@f22a7da129c901513876a2380e2dae9f8e145330 # v3.12.1
         with:
           delete-branch: true
           reviewers: embano1
@@ -112,18 +112,18 @@ jobs:
 
     steps:
       - name: Setup ko
-        uses: imjasonh/setup-ko@v0.4
+        uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4
         
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@424fc82d43fa5a37540bae62709ddcc23d9520d4 # v2.1.5
         with:
           go-version: ${{ matrix.go-version }}
         id: go
         
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
 
       - name: Login to GCP
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@37a9333538a8350a13fe9d8fa03e0d4742a1ad2e # 0.5.0
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_email: ${{ secrets.GCP_EMAIL }}
@@ -139,7 +139,7 @@ jobs:
 
       - name: Get Release URL
         id: get_release_url
-        uses: bruceadams/get-release@v1.2.0
+        uses: bruceadams/get-release@3a8733307b85cd96d52772b037617bd63d99522e # v1.2.3
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
@@ -151,7 +151,7 @@ jobs:
 
       - name: Upload Release Assets
         id: upload-release-asset
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5 # v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

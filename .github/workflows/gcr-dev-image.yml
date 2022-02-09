@@ -29,18 +29,18 @@ jobs:
     
     steps:
       - name: Setup ko
-        uses: imjasonh/setup-ko@v0.4
+        uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4
         
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@424fc82d43fa5a37540bae62709ddcc23d9520d4 # v2.1.5
         with:
           go-version: ${{ matrix.go-version }}
         id: go
         
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
 
       - name: Login to GCP
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@37a9333538a8350a13fe9d8fa03e0d4742a1ad2e # 0.5.0
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_email: ${{ secrets.GCP_EMAIL }}
