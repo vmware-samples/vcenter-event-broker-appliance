@@ -126,9 +126,9 @@ Use the command `docker images` to see your new image listed.
 The test subdirectory contains the files used to test the function locally.  You will need to edit two files:
 1. `docker-test-env-variable` - enter the Slack webhook URL to use.  Slack webhook URLs are unique addresses that allow you to post to a Slack channel.  You can read how to create a Slack webhook URL [here](https://api.slack.com/messaging/webhooks)
 
-2. `test-payload.json` - change the VM Name to use here.  For the example, I will use `Vm.Name="prod-test"` so that the new `handler.ps1` code triggers the slack call for this specific VM Name.
+2. `test-payload.json` - change the VM Name to use here.  For the example, I will use `Vm.Name="prod-test"` so that the new `handler.ps1` code triggers the Slack call for this specific VM Name.
 
-Open a command prompt and run the following command (replacing docker-username with your Docker username).  This should be run in the `/vcenter-event-broker-appliance/examples/knative/powershell/kn-ps-slack/test` directory.  This will run your new function as a Docker container locally on your workstation.  Also remember to use the correct tag (i.e. 1.1) to reference the version of the container you want to use.
+Open a command prompt and run the following command (replacing docker-username with your Docker username).  This should be run in the `/vcenter-event-broker-appliance/examples/knative/powershell/kn-ps-slack/test` directory.  This will run your new function as a Docker container locally on your workstation.  Also remember to use the correct tag (i.e. `1.1`) to reference the version of the container you want to use.
 
 ```
 docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 <docker-username>/kn-ps-slack:1.1

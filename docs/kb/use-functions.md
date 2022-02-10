@@ -16,7 +16,7 @@ cta:
 
 The steps below describe a generalized deployment step of a function on the VMware Event Broker Appliance. For customers looking to get started quickly, please look at deploying from our growing list of [Prebuilt Functions](/examples). The functions are organized by the language that they are written in and have well-documented README.md files with detailed deployment steps.
 
-Deployment or development of functions can require the use of the following development tools: `git`, Docker, and `kubectl`.  If you would like some help in how to setup your workstation to use those tools, an in-depth tutorial is available that shows how to do that and to modify and deploy the [kn-ps-slack](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative/powershell/kn-ps-slack) function (knative powershell slack notification function) as an example.  The tutorial can be found here: [in-depth function tutorial](function-tutorial-intro).
+Deployment or development of functions can require the use of the following development tools: `git`, `docker`, and `kubectl`.  If you would like some help in how to setup your workstation to use those tools, an in-depth tutorial is available that shows how to do that and to modify and deploy the [kn-ps-slack](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative/powershell/kn-ps-slack) function (Knative powershell slack notification function) as an example.  The tutorial can be found here: [in-depth function tutorial](function-tutorial-intro).
 
 
 ## Table of Contents

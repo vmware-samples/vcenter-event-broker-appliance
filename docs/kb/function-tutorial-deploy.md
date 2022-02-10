@@ -10,7 +10,6 @@ cta:
  actions:
     - text: Go back to the Function Tutorial Intro [Function Tutorial - Function Intro](function-tutorial-intro)
     - text: Go back to Modify and Test a Function Locally [Function Tutorial - Function Modify and Test](function-tutorial-modtest)
-    - text: Go to [Deploy Functions](use-functions).  This page also shows how to deploy a function using the vSphere UI instead of using kubectl.
     - text: Look at the [Build Functions](contribute-functions) page for detailed instructions on how to build your own functions.  
     - text: Look at [Troubleshoot Functions](troubleshoot-functions) on help to troubleshoot your functions.
 
@@ -84,7 +83,7 @@ docker.io/<docker username>/<container image name>:<TAG>
 
 
 ## Introduction to the Kubernetes vmware-functions namespace
-With the Docker image pushed to the registry, we are now ready to deploy the function to the VEBA appliance.  Remember, you will need to copy the Kubernetes config file to your workstation and export the `KUBECONFIG` environment variable so that the `kubectl` command can access the Kubernetes cluster on the VEBA appliance.  We will use `kubectl` to deploy the function.  Below is a reminder of the steps we used to copy and use the VEBA appliance config file.  Getting the Kubernetes config file was covered in the intro [Function Tutorial - Function Intro](function-tutorial-intro).  If you have opened a new terminal window, you may need to `export KUBECONFIG` once more for the current session.
+With the Docker image pushed to the registry, we are now ready to deploy the function to the VEBA appliance.  Remember, you will need to copy the Kubernetes config file to your workstation and export the `KUBECONFIG` environment variable so that the `kubectl` command can access the Kubernetes cluster on the VEBA appliance.  We will use `kubectl` to deploy the function.  Below is a reminder of the steps we used to copy and use the VEBA appliance config file.  Getting the Kubernetes config file was covered in the intro [Function Tutorial - Function Intro](function-tutorial-intro).  If you have opened a new terminal window, you may need to set the `KUBECONFIG` environment variable once more for the current session.
 
 {% tabs export KUBECONFIG %}
 
@@ -316,7 +315,7 @@ kubectl -n vmware-functions describe pod <pod name>
 
 The output will look something like this:
 
-```
+```yml
 kubectl -n vmware-functions get pods
 
 NAME                                                READY   STATUS    RESTARTS   AGE
@@ -369,48 +368,9 @@ Containers:
       K_SERVICE:        kn-ps-slack
     Mounts:
       /var/run/secrets/kubernetes.io/serviceaccount from default-token-77dnr (ro)
-  queue-proxy:
-    Container ID:   docker://25e96397b18ad6d88019473bf8387fdd89e955a14d2f7852385f16c8ad476588
-    Image:          gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:9ec8ba5c982a0a7f6dfab384365082655083413c14bdb50b01a51b730284ae32
-    Image ID:       docker-pullable://gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:9ec8ba5c982a0a7f6dfab384365082655083413c14bdb50b01a51b730284ae32
-    Ports:          8022/TCP, 9090/TCP, 9091/TCP, 8012/TCP
-    Host Ports:     0/TCP, 0/TCP, 0/TCP, 0/TCP
-    State:          Running
-      Started:      Thu, 03 Feb 2022 15:34:34 -0500
-    Ready:          True
-    Restart Count:  0
-    Requests:
-      cpu:      25m
-    Readiness:  exec [/ko-app/queue -probe-period 0] delay=0s timeout=10s period=10s #success=1 #failure=3
-    Environment:
-      SERVING_NAMESPACE:                      vmware-functions
-      SERVING_SERVICE:                        kn-ps-slack
-      SERVING_CONFIGURATION:                  kn-ps-slack
-      SERVING_REVISION:                       kn-ps-slack-00001
-      QUEUE_SERVING_PORT:                     8012
-      CONTAINER_CONCURRENCY:                  0
-      REVISION_TIMEOUT_SECONDS:               300
-      SERVING_POD:                            kn-ps-slack-00001-deployment-6585d95fff-vl85t (v1:metadata.name)
-      SERVING_POD_IP:                          (v1:status.podIP)
-      SERVING_LOGGING_CONFIG:                 
-      SERVING_LOGGING_LEVEL:                  
-      SERVING_REQUEST_LOG_TEMPLATE:           {"httpRequest": {"requestMethod": "{{.Request.Method}}", "requestUrl": "{{js .Request.RequestURI}}", "requestSize": "{{.Request.ContentLength}}", "status": {{.Response.Code}}, "responseSize": "{{.Response.Size}}", "userAgent": "{{js .Request.UserAgent}}", "remoteIp": "{{js .Request.RemoteAddr}}", "serverIp": "{{.Revision.PodIP}}", "referer": "{{js .Request.Referer}}", "latency": "{{.Response.Latency}}s", "protocol": "{{.Request.Proto}}"}, "traceId": "{{index .Request.Header "X-B3-Traceid"}}"}
-      SERVING_ENABLE_REQUEST_LOG:             false
-      SERVING_REQUEST_METRICS_BACKEND:        prometheus
-      TRACING_CONFIG_BACKEND:                 none
-      TRACING_CONFIG_ZIPKIN_ENDPOINT:         
-      TRACING_CONFIG_STACKDRIVER_PROJECT_ID:  
-      TRACING_CONFIG_DEBUG:                   false
-      TRACING_CONFIG_SAMPLE_RATE:             0.1
-      USER_PORT:                              8080
-      SYSTEM_NAMESPACE:                       knative-serving
-      METRICS_DOMAIN:                         knative.dev/internal/serving
-      SERVING_READINESS_PROBE:                {"tcpSocket":{"port":8080,"host":"127.0.0.1"},"successThreshold":1}
-      ENABLE_PROFILING:                       false
-      SERVING_ENABLE_PROBE_REQUEST_LOG:       false
-      METRICS_COLLECTOR_ADDRESS:              
-    Mounts:
-      /var/run/secrets/kubernetes.io/serviceaccount from default-token-77dnr (ro)
+
+<snip>
+
 Conditions:
   Type              Status
   Initialized       True
@@ -438,7 +398,6 @@ Events:
   Normal  Pulled     17m   kubelet            Successfully pulled image "gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:9ec8ba5c982a0a7f6dfab384365082655083413c14bdb50b01a51b730284ae32" in 2.674026273s
   Normal  Created    17m   kubelet            Created container queue-proxy
   Normal  Started    17m   kubelet            Started container queue-proxy
-
 ```
 
 There is some interesting info here:
@@ -516,7 +475,6 @@ kubectl -n vmware-system exec --stdin --tty veba-ui-7cfb9cbf5-9k9sm -- /bin/sh
 # ls
 app.jar  bin  boot  dev  etc  home  lib  lib64	media  mnt  opt  proc  root  run  sbin	srv  sys  tmp  usr  var
 # exit
-
 ```
 
 ### port-forward ####
@@ -543,9 +501,6 @@ kubectl -n vmware-functions port-forward sockeye-5d7db96f66-shzvp 8081:8080
 
 Forwarding from 127.0.0.1:8081 -> 8080
 Forwarding from [::1]:8081 -> 8080
-
 ```
 
-In the above example, the port-forward command is directing the 8080 port from the sockeye-5d7db96f66-shzvp pod to the 8081 port on the local workstation we are running `kubectl` on.  You can find what port a pod is exposing (if any) by using `kubectl describe` on the pod or corresponding service.  If we open a browser on our workstation to: `localhost:8081`, we should see the following:
-
-<img src="./img/tutorial-kubectl-port.png" width="70%" align="center" class="border m-1 p-1"/>
+In the above example, the port-forward command is directing the 8080 port from the sockeye-5d7db96f66-shzvp pod to the 8081 port on the local workstation we are running `kubectl` on.  You can find what port a pod is exposing (if any) by using `kubectl describe` on the pod or corresponding service.  If we open a browser on our workstation to: `localhost:8081`, we should see output from the Sockeye application.

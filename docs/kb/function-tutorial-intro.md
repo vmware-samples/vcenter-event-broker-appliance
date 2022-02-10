@@ -45,7 +45,7 @@ All VEBA functions have the same relative format regardless of what programming 
 - **function.yaml** contains the instructions to load the VEBA function into the Kubernetes cluster.  This file has two pieces of information that you may want to change:
   1. The vCenter Event that triggers the function.  The default event is: `VmPoweredOffEvent` but this may be modified to suit your requirements.
   2. The location of the Docker image to load into Kubernetes.  If the PowerShell code will not be modified, you can leave the default image as is.  If you modify the PowerShell code in the handler file, you will need to build a new Docker image and specify the name/location in this file.
-- **handler.ps1** contains the PowerShell code that runs when the specified vCenter event triggers it.  The handler.ps1 file is injected into the Docker image which must be rebuilt every time the code changes.
+- **handler.ps1** contains the PowerShell code that runs when the specified vCenter event triggers it.  The `handler.ps1` file is injected into the Docker image which must be rebuilt every time the code changes.
 - **slack_secret.json** contains the Slack key for your Slack channel.  This file will be used to create a Kubernetes secret that the function will read.  Most functions will include a secret file that contains: usernames/passwords, keys, or other sensitive information that will be used to create a Kubernetes secret.
 
 **What are Kubernetes secrets?**  The VEBA appliance runs a Kubernetes cluster on top of the Photon OS.  This allows the VEBA functions to be packaged as containers that are then deployed into the Kubernetes cluster.  A Kubernetes secret is an object that contains a small amount of sensitive data that can be read by a Kubernets pod (pods are made up of one or more containers).  Secrets allow sensitive or confidential data to be packaged separate from a container's application code.
@@ -54,7 +54,7 @@ All VEBA functions have the same relative format regardless of what programming 
 ## Installing required tools on your workstation
 You will need to install and configure/use three tools:
 - `git` - used to clone the VEBA github repository down to your workstation (including the function code we want to use) so that you have a local copy to modify/test/deploy.
-- `docker` - if you modify the function's code, you will use Docker to:
+- `docker` - if you modify the function's code, you will use the Docker command line tool to:
   - create a new Docker image
   - push the image to the Docker registry so that it is available to be pulled down by the Kubernetes cluster.
   - test the function locally on your workstation without the need for a deployed VEBA appliance.
@@ -133,9 +133,11 @@ The above sample code is _**one**_ way of configuring the Kubernetes config file
 
 
 Check that everything is working.
+
 - `kubectl config view`: returns the currently loaded config
 - `kubectl cluster-info`: returns info from the Kubernetes cluster (within the VEBA appliance)
 - `kubectl get ns`: returns the namespaces from the Kubernetes cluster
+
 ```
 kubectl config view
 kubectl cluster-info
@@ -268,6 +270,7 @@ Check that everything is working.
 - `kubectl config view`: returns the currently loaded config
 - `kubectl cluster-info`: returns info from the Kubernetes cluster (within the VEBA appliance)
 - `kubectl get ns`: returns the namespaces from the Kubernetes cluster
+
 ```
 kubectl config view
 kubectl cluster-info
