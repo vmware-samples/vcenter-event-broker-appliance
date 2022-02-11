@@ -3,7 +3,7 @@
 # Site settings
 title: VMware Event Broker Appliance
 email: dl-veba@vmware.com
-author: 
+author:
 show_downloads: false
 description: The VMware Event Broker Appliance Fling enables customers to easily create event-driven automation based on vCenter Server Events.
 #url: veba.io
@@ -90,7 +90,8 @@ plugins:
   - jekyll-redirect-from
   - jekyll-seo-tag
   - jekyll-github-metadata
-
+  - jekyll-simple-tab
+  
 # Include these subdirectories
 include:
   - CONTRIBUTING.md
