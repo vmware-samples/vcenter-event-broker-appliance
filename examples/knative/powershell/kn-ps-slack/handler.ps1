@@ -43,11 +43,11 @@ Function Process-Handler {
    $payload = @{
       attachments = @(
          @{
-            pretext = ":rotating_light: Virtual Machine Alert from :veba: Knative Function :rotating_light:";
+            pretext = $(${jsonSecrets}.SLACK_MESSAGE_PRETEXT);
             fields = @(
                @{
-                     title = "VM";
-                     value = $cloudEventData.Vm.Name;
+                     title = "EventType";
+                     value = $cloudEvent.Subject;
                      short = "false";
                }
                @{

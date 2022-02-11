@@ -1,1 +1,1 @@
-SLACK_SECRET={"SLACK_WEBHOOK_URL":"YOUR-WEBHOOK-URL"}
+SLACK_SECRET={"SLACK_WEBHOOK_URL":"YOUR-WEBHOOK-URL","SLACK_MESSAGE_PRETEXT":":rotating_light: :veba: Knative Function :rotating_light:"}
