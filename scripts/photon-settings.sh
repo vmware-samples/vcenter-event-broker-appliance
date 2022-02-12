@@ -17,15 +17,12 @@ echo '> Applying latest Updates...'
 cd /etc/yum.repos.d/
 sed -i 's/dl.bintray.com\/vmware/packages.vmware.com\/photon\/$releasever/g' photon.repo photon-updates.repo photon-extras.repo photon-debuginfo.repo
 tdnf -y update photon-repos
-tdnf -y remove minimal # TODO: required due to bug in Photon 4 GA
 tdnf -y remove docker
-rpm -e --noscripts systemd-udev-247.3-1.ph4 # TODO: required due to bug in Photon 4 GA
 tdnf clean all
 tdnf makecache
 tdnf -y update
 
 echo '> Installing Additional Packages...'
-# TODO: minimal required due to bug in Photon 4 GA
 tdnf install -y \
   minimal \
   logrotate \
