@@ -1,8 +1,8 @@
 {
   "description": "Photon Build for VMware Event Broker Appliance",
   "vm_name": "VMware_Event_Broker_Appliance",
-  "iso_checksum": "2221ab214b517a15c60bd5e2aacdb9388581bcd9",
-  "iso_url": "https://packages.vmware.com/photon/4.0/GA/iso/photon-4.0-1526e30ba.iso",
+  "iso_checksum": "5af288017d0d1198dd6bd02ad40120eb",
+  "iso_url": "https://packages.vmware.com/photon/4.0/Rev2/iso/photon-4.0-c001795b8.iso",
   "numvcpus": "6",
   "ramsize": "8192",
   "guest_username": "root",
