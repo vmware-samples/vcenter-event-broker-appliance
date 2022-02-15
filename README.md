@@ -131,6 +131,7 @@ Public VEBA community meetings are held every **last Tuesday** in the month at
 **8AM Pacific Time (US)**.
 
 - **Zoom:** https://via.vmw.com/veba-ama
+  - **Note:** The meeting is **password protected** to mitigate abuse. Please join the VEBA Slack [channel](#other-channels) to receive the Zoom password or contact us in case of issues.
 - **Notes**: https://via.vmw.com/veba-notes
 
 ### Other Channels
