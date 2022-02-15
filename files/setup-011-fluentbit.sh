@@ -24,4 +24,4 @@ ytt --data-value-file bom=${VEBA_BOM_FILE} -f ${FLUENTBIT_DEPLOYMENT_TEMPLATE} >
 kubectl apply -f /root/config/fluentbit/fluentbit-preperations.yaml
 kubectl apply -f ${FLUENTBIT_CONFIGMAP_CONFIG}
 kubectl apply -f ${FLUENTBIT_DEPLOYMENT_CONFIG}
-kubectl wait --for=condition=ready pod -l k8s-app=fluent-bit --timeout=3m -n vmware-system
+kubectl wait --for=condition=ready pod -l k8s-app=fluent-bit --timeout=${KUBECTL_WAIT} -n vmware-system

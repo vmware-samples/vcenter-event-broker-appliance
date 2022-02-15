@@ -20,4 +20,4 @@ echo -e "\e[92mDeploying cAdvisor ..." > /dev/console
 kubectl apply -f /root/config/cadvisor/cadvisor-preperations.yaml
 kubectl apply -f ${CADVISOR_CONFIG}
 kubectl apply -f /root/config/cadvisor/cadvisor-svc.yaml
-kubectl wait --for=condition=ready pod -l app=cadvisor --timeout=3m -n vmware-system
+kubectl wait --for=condition=ready pod -l app=cadvisor --timeout=${KUBECTL_WAIT} -n vmware-system

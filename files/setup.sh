@@ -42,6 +42,7 @@ SYSLOG_SERVER_HOSTNAME=$(/root/setup/getOvfProperty.py "guestinfo.syslog_server_
 SYSLOG_SERVER_PORT=$(/root/setup/getOvfProperty.py "guestinfo.syslog_server_port")
 SYSLOG_SERVER_PROTOCOL=$(/root/setup/getOvfProperty.py "guestinfo.syslog_server_protocol")
 SYSLOG_SERVER_FORMAT=$(/root/setup/getOvfProperty.py "guestinfo.syslog_server_format")
+KUBECTL_WAIT="10m"
 LOCAL_STORAGE_DISK="/dev/sdb"
 LOCAL_STOARGE_VOLUME_PATH="/data"
 export KUBECONFIG="/root/.kube/config"
