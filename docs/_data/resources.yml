@@ -16,15 +16,6 @@ links:
       author_name: Ludovic Rivallain
       excerpt: In the following post, we will discover how to deploy the VMware Event Broker services (VEBA) within an existing Kubernetes (K8S) cluster and use it to add/edit custom attributes information to virtual machines...
 
-  - title: Spin up a local VEBA environment with KinD and vCenter simulator
-    display: true
-    details:
-      url_text: blog post
-      external_url: https://rguske.github.io/post/spin-up-a-local-veba-environment-with-kind-and-vcenter-simulator/
-      external_image: https://rguske.github.io/img/vebakindvcsim_cover.jpg
-      author_name: Robert Guske
-      excerpt: The lightweight alternative would be, to e.g. leverage VMware’s Fusion or Workstation to spin up a Kubernetes cluster locally and to deploy the Event Router, OpenFaaS as well as your function(s) on top of it. Asking yourself now- And what about the vCenter Server? Good question...
-
   - title: Self Service for your DataCenter + Auto Remediation
     display: true
     details: 
