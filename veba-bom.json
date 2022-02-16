@@ -67,6 +67,10 @@
                 "version": "3.4.1"
             },
             {
+                "name": "k8s.gcr.io/pause",
+                "version": "3.5"
+            },
+            {
                 "name": "k8s.gcr.io/etcd",
                 "version": "3.4.13-0"
             },
