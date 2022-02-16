@@ -160,6 +160,10 @@
         "containers": [{
                 "name": "rabbitmqoperator/cluster-operator",
                 "version": "1.10.0"
+            },
+            {
+                "name": "rabbitmq",
+                "version": "3.8.21-management"
             }
         ]
     },
