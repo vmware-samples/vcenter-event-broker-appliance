@@ -1,3 +1,11 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@ load("@ytt:json", "json")
+#@ name = json.decode(data.values.bom)["rabbitmq-operator"]["containers"][1]["name"]
+#@ version = json.decode(data.values.bom)["rabbitmq-operator"]["containers"][1]["version"]
+#@ image = name + ":" + version
+
 apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
@@ -6,6 +14,7 @@ metadata:
   annotations:
     rabbitmq.com/topology-allowed-namespaces: "vmware-functions"
 spec:
+  image: #@ image
   resources:
     requests:
       memory: 200Mi

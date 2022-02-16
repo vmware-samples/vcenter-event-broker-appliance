@@ -34,7 +34,12 @@ kubectl wait deployment --all --timeout=${KUBECTL_WAIT} --for=condition=Availabl
 
 echo -e "\e[92mDeploying RabbitMQ Broker ..." > /dev/console
 kubectl apply -f /root/download/rabbitmq-broker.yaml
-kubectl apply -f /root/config/knative/rabbit.yaml
+
+echo -e "\e[92mDeploying RabbitMQ Cluster ..." > /dev/console
+RABBITMQ_CONFIG_TEMPLATE=/root/config/knative/templates/rabbit-template.yaml
+RABBITMQ_CONFIG=/root/config/knative/rabbit.yaml
+ytt --data-value-file bom=${VEBA_BOM_FILE} -f ${RABBITMQ_CONFIG_TEMPLATE} > ${RABBITMQ_CONFIG}
+kubectl apply -f ${RABBITMQ_CONFIG}
 
 echo -e "\e[92mDeploying Sockeye ..." > /dev/console
 
