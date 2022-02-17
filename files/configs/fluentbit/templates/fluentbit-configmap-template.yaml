@@ -1,78 +1,122 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: fluent-bit-config
-  namespace: vmware-system
   labels:
     k8s-app: fluent-bit
+  name: fluent-bit-config
+  namespace: vmware-system
 data:
   fluent-bit.conf: |
     [SERVICE]
-        Flush         1
-        Log_Level     info
-        Daemon        off
-        Parsers_File  parsers.conf
-        HTTP_Server   On
-        HTTP_Listen   0.0.0.0
-        HTTP_Port     2020
+        Flush                 1
+        Log_Level             info
+        Daemon                off
+        Parsers_File          parsers.conf
+        HTTP_Server           On
+        HTTP_Listen           0.0.0.0
+        HTTP_Port             2020
 
     @INCLUDE input-kubernetes.conf
+    @INCLUDE input-systemd.conf
+    @INCLUDE input-kube-apiserver.conf
+    @INCLUDE input-auditd.conf
     @INCLUDE filter-kubernetes.conf
     @INCLUDE filter-record.conf
     @INCLUDE output-syslog.conf
 
+  input-auditd.conf: |
+    [INPUT]
+        Name                  tail
+        Tag                   audit.*
+        Path                  /var/log/audit/audit.log
+        Parser                logfmt
+        DB                    /var/log/flb_system_audit.db
+        Mem_Buf_Limit         100MB
+        Refresh_Interval      10
+        Skip_Long_Lines       On
+
+  input-kube-apiserver.conf: |
+    [INPUT]
+        Name                  tail
+        Tag                   apiserver_audit.*
+        Path                  /var/log/kubernetes/audit.log
+        Parser                json
+        DB                    /var/log/flb_kube_audit.db
+        Mem_Buf_Limit         50MB
+        Refresh_Interval      10
+        Skip_Long_Lines       On
+
   input-kubernetes.conf: |
     [INPUT]
-        Name                tail
-        Tag                 kube.*
-        Path                /var/log/containers/*.log
-        Parser              docker
-        DB                  /var/log/flb_kube.db
-        Mem_Buf_Limit       100MB
-        Skip_Long_Lines     On
-        Refresh_Interval    10
+        Name                  tail
+        Tag                   kube.*
+        Path                  /var/log/containers/*.log
+        Parser                cri
+        DB                    /var/log/flb_kube.db
+        Mem_Buf_Limit         50MB
+        Skip_Long_Lines       On
+        Refresh_Interval      10
+
+  input-systemd.conf: |
+    [INPUT]
+        Name                  systemd
+        Tag                   kube_systemd.*
+        Path                  /var/log/journal
+        DB                    /var/log/flb_kube_systemd.db
+        Systemd_Filter        _SYSTEMD_UNIT=kubelet.service
+        Systemd_Filter        _SYSTEMD_UNIT=containerd.service
+        Read_From_Tail        On
+        Strip_Underscores     On
 
   filter-kubernetes.conf: |
     [FILTER]
-        Name                kubernetes
-        Match               kube.*
-        Kube_URL            https://kubernetes.default.svc:443
-        Kube_CA_File        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-        Kube_Token_File     /var/run/secrets/kubernetes.io/serviceaccount/token
-        Kube_Tag_Prefix     kube.var.log.containers.
-        Merge_Log           On
-        Merge_Log_Key       log_processed
-        K8S-Logging.Parser  On
-        K8S-Logging.Exclude Off
+        Name                  kubernetes
+        Match                 kube.*
+        Kube_URL              https://kubernetes.default.svc:443
+        Kube_CA_File          /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        Kube_Token_File       /var/run/secrets/kubernetes.io/serviceaccount/token
+        Kube_Tag_Prefix       kube.var.log.containers.
+        Merge_Log             On
+        Merge_Log_Key         log_processed
+        K8S-Logging.Parser    On
+        K8S-Logging.Exclude   Off
 
     [FILTER]
-        Name                modify
-        Match               kube.*
-        Copy                kubernetes k8s
+        Name                  modify
+        Match                 kube.*
+        Copy                  kubernetes k8s
 
     [FILTER]
-        Name                nest
-        Match               kube.*
-        Operation           lift
-        Nested_Under        kubernetes
+        Name                  nest
+        Match                 kube.*
+        Operation             lift
+        Nested_Under          kubernetes
+
   filter-record.conf: |
     [FILTER]
-        Name                 record_modifier
-        Match                *
-        Record veba_instance VEBA_INSTANCE_REPLACEME
-        Record veba_cluster  VEBA_INSTANCE_REPLACEME
+        Name                  record_modifier
+        Match                 *
+        Record veba_cluster   VEBA_INSTANCE_REPLACEME
+        Record veba_instance  VEBA_INSTANCE_REPLACEME
 
     [FILTER]
-        Name                nest
-        Match               kube.*
-        Operation           nest
-        Wildcard            veba_instance*
-        Nest_Under          veba
+        Name                  nest
+        Match                 kube.*
+        Operation             nest
+        Wildcard              veba_instance*
+        Nest_Under            veba
+
+    [FILTER]
+        Name                  nest
+        Match                 kube_systemd.*
+        Operation             nest
+        Wildcard              SYSTEMD*
+        Nest_Under            systemd
 
   output-syslog.conf: |
     [OUTPUT]
         Name                 syslog
-        Match                *
+        Match                kube.*
         Host                 SYSLOG_HOST_REPLACEME
         Port                 SYSLOG_PORT_REPLACEME
         Mode                 SYSLOG_MODE_REPLACEME
@@ -81,37 +125,83 @@ data:
         Syslog_Appname_key   pod_name
         Syslog_Procid_key    container_name
         Syslog_Message_key   message
-        syslog_msgid_key     msgid
         Syslog_SD_key        k8s
         Syslog_SD_key        labels
         Syslog_SD_key        annotations
         Syslog_SD_key        veba
 
+    [OUTPUT]
+        Name                 syslog
+        Match                kube.*
+        Host                 SYSLOG_HOST_REPLACEME
+        Port                 SYSLOG_PORT_REPLACEME
+        Mode                 SYSLOG_MODE_REPLACEME
+        Syslog_Format        SYSLOG_FORMAT_REPLACEME
+        Syslog_Hostname_key  veba_cluster
+        Syslog_Appname_key   veba_instance
+        Syslog_Message_key   MESSAGE
+        Syslog_SD_key        systemd
+
   parsers.conf: |
     [PARSER]
-        Name                 json
-        Format               json
-        Time_Key             time
-        Time_Format          %d/%b/%Y:%H:%M:%S %z
+        Name   json
+        Format json
+        Time_Key time
+        Time_Format %d/%b/%Y:%H:%M:%S %z
 
     [PARSER]
-        Name                 docker
-        Format               json
-        Time_Key             time
-        Time_Format          %Y-%m-%dT%H:%M:%S.%L
-        Time_Keep            On
+        Name        docker
+        Format      json
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L
+        Time_Keep   On
 
     [PARSER]
-        Name                 cri
-        Format               regex
-        Regex                ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<message>.*)$
-        Time_Key             time
-        Time_Format          %Y-%m-%dT%H:%M:%S.%L%z
+        Name        docker-daemon
+        Format      regex
+        Regex       time="(?<time>[^ ]*)" level=(?<level>[^ ]*) msg="(?<msg>[^ ].*)"
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L
+        Time_Keep   On
 
     [PARSER]
-        Name                 syslog
-        Format               regex
-        Regex                ^\<(?<pri>[0-9]{1,5})\>1 (?<time>[^ ]+) (?<host>[^ ]+) (?<ident>[^ ]+) (?<pid>[-0-9]+) (?<msgid>[^ ]+) (?<extradata>(\[(.*)\]|-)) (?<message>.+)$
-        Time_Key             time
-        Time_Format          %Y-%m-%dT%H:%M:%S.%L
-        Time_Keep            On
+        # http://rubular.com/r/tjUt3Awgg4
+        Name cri
+        Format regex
+        Regex ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<message>.*)$
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+
+    [PARSER]
+        Name        logfmt
+        Format      logfmt
+
+    [PARSER]
+        Name        syslog-rfc5424
+        Format      regex
+        Regex       ^\<(?<pri>[0-9]{1,5})\>1 (?<time>[^ ]+) (?<host>[^ ]+) (?<ident>[^ ]+) (?<pid>[-0-9]+) (?<msgid>[^ ]+) (?<extradata>(\[(.*)\]|-)) (?<message>.+)$
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L
+        Time_Keep   On
+
+    [PARSER]
+        Name        syslog-rfc3164-local
+        Format      regex
+        Regex       ^\<(?<pri>[0-9]+)\>(?<time>[^ ]* {1,2}[^ ]* [^ ]*) (?<ident>[a-zA-Z0-9_\/\.\-]*)(?:\[(?<pid>[0-9]+)\])?(?:[^\:]*\:)? *(?<message>.*)$
+        Time_Key    time
+        Time_Format %b %d %H:%M:%S
+        Time_Keep   On
+
+    [PARSER]
+        Name        syslog-rfc3164
+        Format      regex
+        Regex       /^\<(?<pri>[0-9]+)\>(?<time>[^ ]* {1,2}[^ ]* [^ ]*) (?<host>[^ ]*) (?<ident>[a-zA-Z0-9_\/\.\-]*)(?:\[(?<pid>[0-9]+)\])?(?:[^\:]*\:)? *(?<message>.*)$/
+        Time_Key    time
+        Time_Format %b %d %H:%M:%S
+        Time_Format %Y-%m-%dT%H:%M:%S.%L
+        Time_Keep   On
+
+    [PARSER]
+        Name    kube-custom
+        Format  regex
+        Regex   (?<tag>[^.]+)?\.?(?<pod_name>[a-z0-9](?:[-a-z0-9]*[a-z0-9])?(?:\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)_(?<namespace_name>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$
