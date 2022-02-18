@@ -1,12 +1,12 @@
 {
     "veba": {
-        "version": "development"
+        "version": "release-0.7.2"
     },
     "vmware-event-router": {
-        "gitRepoTag": "development",
+        "gitRepoTag": "release-0.7.2",
         "containers": [{
             "name": "us.gcr.io/daisy-284300/veba/router",
-            "version": "development"
+            "version": "release-0.7.2"
         }]
     },
     "veba-ui": {
