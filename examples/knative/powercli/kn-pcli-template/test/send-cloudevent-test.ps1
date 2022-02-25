@@ -8,7 +8,17 @@ $headers = @{
     "ce-subject" = "DvsReconfiguredEvent";
 }
 
-$body = Get-Content -Raw -Path "./test-payload.json"
+$payloadPath = "./test-payload.json"
+if ( $args.Count -gt 0 ) {
+    if ( Test-Path $args[0] ) {
+        $payloadPath = $args[0]
+    }
+    else {
+        Write-Host "$(Get-Date) - ERROR: Invalid path"$args[0]"`n"
+        exit
+    }
+}
+$body = Get-Content -Raw -Path $payloadPath
 
 Write-Host "Testing Function ..."
 Invoke-WebRequest -Uri http://localhost:8080 -Method POST -Headers $headers -Body $body
