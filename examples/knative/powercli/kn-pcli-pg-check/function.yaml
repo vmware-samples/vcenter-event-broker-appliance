@@ -1,0 +1,41 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-pcli-pg-check
+  labels:
+    app: veba-ui
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+        - image: kremerpatrick/kn-pcli-pg-check:1.0
+          envFrom:
+            - secretRef:
+                name: pg-check-secret
+          env:
+            - name: FUNCTION_DEBUG
+              value: "true"
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: veba-pcli-pg-check-trigger
+  labels:
+    app: veba-ui
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: com.vmware.event.router/event
+      # Replace this subject with the event you need to trigger on
+      # Then, edit send-cloudevent-test.ps1 and send-cloudevent-test.sh in the /test folder
+      subject: VmReconfiguredEvent
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kn-pcli-pg-check

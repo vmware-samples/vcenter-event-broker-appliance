@@ -112,7 +112,16 @@ examples:
     description: Function to enforce the `Notify Switches` value on a distributed virtual switch portgroup. Any changes to the `Notify Switches` value will be intercepted by the function and reset to the desired value.
     links:
     - language: powercli
-      url: "/tree/master/knative/powercli/kn-pcli-vds-pg-config"      
+      url: "/tree/master/knative/powercli/kn-pcli-vds-pg-config"
+
+  - title: Portgroup Compliance Check
+    usecases:
+    - item: notification
+    id: kn-pcli-pg-check
+    description: Creates a Slack notification when VM network portgroups are out of compliance. Tag VMs as `PCI`, tag portgroups as `PCI`, receive a Slack notification any time a tagged VM is moved off of a `PCI` portgroup.
+    links:
+    - language: powercli
+      url: "/tree/master/knative/powercli/kn-pcli-pg-check"
 
   - title: Enhancing vSphere Alarm Actions
     usecases:

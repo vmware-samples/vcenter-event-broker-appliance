@@ -1,0 +1,158 @@
+{
+	"Key": 689459,
+	"ChainId": 689456,
+	"CreatedTime": "2022-02-24T20:01:17.280999Z",
+	"UserName": "VSPHERE.LOCAL\\Administrator",
+	"Datacenter": {
+	  "Name": "HomeLab",
+	  "Datacenter": {
+		"Type": "Datacenter",
+		"Value": "datacenter-47"
+	  }
+	},
+	"ComputeResource": {
+	  "Name": "CL1",
+	  "ComputeResource": {
+		"Type": "ClusterComputeResource",
+		"Value": "domain-c52"
+	  }
+	},
+	"Host": {
+	  "Name": "esx02.lab.local",
+	  "Host": {
+		"Type": "HostSystem",
+		"Value": "host-58"
+	  }
+	},
+	"Vm": {
+		"Name": "REPLACE-ME",
+		"Vm": {
+		  "Type": "VirtualMachine",
+		  "Value": "REPLACE-ME"
+		}
+	},
+	"Ds": null,
+	"Net": null,
+	"Dvs": null,
+	"FullFormattedMessage": "Reconfigured tinycore-2 on esx02.lab.local in HomeLab.  \n \nModified:  \n \nconfig.hardware.device(4000).backing.port.portgroupKey: \"dvportgroup-1006\" -> \"dvportgroup-8004\"; \n\nconfig.hardware.device(4000).backing.port.portKey: \"4\" -> \"65\"; \n\nconfig.hardware.device(4000).backing.port.connectionCookie: 174899823 -> 193390024; \n\n Added:  \n \n Deleted:  \n \n",
+	"ChangeTag": "",
+	"Template": false,
+	"ConfigSpec": {
+	  "ChangeVersion": "2022-02-24T20:00:58.726047Z",
+	  "Name": "",
+	  "Version": "",
+	  "CreateDate": "2021-05-25T20:15:49.026445Z",
+	  "Uuid": "",
+	  "InstanceUuid": "",
+	  "NpivNodeWorldWideName": null,
+	  "NpivPortWorldWideName": null,
+	  "NpivWorldWideNameType": "",
+	  "NpivDesiredNodeWwns": 0,
+	  "NpivDesiredPortWwns": 0,
+	  "NpivTemporaryDisabled": null,
+	  "NpivOnNonRdmDisks": null,
+	  "NpivWorldWideNameOp": "",
+	  "LocationId": "",
+	  "GuestId": "",
+	  "AlternateGuestName": "",
+	  "Annotation": "",
+	  "Files": {
+		"VmPathName": "ds:///vmfs/volumes/60883b4b-6596cf2d-0179-001b21a69dd8/tinycore-2/tinycore-2.vmx",
+		"SnapshotDirectory": "",
+		"SuspendDirectory": "",
+		"LogDirectory": "",
+		"FtMetadataDirectory": ""
+	  },
+	  "Tools": null,
+	  "Flags": null,
+	  "ConsolePreferences": null,
+	  "PowerOpInfo": null,
+	  "NumCPUs": 0,
+	  "VcpuConfig": null,
+	  "NumCoresPerSocket": 0,
+	  "MemoryMB": 0,
+	  "MemoryHotAddEnabled": null,
+	  "CpuHotAddEnabled": null,
+	  "CpuHotRemoveEnabled": null,
+	  "VirtualICH7MPresent": null,
+	  "VirtualSMCPresent": null,
+	  "DeviceChange": [
+		{
+		  "Operation": "edit",
+		  "FileOperation": "",
+		  "Device": {
+			"Key": 4000,
+			"DeviceInfo": {
+			  "Label": "Network adapter 1",
+			  "Summary": "DVSwitch: 50 17 d5 a1 f0 17 6c 1d-d7 f9 b4 a8 21 62 1e 6b"
+			},
+			"Backing": {
+			  "Port": {
+				"SwitchUuid": "50 17 d5 a1 f0 17 6c 1d-d7 f9 b4 a8 21 62 1e 6b",
+				"PortgroupKey": "dvportgroup-8004",
+				"PortKey": "65",
+				"ConnectionCookie": 193390024
+			  }
+			},
+			"Connectable": null,
+			"SlotInfo": {
+			  "PciSlotNumber": 32
+			},
+			"ControllerKey": 100,
+			"UnitNumber": 7,
+			"AddressType": "assigned",
+			"MacAddress": "00:50:56:97:6f:a8",
+			"WakeOnLanEnabled": true,
+			"ResourceAllocation": {
+			  "Reservation": 0,
+			  "Share": {
+				"Shares": 50,
+				"Level": "normal"
+			  },
+			  "Limit": -1
+			},
+			"ExternalId": "",
+			"UptCompatibilityEnabled": false
+		  },
+		  "Profile": null,
+		  "Backing": null
+		}
+	  ],
+	  "CpuAllocation": null,
+	  "MemoryAllocation": null,
+	  "LatencySensitivity": null,
+	  "CpuAffinity": null,
+	  "MemoryAffinity": null,
+	  "NetworkShaper": null,
+	  "CpuFeatureMask": null,
+	  "ExtraConfig": null,
+	  "SwapPlacement": "",
+	  "BootOptions": null,
+	  "VAppConfig": null,
+	  "FtInfo": null,
+	  "RepConfig": null,
+	  "VAppConfigRemoved": null,
+	  "VAssertsEnabled": null,
+	  "ChangeTrackingEnabled": null,
+	  "Firmware": "",
+	  "MaxMksConnections": 0,
+	  "GuestAutoLockEnabled": null,
+	  "ManagedBy": null,
+	  "MemoryReservationLockedToMax": null,
+	  "NestedHVEnabled": null,
+	  "VPMCEnabled": null,
+	  "ScheduledHardwareUpgradeInfo": null,
+	  "VmProfile": null,
+	  "MessageBusTunnelEnabled": null,
+	  "Crypto": null,
+	  "MigrateEncryption": "",
+	  "SgxInfo": null,
+	  "GuestMonitoringModeInfo": null,
+	  "SevEnabled": null
+	},
+	"ConfigChanges": {
+	  "Modified": "config.hardware.device(4000).backing.port.portgroupKey: \"dvportgroup-1006\" -> \"dvportgroup-8004\"; \n\nconfig.hardware.device(4000).backing.port.portKey: \"4\" -> \"65\"; \n\nconfig.hardware.device(4000).backing.port.connectionCookie: 174899823 -> 193390024; \n\n",
+	  "Added": "",
+	  "Deleted": ""
+	}
+  }
