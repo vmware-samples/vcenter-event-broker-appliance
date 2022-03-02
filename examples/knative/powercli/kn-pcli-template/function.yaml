@@ -1,7 +1,7 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: kn-pcli-#REPLACE-ME#
+  name: kn-pcli-#REPLACE-FN-NAME#
   labels:
     app: veba-ui
 spec:
@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-pcli-#REPLACE-ME#:1.0
+        - image: us.gcr.io/daisy-284300/veba/kn-pcli-#REPLACE-FN-NAME#:1.0
           envFrom:
             - secretRef:
                 name: vds-secret
@@ -23,7 +23,7 @@ spec:
 apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
-  name: veba-pcli-#REPLACE-ME#-trigger
+  name: veba-pcli-#REPLACE-FN-NAME#-trigger
   labels:
     app: veba-ui
 spec:

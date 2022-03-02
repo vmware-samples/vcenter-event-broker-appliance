@@ -1,6 +1,6 @@
 # Knative Function Template 
 Delete this section before publishing your new function
-- Find all instances of #REPLACE-ME# and replace it with descriptive names for your function
+- Find all instances of `#REPLACE-FN-NAME#` and replace it with descriptive names for your function
 	- For example, if you are writing a function for a distributed virtual switch, you might name the function `kn-pcli-dvs`
 - Find all instances of FUNCTION_SECRET and function_secret, replacing it with descriptive names for your function. For example, if you are writing a function for a distributed virtual switch, you might use DVS_SECRET
 	- test/docker-test-env-variable
@@ -9,8 +9,8 @@ Delete this section before publishing your new function
 	- function_secret.json (rename the file)
 - Obtain a new payload file
 	- The example `test/test-payload.json` is a sample event payload file for event type `DvsReconfiguredEvent`. This needs to be replaced with the payload for your specific event. This is easily obtained using the built-in Sockeye service. Browse to the `/events` endpoint of your VEBA deployment and cause your event to trigger. You can then can easily copy and paste the payload from the output in Sockeye.
-# kn-pcli-#REPLACE-ME#
-Example Knative PowerCLI function #REPLACE-ME#
+# kn-pcli-#REPLACE-FN-NAME#
+Example Knative PowerCLI function kn-pcli-#REPLACE-FN-NAME#
 
 # Step 1 - Build
 
@@ -22,14 +22,14 @@ Create the container image locally to test your function logic.
 Mac/Linux
 ```
 # change the IMAGE name accordingly, example below for Docker
-export IMAGE=<docker-username>/kn-pcli-#REPLACE-ME#:1.0
+export IMAGE=<docker-username>/kn-pcli-#REPLACE-FN-NAME#:1.0
 docker build -t ${IMAGE} .
 ```
 
 Windows
 ```
 # change the IMAGE name accordingly, example below for Docker
-$IMAGE="<docker-username>/kn-pcli-#REPLACE-ME#:1.0"
+$IMAGE="<docker-username>/kn-pcli-#REPLACE-FN-NAME#:1.0"
 docker build -t ${IMAGE} .
 ```
 # Step 2 - Test
@@ -54,12 +54,12 @@ If you built a custom image in Step 1, comment out the default `IMAGE` command b
 
 Mac/Linux
 ```console
-export IMAGE=us.gcr.io/daisy-284300/veba/kn-#REPLACE-ME#:1.0
+export IMAGE=us.gcr.io/daisy-284300/veba/kn-pcli-#REPLACE-FN-NAME#:1.0
 docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 ${IMAGE}
 ```
 Windows
 ```console
-$IMAGE="us.gcr.io/daisy-284300/veba/kn-pcli-#REPLACE-ME#:1.0"
+$IMAGE="us.gcr.io/daisy-284300/veba/kn-pcli-#REPLACE-FN-NAME#:1.0"
 docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 ${IMAGE}
 ```
 
