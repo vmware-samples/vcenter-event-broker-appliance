@@ -84,8 +84,8 @@ Function Process-Handler {
    # Write-Host "$(Get-Date) - ERROR: "
 
    # This is the final line of your custom code.
-   # Replace #REPLACE-ME# with a meaningful message showing the end of your custom code
-   #Write-Host "$(Get-Date) - #REPLACE-ME# operation complete ...`n"
+   # Replace #REPLACE-FN-NAME# with a meaningful message showing the end of your custom code
+   #Write-Host "$(Get-Date) - #REPLACE-FN-NAME# operation complete ...`n"
 
    Write-Host "$(Get-Date) - Handler Processing Completed ...`n"
 }
