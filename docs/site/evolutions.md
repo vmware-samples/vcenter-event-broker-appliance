@@ -6,6 +6,21 @@ permalink: /evolution
 limit: 3
 entry:
 
+- title: VEBA [v0.7.2](https://williamlam.com/2022/03/vmware-event-broker-appliance-veba-v0-7-2.html)
+  type: feature
+  date: Mar 2022
+  id: vzeroseventwo
+  detail:
+    subtitle: Features
+    text:
+    - New Knative PowerCLI template (quickly get started on building new functions)
+    - PowerShell Slack Function enhancement to be event agnostic + customizable message
+    - New PowerCLI example function to enforce VDS & DVPortgroup configs
+    - Syslog now captures all logs via Fluentbit
+    - RabbitMQ (triggers) now supports function scaling to scale out when there's a burst of events
+    - Added Let's Encrypt documentation
+    - Various backend updates (see this [blog post](https://williamlam.com/2022/03/vmware-event-broker-appliance-veba-v0-7-2.html) for more details)
+
 - title: VEBA [v0.7.1](https://williamlam.com/2021/12/vmware-event-broker-appliance-veba-v0-7-1.html)
   type: feature
   date: Dec 2021

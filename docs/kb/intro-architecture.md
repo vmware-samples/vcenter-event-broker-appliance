@@ -8,9 +8,7 @@ cta:
  title: Learn More
  description: Find more about what makes VMware Event Broker Appliance possible
  actions:
-    - text: Install the [Appliance with Knative](install-knative) to extend your SDDC with our [community-sourced functions](/examples-knative)
-    - text: Install the [Appliance with OpenFaaS](install-openfaas) to extend your SDDC with our [community-sourced functions](/examples)
-    - text: Install the [Appliance with AWS EventBridge](install-eventbridge) to extend your SDDC leveraging native AWS capabilities. 
+    - text: Install the [Appliance with Knative](install-knative) to extend your SDDC with our [community-sourced functions](/examples)
     - text: Learn more about the [VMware Event Router](event-router) and supported Event Sources and Processors
 ---
 
@@ -25,23 +23,17 @@ The VMware Event Broker Appliance follows a highly modular approach, using Kuber
     - Incoming Webhooks
   - Supported Event Stream Processors:
     - Knative ([Website](https://www.knative.dev/){:target="_blank"})
-    - OpenFaaS ([Website](https://www.openfaas.com/){:target="_blank"}) (**deprecated** for VEBA appliance)
-    - AWS EventBridge ([Website](https://aws.amazon.com/eventbridge/){:target="_blank"}) (**deprecated** for VEBA appliance)
 - Contour ([Github](https://github.com/projectcontour/contour){:target="_blank"})
 - Kubernetes ([Github](https://github.com/kubernetes/kubernetes){:target="_blank"})
 - Photon OS ([Github](https://github.com/vmware/photon){:target="_blank"})
 
 <img src="./img/veba-architecture.png" width="100%" align="center" class="border m-1 p-1"/>
 
-**[VMware Event Router](event-router)** implements the core functionality of the VMware Event Broker Appliance, that is connecting to event `streams` ("sources") and processing the events with a configurable event `processor` such as OpenFaaS or AWS EventBridge.
+**[VMware Event Router](event-router)** implements the core functionality of the VMware Event Broker Appliance, that is connecting to event `streams` ("sources") and processing the events with a configurable event `processor` such as Knative.
 
 **Knative** is a Kubernetes-based platform to deploy and manage modern serverless workloads. Knative has two core building blocks, that is Serving (Knative Service) and Eventing (Broker, Channel, etc.).
 The VMware Event Router can be configured to directly send events to any addressable Knative resource (“reference”), e.g. a Knative Broker or Service. Broker is the recommended deployment model for the VMware Event Router. Please see the Knative documentation on Eventing for details around brokers, triggers, event filtering, etc.
 Alternatively, the router can send events to a URI, e.g. an external HTTP endpoint accepting CloudEvents.
-
-**OpenFaaS&reg;** makes it easy for developers to deploy event-driven functions and microservices to Kubernetes without repetitive, boiler-plate coding. Package your code or an existing binary in a Docker image to get a highly scalable endpoint with auto-scaling and metrics. In the VMware Event Broker Appliance, OpenFaaS powers the appliance-integrated Function-as-a-Service framework to **trigger custom functions based on vCenter events**. The OpenFaaS user interface provides an easy to use dashboard to deploy and monitor functions. Functions can be authored and also deployed via an easy to use [CLI](https://github.com/openfaas/faas-cli){:target="_blank"}.
-
-**Amazon EventBridge** is a serverless event bus that makes it easy to connect applications together using data from your own applications, integrated Software-as-a-Service (SaaS) applications, and AWS services. The VMware Event Broker Appliance offers native integration for **event forwarding to AWS EventBridge**. The only requirement is creating a dedicated IAM user (access_key) and associated EventBridge rule on the default (or custom) event bus in the AWS management console to be used by this appliance. Only events matching the specified event pattern (EventBridge rule) will be forwarded to limit outgoing network traffic and costs.
 
 **Contour** is an ingress controller for Kubernetes that works by deploying the Envoy proxy as a reverse proxy and load balancer. Contour supports dynamic configuration updates out of the box while maintaining a lightweight profile. In the VMware Event Broker Appliance, Contour provides **TLS termination for the various HTTP(S) endpoints** served.
 

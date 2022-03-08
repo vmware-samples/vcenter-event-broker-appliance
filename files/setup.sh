@@ -35,27 +35,14 @@ HORIZON_DISABLE_TLS=$(/root/setup/getOvfProperty.py "guestinfo.horizon_disable_t
 WEBHOOK_ENABLED=$(/root/setup/getOvfProperty.py "guestinfo.webhook")
 WEBHOOK_USERNAME=$(/root/setup/getOvfProperty.py "guestinfo.webhook_username")
 WEBHOOK_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.webhook_password")
-EVENT_PROCESSOR_TYPE=$(/root/setup/getOvfProperty.py "guestinfo.event_processor_type")
-OPENFAAS_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.openfaas_password")
-OPENFAAS_ADV_OPTION=$(/root/setup/getOvfProperty.py "guestinfo.openfaas_advanced_options")
-KNATIVE_HOST=$(/root/setup/getOvfProperty.py "guestinfo.knative_host")
-KNATIVE_SCHEME=$(/root/setup/getOvfProperty.py "guestinfo.knative_scheme" | tr [:upper:] [:lower:])
-KNATIVE_DISABLE_TLS=$(/root/setup/getOvfProperty.py "guestinfo.knative_disable_tls_verification")
-KNATIVE_PATH=$(/root/setup/getOvfProperty.py "guestinfo.knative_path")
-AWS_EVENTBRIDGE_ACCESS_KEY=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_access_key")
-AWS_EVENTBRIDGE_ACCESS_SECRET=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_access_secret")
-AWS_EVENTBRIDGE_EVENT_BUS=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_event_bus")
-AWS_EVENTBRIDGE_REGION=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_region")
-AWS_EVENTBRIDGE_RULE_ARN=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_arn")
-AWS_EVENTBRIDGE_ADV_OPTION=$(/root/setup/getOvfProperty.py "guestinfo.aws_eb_advanced_options")
 CUSTOM_VEBA_TLS_PRIVATE_KEY=$(/root/setup/getOvfProperty.py "guestinfo.custom_tls_private_key")
 CUSTOM_VEBA_TLS_CA_CERT=$(/root/setup/getOvfProperty.py "guestinfo.custom_tls_ca_cert")
-DOCKER_NETWORK_CIDR=$(/root/setup/getOvfProperty.py "guestinfo.docker_network_cidr")
 POD_NETWORK_CIDR=$(/root/setup/getOvfProperty.py "guestinfo.pod_network_cidr")
 SYSLOG_SERVER_HOSTNAME=$(/root/setup/getOvfProperty.py "guestinfo.syslog_server_hostname")
 SYSLOG_SERVER_PORT=$(/root/setup/getOvfProperty.py "guestinfo.syslog_server_port")
 SYSLOG_SERVER_PROTOCOL=$(/root/setup/getOvfProperty.py "guestinfo.syslog_server_protocol")
 SYSLOG_SERVER_FORMAT=$(/root/setup/getOvfProperty.py "guestinfo.syslog_server_format")
+KUBECTL_WAIT="10m"
 LOCAL_STORAGE_DISK="/dev/sdb"
 LOCAL_STOARGE_VOLUME_PATH="/data"
 export KUBECONFIG="/root/.kube/config"
@@ -85,17 +72,6 @@ else
 		EVENT_PROVIDERS+=("horizon")
 	fi
 
-	# Determine Knative deployment model
-	if [ "${EVENT_PROCESSOR_TYPE}" == "Knative" ]; then
-		if [ ! -z ${KNATIVE_HOST} ]; then
-			KNATIVE_DEPLOYMENT_TYPE="external"
-		else
-			KNATIVE_DEPLOYMENT_TYPE="embedded"
-		fi
-	else
-		KNATIVE_DEPLOYMENT_TYPE="na"
-	fi
-
 	# Customize the POD CIDR Network if provided or else default to 10.10.0.0/16
 	if [ -z "${POD_NETWORK_CIDR}" ]; then
 		POD_NETWORK_CIDR="10.16.0.0/16"
@@ -117,13 +93,6 @@ else
 
 	ESCAPED_WEBHOOK_USERNAME=$(eval echo -n '${WEBHOOK_USERNAME}' | jq -Rs .)
 	ESCAPED_WEBHOOK_PASSWORD=$(eval echo -n '${WEBHOOK_PASSWORD}' | jq -Rs .)
-
-	ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY=$(eval echo -n '${AWS_EVENTBRIDGE_ACCESS_KEY}' | jq -Rs .)
-	ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET=$(eval echo -n '${AWS_EVENTBRIDGE_ACCESS_SECRET}' | jq -Rs .)
-	ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS=$(eval echo -n '${AWS_EVENTBRIDGE_EVENT_BUS}' | jq -Rs .)
-	ESCAPED_AWS_EVENTBRIDGE_RULE_ARN=$(eval echo -n '${AWS_EVENTBRIDGE_RULE_ARN}' | jq -Rs .)
-
-	ESCAPED_OPENFAAS_PASSWORD=$(eval echo -n '${OPENFAAS_PASSWORD}' | jq -Rs .)
 
 	cat > /root/config/veba-config.json <<EOF
 {
@@ -157,23 +126,8 @@ else
 	"WEBHOOK_ENABLED": "${WEBHOOK_ENABLED}",
 	"ESCAPED_WEBHOOK_USERNAME": ${ESCAPED_WEBHOOK_USERNAME},
 	"ESCAPED_WEBHOOK_PASSWORD": ${ESCAPED_WEBHOOK_PASSWORD},
-	"EVENT_PROCESSOR_TYPE": "${EVENT_PROCESSOR_TYPE}",
-	"KNATIVE_DEPLOYMENT_TYPE": "${KNATIVE_DEPLOYMENT_TYPE}",
-	"ESCAPED_OPENFAAS_PASSWORD": ${ESCAPED_OPENFAAS_PASSWORD},
-	"OPENFAAS_ADV_OPTION": "${OPENFAAS_ADV_OPTION}",
-	"KNATIVE_HOST": "${KNATIVE_HOST}",
-	"KNATIVE_SCHEME": "${KNATIVE_SCHEME}",
-	"KNATIVE_DISABLE_TLS": "${KNATIVE_DISABLE_TLS}",
-	"KNATIVE_PATH": "${KNATIVE_PATH}",
-	"ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY": ${ESCAPED_AWS_EVENTBRIDGE_ACCESS_KEY},
-	"ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET": ${ESCAPED_AWS_EVENTBRIDGE_ACCESS_SECRET},
-	"ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS": ${ESCAPED_AWS_EVENTBRIDGE_EVENT_BUS},
-	"AWS_EVENTBRIDGE_REGION": "${AWS_EVENTBRIDGE_REGION}",
-	"ESCAPED_AWS_EVENTBRIDGE_RULE_ARN": ${ESCAPED_AWS_EVENTBRIDGE_RULE_ARN},
-	"AWS_EVENTBRIDGE_ADV_OPTION": "${AWS_EVENTBRIDGE_ADV_OPTION}",
 	"CUSTOM_VEBA_TLS_PRIVATE_KEY": "${CUSTOM_VEBA_TLS_PRIVATE_KEY}",
 	"CUSTOM_VEBA_TLS_CA_CERT": "${CUSTOM_VEBA_TLS_CA_CERT}",
-	"DOCKER_NETWORK_CIDR": "${DOCKER_NETWORK_CIDR}",
 	"POD_NETWORK_CIDR": "${POD_NETWORK_CIDR}",
 	"SYSLOG_SERVER_HOSTNAME": "${SYSLOG_SERVER_HOSTNAME}",
 	"SYSLOG_SERVER_PORT": "${SYSLOG_SERVER_PORT}",
@@ -196,10 +150,8 @@ EOF
 	echo -e "\e[92mStarting Kubernetes Configuration ..." > /dev/console
 	. /root/setup/setup-04-kubernetes.sh
 
-	if [ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]; then
-		echo -e "\e[92mStarting Knative Configuration ..." > /dev/console
-		. /root/setup/setup-05-knative.sh
-	fi
+	echo -e "\e[92mStarting Knative Configuration ..." > /dev/console
+	. /root/setup/setup-05-knative.sh
 
 	echo -e "\e[92mStarting VMware Event Processor Configuration ..." > /dev/console
 	. /root/setup/setup-06-event-processor.sh
@@ -213,7 +165,7 @@ EOF
 	echo -e "\e[92mStarting Ingress Router Configuration ..." > /dev/console
 	. /root/setup/setup-09-ingress.sh
 
-	if [[ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]] && [[ ! -z ${VCENTER_USERNAME_FOR_VEBA_UI} ]] && [[ ! -z ${VCENTER_PASSWORD_FOR_VEBA_UI} ]]; then
+	if [[ ! -z ${VCENTER_USERNAME_FOR_VEBA_UI} ]] && [[ ! -z ${VCENTER_PASSWORD_FOR_VEBA_UI} ]]; then
 		echo -e "\e[92mStarting Knative UI Configuration ..." > /dev/console
 		. /root/setup/setup-010-veba-ui.sh
 	fi

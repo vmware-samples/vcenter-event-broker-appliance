@@ -2,14 +2,13 @@
 # Copyright 2021 VMware, Inc. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
-# Setup Docker and Kubernetes
+# Setup Containerd and Kubernetes
 
 set -euo pipefail
 
-echo -e "\e[92mStarting Docker ..." > /dev/console
-systemctl daemon-reload
-systemctl start docker.service
-systemctl enable docker.service
+echo -e "\e[92mStarting Containerd ..." > /dev/console
+systemctl enable containerd
+systemctl start containerd
 
 echo -e "\e[92mDisabling/Stopping IP Tables  ..." > /dev/console
 systemctl stop iptables
@@ -48,13 +47,11 @@ do
     sleep 10
 done
 
-if [ "${KNATIVE_DEPLOYMENT_TYPE}" == "embedded" ]; then
-  echo -e "\e[92mDeploying Local Storage Provisioner ..." > /dev/console
-  mkdir -p ${LOCAL_STOARGE_VOLUME_PATH}/local-path-provisioner
-  chmod 777 ${LOCAL_STOARGE_VOLUME_PATH}/local-path-provisioner
-  kubectl apply -f /root/download/local-path-storage.yaml
-  kubectl patch sc local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-fi
+echo -e "\e[92mDeploying Local Storage Provisioner ..." > /dev/console
+mkdir -p ${LOCAL_STOARGE_VOLUME_PATH}/local-path-provisioner
+chmod 777 ${LOCAL_STOARGE_VOLUME_PATH}/local-path-provisioner
+kubectl apply -f /root/download/local-path-storage.yaml
+kubectl patch sc local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 
 echo -e "\e[92mCreating VMware namespaces ..." > /dev/console
 kubectl create namespace vmware-system

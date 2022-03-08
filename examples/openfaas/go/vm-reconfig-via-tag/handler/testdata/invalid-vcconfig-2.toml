@@ -1,4 +1,0 @@
-[vcenter]
-    server = "veba.local.corp"
-    password = "password1234"
-    insecure = true

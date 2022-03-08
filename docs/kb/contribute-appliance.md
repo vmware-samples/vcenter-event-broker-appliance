@@ -20,7 +20,6 @@ cta:
 * The following must be installed on your development machine:
   * [VMware OVFTool](https://www.vmware.com/support/developer/ovf/){:target="_blank"}
   * [Docker Client](https://docs.docker.com/v17.09/engine/installation/){:target="_blank"}
-  * [OpenFaaS CLI](https://github.com/openfaas/faas-cli){:target="_blank"}
   * [Packer](https://www.packer.io/intro/getting-started/install.html){:target="_blank"} (v1.6.3 or greater)
   * [jq](https://stedolan.github.io/jq/){:target="_blank"}
 * Development machine must have the firewall disabled for the duration of the build

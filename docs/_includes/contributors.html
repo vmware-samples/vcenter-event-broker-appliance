@@ -11,29 +11,18 @@
 <h2 class="mb-4 mt-3">Top Contributors</h2>    
 {% if site.people %}
 <div class="row thumbnail-grid">
-  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-    <div class="media thumbnail-item d-flex flex-column align-items-center mb-3">
-      <a href="https://www.youtube.com/watch?v=FdSJ0QxhHro" target="_blank" class="p-1 text-center">
-        <img src="{{'/assets/img/heroes/veba_banner_sm.png' | relative_url}}" alt="Person" />
-        <span id="otto-hack" class="mt-1 p-1 w-100 badge badge-secondary align-middle text-dark">
-          &bsol;&Ograve;&boxhd;&Oacute;&frasl;
-        </span>
-      </a>
-    </div>
-  </div>
   {% for person in site.github.contributors %}
+   {% if person.login == "vmwghbot" or person.login == "dependabot[bot]" %}
+    {% continue %}
+   {% endif %}
     <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
       <div class="media thumbnail-item d-flex flex-column align-items-center mb-3">
-        {% if person.login == "vmwghbot" %}
-          <!--SKIP-->
-        {% else %}
           <a href="{{person.html_url}}" target="_blank" class="p-1 text-center">
             <img src="{{ person.avatar_url }}" class="rounded-circle shadow-sm" alt="Person" />
             <span class="mt-1 p-1 w-100 badge badge-secondary align-middle">
               {{ person.login }} 
             </span>
           </a>
-        {% endif %}
       </div>
     </div>
     {% if site.peoplelimit > 0 and forloop.index >= site.people_limit %}

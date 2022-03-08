@@ -23,6 +23,7 @@ cd test
 Update the following variable names within the `docker-test-env-variable` file
 
 * SLACK_WEBHOOK_URL - Slack webhook URL
+* SLACK_MESSAGE_PRETEXT - Text displayed for Slack notification
 
 Start the container image by running the following command:
 

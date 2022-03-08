@@ -8,9 +8,7 @@ cta:
  title: Getting Started
  description: Get started with VMware Event Broker Appliance and extend your vSphere SDDC in under 60 minutes
  actions:
-    - text: Install the [Appliance with Knative](install-knative) to extend your SDDC with our [community-sourced functions](/examples-knative)
-    - text: Install the [Appliance with OpenFaaS](install-openfaas) to extend your SDDC with our [community-sourced functions](/examples)
-    - text: Install the [Appliance with AWS EventBridge](install-eventbridge) to extend your SDDC leveraging native AWS capabilities. 
+    - text: Install the [Appliance with Knative](install-knative) to extend your SDDC with our [community-sourced functions](/examples)
 ---
 
 # VMware Event Broker Appliance

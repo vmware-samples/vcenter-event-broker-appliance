@@ -1,0 +1,60 @@
+name: VMware Event Router Development Image Build
+
+# triggered on every push to development but only when changes inside
+# vmware-event-router (sub)dir(s)
+on:
+  push:
+    paths:
+      - "vmware-event-router/**"
+    branches:
+      - "development"
+
+# run all jobs with these defaults, unless specified otherwise
+defaults:
+  run:
+    shell: bash
+    working-directory: ./vmware-event-router
+
+jobs:
+  image:
+    strategy:
+      matrix:
+        go-version: ["1.17"]
+        platform: ["ubuntu-latest"]
+
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 20
+    env:
+      KO_DOCKER_REPO: us.gcr.io/daisy-284300/veba # .../router@sha256:
+    
+    steps:
+      - name: Setup ko
+        uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4
+        
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@424fc82d43fa5a37540bae62709ddcc23d9520d4 # v2.1.5
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+        
+      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
+
+      - name: Login to GCP
+        uses: google-github-actions/setup-gcloud@37a9333538a8350a13fe9d8fa03e0d4742a1ad2e # 0.5.0
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_email: ${{ secrets.GCP_EMAIL }}
+          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker --quiet
+
+      - name: Get short COMMIT and TAG
+        run: |
+          echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
+
+      - name: Build and push multi-arch image
+        run: |
+          # build and push with development tag
+          ko resolve --platform=linux/arm64,linux/amd64 --tags ${KO_COMMIT},development -BRf deploy/event-router-k8s.yaml

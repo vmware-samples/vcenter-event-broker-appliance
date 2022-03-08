@@ -14,20 +14,20 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
         with:
           fetch-depth: 1
 
       - name: Render template
         id: template
-        uses: chuhlomin/render-template@v1.2
+        uses: chuhlomin/render-template@f828bb5c72a3e3af89cb79808cea490166c6f1ce # v1.4
         with:
           template: .github/comment-template.md
           vars: |
             author: ${{ github.actor }}
 
       - name: Create comment
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/create-or-update-comment@a35cf36e5301d70b76f316e867e7788a55a31dae # v1.4.5
         with:
           issue-number: ${{ github.event.issue.number }}
           body: ${{ steps.template.outputs.result }}

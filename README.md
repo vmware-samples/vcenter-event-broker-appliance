@@ -19,7 +19,7 @@ Follow](https://img.shields.io/twitter/follow/lamw?style=social)](https://twitte
 Follow](https://img.shields.io/twitter/follow/embano1?style=social)](https://twitter.com/embano1)
 
 
-<img src="logo/veba_otto_the_orca_320x320_v2.png" align="right" height="320px"/>
+<img src="logo/veba_icon_only.png" align="right" height="320px"/>
 
 ## Table of Contents
 
@@ -111,10 +111,6 @@ appliance:
     - Incoming Webhooks
   - Supported Event Stream Processors:
     - Knative [(Website)](https://knative.dev/)
-    - OpenFaaS ([Website](https://www.openfaas.com/)) (**deprecated** for VEBA
-      appliance)
-    - AWS EventBridge ([Website](https://aws.amazon.com/eventbridge/))
-      (**deprecated** for VEBA appliance)
 - Contour ([Github](https://github.com/projectcontour/contour))
 - Kubernetes ([Github](https://github.com/kubernetes/kubernetes))
 - Photon OS ([Github](https://github.com/vmware/photon))
@@ -133,6 +129,7 @@ Public VEBA community meetings are held every **last Tuesday** in the month at
 **8AM Pacific Time (US)**.
 
 - **Zoom:** https://via.vmw.com/veba-ama
+  - **Note:** The meeting is **password protected** to mitigate abuse. Please join the VEBA Slack [channel](#other-channels) to receive the Zoom password or contact us in case of issues.
 - **Notes**: https://via.vmw.com/veba-notes
 
 ### Other Channels

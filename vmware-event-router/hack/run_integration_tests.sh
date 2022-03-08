@@ -16,9 +16,9 @@ GREEN='\033[32m'
 RESET='\033[0m'
 
 # OpenFaaS
-OF_VERSION=$(${JQBIN} '.openfaas.gitRepoTag' ${BOM_FILE})                # faas-netes version to use
+OF_VERSION=0.14.1                                                     # faas-netes version to use
 OF_TIMEOUT=3m                                                         # exit if OpenFaaS is not ready within this time
-CLI_VERSION=$(${JQBIN} '.openfaas."faas-cli"["version"]' ${BOM_FILE}) # faas-cli version
+CLI_VERSION=0.14.1                                                    # faas-cli version
 PORT_FWD="deploy/gateway 8080:8080"                                   # local/remote ports to use for port-forwarding to OpenFaaS gateway
 OKFN=of-echo                                                          # OpenFaaS function
 FAILFN=of-fail                                                        # OpenFaaS function
@@ -28,12 +28,13 @@ FN_TIMEOUT=1m                                                         # exit if 
 AWS_SECRET=secret_aws.json # when running AWS integration tests, secret file holding AWS config at index [1]
 
 # Kubernetes (kind)
-K8S_VERSION=$(${JQBIN} '.kubernetes.gitRepoTag' ${BOM_FILE})
+K8S_IMAGE=$(${JQBIN} '.kind.containers[0].name' ${BOM_FILE})
+K8S_TAG=$(${JQBIN} '.kind.containers[0].version' ${BOM_FILE})
 KINDBIN="kind"
 KIND_TIMEOUT=5m # exit if kind cluster creation does not complete within this time
 KIND_WAIT=2m    # wait for control plane to show ready
 KIND_CLUSTER="veba-integration"
-KIND_IMAGE="kindest/node:${K8S_VERSION}"
+KIND_IMAGE="${K8S_IMAGE}:${K8S_TAG}"
 #################################
 
 tmp_dir=$(mktemp -d -t ci-XXXXXXXXXX)
@@ -61,7 +62,7 @@ function cleanup() {
 trap cleanup INT TERM EXIT
 
 # create kind cluster
-cecho "---> Creating Kubernetes cluster (${K8S_VERSION}) with max wait time: ${KIND_TIMEOUT}" ${GREEN}
+cecho "---> Creating Kubernetes cluster (${K8S_TAG}) with max wait time: ${KIND_TIMEOUT}" ${GREEN}
 ${TIMEOUT_CMD} ${KIND_TIMEOUT} ${KINDBIN} create cluster --name ${KIND_CLUSTER} --wait ${KIND_WAIT} --image ${KIND_IMAGE}
 
 # generate password used by OpenFaaS for basic_auth

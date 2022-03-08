@@ -1,0 +1,31 @@
+#@ load("@ytt:overlay", "overlay")
+
+#@overlay/match by=overlay.subset({"kind":"Deployment", "metadata": {"name": "cert-manager-cainjector"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by=overlay.all, expects="1+"
+      -
+        imagePullPolicy: IfNotPresent
+
+#@overlay/match by=overlay.subset({"kind":"Deployment", "metadata": {"name": "cert-manager"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by=overlay.all, expects="1+"
+      -
+        imagePullPolicy: IfNotPresent
+
+#@overlay/match by=overlay.subset({"kind":"Deployment", "metadata": {"name": "cert-manager-webhook"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by=overlay.all, expects="1+"
+      -
+        imagePullPolicy: IfNotPresent

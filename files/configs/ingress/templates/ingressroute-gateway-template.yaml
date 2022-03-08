@@ -4,8 +4,6 @@
 #@ load("@ytt:json", "json")
 #@ fqdn = json.decode(data.values.config)["HOSTNAME"]
 
-#@ processorType = json.decode(data.values.config)["EVENT_PROCESSOR_TYPE"]
-#@ knativeDeploymentType = json.decode(data.values.config)["KNATIVE_DEPLOYMENT_TYPE"]
 #@ vebaUIUsername = json.decode(data.values.config)["ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI"]
 #@ vebaUIPassword = json.decode(data.values.config)["ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI"]
 #@ webhookEnabled = json.decode(data.values.config)["WEBHOOK_ENABLED"]
@@ -14,10 +12,8 @@
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
-  #@ if processorType == "Knative" and knativeDeploymentType == "embedded":
   annotations:
     kubernetes.io/ingress.class: contour-external
-  #@ end
   labels:
     app: vmware
   name: event-router
@@ -89,25 +85,16 @@ spec:
       minimumProtocolVersion: "1.2"
       secretName: #@ data.values.secretName
   includes:
-  #@ if processorType == "Knative" and knativeDeploymentType == "embedded":
   - name: sockeye
     namespace: vmware-functions
-  #@ end
   - name: cadvisor
     namespace: vmware-system
-  #@ if processorType == "OpenFaaS":
-  - name: gateway
-    namespace: openfaas
-  #@ end
-#@ if processorType == "Knative":
 ---
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
-  #@ if knativeDeploymentType == "embedded":
   annotations:
     kubernetes.io/ingress.class: contour-external
-  #@ end
   name: sockeye
   namespace: vmware-functions
 spec:
@@ -134,15 +121,12 @@ spec:
     services:
     - name: sockeye
       port: 80
-#@ end
 ---
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
-  #@ if processorType == "Knative" and knativeDeploymentType == "embedded":
   annotations:
     kubernetes.io/ingress.class: contour-external
-  #@ end
   labels:
     app: cadvisor
   name: cadvisor
@@ -154,18 +138,3 @@ spec:
     services:
     - name: cadvisor
       port: 8080
-#@ if processorType == "OpenFaaS":
----
-apiVersion: projectcontour.io/v1
-kind: HTTPProxy
-metadata:
-  name: gateway
-  namespace: openfaas
-spec:
-  routes:
-  - conditions:
-    - prefix: /
-    services:
-    - name: gateway
-      port: 8080
-#@ end

@@ -23,7 +23,7 @@ faqs:
   - Q: How long does it take for the functions to be invoked upon an event being generated?
     A: Instantaneous to a few seconds! The function execution itself is not considered in this answer since that is dependent on the logic that is being implemented.
   - Q: Can I setup the VMware Event Broker Appliance components on Kubernetes?
-    A: Yes! Follow the steps provided [here](/kb/advanced-deploy-k8s).
+    A: Yes! Follow the steps provided [here](/kb/event-router#deployment).
   - Q: Can I use a private registry like e.g. [Harbor](https://goharbor.io/) to have a source of truth for my functions (images)?
     A: Yes! Follow the steps provided [here](https://rguske.github.io/post/using-harbor-with-the-vcenter-event-broker-appliance/).
   - Q: How can I monitor the Appliance, the Kubernetes components as well as the functions (pods) in terms of utilization, performance and state?

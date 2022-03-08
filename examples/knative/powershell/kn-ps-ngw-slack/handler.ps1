@@ -66,7 +66,7 @@ Function Process-Handler {
                      short = "false";
                   }
                )
-               footer_icon = "https://raw.githubusercontent.com/vmware-samples/vcenter-event-broker-appliance/development/logo/veba_otto_the_orca_320x320.png";
+               footer_icon = "https://raw.githubusercontent.com/vmware-samples/vcenter-event-broker-appliance/development/logo/veba_icon_only.png";
                footer = "Powered by VEBA";
          }
       )

@@ -66,7 +66,7 @@ Linux/Mac:
 docker run --rm \
   --volume="$PWD:/srv/jekyll" \
   --publish 4000:4000 \
-  jekyll/jekyll \
+  jekyll/jekyll:3.8 \
   jekyll serve
 ```
 
@@ -75,8 +75,21 @@ Windows:
 docker run --rm `
   --volume="${PWD}:/srv/jekyll" `
   --publish 4000:4000 `
-  jekyll/jekyll `
+  jekyll/jekyll:3.8 `
   jekyll serve
+```
+> Note: You may see a warning saying `Auto-regeneration may not work on some
+> Windows versions.` Symptoms of this warning are the inability to automatically
+> see any local website changes in your browser. This makes website changes
+> difficult as you must restart Jekyll after every local change to view the
+> results. To work around this issue, try the `--force-polling` switch to the
+> `jekyll serve` command.
+```powershell
+docker run --rm `
+  --volume="${PWD}:/srv/jekyll" `
+  --publish 4000:4000 `
+  jekyll/jekyll `
+  jekyll serve --force-polling
 ```
 
 Step 3 - Once the server is ready, you can open a browser to `http://localhost:4000` to review the documentation locally. If you need to change the default port (`4000`), modify the `--publish` arguments from step 2.

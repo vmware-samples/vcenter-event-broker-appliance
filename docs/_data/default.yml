@@ -19,12 +19,6 @@ toc:
       - page: VEBA (Knative)
         id: install-knative
         url: /kb/install-knative
-      - page: VEBA (OpenFaaS)
-        id: install-openfaas
-        url: /kb/install-openfaas
-      - page: VEBA (AWS EventBridge)
-        id: install-eventbridge
-        url: /kb/install-eventbridge
 
   - title: Use
     subfolderitems:
@@ -67,6 +61,9 @@ toc:
       - page: Deploy Event Router to Kind
         id: site-resources
         url: /kb/deploy-event-router-kind
+      - page: In-depth Function Tutorial
+        id: function-tutorial-intro
+        url: /kb/function-tutorial-intro
       - page: Replace TLS Certificates on VEBA
         id: advanced-certificates
         url: /kb/advanced-certificates

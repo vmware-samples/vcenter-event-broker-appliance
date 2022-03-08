@@ -1,5 +1,8 @@
 # kn-ps-slack-vsphere-alarm
-Example Knative PowerShell function for sending to a Slack webhook when a vSphere Alarm is triggered leveraging [Knative Flows (Sequence and Parallel)](https://knative.dev/docs/eventing/flows/) constructs. The example below currently forwards all "enriched" vSphere Alarm Events to the function. To restrict or limit the function applicability, you can filter on the specific vSphere Alarm name. For further details, please refer to the `handler.ps1` example.
+
+Example Knative PowerShell function for sending to a Slack webhook when a vSphere Alarm is triggered leveraging [Knative Flows (Sequence and Parallel)](https://knative.dev/docs/eventing/flows/) constructs. This example also uses (deploys) the [vSphere Alarm Server](https://github.com/embano1/vsphere-alarm-server) to enrich vSphere Alarms with useful information, reduce the number of vCenter roundtrips (latency) and simplify the logic of the function in this example.
+
+The example below currently forwards **all** "enriched" vSphere Alarm Events to the function. To restrict or limit the function applicability, you can filter on the specific vSphere Alarm name. For further details, please refer to the `handler.ps1` example.
 
 ![](screenshots/enhanced-vsphere-alarm-slack-1.png)
 
@@ -26,7 +29,7 @@ cd test
 
 Update the following variable names within the `docker-test-env-variable` file
 
-* SLACK_WEBHOOK_URL - Slack webhook URL
+* `SLACK_WEBHOOK_URL` - Slack webhook URL
 
 Start the container image by running the following command:
 
@@ -122,15 +125,21 @@ Successfully sent Webhook ...
 
 # Step 3 - Deploy
 
-> **Note:** The following steps assume a working Knative environment using the
+The following steps assume a working Knative environment using the
 `default` Rabbit `broker`. The Knative `service` and `trigger` will be installed in the
 `vmware-functions` Kubernetes namespace, assuming that the `broker` is also available there.
+
+## Push Image
+
+> **Note** this step is only required if you made changes to the function code. Otherwise you can skip the `docker push` and use the image provided in this example.
 
 Push your container image to an accessible registry such as Docker once you're done developing and testing your function logic.
 
 ```console
 docker push <docker-username>/kn-ps-slack-vsphere-alarm:${TAG}
 ```
+
+## Create vCenter Secret
 
 Update the `slack_secret.json` file with your Slack webhook configurations and then create the kubernetes secret which can then be accessed from within the function by using the environment variable named called `SLACK_SECRET`.
 
@@ -149,27 +158,32 @@ Create the kubernetes `vsphere-credentials ` secret which will be used by the vS
 kubectl -n vmware-functions create secret generic vsphere-credentials --from-literal=username=<vcenter-username> --from-literal=password=<vcenter-password>
 ```
 
-Download the latest deployment manifest for vSphere Alarm Server
+## Deploy the vSphere Alarm Server
+
+Download the latest deployment manifest for the [vSphere Alarm Server](https://github.com/embano1/vsphere-alarm-server).
+
 ```console
-export RELEASE=v0.2.2
-curl -L -O https://github.com/embano1/vsphere-alarm-server/releases/download/${RELEASE}/release.yaml
+curl -L -O https://github.com/embano1/vsphere-alarm-server/releases/latest/download/release.yaml
 ```
 
 Edit the `release.yaml` file and update the `VCENTER_URL` to the vCenter Server. You may also need to update the value of `VCENTER_INSECURE` if a self-signed TLS certificate is being used by the vCenter Server.
 
-Deploy the vSphere Alarm Server service
+Deploy the vSphere Alarm Server.
 ```console
 kubectl -n vmware-functions apply -f release.yaml
 ```
 
-Deploy the Knative In-Memory Channel which is required when using Knative Sequence and Parallels
+## Deploy In-Memory Channel
+
+Deploy the Knative In-Memory Channel which is required when using Knative `Sequence` and `Parallels` since the RabbitMQ `broker` currently does not support these.
 
 ```console
 kubectl apply -f in-memory-channel.yaml
 ```
 
-Edit the `parallel.yaml` file with the name of the container image from Step 1 if you made any changes. If not, the default VMware container image will suffice.
+## Deploy the Function and its Components
 
+Edit the `parallel.yaml` file with the name of the container image from Step 1 **if you made any changes to the function code**. If not, the default VMware container image will suffice and you can keep the defaults.
 
 Deploy the functions to the VMware Event Broker Appliance (VEBA).
 
@@ -188,8 +202,7 @@ annotations:
 # Step 4 - Undeploy
 
 ```console
-# undeploy function
-
+# undeploy function and in-mem channel
 kubectl -n vmware-functions delete -f function.yaml
 kubectl delete -f in-memory-channel.yaml
 
