@@ -1,4 +1,107 @@
 
+<a name="v0.7.2"></a>
+## [Release v0.7.2](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.7.1...v0.7.2)
+
+> Release Date: 2022-03-08
+
+### 🐞 Fix
+
+- [fc222a9]	Update Envoy to listen on 80/443 (#803) 
+- [353fef4]	Updated fluentbit config in order to process all logs (#721) 
+- [3866a26]	Add pause container 3.5 (#800) 
+- [fa586fd]	De-interlace VEBA icon for GRUB menu (#796) 
+- [ace761c]	Ensure RabbitMQ image is pre-pulled (#795) 
+- [0770884]	Go tests in kn-go-tagging (#754) 
+
+### 💫 Feature
+
+- [40ae218]	Test scripts accept payload filename argument (#807) 
+- [40e9380]	Increase kubectl wait time (#792) 
+- [5c316f5]	Slack Function enhancment to be event agnostic + customized message (#785) 
+- [fdf5c64]	PowerCLI example function to enforce VDS pg configs (#771) 
+- [f5f4d6f]	PowerCLI example function to enforce VDS configs (#758) 
+
+### 📃 Documentation
+
+- [8588b34]	Update VEBA Evolution page w/v0.7.2 release (#814) 
+- [11f9c4e]	Clarified naming a new function (#810) 
+- [7fef73d]	Update architecture and docs (#794) 
+- [1e9613c]	Add Zoom password note (#790) 
+- [6944c78]	Remove OpenFaaS links from website (#770)  (#776) 
+- [4033a78]	Create Knative PowerCLI template (#773) 
+- [642163e]	Add new DVS functions to website (#778) 
+- [8398dce]	Update event router config path (#764) 
+- [c92bad1]	Add Let's Encrypt documentation (#759) 
+- [6a7e6da]	Update router docs for new build (#645) 
+- [e781d7f]	Add Windows instructions for Jekyll (#761) 
+- [97994ad]	Hide bot contributors, remove Otto
+- [d3d2409]	Update Alarms Example (#750) 
+
+### 🧹 Chore
+
+- [37a80c7]	Update to Photon OS 4.0 Rev2 (#788) 
+- [b1382b7]	Use BOM version in Knative workflow (#782) 
+- [474d9f3]	Use SHA IDs in Github workflows (#780) 
+- [44a1040]	Update to 6 x vCPU due additional resource requirements (#766) 
+- [918bc05]	Remove Docker CIDR & Processor Type from VEBA deployment script (#765) 
+- [a5f5c2b]	Update Knative Serving/Eventing stack to v1.1.0 (#509) 
+- [d92fde8]	update workflows (#645) 
+- [f0697f8]	push to GCR with ko (#645) 
+- [f1939c3]	remove Go vendor (#645) 
+- [440910a]	Migrate container runtime from Docker to Containerd (#674) 
+- [106b380]	Update K8s to v1.21.5 (#508) 
+- [55c3d80]	Remove support for External Knative Processor
+- [c14bd5d]	Remove OpenFaaS Processor
+- [bcfa8ed]	Remove EventBridge Processor
+- [892b424]	Update repo with new VEBA logo (#748) 
+
+### ⚠️ BREAKING
+
+### 📖 Commits
+
+- [12af139]	Bump version to v0.7.2 for release
+- [8588b34]	docs: Update VEBA Evolution page w/v0.7.2 release (#814)
+- [b5e260b]	Bump version to release-0.7.2
+- [11f9c4e]	docs: Clarified naming a new function (#810)
+- [40ae218]	feat: Test scripts accept payload filename argument (#807)
+- [fc222a9]	fix: Update Envoy to listen on 80/443 (#803)
+- [353fef4]	fix: Updated fluentbit config in order to process all logs (#721)
+- [3866a26]	fix: Add pause container 3.5 (#800)
+- [fa586fd]	fix: De-interlace VEBA icon for GRUB menu (#796)
+- [ace761c]	fix: Ensure RabbitMQ image is pre-pulled (#795)
+- [7fef73d]	docs: Update architecture and docs (#794)
+- [40e9380]	feat: Increase kubectl wait time (#792)
+- [1e9613c]	docs: Add Zoom password note (#790)
+- [6944c78]	docs: Remove OpenFaaS links from website (#770) (#776)
+- [37a80c7]	chore: Update to Photon OS 4.0 Rev2 (#788)
+- [5c316f5]	feat: Slack Function enhancment to be event agnostic + customized message (#785)
+- [4033a78]	docs: Create Knative PowerCLI template (#773)
+- [36d28ad]	docs:add function tutorial (#736)
+- [b1382b7]	chore: Use BOM version in Knative workflow (#782)
+- [474d9f3]	chore: Use SHA IDs in Github workflows (#780)
+- [642163e]	docs: Add new DVS functions to website (#778)
+- [fdf5c64]	feat: PowerCLI example function to enforce VDS pg configs (#771)
+- [8398dce]	docs: Update event router config path (#764)
+- [f5f4d6f]	feat: PowerCLI example function to enforce VDS configs (#758)
+- [44a1040]	chore: Update to 6 x vCPU due additional resource requirements (#766)
+- [918bc05]	chore: Remove Docker CIDR & Processor Type from VEBA deployment script (#765)
+- [a5f5c2b]	chore: Update Knative Serving/Eventing stack to v1.1.0 (#509)
+- [c92bad1]	docs: Add Let's Encrypt documentation (#759)
+- [6a7e6da]	docs: Update router docs for new build (#645)
+- [d92fde8]	chore: update workflows (#645)
+- [f0697f8]	chore: push to GCR with ko (#645)
+- [f1939c3]	chore: remove Go vendor (#645)
+- [e781d7f]	docs: Add Windows instructions for Jekyll (#761)
+- [440910a]	chore: Migrate container runtime from Docker to Containerd (#674)
+- [106b380]	chore: Update K8s to v1.21.5 (#508)
+- [97994ad]	docs: Hide bot contributors, remove Otto
+- [55c3d80]	chore: Remove support for External Knative Processor
+- [0770884]	fix: Go tests in kn-go-tagging (#754)
+- [c14bd5d]	chore: Remove OpenFaaS Processor
+- [d3d2409]	docs: Update Alarms Example (#750)
+- [bcfa8ed]	chore: Remove EventBridge Processor
+- [892b424]	chore: Update repo with new VEBA logo (#748)
+
 <a name="v0.7.1"></a>
 ## [Release v0.7.1](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.7.0...v0.7.1)
 
