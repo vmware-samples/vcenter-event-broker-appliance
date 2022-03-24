@@ -25,6 +25,8 @@ This tutorial will go over:
 - [The big picture](#the-big-picture)
 - [The anatomy of a VEBA function](#the-anatomy-of-a-veba-function)
 - [Installing required tools on your workstation](#installing-required-tools-on-your-workstation)
+- [macOS Instructions](#macos-instructions)
+- [Windows Instructions](#windows-instructions)
 
 ## The big picture
 VEBA functions provide the "custom" logic to the VEBA appliance to fulfil your business requirements.  Functions are packaged as Docker images.  The functions can be written in PowerShell, Python, Go, or just about any language, and are packaged and distributed as Docker images.  This is because the VEBA appliance runs Kubernetes (on top of the Photon OS) and functions are deployed as containers on the Kubernetes system.  Kubernetes provides an abstraction layer to allow containers to run seamlessly on disparate hardware/OSes.
@@ -62,12 +64,10 @@ You will need to install and configure/use three tools:
 
 Note: even if the function's code is not modified, Docker will still be necessary to run local tests of the function from your workstation.
 
-Install instructions for the required tools follow:
+Install instructions for the required tools on macOS are below.  Install instructions for Windows follow after the macOS instructions.
 
 
-{% tabs install %}
-
-{% tab install#macOS%}
+## macOS Instructions
 
 ### Install `git` and clone the repo to your workstation
 
@@ -195,9 +195,7 @@ vmware-system        Active   14d
 ```
 
 
-{% endtab %}
-
-{% tab install#Windows %}
+## Windows Instructions
 
 ### Install `git` and clone the repo to your workstation
 
@@ -326,8 +324,3 @@ vmware-functions     Active   14d
 vmware-system        Active   14d
 
 ```
-
-
-{% endtab %}
-
-{% endtabs %}
