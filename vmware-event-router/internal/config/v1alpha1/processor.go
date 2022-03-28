@@ -56,7 +56,7 @@ type ProcessorConfigEventBridge struct {
 	// RuleARN is the ARN of the rule to use for configuring pattern matching and event forwarding
 	// TODO (@mgasch): deprecate and support 1..n rules per given eventbus
 	RuleARN string `yaml:"ruleARN" json:"ruleARN" jsonschema:"required,default=arn:aws:events:us-west-1:1234567890:rule/vmware-event-router"`
-	// Auth sets the AWS authentication credentials. Only aws_access_key is
+	// Auth sets the AWS authentication credentials. Only aws_access_key or aws_iam_role is
 	// supported.
 	Auth *AuthMethod `yaml:"auth,omitempty" json:"auth,omitempty" jsonschema:"oneof_required=auth,description=Authentication configuration for this section"`
 }
