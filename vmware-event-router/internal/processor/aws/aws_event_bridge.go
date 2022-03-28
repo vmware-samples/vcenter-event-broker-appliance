@@ -85,6 +85,9 @@ type eventPattern struct {
 // NewEventBridgeProcessor returns an AWS EventBridge processor for the given
 // configuration
 func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEventBridge, ms metrics.Receiver, log logger.Logger, opts ...Option) (*EventBridgeProcessor, error) {
+	// Initialize awsSession for the AWS SDK client
+	var awsSession *session.Session
+
 	awsLog := log
 	if zapSugared, ok := log.(*zap.SugaredLogger); ok {
 		proc := strings.ToUpper(string(config.ProcessorEventBridge))
@@ -107,13 +110,6 @@ func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEve
 		return nil, errors.New("no AWS EventBridge configuration found")
 	}
 
-	if cfg.Auth == nil || cfg.Auth.AWSAccessKeyAuth == nil {
-		return nil, fmt.Errorf("invalid %s credentials: accessKey and secretKey must be set", config.AWSAccessKeyAuth)
-	}
-
-	accessKey := cfg.Auth.AWSAccessKeyAuth.AccessKey
-	secretKey := cfg.Auth.AWSAccessKeyAuth.SecretKey
-
 	if cfg.Region == "" {
 		return nil, errors.New("region must be specified")
 	}
@@ -126,16 +122,38 @@ func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEve
 		return nil, errors.New("event bus must be specified")
 	}
 
-	awsSession, err := session.NewSession(&aws.Config{
-		Region: aws.String(cfg.Region),
-		Credentials: credentials.NewStaticCredentials(
-			accessKey,
-			secretKey,
-			"", // a token will be created when the session is used.
-		),
-	})
-	if err != nil {
-		return nil, errors.Wrap(err, "create AWS session")
+	// Check the Auth Method to determine how the Session should be established
+	if cfg.Auth.Type == "aws_access_key" {
+		if cfg.Auth == nil || cfg.Auth.AWSAccessKeyAuth == nil {
+			return nil, fmt.Errorf("invalid %s credentials: accessKey and secretKey must be set", config.AWSAccessKeyAuth)
+		}
+		accessKey := cfg.Auth.AWSAccessKeyAuth.AccessKey
+		secretKey := cfg.Auth.AWSAccessKeyAuth.SecretKey
+
+		awsSessionAccessKey, err := session.NewSession(&aws.Config{
+			Region: aws.String(cfg.Region),
+			Credentials: credentials.NewStaticCredentials(
+				accessKey,
+				secretKey,
+				"", // a token will be created when the session is used.
+			),
+		})
+		if err != nil {
+			return nil, errors.Wrap(err, "create AWS session")
+		}
+		// Set the AWS Session to the IAM Role authenticated session
+		awsSession = awsSessionAccessKey
+	}
+	if cfg.Auth.Type == "aws_iam_role" {
+		// Create Session without additional options will load credentials region, and profile loaded from the environment and shared config automatically
+		awsSessionIam, err := session.NewSession(&aws.Config{
+			Region: aws.String(cfg.Region),
+		})
+		if err != nil {
+			return nil, errors.Wrap(err, "create AWS session")
+		}
+		// Set the AWS Session to the IAM Role authenticated session
+		awsSession = awsSessionIam
 	}
 
 	eventBridge.session = *awsSession
