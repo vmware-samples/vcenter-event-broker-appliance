@@ -85,25 +85,18 @@ docker.io/<docker username>/<container image name>:<TAG>
 ## Introduction to the Kubernetes vmware-functions namespace
 With the Docker image pushed to the registry, we are now ready to deploy the function to the VEBA appliance.  Remember, you will need to copy the Kubernetes config file to your workstation and export the `KUBECONFIG` environment variable so that the `kubectl` command can access the Kubernetes cluster on the VEBA appliance.  We will use `kubectl` to deploy the function.  Below is a reminder of the steps we used to copy and use the VEBA appliance config file.  Getting the Kubernetes config file was covered in the intro [Function Tutorial - Function Intro](function-tutorial-intro).  If you have opened a new terminal window, you may need to set the `KUBECONFIG` environment variable once more for the current session.
 
-{% tabs export KUBECONFIG %}
-
-{% tab export KUBECONFIG#macOS%}
+**Hint:** KUBECONFIG export for macOS:
 
 ```
 export KUBECONFIG=$HOME/veba/config
 ```
 
-{% endtab %}
-
-{% tab export KUBECONFIG#Windows %}
+**Hint:** KUBECONFIG export for Windows:
 
 ```
 Env:KUBECONFIG="$HOME\veba\config"
 ```
 
-{% endtab %}
-
-{% endtabs %}
 
 Kubernetes namespaces are resource boundaries within the cluster.  Function related resources in the VEBA appliance are segregated into the "vmware-functions" namespace.  Use `kubectl` to list out the resources in the vmware-functions namespace:
 
@@ -306,7 +299,7 @@ We have used `kubectl get` and `kubectl apply` in the above examples.  The follo
 
 
 ### describe ###
-The `kubectl describe` command is very useful and shows details about Kubernetes objects like pods.  Remember, we need to explicitely set the namespace if not "default".
+The `kubectl describe` command is very useful and shows details about Kubernetes objects like pods.  Remember, we need to explicitly set the namespace if not "default".
 
 ```
 kubectl -n vmware-functions get pods
