@@ -98,8 +98,10 @@ Function Process-Handler {
    } 
 
    $arguments = $cloudEventData.Arguments | Out-String
-   Write-Host "$(Get-Date) - DEBUG: CloudEventDataArguments:`n $arguments"
-   Write-Host "$(Get-Date) - DEBUG: VM name: $vmname"
+   if (${env:FUNCTION_DEBUG} -eq "true") {
+      Write-Host "$(Get-Date) - DEBUG: CloudEventDataArguments:`n $arguments"
+      Write-Host "$(Get-Date) - DEBUG: VM name: $vmname"
+   }
 
    # Get VM object from vCenter
    try {
