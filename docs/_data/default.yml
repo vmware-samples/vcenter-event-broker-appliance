@@ -69,7 +69,7 @@ toc:
         url: /kb/advanced-certificates
       - page: Using Private Container Registry with VEBA
         id: private-registry
-        external_url: /kb/private-registry
+        url: /kb/private-registry
       - page: Monitoring VEBA with vROps
         id: site-resources
         external_url: https://rguske.github.io/post/monitoring-the-vmware-event-broker-appliance-with-vrealize-operations-manager/
