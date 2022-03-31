@@ -32,7 +32,7 @@ if [ -n "${HTTP_PROXY}" ] || [ -n "${HTTPS_PROXY}" ]; then
             else
                 HTTP_PROXY_URL="${HTTP_PROXY_PROTOCOL}://${HTTP_PROXY_SERVER_PORT}"
             fi
-            echo "HTTP_PROXY=\"${HTTP_PROXY_URL}\"" >> ${PROXY_CONF}
+            echo "HTTP_PROXY='${HTTP_PROXY_URL}'" >> ${PROXY_CONF}
             sed -i "/^\[Install\]/i Environment=HTTP_PROXY=${HTTP_PROXY_URL}" ${CONTAINERD_CONF}
         else
 	    echo -e "\e[91mInvalid HTTP Proxy URL supplied" > /dev/console
@@ -49,7 +49,7 @@ if [ -n "${HTTP_PROXY}" ] || [ -n "${HTTPS_PROXY}" ]; then
             else
                 HTTPS_PROXY_URL="${HTTPS_PROXY_PROTOCOL}://${HTTPS_PROXY_SERVER_PORT}"
             fi
-            echo "HTTPS_PROXY=\"${HTTPS_PROXY_URL}\"" >> ${PROXY_CONF}
+            echo "HTTPS_PROXY='${HTTPS_PROXY_URL}'" >> ${PROXY_CONF}
             sed -i "/^\[Install\]/i Environment=HTTPS_PROXY=${HTTPS_PROXY_URL}" ${CONTAINERD_CONF}
         else
 	    echo -e "\e[91mInvalid HTTPS Proxy URL supplied" > /dev/console
