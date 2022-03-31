@@ -16,7 +16,7 @@ if ! hash jq 2>/dev/null; then
     exit 1
 fi
 
-if [[ ! -z $(git status -s) ]]; then
+if [[ ! -z $(git status -s | grep -vE 'photon-builder.json|test/.*\.sh') ]]; then
     echo "Dirty Git repository, please clean up any untracked files or commit them before building"
     exit
 fi

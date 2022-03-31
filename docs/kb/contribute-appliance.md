@@ -13,8 +13,9 @@ cta:
 
 ## Requirements
 
-* 4 vCPU and 8GB of memory for VMware Event Broker Appliance
+* 6 vCPU and 8GB of memory for VMware Event Broker Appliance
 * ESXi host v6.7 or greater
+  * Datastore with at least 60GB of free space
   * SSH must be enabled on the host
   * Enable GuestIPHack on the host by running `esxcli system settings advanced set -o /Net/GuestIPHack -i 1`
 * The following must be installed on your development machine:
@@ -23,6 +24,7 @@ cta:
   * [Packer](https://www.packer.io/intro/getting-started/install.html){:target="_blank"} (v1.6.3 or greater)
   * [jq](https://stedolan.github.io/jq/){:target="_blank"}
 * Development machine must have the firewall disabled for the duration of the build
+> **Note:** It has been seen that Packer can bind to an IPv6 on the development machine - you may wish to disable IPv6!
 * Development machine must be on the same L2 subnet as the target VM portgroup defined in `builder_host_portgroup` below
 
 
