@@ -10,7 +10,7 @@
             <Label>Hostname</Label>
             <Description>Hostname (FQDN) of system</Description>
         </Property>
-        <Property ovf:key="guestinfo.ipaddress" ovf:type="string" ovf:userConfigurable="true">
+        <Property ovf:key="guestinfo.ip_address" ovf:type="string" ovf:userConfigurable="true">
             <Label>IP Address</Label>
             <Description>IP Address of the system</Description>
         </Property>
@@ -22,15 +22,15 @@
             <Label>Gateway</Label>
             <Description>Gateway of the system</Description>
         </Property>
-        <Property ovf:key="guestinfo.dns" ovf:type="string" ovf:userConfigurable="true">
+        <Property ovf:key="guestinfo.dns_server" ovf:type="string" ovf:userConfigurable="true">
             <Label>DNS</Label>
             <Description>DNS Servers (space separated)</Description>
         </Property>
-        <Property ovf:key="guestinfo.domain" ovf:type="string" ovf:userConfigurable="true">
+        <Property ovf:key="guestinfo.dns_domain" ovf:type="string" ovf:userConfigurable="true">
             <Label>DNS Domain</Label>
             <Description>DNS Domain</Description>
         </Property>
-        <Property ovf:key="guestinfo.ntp" ovf:type="string" ovf:userConfigurable="true">
+        <Property ovf:key="guestinfo.ntp_server" ovf:type="string" ovf:userConfigurable="true">
             <Label>NTP</Label>
             <Description>NTP Servers (space separated)</Description>
         </Property>
@@ -77,20 +77,20 @@
             <Label>vCenter Password</Label>
             <Description>Password to login to vCenter Server</Description>
         </Property>
-        <Property ovf:key="guestinfo.vcenter_veba_ui_username" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+        <Property ovf:key="guestinfo.vcenter_username_for_veba_ui" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>vCenter Username to register VEBA UI</Label>
             <Description>Username to register VMware Event Broker UI to vCenter Server for Knative Processor (optional)</Description>
         </Property>
-        <Property ovf:key="guestinfo.vcenter_veba_ui_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+        <Property ovf:key="guestinfo.vcenter_password_for_veba_ui" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>vCenter Password to register VEBA UI</Label>
             <Description>Password to register VMware Event Broker UI to vCenter Server for Knative Processor (optional)</Description>
         </Property>
-        <Property ovf:key="guestinfo.vcenter_disable_tls_verification" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+        <Property ovf:key="guestinfo.vcenter_disable_tls" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Disable vCenter Server TLS Verification</Label>
             <Description>Disable TLS Verification for vCenter Server (required for self-sign certificate)</Description>
         </Property>
      <Category>Horizon</Category>
-        <Property ovf:key="guestinfo.horizon" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+        <Property ovf:key="guestinfo.horizon_enabled" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Enable Horizon Event Provider</Label>
             <Description>Enable Horizon Event Provider</Description>
         </Property>
@@ -110,12 +110,12 @@
             <Label>Horizon Password</Label>
             <Description>Password to login to Horizon Server</Description>
         </Property>
-        <Property ovf:key="guestinfo.horizon_disable_tls_verification" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+        <Property ovf:key="guestinfo.horizon_disable_tls" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Disable Horizon Server TLS Verification</Label>
             <Description>Disable TLS Verification for Horizon Server (required for self-sign certificate)</Description>
         </Property>
       <Category>Webhook</Category>
-        <Property ovf:key="guestinfo.webhook" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+        <Property ovf:key="guestinfo.webhook_enabled" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Enable Webhook Event Provider</Label>
             <Description>Enable Webhook Event Provider</Description>
         </Property>
@@ -128,11 +128,11 @@
             <Description>Password to login to webhook endpoint</Description>
         </Property>
       <Category>Custom TLS Certificate Configuration</Category>
-        <Property ovf:key="guestinfo.custom_tls_private_key" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+        <Property ovf:key="guestinfo.custom_veba_tls_private_key" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Custom VMware Event Broker Appliance TLS Certificate Private Key (Base64)</Label>
             <Description>Base64 encoded custom TLS certificate (.PEM) for the VMware Event Broker Appliance</Description>
         </Property>
-        <Property ovf:key="guestinfo.custom_tls_ca_cert" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+        <Property ovf:key="guestinfo.custom_veba_tls_ca_cert" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Custom VMware Event Broker Appliance TLS Certificate Authority Certificate (Base64)</Label>
             <Description>Base64 encoded custom TLS certificate (.CER) for the VMware Event Broker Appliance</Description>
         </Property>
@@ -154,7 +154,7 @@
             <Description>Choose the Syslog Protocol Format</Description>
         </Property>
       <Category>zAdvanced</Category>
-        <Property ovf:key="guestinfo.debug" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+        <Property ovf:key="guestinfo.veba_debug" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Debugging</Label>
             <Description>Enable Debugging</Description>
         </Property>

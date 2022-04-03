@@ -97,8 +97,8 @@
     },
     {
       "type": "file",
-      "source": "files/getOvfProperty.py",
-      "destination": "/root/setup/getOvfProperty.py"
+      "source": "files/getOvfProperties.py",
+      "destination": "/root/setup/getOvfProperties.py"
     },
     {
       "type": "file",

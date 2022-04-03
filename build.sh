@@ -18,7 +18,7 @@ fi
 
 if [[ ! -z $(git status -s | grep -vE 'photon-builder.json|test/.*\.sh') ]]; then
     echo "Dirty Git repository, please clean up any untracked files or commit them before building"
-    exit
+    exit 1
 fi
 
 rm -f output-vmware-iso/*.ova
