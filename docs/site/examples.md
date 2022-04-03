@@ -150,6 +150,9 @@ examples:
     links:
     - language: powercli
       url: "/tree/master/examples/knative/powercli/kn-pcli-nsx-tag-sync"
+    - language: go
+      url: "/tree/master/examples/knative/go/kn-go-nsx-tag-sync"
+
 
   - title: vSphere Tagging
     usecases:
