@@ -67,9 +67,9 @@ toc:
       - page: Replace TLS Certificates on VEBA
         id: advanced-certificates
         url: /kb/advanced-certificates
-      - page: Using Harbor with VEBA
-        id: site-resources
-        external_url: https://rguske.github.io/post/using-harbor-with-the-vcenter-event-broker-appliance/
+      - page: Using Private Container Registry with VEBA
+        id: private-registry
+        url: /kb/private-registry
       - page: Monitoring VEBA with vROps
         id: site-resources
         external_url: https://rguske.github.io/post/monitoring-the-vmware-event-broker-appliance-with-vrealize-operations-manager/

@@ -28,7 +28,7 @@ The VMware Event Broker Appliance can be deployed using the Knative event proces
 
 ## Knative
 
-Users who directly want to jump into VMware vSphere-related function code might want to check out the examples we provide [here](/examples/knative).
+Users who directly want to jump into VMware vSphere-related function code might want to check out the examples we provide [here](/examples).
 
 ### Knative Naming and Version Control
 
