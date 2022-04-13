@@ -9,7 +9,7 @@ const (
 	// AWSAccessKeyAuth represents the AWS IAM authentication method using access key and secret key
 	AWSAccessKeyAuth AuthMethodType = "aws_access_key"
 	// AWSIAMRoleAuth represents the AWS IAM authentication method using temporary credentials provided
-	// by Security Token Service (STS). Intended for use as IAM role with a Kubernetes service account 
+	// by Security Token Service (STS). Intended for use as IAM role with a Kubernetes service account
 	// for use case of running under the Amazon EKS.
 	AWSIAMRoleAuth AuthMethodType = "aws_iam_role"
 	// 	ActiveDirectory represents the MS Active Directory domain/user/password scheme
