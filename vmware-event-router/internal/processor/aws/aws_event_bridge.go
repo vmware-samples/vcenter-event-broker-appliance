@@ -123,7 +123,11 @@ func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEve
 	}
 
 	// Check the Auth Method to determine how the Session should be established
+<<<<<<< HEAD
 	if cfg.Auth.Type == config.AWSAccessKeyAuth {
+=======
+	if cfg.Auth.Type == "aws_access_key" {
+>>>>>>> ae5805a29f4084619b15fe7bd3df469026788d5c
 		if cfg.Auth == nil || cfg.Auth.AWSAccessKeyAuth == nil {
 			return nil, fmt.Errorf("invalid %s credentials: accessKey and secretKey must be set", config.AWSAccessKeyAuth)
 		}
@@ -144,9 +148,14 @@ func NewEventBridgeProcessor(ctx context.Context, cfg *config.ProcessorConfigEve
 		// Set the AWS Session to the IAM Role authenticated session
 		awsSession = awsSessionAccessKey
 	}
+<<<<<<< HEAD
 	if cfg.Auth.Type == config.AWSIAMRoleAuth {
 		// Create Session without additional options will load credentials region,
 		// and profile loaded from the environment and shared config automatically
+=======
+	if cfg.Auth.Type == "aws_iam_role" {
+		// Create Session without additional options will load credentials region, and profile loaded from the environment and shared config automatically
+>>>>>>> ae5805a29f4084619b15fe7bd3df469026788d5c
 		awsSessionIam, err := session.NewSession(&aws.Config{
 			Region: aws.String(cfg.Region),
 		})

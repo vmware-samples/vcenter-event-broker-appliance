@@ -8,9 +8,13 @@ const (
 	BasicAuth AuthMethodType = "basic_auth"
 	// AWSAccessKeyAuth represents the AWS IAM authentication method using access key and secret key
 	AWSAccessKeyAuth AuthMethodType = "aws_access_key"
+<<<<<<< HEAD
 	// AWSIAMRoleAuth represents the AWS IAM authentication method using temporary credentials provided
 	// by Security Token Service (STS). Intended for use as IAM role with a Kubernetes service account 
 	// for use case of running under the Amazon EKS.
+=======
+	// AWSIAMRoleAuth represents the AWS IAM authentication method using temporary credentials provided by Security Token Service (STS). Intended for use as IAM role with a Kubernetes service account for use case of running under the Amazon EKS.
+>>>>>>> ae5805a29f4084619b15fe7bd3df469026788d5c
 	AWSIAMRoleAuth AuthMethodType = "aws_iam_role"
 	// 	ActiveDirectory represents the MS Active Directory domain/user/password scheme
 	ActiveDirectory AuthMethodType = "active_directory"
