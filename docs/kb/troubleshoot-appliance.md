@@ -5,7 +5,7 @@ title: VMware Event Broker Appliance Troubleshooting
 description: Troubleshooting guide for general appliance issues
 permalink: /kb/troubleshoot-appliance
 cta:
- title: Still having trouble? 
+ title: Still having trouble?
  description: Please submit bug reports and feature requests by using our GitHub [Issues](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues){:target="_blank"} page or Join us on slack [#vcenter-event-broker-appliance](https://vmwarecode.slack.com/archives/CQLT9B5AA){:target="_blank"} on vmwarecode.slack.com.
 ---
 # VMware Event Broker Appliance - Troubleshooting
@@ -74,7 +74,10 @@ vmware-system        vmware-event-router-5dd9c8f858-5c9mh                  0/1  
 
 > **Note:** The status ```Completed``` of the container ```contour-certgen-v1.10.0-btmlp``` is expected after successful appliance deployment.
 
-One of the first things to look for is whether a pod is in a crash state. In this case, the vmware-event-router pod is crashing. We need to look at the logs with this command:
+One of the first things to look for is whether a pod is in a crash state.
+
+### Recovering from a crashing event router pod
+In the above case, the vmware-event-router pod is crashing. We need to look at the logs with this command:
 
 ```bash
 kubectl -n vmware-system logs vmware-event-router-5dd9c8f858-5c9mh
@@ -167,6 +170,17 @@ Here is the command output:
 
 We now see that the Event Router came online, connected to vCenter, and successfully received an event.
 
+### Check for completed installation
+
+If the pods appear to be up without a crash status, check to make sure the installation completed. The file `/root/ran_customzation` gets created when installation completes successfully. If this file is missing, you can turn to the installation logs to find out why.
+```bash
+root@veba [ ~ ]# ls -al /root/ran_customization
+-rw-r--r-- 1 root root 0 Oct  1  2021 /root/ran_customization
+```
+
+### Examine log files
+
+The appliance installation log file is found in `/var/log/bootstrap.log`. If enabled at install time, a debug log is available in `/var/log/bootstrap-debug.log`. The logs should point you toward the source of the issue. Don't hesitate to [reach out](#bottom) to the team if you need help.
 ## Changing the vCenter service account
 
 If you need to change the account the appliance uses to connect to vCenter, the procedure above can be used.
@@ -293,3 +307,4 @@ Here is the command output:
    }
 }
 ```
+<a name="bottom"></a>
