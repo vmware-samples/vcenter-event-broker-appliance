@@ -33,6 +33,15 @@ examples:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-email"
 
+  - title: Host Maintenance Alarm Actions
+    usecases:
+    - item: notification
+    id: kn-pcli-hostmaint-alarms
+    description: Automatically disables alarm actions when a host enters maintenance mode, enables alarm action when a host exits maintenance mode.
+    links:
+    - language: powercli
+      url: "/tree/master/examples/knative/powercli/kn-pcli-hostmaint-alarms"
+
   - title: Slack Notification
     usecases:
     - item: integration
