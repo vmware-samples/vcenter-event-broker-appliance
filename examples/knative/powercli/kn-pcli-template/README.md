@@ -90,7 +90,11 @@ Next, locate the `ConfigSpec` section of the JSON file. Change the `MaxMTU` prop
 **WARNING** - This function will reconfigure your distributed virtual switch - if your MTU is not set to 1500, it will be reset by this function.
 ---
 
-In a separate terminal, run either `send-cloudevent-test.ps1` (PowerShell Script) or `send-cloudevent-test.sh` (Bash Script) to simulate a CloudEvent payload being sent to the local container image. When run with no arguments, the scripts will send the contents of `test-payload.json` as the payload. If you pass the scripts a different filename as an argument, they will send the contents of the specified file instead. Example: `send-cloudevent-test.ps1 test-payload2.json`. This testing technique is useful when writing complex functions with varying payloads.
+In a separate terminal, run either `send-cloudevent-test.ps1` (PowerShell Script) or `send-cloudevent-test.sh` (Bash Script) to simulate a CloudEvent payload being sent to the local container image. When run with no arguments, the scripts will send the contents of `test-payload.json` as the payload. If you pass the scripts a different filename as an argument, they will send the contents of the specified file instead. Example: `send-cloudevent-test.ps1 test-payload2.json`. 
+
+You can also send a custom event subject as an argument. The default event is `DvsReconfiguredEvent`. Example: `send-cloudevent-test.ps1 test-payload2.json EnteredMaintenanceModeEvent` will send `test-payload2.json` with a subject of `EnteredMaintenanceModeEvent`. 
+
+These testing technique are useful when writing complex functions with varying payloads, or when writing functions with separate triggers on different events.
 
 ```console
 Testing Function ...
