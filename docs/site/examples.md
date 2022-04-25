@@ -95,6 +95,15 @@ examples:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-ngw-slack"
 
+  - title: VMware HA Notification
+    usecases:
+    - item: notification
+    id: kn-pcli-ha-restarted-vms
+    description: Function to send an e-mail notification after an HA event. The email includes a list of VMs and timestamps showing when each VM was restarted by HA.
+    links:
+    - language: powercli
+      url: "/tree/master/examples/knative/powercli/kn-pcli-ha-restarted-vms"
+
   - title: VMware Horizon Notification
     usecases:
     - item: integration

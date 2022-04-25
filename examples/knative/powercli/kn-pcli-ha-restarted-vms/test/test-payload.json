@@ -1,0 +1,35 @@
+{
+	"Key": 929015,
+	"ChainId": 929015,
+	"CreatedTime": "2022-04-25T17:29:48.171999Z",
+	"UserName": "",
+	"Datacenter": {
+	  "Name": "DC1",
+	  "Datacenter": {
+		"Type": "Datacenter",
+		"Value": "datacenter-47"
+	  }
+	},
+	"ComputeResource": {
+	  "Name": "CL1",
+	  "ComputeResource": {
+		"Type": "ClusterComputeResource",
+		"Value": "domain-c52"
+	  }
+	},
+	"Host": null,
+	"Vm": null,
+	"Ds": null,
+	"Net": null,
+	"Dvs": null,
+	"FullFormattedMessage": "vSphere HA completed a virtual machine failover action in cluster CL1 in datacenter DC1",
+	"ChangeTag": "",
+	"EventTypeId": "com.vmware.vc.HA.ClusterFailoverActionCompletedEvent",
+	"Severity": "info",
+	"Message": "",
+	"Arguments": null,
+	"ObjectId": "domain-c52",
+	"ObjectType": "ClusterComputeResource",
+	"ObjectName": "CL1",
+	"Fault": null
+  }
