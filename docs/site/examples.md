@@ -229,6 +229,15 @@ examples:
     links: 
     - language: python
       url: "/tree/master/examples/knative/python/kn-py-vro"
+
+  - title: Zapier workflow integration
+    usecases:
+    - item: integration
+    id: kn-ps-zapier-function
+    description: Trigger a Zapier workflow, passing select CloudEvent data to a Zapier webhook
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-zapier"
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 
