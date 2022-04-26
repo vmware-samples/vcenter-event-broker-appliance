@@ -7,6 +7,7 @@ Delete this section before publishing your new function
 	- handler.ps1
 	- README.md
 	- function_secret.json (rename the file)
+	- function.yaml
 - Obtain a new payload file
 	- The example `test/test-payload.json` is a sample event payload file for event type `DvsReconfiguredEvent`. This needs to be replaced with the payload for your specific event. This is easily obtained using the built-in Sockeye service. Browse to the `/events` endpoint of your VEBA deployment and cause your event to trigger. You can then can easily copy and paste the payload from the output in Sockeye.
 # kn-pcli-#REPLACE-FN-NAME#
