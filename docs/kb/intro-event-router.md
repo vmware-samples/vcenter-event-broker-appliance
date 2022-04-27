@@ -97,6 +97,7 @@ not retried and discarded.
   - [The `auth` section](#the-auth-section)
     - [Type `basic_auth`](#type-basic_auth)
     - [Type `aws_access_key`](#type-aws_access_key)
+    - [Type `aws_iam_role`](#type-aws_iam_role)
     - [Type `active_directory`](#type-active_directory)
   - [The `metricsProvider` section](#the-metricsprovider-section)
     - [Provider Type `default`](#provider-type-default)
@@ -463,7 +464,7 @@ as an event `processor`.
 | `region`   | String | AWS region to use, see [regions doc](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html). | true     | `us-west-1`                                                            |
 | `eventBus` | String | Name of the event bus to use                                                                                                            | true     | `default` or `arn:aws:events:us-west-1:1234567890:event-bus/customBus` |
 | `ruleARN`  | String | Rule ARN to use for event pattern matching                                                                                              | true     | `arn:aws:events:us-west-1:1234567890:rule/vmware-event-router`         |
-| `<auth>`   | Object | AWS IAM role credentials                                                                                                                | true     | (see `aws_access_key` example below)                                   |
+| `<auth>`   | Object | AWS IAM role credentials                                                                                                                | true     | (see `aws_access_key` and `aws_iam_role` examples below)               |
 
 ## The `auth` section
 
@@ -490,6 +491,9 @@ Supported providers/processors:
 
 ### Type `aws_access_key`
 
+Use an AWS IAM role with the provided access key ID and secret access key for
+authentication.
+
 Supported providers/processors:
 
 - `aws_event_bridge`
@@ -501,8 +505,48 @@ Supported providers/processors:
 | `awsAccessKeyAuth.accessKey` | String | Access Key ID for the IAM role used         | true     | `ABCDEFGHIJK`    |
 | `awsAccessKeyAuth.secretKey` | String | Secret Access Key for the IAM role used     | true     | `ZYXWVUTSRQPO`   |
 
-> **Note:** Currently only IAM user accounts with access key/secret are
-> supported to authenticate against AWS EventBridge. Please follow the [user
+> **Note:** Please follow the EventBridge IAM [user
+> guide](https://docs.aws.amazon.com/eventbridge/latest/userguide/getting-set-up-eventbridge.html)
+> before deploying the event router. Further information can also be found in
+> the
+> [authentication](https://docs.aws.amazon.com/eventbridge/latest/userguide/auth-and-access-control-eventbridge.html#authentication-eventbridge)
+> section.
+
+In addition to the recommendation in the AWS EventBridge user guide you might
+want to lock down the IAM role for the VMware Event Router and scope it to these
+permissions ("Action"):
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VisualEditor0",
+      "Effect": "Allow",
+      "Action": [
+        "events:PutEvents",
+        "events:ListRules",
+        "events:TestEventPattern"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+### Type `aws_iam_role`
+
+Use an AWS IAM role configured from the shared credentials file.
+
+Supported providers/processors:
+
+- `aws_event_bridge`
+
+| Field  | Type   | Description                  | Required | Example        |
+|--------|--------|------------------------------|----------|----------------|
+| `type` | String | Authentication method to use | true     | `aws_iam_role` |
+
+> **Note:** Please follow the EventBridge IAM [user
 > guide](https://docs.aws.amazon.com/eventbridge/latest/userguide/getting-set-up-eventbridge.html)
 > before deploying the event router. Further information can also be found in
 > the
