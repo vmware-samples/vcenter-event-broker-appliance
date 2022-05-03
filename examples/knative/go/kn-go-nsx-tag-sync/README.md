@@ -242,7 +242,7 @@ autoscaler will then create multiple instances of the function.
 
 ### Example
 
-To handle up to **100 concurrent** tagging events if the default values (FIFO
+To handle up to **200 concurrent** tagging events if the default values (FIFO
 semantics) are not appropriate:
 
 *Trigger settings:*
