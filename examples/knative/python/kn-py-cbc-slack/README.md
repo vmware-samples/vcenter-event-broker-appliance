@@ -2,7 +2,9 @@
 
 A pair of example Python functions one of which triggers when a VM is created and the other when VM is deleted. When a VM is created the Carbon Black Cloud API is contacted and sensor enablement initiated. When a VM is deleted the Carbon Black Cloud API is contacted and the stale VM resource record is removed.
 
-If your happy deploying latest public image skip straight to Step 4.  If you would like to rceate new refreshed image in private registry follow Steps 1-4.
+The use cases for these are slightly different so we have included functions to deply them seperately or together.  The function-deploy.yaml would be used in situations where new virtual machines are being created using powercli for example and Carbon Black is not pre installed, in this scenario we are automating the deployment of a Carbon Black sensor whenever a new VM is deployed.  The function-remove.yaml might be used on its own in a VDI environment where the clones are pre-installed with Carbon Black but they are deleted whenever logged off without informing the Carbon Black Cloud Console that this device no longer exisits.  In this scenario we are house keeping the console and removing sensors as they are removed from vCenter.  The function-both.yaml can be used if you have both use cases, the secrets are shared between the deployments so you only need to create them once.
+
+If you are making changes to the handler.py logic or want to host your own images in a private registry then you will need to recreate the images as below in steps 1 to 4.  If you are happy deploying the latest public image skip straight to Step 4.
 
 ## Step 1 - Build image
 
@@ -38,21 +40,21 @@ As this is running in interactive mode, you should see Stdout displayed of Flask
  * Debugger PIN: 994-125-687
  ```
 
-In a separate terminal window, go to the test directory and edit the `deploy.json` file to to include a VM name registered within CBC but without sensor enabled.
+In a separate terminal window, go to the test directory and edit the `deploy.json` file to to include a VM name registered within CBC but without sensor enabled,  or `remove.json` to include a VM name removed from vcenter but still registered within CBC.
 
 ```json
 "Vm": 
     {"Name": "new-vm",
 ```
 
-Simulate CloudEvent being posted to the function using cURL to make HTTP POST of the test json.
+Simulate CloudEvent being posted to the function using cURL to make HTTP POST of the appropriate test json.
 
 ```console
 cd test
 curl -i -d@deploy.json localhost:8080
 ```
 
-If you check back to the interactive Stdout from container image ou should see the POST being recieved and output from the function:
+If you check back to the interactive Stdout from container image you should see the POST being recieved and output from the function:
 
 ```console
 * Serving Flask app "handler.py" (lazy loading)
@@ -69,7 +71,7 @@ If you check back to the interactive Stdout from container image ou should see t
 2021-05-26 18:56:27,720 INFO werkzeug Thread-3 : 172.17.0.1 - - [26/May/2021 18:56:27] "POST / HTTP/1.1" 204 -
 ```
 
-Check the Carbon Black Cloud UI and ensure the sensor installation has been started.
+Check the Carbon Black Cloud UI and ensure the sensor installation has been started or the stale record removed.
 
 Once you are happy the function behaves as expected push the container image to container registry.
 
@@ -79,19 +81,19 @@ docker push <container-registry>/kn-py-cbc-deploy:1.0
 
 Repeat test by starting the remove container image and using the remove.json test event.
 
-## Step 3 - Deploy function
+## Step 3 - Deploy function(s)
 
 Ensure the kubernetes manifest file `function.yaml` reflects the correct container registry, images and image versions. Adjust values of secret files to reflect values appropriate to your environment. With these complete create the Kubernetes secrets and Knative triggers and services.
 
 ```console
-# deploy function
-kubectl create secret generic cbc-ini --from-file=CBC_CONFIG_INI=./cbc-ini -n vmware-functions
-kubectl create secret generic cbc-url --from-file=CBC_URL=./cbc-url -n vmware-functions
-kubectl create secret generic cbc-org-key --from-file=CBC_ORG_KEY=./cbc-org-key -n vmware-functions
-kubectl create secret generic cbc-token --from-file=CBC_TOKEN=./cbc-token -n vmware-functions
-kubectl create secret generic slack-url --from-file=SLACK_URL=./slack-url -n vmware-functions
-kubectl create secret generic sensor-ver --from-file=SENSOR_VER=./sensor-ver -n vmware-functions
-kubectl -n vmware-functions apply -f function.yaml
+# deploy secret
+kubectl create secret generic cbc-env --from-file=CBC_CONFIG_INI=./cbc-ini --from-file=CBC_URL=./cbc-url --from-file=CBC_ORG_KEY=./cbc-org-key --from-file=CBC_TOKEN=./cbc-token --from-file=SLACK_URL=./slack-url --from-file=SENSOR_VER=./sensor-ver -n vmware-functions
+# To deploy the function to install CB on new VM's
+kubectl -n vmware-functions apply -f function-deploy.yaml
+# To deploy the function to remove old vdi clones from the CBC console
+kubectl -n vmware-functions apply -f function-remove.yaml
+# To deploy both functions together
+kubectl -n vmware-functions apply -f function-both.yaml
 ```
 
 ## Step 4 - Undeploy
@@ -99,4 +101,5 @@ kubectl -n vmware-functions apply -f function.yaml
 ```console
 # undeploy function
 kubectl -n vmware-functions delete -f function.yaml
+kubectl -n vmware-functions delete secret cbc-env
 ```

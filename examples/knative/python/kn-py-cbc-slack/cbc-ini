@@ -1,6 +1,6 @@
 [customer]
-EncodedCompanyCode = 7X2KTWJQHO@RUO@R5I1LNO3@E319A
-CompanyCode = NBEA3DLZ
-BackendServer = prod01.xyz.io
-
-< UPDATE ABOVE EXAMPLE WITH YOUR DETAILS AS PER https://docs.vmware.com/en/VMware-Carbon-Black-Cloud-Workload/1.1/carbonblack_workload/GUID-F76913A8-6CFF-4805-B773-4091B71BFEBB.html#GUID-F76913A8-6CFF-4805-B773-4091B71BFEBB>
+EncodedCompanyCode = L9RJ6UZDW9K5L0439!U
+CompanyCode = VFKLWGMH
+BackendServer = dev-prod05.conferdeploy.net
+ProxyServer = 192.168.200.75:3128
+CurlCrlCheck = false

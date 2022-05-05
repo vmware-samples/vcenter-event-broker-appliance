@@ -12,20 +12,10 @@ spec:
         autoscaling.knative.dev/minScale: "0"
     spec:
       containers:
-        - image: docker.io/rimasonvmw/kn-py-cbc-deploy-sensor:1.0
+        - image: us.gcr.io/daisy-284300/veba/kn-py-cbc-deploy-sensor:1.0
           envFrom:
             - secretRef:
-                name: slack-url
-            - secretRef:
-                name: cbc-ini
-            - secretRef:
-                name: cbc-url
-            - secretRef:
-                name: cbc-org-key
-            - secretRef:
-                name: cbc-token
-            - secretRef:
-                name: sensor-ver
+                name: cbc-env
 ---
 apiVersion: eventing.knative.dev/v1
 kind: Trigger
@@ -59,20 +49,10 @@ spec:
         autoscaling.knative.dev/minScale: "0"
     spec:
       containers:
-        - image: docker.io/rimasonvmw/kn-py-cbc-remove-sensor:1.0
+        - image: us.gcr.io/daisy-284300/veba/kn-py-cbc-remove-sensor:1.0
           envFrom:
             - secretRef:
-                name: slack-url
-            - secretRef:
-                name: cbc-ini
-            - secretRef:
-                name: cbc-url
-            - secretRef:
-                name: cbc-org-key
-            - secretRef:
-                name: cbc-token
-            - secretRef:
-                name: sensor-ver
+                name: cbc-env
 ---
 apiVersion: eventing.knative.dev/v1
 kind: Trigger
