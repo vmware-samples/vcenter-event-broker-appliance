@@ -11,6 +11,15 @@ images:
   go: /assets/img/languages/go.png
   powershell: /assets/img/languages/powershell.png
 examples:
+  - title: Datastore Usage Alarm Email Notification
+    usecases:
+    - item: notification
+    id: kn-pcli-datastore-usage-email
+    description: Sends email notifications to a specified email address for datastore usage on disk alarms. Optional configuration for a per-datastore email, enabling different recipients for different datastores.
+    links:
+    - language: powercli
+      url: "/tree/master/examples/knative/powercli/kn-pcli-datastore-usage-email"
+
   - title: Echo Cloud Event for Knative
     usecases:
     - item: other
