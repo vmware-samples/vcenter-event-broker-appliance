@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(levelname)s %(name
 
 app = Flask(__name__)
 #Change the value to match the secret key in the VEBA appliance where you enter the Slack webook url information
-#url = os.environ.get('SLACK_SECRET')
+url = os.environ.get('SLACK_SECRET')
 
 @app.route('/', methods=['POST'])
 def slack():
