@@ -10,7 +10,7 @@ Flask==2.1.2
   Jinja2==3.1.2
     MarkupSafe==2.1.1
   Werkzeug==2.1.2
-pip==20.2.3
+pip==21.1
 python-dateutil==2.8.2
   six==1.16.0
 regex==2021.11.10
