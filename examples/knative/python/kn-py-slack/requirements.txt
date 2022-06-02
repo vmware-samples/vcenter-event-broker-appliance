@@ -15,5 +15,5 @@ requests==2.20.0
   certifi==2022.5.18.1
   chardet==3.0.4
   idna==2.7
-  urllib3==1.24.3
+  urllib3==1.26.5
 setuptools==49.2.1
