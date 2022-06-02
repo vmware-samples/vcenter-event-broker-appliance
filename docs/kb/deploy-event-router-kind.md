@@ -9,7 +9,7 @@ permalink: /kb/deploy-event-router-kind
 # Installation of VMware Event Router with `kind`
 
 The following steps describe the installation of the [VMware Event
-Router](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/development/vmware-event-router)
+Router](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/vmware-event-router)
 in a local [kind](https://kind.sigs.k8s.io/) cluster and [Knative](https://knative.dev/) environment.
 
 The steps assume a Mac OSX environment but the links provide resources to
