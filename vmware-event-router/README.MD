@@ -49,8 +49,8 @@ not retried and discarded.
   router crashes **within seconds** right after startup and having received *n* events but before creating the
   first valid checkpoint (current checkpoint interval is 5s)
 - If an event cannot be successfully delivered (retried) by an event `processor` it is
-  logged and discarded, i.e. there is currently no support for dead letter
-  queues (see note below)
+  logged and discarded, i.e. there is currently no support for [dead letter
+  queues](https://en.wikipedia.org/wiki/Dead_letter_queue) (see note below)
 - Retries in the [OpenFaaS event processor](#processor-type-openfaas) are only
   supported when running in synchronous mode, i.e. `async: false` (see this
   OpenFaaS [issue](https://github.com/openfaas/nats-queue-worker/issues/84))
