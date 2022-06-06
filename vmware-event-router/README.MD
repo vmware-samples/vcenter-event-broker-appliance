@@ -93,7 +93,7 @@ version: <release_tag>
 
 The following sections describe the layout of the configuration file (YAML) and
 specific options for the supported event `providers`, `processors` and `metrics`
-endpoint. Configuration examples are provided [here](deploy/).
+endpoint. Configuration examples are provided [here](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/vmware-event-router/deploy).
 
 > **Note:** Currently only one event `provider` and one event `processor` can be
 > configured at a time, e.g. one vCenter Server instance streaming events to
@@ -151,7 +151,7 @@ metricsProvider:
 ## JSON Schema Validation
 
 In order to simplify the configuration and validation of the YAML configuration
-file a JSON schema [file](README.MD) is provided. Many editors/IDEs offer
+file a JSON schema [file](https://github.com/vmware-samples/vcenter-event-broker-appliance/blob/master/vmware-event-router/routerconfig.schema.json) is provided. Many editors/IDEs offer
 support for registering a schema file, e.g.
 [Jetbrains](https://www.jetbrains.com/help/rider/Settings_Languages_JSON_Schema.html)
 and [VS
@@ -589,7 +589,7 @@ using the Knative backend.
 
 ### Helm Deployment
 
-The Helm files are located in the [chart](chart/) directory. The `values.yaml`
+The Helm files are located in the [chart](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/vmware-event-router/chart) directory. The `values.yaml`
 file contains the allowed parameters and parameter descriptions which map to the
 VMware Event Router [configuration](#overview-configuration-file-structure-yaml)
 file.
@@ -753,7 +753,7 @@ Create a namespace where the VMware Event Router will be deployed to:
 $ kubectl create namespace vmware
 ```
 
-Use one of the configuration files provided [here](deploy/) to configure the
+Use one of the configuration files provided [here](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/vmware-event-router/deploy) to configure the
 router with **one** VMware vCenter Server `eventProvider` and **one** OpenFaaS
 **or** AWS EventBridge `eventProcessor`. Change the values to match your
 environment. The following example will use the OpenFaaS config sample.
