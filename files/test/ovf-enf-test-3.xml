@@ -1,0 +1,169 @@
+Open
+Improve Appliance Setup Scripts
+#889
+dsbibby opened this issue 7 days ago · 1 comment
+Assignees
+@lamw
+Labels
+enhancement
+Milestone
+ v0.8.0
+Comments
+@dsbibby dsbibby commented 7 days ago
+Opening this issue as discussed on the May 31st VEBA Community Call to discuss improvements to the appliance setup scripts.
+
+The suggestion is to incorporate some unit testing to reduce the feedback cycle during development, and to swap out some of the parsing functionality in files/setup.sh to Python where there are libraries to help with the parsing and generation of XML, JSON, etc.
+
+@dsbibby dsbibby added the enhancement label 7 days ago
+@dsbibby dsbibby assigned lamw 7 days ago
+@lamw lamw commented yesterday
+@dsbibby As promised, here's a couple of guestinfo.ovfEnv payload capture for both simple and complex password that can help w/offline testing
+
+Simple Password
+
+# vmtoolsd --cmd "info-get guestinfo.ovfEnv"
+<?xml version="1.0" encoding="UTF-8"?>
+<Environment
+     xmlns="http://schemas.dmtf.org/ovf/environment/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:oe="http://schemas.dmtf.org/ovf/environment/1"
+     xmlns:ve="http://www.vmware.com/schema/ovfenv"
+     oe:id=""
+     ve:vCenterId="vm-35056">
+   <PlatformSection>
+      <Kind>VMware ESXi</Kind>
+      <Version>7.0.3</Version>
+      <Vendor>VMware, Inc.</Vendor>
+      <Locale>en_US</Locale>
+   </PlatformSection>
+   <PropertySection>
+         <Property oe:key="guestinfo.aws_eb_access_key" oe:value=""/>
+         <Property oe:key="guestinfo.aws_eb_access_secret" oe:value=""/>
+         <Property oe:key="guestinfo.aws_eb_advanced_options" oe:value=""/>
+         <Property oe:key="guestinfo.aws_eb_arn" oe:value=""/>
+         <Property oe:key="guestinfo.aws_eb_event_bus" oe:value=""/>
+         <Property oe:key="guestinfo.aws_eb_region" oe:value=""/>
+         <Property oe:key="guestinfo.custom_tls_ca_cert" oe:value=""/>
+         <Property oe:key="guestinfo.custom_tls_private_key" oe:value=""/>
+         <Property oe:key="guestinfo.debug" oe:value="True"/>
+         <Property oe:key="guestinfo.dns" oe:value="192.168.30.2"/>
+         <Property oe:key="guestinfo.docker_network_cidr" oe:value="172.17.0.1/16"/>
+         <Property oe:key="guestinfo.domain" oe:value="primp-industries.local"/>
+         <Property oe:key="guestinfo.enable_ssh" oe:value="True"/>
+         <Property oe:key="guestinfo.event_processor_type" oe:value="Knative"/>
+         <Property oe:key="guestinfo.gateway" oe:value="192.168.30.1"/>
+         <Property oe:key="guestinfo.horizon" oe:value="False"/>
+         <Property oe:key="guestinfo.horizon_disable_tls_verification" oe:value="False"/>
+         <Property oe:key="guestinfo.horizon_domain" oe:value=""/>
+         <Property oe:key="guestinfo.horizon_password" oe:value=""/>
+         <Property oe:key="guestinfo.horizon_server" oe:value=""/>
+         <Property oe:key="guestinfo.horizon_username" oe:value=""/>
+         <Property oe:key="guestinfo.hostname" oe:value="veba.primp-industries.local"/>
+         <Property oe:key="guestinfo.http_proxy" oe:value=""/>
+         <Property oe:key="guestinfo.https_proxy" oe:value=""/>
+         <Property oe:key="guestinfo.ipaddress" oe:value="192.168.30.9"/>
+         <Property oe:key="guestinfo.knative_disable_tls_verification" oe:value="False"/>
+         <Property oe:key="guestinfo.knative_host" oe:value=""/>
+         <Property oe:key="guestinfo.knative_path" oe:value=""/>
+         <Property oe:key="guestinfo.knative_scheme" oe:value="HTTP"/>
+         <Property oe:key="guestinfo.netmask" oe:value="24 (255.255.255.0)"/>
+         <Property oe:key="guestinfo.no_proxy" oe:value=""/>
+         <Property oe:key="guestinfo.ntp" oe:value="pool.ntp.org"/>
+         <Property oe:key="guestinfo.openfaas_advanced_options" oe:value=""/>
+         <Property oe:key="guestinfo.openfaas_password" oe:value=""/>
+         <Property oe:key="guestinfo.pod_network_cidr" oe:value="10.10.0.0/16"/>
+         <Property oe:key="guestinfo.proxy_password" oe:value=""/>
+         <Property oe:key="guestinfo.proxy_username" oe:value=""/>
+         <Property oe:key="guestinfo.root_password" oe:value="VMware1!"/>
+         <Property oe:key="guestinfo.syslog_server_format" oe:value="RFC5424"/>
+         <Property oe:key="guestinfo.syslog_server_hostname" oe:value=""/>
+         <Property oe:key="guestinfo.syslog_server_port" oe:value="514"/>
+         <Property oe:key="guestinfo.syslog_server_protocol" oe:value="TCP"/>
+         <Property oe:key="guestinfo.vcenter_disable_tls_verification" oe:value="True"/>
+         <Property oe:key="guestinfo.vcenter_password" oe:value="VMware1!"/>
+         <Property oe:key="guestinfo.vcenter_server" oe:value="vcsa.primp-industries.local"/>
+         <Property oe:key="guestinfo.vcenter_username" oe:value="veba@vsphere.local"/>
+         <Property oe:key="guestinfo.vcenter_veba_ui_password" oe:value="VMware1!"/>
+         <Property oe:key="guestinfo.vcenter_veba_ui_username" oe:value="veba-ui@vsphere.local"/>
+         <Property oe:key="guestinfo.webhook" oe:value="False"/>
+         <Property oe:key="guestinfo.webhook_password" oe:value=""/>
+         <Property oe:key="guestinfo.webhook_username" oe:value=""/>
+   </PropertySection>
+   <ve:EthernetAdapterSection>
+      <ve:Adapter ve:mac="00:50:56:a9:4c:b4" ve:network="VM Network" ve:unitNumber="7"/>
+   </ve:EthernetAdapterSection>
+</Environment>
+Complex Password
+
+# vmtoolsd --cmd "info-get guestinfo.ovfEnv"
+<?xml version="1.0" encoding="UTF-8"?>
+<Environment
+     xmlns="http://schemas.dmtf.org/ovf/environment/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:oe="http://schemas.dmtf.org/ovf/environment/1"
+     xmlns:ve="http://www.vmware.com/schema/ovfenv"
+     oe:id=""
+     ve:vCenterId="vm-35057">
+   <PlatformSection>
+      <Kind>VMware ESXi</Kind>
+      <Version>7.0.3</Version>
+      <Vendor>VMware, Inc.</Vendor>
+      <Locale>en_US</Locale>
+   </PlatformSection>
+   <PropertySection>
+         <Property oe:key="guestinfo.aws_eb_access_key" oe:value=""/>
+         <Property oe:key="guestinfo.aws_eb_access_secret" oe:value=""/>
+         <Property oe:key="guestinfo.aws_eb_advanced_options" oe:value=""/>
+         <Property oe:key="guestinfo.aws_eb_arn" oe:value=""/>
+         <Property oe:key="guestinfo.aws_eb_event_bus" oe:value=""/>
+         <Property oe:key="guestinfo.aws_eb_region" oe:value=""/>
+         <Property oe:key="guestinfo.custom_tls_ca_cert" oe:value=""/>
+         <Property oe:key="guestinfo.custom_tls_private_key" oe:value=""/>
+         <Property oe:key="guestinfo.debug" oe:value="True"/>
+         <Property oe:key="guestinfo.dns" oe:value="192.168.30.2"/>
+         <Property oe:key="guestinfo.docker_network_cidr" oe:value="172.17.0.1/16"/>
+         <Property oe:key="guestinfo.domain" oe:value="primp-industries.local"/>
+         <Property oe:key="guestinfo.enable_ssh" oe:value="True"/>
+         <Property oe:key="guestinfo.event_processor_type" oe:value="Knative"/>
+         <Property oe:key="guestinfo.gateway" oe:value="192.168.30.1"/>
+         <Property oe:key="guestinfo.horizon" oe:value="False"/>
+         <Property oe:key="guestinfo.horizon_disable_tls_verification" oe:value="False"/>
+         <Property oe:key="guestinfo.horizon_domain" oe:value=""/>
+         <Property oe:key="guestinfo.horizon_password" oe:value=""/>
+         <Property oe:key="guestinfo.horizon_server" oe:value=""/>
+         <Property oe:key="guestinfo.horizon_username" oe:value=""/>
+         <Property oe:key="guestinfo.hostname" oe:value="veba.primp-industries.local"/>
+         <Property oe:key="guestinfo.http_proxy" oe:value=""/>
+         <Property oe:key="guestinfo.https_proxy" oe:value=""/>
+         <Property oe:key="guestinfo.ipaddress" oe:value="192.168.30.9"/>
+         <Property oe:key="guestinfo.knative_disable_tls_verification" oe:value="False"/>
+         <Property oe:key="guestinfo.knative_host" oe:value=""/>
+         <Property oe:key="guestinfo.knative_path" oe:value=""/>
+         <Property oe:key="guestinfo.knative_scheme" oe:value="HTTP"/>
+         <Property oe:key="guestinfo.netmask" oe:value="24 (255.255.255.0)"/>
+         <Property oe:key="guestinfo.no_proxy" oe:value=""/>
+         <Property oe:key="guestinfo.ntp" oe:value="pool.ntp.org"/>
+         <Property oe:key="guestinfo.openfaas_advanced_options" oe:value=""/>
+         <Property oe:key="guestinfo.openfaas_password" oe:value=""/>
+         <Property oe:key="guestinfo.pod_network_cidr" oe:value="10.10.0.0/16"/>
+         <Property oe:key="guestinfo.proxy_password" oe:value=""/>
+         <Property oe:key="guestinfo.proxy_username" oe:value=""/>
+         <Property oe:key="guestinfo.root_password" oe:value="VMware1!"/>
+         <Property oe:key="guestinfo.syslog_server_format" oe:value="RFC5424"/>
+         <Property oe:key="guestinfo.syslog_server_hostname" oe:value=""/>
+         <Property oe:key="guestinfo.syslog_server_port" oe:value="514"/>
+         <Property oe:key="guestinfo.syslog_server_protocol" oe:value="TCP"/>
+         <Property oe:key="guestinfo.vcenter_disable_tls_verification" oe:value="True"/>
+         <Property oe:key="guestinfo.vcenter_password" oe:value="VMware1!"/>
+         <Property oe:key="guestinfo.vcenter_server" oe:value="vcsa.primp-industries.local"/>
+         <Property oe:key="guestinfo.vcenter_username" oe:value="veba@vsphere.local"/>
+         <Property oe:key="guestinfo.vcenter_veba_ui_password" oe:value="$VMware1!"/>
+         <Property oe:key="guestinfo.vcenter_veba_ui_username" oe:value="veba-ui@vsphere.local"/>
+         <Property oe:key="guestinfo.webhook" oe:value="True"/>
+         <Property oe:key="guestinfo.webhook_password" oe:value="V3b@"/>
+         <Property oe:key="guestinfo.webhook_username" oe:value="veba"/>
+   </PropertySection>
+   <ve:EthernetAdapterSection>
+      <ve:Adapter ve:mac="00:50:56:a9:17:73" ve:network="VM Network" ve:unitNumber="7"/>
+   </ve:EthernetAdapterSection>
+</Environment>
