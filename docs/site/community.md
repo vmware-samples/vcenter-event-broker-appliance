@@ -11,9 +11,15 @@ links:
   - description: "Follow us at "
     url: "https://twitter.com/VMWEventBroker"
     label: "@VMWEventBroker"
+- title: Github
+  image: /assets/img/icons/github.svg
+  items:
+  - description: "Follow us at "
+    url: "https://github.com/vmware-samples/vcenter-event-broker-appliance"
+    label: vcenter-event-broker-appliance
 - title: Slack
   image: /assets/img/icons/slack.svg
-  items: 
+  items:
   - description: "Join us at"
     url: "https://vmwarecode.slack.com/archives/CQLT9B5AA"
     label: "&#35;vcenter-event-broker-appliance"
@@ -25,10 +31,40 @@ links:
     label: dl-veba@vmware.com
 ---
 
+# Get in touch
+
+<div class="container pb-3 pt-0">
+  <div class="row justify-content-md-center">
+    {% for link in page.links %}
+    <div class="col-md-3 community-item text-center pt-2">
+      <div class="icon mt-2">
+        <img src="{{ link.image | relative_url }}" style="height: 45px;" alt="{{ link.title}}">
+      </div>
+      <h2 class="mt-2">{{link.title}}</h2>
+      {% for item in link.items %}
+      <div class="link-description">
+        <p class="mb-0 pb-0">{{ item.description }}</p>
+        <span class="mt-0 pt-0"><a href="{{ item.url }}" target="_blank">{{ item.label }}</a></span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
 
 The VMware Event Broker Appliance team welcomes contributions from the community and this page presents the guidelines for contributing to VMware Event Broker Appliance. 
 
-# Guidelines
+## Community Calls
+
+Public VEBA community meetings are held every **last Tuesday** in the month at
+**8AM Pacific Time (US)**.
+
+- **Zoom:** <https://via.vmw.com/veba-ama>{:target="_blank"}
+  - **Note:** The meeting is **password protected** to mitigate abuse. Please join the VEBA Slack [channel](https://vmwarecode.slack.com/archives/CQLT9B5AA){:target="_blank"} to receive the Zoom password or contact us in case of issues.
+- **Notes**: <https://via.vmw.com/veba-notes>{:target="_blank"}
+- **Recording Playlist**: [VEBA Community Calls](https://youtube.com/playlist?list=PLnopqt07fPn3hspeQvarWuFH3IiwkMpDJ){:target="_blank"}
+
+## Contributing
 
 Following the guidelines helps to make the contribution process easy,
 collaborative, and productive.
@@ -38,33 +74,6 @@ Before you start working with the VMware Event Broker Appliance, please read our
 All contributions to this repository must be signed as described on that page.
 Your signature certifies that you wrote the patch or have the right to pass it
 on as an open-source patch.
-
-## Submitting Bug Reports and Feature Requests
-
-Please submit bug reports and feature requests by using our GitHub
-[Issues](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues){:target="_blank"}
-page.
-
-Before you submit a bug report about the code in the repository, please check
-the Issues page to see whether someone has already reported the problem. In the
-bug report, be as specific as possible about the error and the conditions under
-which it occurred. On what version and build did it occur? What are the steps to
-reproduce the bug?
-
-Feature requests should fall within the scope of the project.
-
-## Pull Requests
-
-Before submitting a pull request, please make sure that your change satisfies
-the following requirements:
-- The change is signed as described by the [Developer Certificate of
-  Origin](https://cla.vmware.com/dco){:target="_blank"} doc.
-- The change is clearly documented and follows Git commit best practices (see
-  below)
-
-### Git Commit Best Practices
-
-#### Contribution Flow
 
 This is a rough outline of what a contributor's workflow looks like:
 
@@ -82,8 +91,32 @@ and **supported prefixes**, e.g. `fix: <message>`.
 > my!](https://www.mgasch.com/2021/05/git-basics/) for more details on how to
 > successfully contribute to an open source project.
 
+### Submitting Bug Reports and Feature Requests
 
-#### Format of the Commit Message
+Please submit bug reports and feature requests by using our GitHub
+[Issues](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues){:target="_blank"}
+page.
+
+Before you submit a bug report about the code in the repository, please check
+the Issues page to see whether someone has already reported the problem. In the
+bug report, be as specific as possible about the error and the conditions under
+which it occurred. On what version and build did it occur? What are the steps to
+reproduce the bug?
+
+Feature requests should fall within the scope of the project.
+
+### Pull Requests
+
+Before submitting a pull request, please make sure that your change satisfies
+the following requirements:
+
+- The change is signed as described by the [Developer Certificate of
+  Origin](https://cla.vmware.com/dco){:target="_blank"} doc.
+- The change is clearly documented and follows Git commit best practices (see
+  below)
+
+
+### Format of the Commit Message
 
 We follow the conventions described in [How to Write a Git Commit
 Message](http://chris.beams.io/posts/git-commit/).
@@ -112,19 +145,22 @@ Currently the following prefixes are used:
 If your contribution falls into multiple categories, e.g. `feat` and `fix` it is
 recommended to break up your commits using distinct prefixes.
 
-### Contributions to the Appliance 
-  - See the Build Appliance document [here](/kb/contribute-appliance)
-  - See the Build Event Router document [here](/kb/contribute-eventrouter)
-  - Requestor must verify that the VMware Event Broker Appliance can be built and deployed. 
+### Contributions to the Appliance
+
+- See the Build Appliance document [here](/kb/contribute-appliance)
+- See the Build Event Router document [here](/kb/contribute-eventrouter)
+- Requestor must verify that the VMware Event Broker Appliance can be built and deployed.
 
 ### Contributions to the Functions
-  - See the Build Functions document [here](/kb/contribute-functions)
-  - PR should contain information on how the function was tested (environment, version etc)
-  - PR should contain a titled readme and the title is listed in the [Functions](/examples) page
+
+- See the Build Functions document [here](/kb/contribute-functions)
+- PR should contain information on how the function was tested (environment, version etc)
+- PR should contain a titled readme and the title is listed in the [Functions](/examples) page
 
 ### Contributions to the Website
-  - See the Build Website document [here](/kb/contribute-functions)
-  - Requestor must verify that the website change was built and tested locally
+
+- See the Build Website document [here](/kb/contribute-functions)
+- Requestor must verify that the website change was built and tested locally
 
 Get started quickly with your contributions with our [getting started](/kb/contribute-start) guide
 
@@ -132,24 +168,4 @@ Get started quickly with your contributions with our [getting started](/kb/contr
 
 <div id="contributors-veba" class="section section-background-{{ page.backgrounds.team }} p-3">
     {% include contributors.html %}
-</div>
-
-## Get in touch
-<div class="container pb-3 pt-0">
-  <div class="row justify-content-md-center">
-    {% for link in page.links %}
-    <div class="col-md-4 community-item text-center pt-2">
-      <div class="icon mt-2">
-        <img src="{{ link.image | relative_url }}" style="height: 45px;" alt="{{ link.title}}">
-      </div>
-      <h2 class="mt-2">{{link.title}}</h2>
-      {% for item in link.items %}
-      <div class="link-description">
-        <p class="mb-0 pb-0">{{ item.description }}</p>
-        <span class="mt-0 pt-0"><a href="{{ item.url }}" target="_blank">{{ item.label }}</a></span>
-      </div>
-      {% endfor %}
-    </div>
-    {% endfor %}
-  </div>
 </div>
