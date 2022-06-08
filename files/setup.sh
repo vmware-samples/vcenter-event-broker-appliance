@@ -47,7 +47,8 @@ syslog_server_hostname
 syslog_server_port
 syslog_server_protocol
 syslog_server_format)
-eval "$(/root/setup/getOvfProperties.py ${PROPS[@]})"
+/root/setup/getOvfProperties.py ${PROPS[@]}
+source /root/config/shell_env
 # VEBA_DEBUG=$(/root/setup/getOvfProperty.py "veba_debug")
 # HOSTNAME=$(/root/setup/getOvfProperty.py "hostname" | tr '[:upper:]' '[:lower:]')
 HOSTNAME=$(echo "$HOSTNAME" | tr '[:upper:]' '[:lower:]')

@@ -7,10 +7,14 @@ import xml.parsers.expat
 import re
 import json
 from os import path
+from os.path import exists
 
-ovfenv_cmd = "/usr/bin/vmtoolsd --cmd 'info-get guestinfo.ovfEnv'"
+if exists('/.dockerenv'):
+    ovfenv_cmd = "/usr/bin/cat /root/setup/test/ovf-enf-test-1.xml"
+else:
+    ovfenv_cmd = "/usr/bin/vmtoolsd --cmd 'info-get guestinfo.ovfEnv'"
 veba_config_file = "/root/config/veba-config.json"
-
+veba_env_file = "/root/config/shell_env"
 
 def debug(s):
     sys.stderr.write(s + " \n")  # Syserr only get logged on the console logs
@@ -42,34 +46,36 @@ def main(argv):
         sys.exit(1)
 
     ovf = get_ovf_properties()
-
+    print(ovf)
     if path.isfile(veba_config_file):
         with open(veba_config_file) as fp:
             veba_config = json.load(fp)
     else:
         veba_config = {}
 
-    for property_name in argv:
-        try:
-            res = ovf[f'guestinfo.{property_name}']
-        except KeyError as err:
-            debug(f'ovfProperty not found: {err}')
-            #sys.exit(1)
+    with open(veba_env_file, 'w') as fp:
+        for property_name in argv:
+            try:
+                res = ovf[f'guestinfo.{property_name}']
+            except KeyError as err:
+                debug(f'ovfProperty not found: {err}')
+                continue
 
-        # Strip enclosing quotes if not a password
-        if not re.search('password', property_name, flags=re.IGNORECASE):
-            res = re.sub(r'^(["\'])(.*)\1$', r'\2', res)
+            # Strip enclosing quotes if not a password
+            if not re.search('password', property_name, flags=re.IGNORECASE):
+                res = re.sub(r'^(["\'])(.*)\1$', r'\2', res)
 
-        # Add the property to veba-config.json
-        veba_config[property_name.upper()] = res
+            # Add the property to veba-config.json
+            veba_config[property_name.upper()] = res
 
-        # Escape special shell characters
-        # res = re.sub("(!|\$|#|&|\"|\'|\(|\)|\||<|>|`|\\\|;)", r"\\\1", res)
-        # res = re.sub(r'([$`"\\!])', r'\\\1', res)
-        # res = re.sub("'", "'\"'\"'", res)
-        res = re.sub('"', r'\"', res)
-        # Print the result
-        print(f'{property_name.upper()}="{res}"')
+            # Escape special shell characters
+            # res = re.sub("(!|\$|#|&|\"|\'|\(|\)|\||<|>|`|\\\|;)", r"\\\1", res)
+            # res = re.sub(r'([$`"\\!])', r'\\\1', res)
+            # res = re.sub("'", "'\"'\"'", res)
+            res = re.sub('"', r'\"', res)
+
+            # Write out the result to the environment variables
+            fp.write(f'{property_name.upper()}="{res}"\n')
 
     with open(veba_config_file, 'w') as fp:
         json.dump(veba_config, fp, indent=4)

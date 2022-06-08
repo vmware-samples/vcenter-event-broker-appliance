@@ -21,7 +21,7 @@ Domain=${DNS_DOMAIN}
 __CUSTOMIZE_PHOTON__
 
 # Remove default symlink to prevent reverting back to local DNS stub resolver
-rm -f /etc/resolv.conf
+rm -f /etc/resolv.conf || true
 cat > /etc/resolv.conf <<EOF
 nameserver ${DNS_SERVER}
 search ${DNS_DOMAIN}

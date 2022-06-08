@@ -1,0 +1,23 @@
+ARG veba_version
+ARG veba_commit
+FROM photon:4.0
+WORKDIR /root
+COPY veba-bom.json config/veba-bom.json
+COPY scripts scripts
+COPY files setup
+ENV VEBA_VERSION=${veba_version}
+ENV VEBA_COMMIT=${veba_commit}
+
+RUN ln -s /usr/bin/echo /usr/local/bin/systemctl \
+ && ln -s /usr/bin/echo /usr/local/bin/hostnamectl \
+ && ln -s /usr/bin/echo /usr/local/bin/mkfs \
+ && ln -s /usr/bin/echo /usr/local/bin/mount \
+ && ln -s /usr/bin/echo /usr/local/bin/parted \
+ && ln -s /usr/bin/echo /usr/local/bin/kubeadm \
+ && ln -s /usr/bin/echo /usr/local/bin/kubectl \
+ && mkdir download \
+ && bash scripts/photon-settings.sh \
+ && touch /etc/kubernetes/admin.conf \
+ && ln -s /root/setup/configs/* /root/config
+
+CMD ["/bin/bash", "/root/setup/setup.sh"]
