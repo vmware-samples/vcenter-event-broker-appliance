@@ -41,10 +41,8 @@ const (
 	allowedRate = 1000
 )
 
-var (
-	// ErrInvalidPath is returned on an invalid webhook endpoint path
-	ErrInvalidPath = errors.New("invalid webhook endpoint path")
-)
+// ErrInvalidPath is returned on an invalid webhook endpoint path
+var ErrInvalidPath = errors.New("invalid webhook endpoint path")
 
 // Server is a webhook event provider
 type Server struct {

@@ -24,9 +24,7 @@ const (
 	endpoint    = "/stats"
 )
 
-var (
-	eventRouterStats = expvar.NewMap(mapName)
-)
+var eventRouterStats = expvar.NewMap(mapName)
 
 // Receiver receives metrics from metric providers
 type Receiver interface {
@@ -132,7 +130,6 @@ func withBasicAuth(log logger.Logger, next http.Handler, u, p string) http.Handl
 		if !ok || !(p == password && u == user) {
 			w.WriteHeader(http.StatusUnauthorized)
 			_, err := w.Write([]byte("invalid credentials"))
-
 			if err != nil {
 				log.Errorf("could not write http response: %v", err)
 			}

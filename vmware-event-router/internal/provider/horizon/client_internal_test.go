@@ -1,5 +1,4 @@
 //go:build unit
-// +build unit
 
 package horizon
 
@@ -14,7 +13,7 @@ import (
 	"time"
 
 	"go.uber.org/zap/zaptest"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 const (
@@ -300,7 +299,7 @@ func (h *horizonAPIMock) logoutHandler(w http.ResponseWriter, r *http.Request) {
 func randomToken(n int) string {
 	rand.Seed(time.Now().Unix())
 
-	var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+	letter := []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 	b := make([]rune, n)
 	for i := range b {
 		b[i] = letter[rand.Intn(len(letter))]
