@@ -18,10 +18,11 @@ require (
 	github.com/openfaas-incubator/connector-sdk v0.0.0-20200902074656-7f648543d4aa
 	github.com/openfaas/faas-provider v0.15.1
 	github.com/pkg/errors v0.9.1
+	github.com/timbray/quamina v0.2.0
 	github.com/vmware/govmomi v0.24.1-0.20210210035757-ed60338583b0
 	go.uber.org/zap v1.16.0
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
-	gotest.tools v2.2.0+incompatible
+	gotest.tools/v3 v3.2.0
 	k8s.io/api v0.18.8
 	k8s.io/apimachinery v0.18.8
 	k8s.io/client-go v0.18.8
@@ -45,7 +46,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.4.3 // indirect
-	github.com/google/go-cmp v0.5.2 // indirect
+	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/googleapis/gnostic v0.4.0 // indirect

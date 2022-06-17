@@ -1,24 +1,16 @@
 package aws
 
 import (
-	"time"
+	"github.com/aws/aws-sdk-go/service/eventbridge/eventbridgeiface"
 )
 
 // Option configures the AWS processor
 // TODO: change signature to return errors
 type Option func(*EventBridgeProcessor)
 
-// WithResyncInterval configures the interval to sync AWS EventBridge event
-// pattern rules
-func WithResyncInterval(interval time.Duration) Option {
+// WithClient uses the specified EventBridge client, e.g. useful in testing
+func WithClient(client eventbridgeiface.EventBridgeAPI) Option {
 	return func(aws *EventBridgeProcessor) {
-		aws.resyncInterval = interval
-	}
-}
-
-// WithBatchSize sets the batch size for PutEvents requests
-func WithBatchSize(size int) Option {
-	return func(aws *EventBridgeProcessor) {
-		aws.batchSize = size
+		aws.EventBridgeAPI = client
 	}
 }
