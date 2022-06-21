@@ -22,7 +22,7 @@ jobs:
     name: Build binaries
     strategy:
       matrix:
-        go-version: ["1.17"]
+        go-version: ["1.18"]
         platform: ["ubuntu-latest"]
 
     runs-on: ${{ matrix.platform }}
@@ -30,16 +30,16 @@ jobs:
 
     steps:
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@424fc82d43fa5a37540bae62709ddcc23d9520d4 # v2.1.5
+        uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923
         with:
           go-version: ${{ matrix.go-version }}
         id: go
         
       - name: Check out code
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
 
       - name: GoReleaser Snapshot
-        uses: goreleaser/goreleaser-action@79d4afbba1b4eff8b9a98e3d2e58c4dbaf094e2b # v2.8.1
+        uses: goreleaser/goreleaser-action@68acf3b1adf004ac9c2f0a4259e85c5f66e99bef
         with:
           version: latest
           args: release --rm-dist --snapshot
@@ -48,7 +48,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Archive run artifacts
-        uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8
         with:
           name: dist
           path: |
@@ -60,7 +60,7 @@ jobs:
     name: Verify Release ko artifact (no upload)
     strategy:
       matrix:
-        go-version: ["1.17"]
+        go-version: ["1.18"]
         platform: ["ubuntu-latest"]
 
     runs-on: ${{ matrix.platform }}
@@ -73,13 +73,13 @@ jobs:
         uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4
 
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@424fc82d43fa5a37540bae62709ddcc23d9520d4 # v2.1.5
+        uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923
         with:
           go-version: ${{ matrix.go-version }}
         id: go
         
       - name: Check out code
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
 
       - name: Get short COMMIT and TAG
         run: |
@@ -92,7 +92,7 @@ jobs:
           ko resolve --platform=linux/arm64,linux/amd64 --push=false --tags ${KO_TAG},${KO_COMMIT},latest -BRf deploy/event-router-k8s.yaml > release.yaml
 
       - name: Archive run artifacts
-        uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8
         with:
           name: release
           path: |
