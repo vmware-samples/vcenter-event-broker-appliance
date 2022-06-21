@@ -1,11 +1,10 @@
 //go:build integration
-// +build integration
 
 package integration_test
 
 import "github.com/vmware/govmomi/vim25/types"
 
-//nolint
+// nolint
 func newVMPoweredOnEvent() types.BaseEvent {
 	return &types.VmPoweredOnEvent{
 		VmEvent: types.VmEvent{
@@ -24,12 +23,12 @@ func newVMPoweredOnEvent() types.BaseEvent {
 	}
 }
 
-//nolint
+// nolint
 func newLicenseEvent() types.BaseEvent {
 	return types.BaseEvent(&types.LicenseEvent{})
 }
 
-//nolint
+// nolint
 func newClusterCreatedEvent() types.BaseEvent {
 	return types.BaseEvent(&types.ClusterCreatedEvent{})
 }

@@ -283,7 +283,7 @@ func (vc *EventStream) stream(ctx context.Context, p processor.Processor, collec
 			path := fullPath(f, dir)
 
 			// always create/overwrite (existing) checkpoint
-			file, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
+			file, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o600)
 			if err != nil {
 				return errors.Wrap(err, "create checkpoint file")
 			}

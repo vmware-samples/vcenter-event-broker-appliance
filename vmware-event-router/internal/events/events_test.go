@@ -1,5 +1,4 @@
 //go:build unit
-// +build unit
 
 package events
 
@@ -9,7 +8,7 @@ import (
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/vmware/govmomi/vim25/types"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 )
 
 func Test_GetEventDetails(t *testing.T) {

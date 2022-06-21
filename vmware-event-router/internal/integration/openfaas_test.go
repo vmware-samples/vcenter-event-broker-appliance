@@ -1,4 +1,4 @@
-// +build integration,openfaas
+//go:build integration && openfaas
 
 package integration_test
 

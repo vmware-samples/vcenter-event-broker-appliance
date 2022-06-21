@@ -1,5 +1,4 @@
 //go:build unit
-// +build unit
 
 package horizon_test
 
@@ -15,7 +14,7 @@ import (
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/logger"
 
 	"go.uber.org/zap/zaptest"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 	"knative.dev/pkg/logging"
 
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"

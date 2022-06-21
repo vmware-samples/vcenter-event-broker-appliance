@@ -21,9 +21,7 @@ const (
 	format               = "cp-%s.json" // cp-<vc_hostname>.json
 )
 
-var (
-	errInvalidEvent = errors.New("invalid event")
-)
+var errInvalidEvent = errors.New("invalid event")
 
 // checkpoint represents a checkpoint object
 type checkpoint struct {
@@ -48,9 +46,7 @@ type checkpoint struct {
 // (i.e. default values) and it is the caller's responsibility to check for
 // validity using time.IsZero() on any timestamp.
 func getCheckpoint(ctx context.Context, host, dir string) (cp *checkpoint, path string, err error) {
-	var (
-		skip bool
-	)
+	var skip bool
 
 	file := fileName(host)
 	path = fullPath(file, dir)
@@ -90,7 +86,7 @@ func initCheckpoint(_ context.Context, fullPath string) (*checkpoint, error) {
 	dir := filepath.Dir(fullPath)
 
 	// create if not exists
-	err := os.MkdirAll(dir, 0755)
+	err := os.MkdirAll(dir, 0o755)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create checkpoint directory")
 	}
@@ -102,7 +98,7 @@ func initCheckpoint(_ context.Context, fullPath string) (*checkpoint, error) {
 		return nil, errors.Wrap(err, "could not marshal checkpoint to JSON object")
 	}
 
-	err = ioutil.WriteFile(fullPath, jsonBytes, 0600)
+	err = ioutil.WriteFile(fullPath, jsonBytes, 0o600)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not write checkpoint file")
 	}

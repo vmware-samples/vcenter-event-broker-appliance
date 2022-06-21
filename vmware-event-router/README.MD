@@ -35,7 +35,7 @@ to normalize events from the supported event `providers`. See
   - with the [Horizon event provider](#provider-type-horizon)
   - with the [vcsim event provider](#provider-type-vcsim)
 
-**Note:** All implemented event `processors` use built-in retry mechanisms so
+> **Note:** All implemented event `processors` use built-in retry mechanisms so
 your function might still be involved multiple times depending on its response
 code. However, if an event `provider` crashes before sending an event to the
 configured `processor` or when the `processor` returns an error, the event is
@@ -382,15 +382,21 @@ only forwards events configured in the associated `rule` of an event bus. Rules
 in AWS EventBridge use pattern matching
 ([docs](https://docs.aws.amazon.com/eventbridge/latest/userguide/filtering-examples-structure.html)).
 Upon start, VMware Event Router contacts EventBridge (using the given IAM role)
-to parse and extract event categories from the configured rule ARN (see
-configuration option below).
+to parse the configured rule ARN (see configuration option below).
 
-The VMware Event Router uses the `"subject"` field in the event payload to store
-the event category, e.g. `"VmPoweredOnEvent"`. Thus it is required that you use
-a **specific pattern match** (`"detail->subject"`) that the VMware Event Router
-can parse to retrieve the desired event (forwarding) categories. For example,
-the following AWS EventBridge event pattern rule matches power on/off events
-(including DRS-enabled clusters):
+The VMware Event Router uses the pattern match library which supports a subset
+of the EventBridge pattern rules. You may only use these supported patterns in
+your specified EventBridge rule. Refer to [this
+page](https://github.com/timbray/quamina/blob/v0.2.0/PATTERNS.md) for the
+currently supported patterns in `Quamina`.
+
+> **Note:** EventBridge wraps each VMware Event Router event (CloudEvent) into
+> an EventBridge message envelop. The `detail` field contains the JSON
+> representation of the full CloudEvent as produced by the VMware Event Router.
+
+The following examples show supported and useful patterns.
+
+Example: Forward all CloudEvents containing one of the specified `subjects`:
 
 ```json
 {
@@ -400,10 +406,34 @@ the following AWS EventBridge event pattern rule matches power on/off events
 }
 ```
 
-`"subject"` can contain one or more event categories. Wildcards (`"*"`) are not
-supported. If one wants to modify the event pattern match rule **after**
-deploying the VMware Event Router, its internal rules cache is periodically
-synchronized with AWS EventBridge at a fixed interval of 5 minutes.
+Example: Forward all CloudEvents containing a `subject` with the prefix `Vm`:
+
+```json
+{
+  "detail": {
+    "subject": [{
+      "shellstyle": "Vm*"
+    }]
+  }
+}
+```
+
+Example: Forward all CloudEvents containing virtual machines with the prefix
+`Linux`:
+
+```json
+{
+  "detail": {
+    "data": {
+      "Vm": {
+        "Name": [{
+          "shellstyle": "Linux*"
+        }]
+      }
+    }
+  }
+}
+```
 
 > **Note:** A list of event names (categories) and how to retrieve them can be
 > found

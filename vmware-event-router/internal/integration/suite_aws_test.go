@@ -1,12 +1,19 @@
-// +build integration,aws
+//go:build integration && aws
 
 package integration_test
 
 import (
 	"context"
 	"os"
+	"sync/atomic"
 	"testing"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/request"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/eventbridge"
+	"github.com/aws/aws-sdk-go/service/eventbridge/eventbridgeiface"
 	. "github.com/onsi/ginkgo"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
@@ -28,6 +35,16 @@ func (r receiveFunc) Receive(stats *metrics.EventStats) {
 	r(stats)
 }
 
+type mockClient struct {
+	eventbridgeiface.EventBridgeAPI
+	sent int32 // number events sent
+}
+
+func (m *mockClient) PutEventsWithContext(ctx aws.Context, input *eventbridge.PutEventsInput, opts ...request.Option) (*eventbridge.PutEventsOutput, error) {
+	atomic.AddInt32(&m.sent, 1)
+	return m.EventBridgeAPI.PutEventsWithContext(ctx, input, opts...)
+}
+
 var (
 	ctx context.Context
 	log *zap.SugaredLogger
@@ -35,6 +52,7 @@ var (
 	awsProcessor processor.Processor
 	cfg          *config.ProcessorConfigEventBridge
 	receiver     receiveFunc
+	ebClient     *mockClient
 )
 
 func TestAWS(t *testing.T) {
@@ -75,3 +93,24 @@ var _ = BeforeSuite(func() {
 })
 
 var _ = AfterSuite(func() {})
+
+func createClient(cfg *config.ProcessorConfigEventBridge) *mockClient {
+	accessKey := cfg.Auth.AWSAccessKeyAuth.AccessKey
+	secretKey := cfg.Auth.AWSAccessKeyAuth.SecretKey
+
+	awsSessionAccessKey, err := session.NewSession(&aws.Config{
+		Region: aws.String(cfg.Region),
+		Credentials: credentials.NewStaticCredentials(
+			accessKey,
+			secretKey,
+			"", // a token will be created when the session is used.
+		),
+	})
+
+	Expect(err).ShouldNot(HaveOccurred())
+
+	client := eventbridge.New(awsSessionAccessKey)
+	Expect(client).ToNot(BeNil())
+
+	return &mockClient{EventBridgeAPI: client}
+}

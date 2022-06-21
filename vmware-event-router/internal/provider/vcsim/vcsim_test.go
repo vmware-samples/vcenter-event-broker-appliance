@@ -1,5 +1,4 @@
 //go:build unit
-// +build unit
 
 package vcsim
 
@@ -135,8 +134,7 @@ func Test_eventHandler(t *testing.T) {
 }
 
 // fakeProcessor implements the processor interface
-type fakeProcessor struct {
-}
+type fakeProcessor struct{}
 
 func (f fakeProcessor) PushMetrics(_ context.Context, _ metrics.Receiver) {
 }

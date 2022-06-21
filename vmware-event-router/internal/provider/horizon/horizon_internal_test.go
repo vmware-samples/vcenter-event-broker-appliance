@@ -1,5 +1,4 @@
 //go:build unit
-// +build unit
 
 package horizon
 
@@ -16,7 +15,7 @@ import (
 	ce "github.com/cloudevents/sdk-go/v2"
 	"github.com/jpillora/backoff"
 	"go.uber.org/zap/zaptest"
-	"gotest.tools/assert"
+	"gotest.tools/v3/assert"
 
 	config "github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/config/v1alpha1"
 	"github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router/internal/logger"
@@ -192,7 +191,7 @@ func (f *fakeClient) GetEvents(_ context.Context, _ Timestamp) ([]AuditEventSumm
 	f.log.Debugf("GetEvents invocations: %d", f.invocations)
 
 	// preserve existing events slice
-	var newEvents = make([]AuditEventSummary, len(f.events))
+	newEvents := make([]AuditEventSummary, len(f.events))
 	copy(newEvents, f.events)
 
 	// Horizon API returns events ordered from newest to oldest

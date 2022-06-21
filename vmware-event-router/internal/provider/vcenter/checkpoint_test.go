@@ -1,5 +1,4 @@
 //go:build unit
-// +build unit
 
 package vcenter
 
@@ -122,7 +121,8 @@ func Test_checkpoint(t *testing.T) {
 						VmEvent: types.VmEvent{
 							Event: types.Event{
 								Key:         lastEventKey,
-								CreatedTime: lastEventKeyTime},
+								CreatedTime: lastEventKeyTime,
+							},
 						},
 					},
 					uuid: lastEventUUID,

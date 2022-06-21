@@ -18,7 +18,6 @@ func main() {
 
 	s := jsonschema.Reflect(&config.RouterConfig{})
 	b, err := s.MarshalJSON()
-
 	if err != nil {
 		log.Fatalf("could not marshal to JSON: %v", err)
 	}
