@@ -16,4 +16,6 @@ jobs:
     if: github.event_name == 'pull_request' && github.base_ref == 'master'
     steps:
       - name: Must reject PR
-        run: exit 1
+        run: |
+          echo "::error:: pull requests must not be made against master branch"
+          exit 1
