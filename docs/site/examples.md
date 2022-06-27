@@ -196,7 +196,7 @@ examples:
     usecases:
     - item: integration
     id: kn-ps-webhook-function
-    description: Function to ingest a non-CloudEvent using a custom incoming webhook
+    description: Function to ingest a non-CloudEvent using a custom incoming webhook.
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-webhook"
@@ -205,7 +205,7 @@ examples:
     usecases:
     - item: notification
     id: kn-ps-vrni-databus-function
-    description: Function that accepts an incoming webhook from the vRealize Network Insight Databus, constructs a CloudEvent and sends it to the VMware Event Router
+    description: Function that accepts an incoming webhook from the vRealize Network Insight Databus, constructs a CloudEvent and sends it to the VMware Event Router.
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-vrni-databus"
@@ -214,7 +214,7 @@ examples:
     usecases:
     - item: notification
     id: kn-ps-vsphere-inv-slack-function
-    description: Function to send a Slack notification when a specific vSphere inventory resource has been deleted
+    description: Function to send a Slack notification when a specific vSphere inventory resource has been deleted.
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-vsphere-inv-slack"
@@ -224,7 +224,7 @@ examples:
     - item: automation
     - item: remediation
     id: kn-pcli-snapshot-cron-function
-    description: Function to manage VM snapshots on a scheduled job (cron)
+    description: Function to manage VM snapshots on a scheduled job (cron).
     links:
     - language: powercli
       url: "/tree/master/examples/knative/powercli/kn-pcli-snapshot-cron"
@@ -233,18 +233,18 @@ examples:
     usecases:
     - item: integration
     id: kn-go-preemption-function
-    description: Function for triggering vSphere virtual machine preemption (power off) using a workflow engine and the vsphere-preemption prototype
+    description: Function for triggering vSphere virtual machine preemption (power off) using a workflow engine and the vsphere-preemption prototype.
     links:
     - language: go
       url: "/tree/master/examples/knative/go/kn-go-preemption"
 
   - title: vRealize Orchestrator
-    usecases: 
+    usecases:
     - item: integration
     - item: remediation
     id: kn-py-vro-function
     description: Trigger a vRealize Orchestrator workflow, passing all CloudEvent data as native vRO datatypes, using the vRO REST API.
-    links: 
+    links:
     - language: python
       url: "/tree/master/examples/knative/python/kn-py-vro"
 
@@ -252,10 +252,28 @@ examples:
     usecases:
     - item: integration
     id: kn-ps-zapier-function
-    description: Trigger a Zapier workflow, passing select CloudEvent data to a Zapier webhook
+    description: Trigger a Zapier workflow, passing select CloudEvent data to a Zapier webhook.
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-zapier"
+
+  - title: Transform Harbor webhook event notifications to CloudEvents
+    usecases:
+    - item: integration
+    id: kn-go-harbor-webhook-function
+    description: Function for receiving Project Harbor webhook notifications (events).
+    links:
+    - language: go
+      url: "/tree/master/examples/knative/go/kn-go-harbor-webhook"
+
+  - title: Creates a Slack notification when a Harbor webhook notification event got triggered
+    usecases:
+    - item: notification
+    id: kn-ps-harbor-slack-function
+    description: Function to send a Slack notification triggered by a Harbor webhook notification.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-harbor-slack"
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 
