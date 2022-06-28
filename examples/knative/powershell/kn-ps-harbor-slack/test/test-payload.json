@@ -1,0 +1,21 @@
+{
+	"type": "PUSH_ARTIFACT",
+	"occur_at": 1656076946,
+	"operator": "admin",
+	"event_data": {
+	  "resources": [
+		{
+		  "digest": "sha256:d3890814cc5a7cfc02403435281cdf51adfb6b67e223934d9d6137a4ad364286",
+		  "tag": "1.21.6-debian-10-r117",
+		  "resource_url": "harbor.jarvis.tanzu/veba-webhook/bitnami-nginx:1.21.6-debian-10-r117"
+		}
+	  ],
+	  "repository": {
+		"date_created": 1656076946,
+		"name": "bitnami-nginx",
+		"namespace": "veba-webhook",
+		"repo_full_name": "veba-webhook/bitnami-nginx",
+		"repo_type": "public"
+	  }
+	}
+  }
