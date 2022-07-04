@@ -104,7 +104,6 @@ ko publish -B -t $KO_TAG .
 ⚠️ Using the above example, the resulting image would be
 `docker.io/myuser/kn-go-harbor-webhook:1.0`.
 
-
 # Step 2 - Test
 
 Run unit tests using the following command:
@@ -130,7 +129,7 @@ notifications.
 kubectl create secret generic webhook-auth \
 --type=kubernetes.io/basic-auth \
 --from-literal=username='webhookuser' \
---from-literal=password='replaceme'
+--from-literal=password='replaceme' \
 --namespace vmware-functions
 
 # update label for secret to show up in VEBA UI
@@ -145,7 +144,6 @@ endpoint. Users may update environment specific settings under `env:` in the
 
 Please see the table below for a description of the available (and **required**)
 settings.
-
 
 | Configuration         | Description                                                                  | Example Values            | Required |
 |-----------------------|------------------------------------------------------------------------------|---------------------------|----------|
