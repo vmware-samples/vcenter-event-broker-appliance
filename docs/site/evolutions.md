@@ -6,6 +6,18 @@ permalink: /evolution
 limit: 3
 entry:
 
+- title: VEBA [v0.7.3](https://github.com/vmware-samples/vcenter-event-broker-appliance/releases/tag/v0.7.3)
+  type: feature
+  date: Jul 2022
+  id: vzeroseventhree
+  detail:
+    subtitle: Features
+    text:
+    - New VMware Harbor, Zapier, NSX Tag Sync & Unapproved Portgroup Usage Functions
+    - Ported Datastore Usage Email, vSphere HA Restart & Host Maint. Alarm functions to Knative
+    - Enhanced pattern matching for EventBridge processor
+    - Various Documentation Updates & Bug Fixes
+
 - title: VEBA [v0.7.2](https://williamlam.com/2022/03/vmware-event-broker-appliance-veba-v0-7-2.html)
   type: feature
   date: Mar 2022
