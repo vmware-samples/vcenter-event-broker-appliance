@@ -27,7 +27,7 @@ K8S_CONFIG=/root/config/kubernetes/kubeconfig.yaml
 # Apply YTT overlay
 ytt --data-value-file bom=${VEBA_BOM_FILE} --data-value-file config=${VEBA_CONFIG_FILE} -f ${K8S_TEMPLATE} > ${K8S_CONFIG}
 
-echo -e "\e[92mDeloying kubeadm ..." > /dev/console
+echo -e "\e[92mDeploying kubeadm ..." > /dev/console
 HOME=/root
 kubeadm init --ignore-preflight-errors SystemVerification --skip-token-print --config ${K8S_CONFIG}
 mkdir -p $HOME/.kube
@@ -35,7 +35,7 @@ cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl taint nodes --all node-role.kubernetes.io/master-
 
-echo -e "\e[92mDeloying Antrea ..." > /dev/console
+echo -e "\e[92mDeploying Antrea ..." > /dev/console
 kubectl apply -f /root/download/antrea.yml
 
 echo -e "\e[92mStarting k8s ..." > /dev/console

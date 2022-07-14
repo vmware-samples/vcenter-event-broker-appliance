@@ -13,10 +13,10 @@ def test_missingcommand(monkeypatch, capsys):
     monkeypatch.setattr(getOvfProperties, 'ovfenv_cmd', '/bin/madeupcommand -someparam')
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         getOvfProperties.main(["missingvalue"])
-    captured = capsys.readouterr()
+    # captured = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 1
-    assert captured.out == ""
+    # assert captured.out == ""
 
 
 def test_invalidxml(monkeypatch, capsys):
@@ -25,10 +25,10 @@ def test_invalidxml(monkeypatch, capsys):
 EOF""")
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         getOvfProperties.main(["missingvalue"])
-    captured = capsys.readouterr()
+    # captured = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 1
-    assert captured.out == ""
+    # assert captured.out == ""
 
 
 def test_missingvalue(capsys):
@@ -36,99 +36,107 @@ def test_missingvalue(capsys):
         getOvfProperties.main(["missingvalue"])
     captured = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
-    assert pytest_wrapped_e.value.code == 1
-    assert captured.out == ""
+    assert pytest_wrapped_e.value.code == 0
+    assert captured.err == "ovfProperty not found: 'guestinfo.missingvalue' \n"
 
 
 def test_textvalue(capsys):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         getOvfProperties.main(["textvalue"])
-    captured = capsys.readouterr()
+    # captured = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 0
-    assert captured.out == 'TEXTVALUE="Hello World!"\n'
+    # assert captured.out == 'TEXTVALUE="Hello World!"\n'
+    assert get_veba_config('TEXTVALUE') == 'Hello World!'
 
 
 def test_boolvalue(capsys):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         getOvfProperties.main(["boolvalue"])
-    captured = capsys.readouterr()
+    # captured = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 0
-    assert captured.out == 'BOOLVALUE="True"\n'
+    # assert captured.out == 'BOOLVALUE="True"\n'
+    assert get_veba_config('BOOLVALUE') == 'True'
 
 
 def test_numbervalue(capsys):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         getOvfProperties.main(["numbervalue"])
-    captured = capsys.readouterr()
+    # captured = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 0
-    assert captured.out == r"NUMBERVALUE='3.141'"
+    # assert captured.out == r"NUMBERVALUE='3.141'"
+    assert get_veba_config('NUMBERVALUE') == '3.141'
 
 
 def test_specialchars(capsys):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         getOvfProperties.main(["specialchars"])
-    captured = capsys.readouterr()
+    # captured = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 0
-    assert captured.out == r"SPECIALCHARS='& < > ' \""
+    # assert captured.out == r"SPECIALCHARS='& < > ' \""
+    assert get_veba_config('SPECIALCHARS') == '& < > \' "'
 
 
 def test_doublequotedvalue(capsys):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         getOvfProperties.main(["doublequotedvalue"])
-    captured = capsys.readouterr()
+    # captured = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 0
-    assert captured.out == 'DOUBLEQUOTEDVALUE="Hello World"\n'
+    # assert captured.out == 'DOUBLEQUOTEDVALUE="Hello World"\n'
+    assert get_veba_config('DOUBLEQUOTEDVALUE') == 'Hello World'
 
 
 def test_singlequotedvalue(capsys):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         getOvfProperties.main(["singlequotedvalue"])
-    captured = capsys.readouterr()
+    # captured = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 0
-    assert captured.out == r"SINGLEQUOTEDVALUE='Hello World'"
+    # assert captured.out == r"SINGLEQUOTEDVALUE='Hello World'"
+    assert get_veba_config('SINGLEQUOTEDVALUE') == "Hello World"
 
 
 def test_mismatchedquotesvalue(capsys):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         getOvfProperties.main(["mismatchedquotes"])
-    captured = capsys.readouterr()
+    # captured = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 0
-    assert captured.out == r"MISMATCHEDQUOTES=''\"'\"'Hello World\"'"
+    # assert captured.out == r"MISMATCHEDQUOTES=''\"'\"'Hello World\"'"
+    assert get_veba_config('MISMATCHEDQUOTES') == '\'Hello World"'
 
 
 def test_onequotevalue(capsys):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         getOvfProperties.main(["onequote"])
-    captured = capsys.readouterr()
+    # captured = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 0
-    assert captured.out == r"ONEQUOTE='Hello World\"'"
+    # assert captured.out == r"ONEQUOTE='Hello World\"'"
+    assert get_veba_config('ONEQUOTE') == 'Hello World"'
 
 
 def test_passwordvalue(capsys):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         getOvfProperties.main(["test_password"])
-    captured = capsys.readouterr()
+    # captured = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 0
-    assert captured.out == 'TEST_PASSWORD="\\"My&Quoted!Password\\""\n'
+    # assert captured.out == 'TEST_PASSWORD="\\"My&Quoted!Password\\""\n'
     assert get_veba_config('TEST_PASSWORD') == '"My&Quoted!Password"'
 
 
 def test_shellspecials(capsys):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         getOvfProperties.main(["shellspecials"])
-    captured = capsys.readouterr()
+    # captured = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 0
-    assert captured.out == r"SHELLSPECIALS='$`\"\!'"
+    # assert captured.out == r"SHELLSPECIALS='$`\"\!'"
     assert get_veba_config('SHELLSPECIALS') == r'$`"\!'
 
 
@@ -142,6 +150,7 @@ def get_veba_config(param):
 @pytest.fixture(autouse=True)
 def ovfenv(monkeypatch):
     monkeypatch.setattr(getOvfProperties, 'veba_config_file', './test_veba_config.json')
+    monkeypatch.setattr(getOvfProperties, 'veba_env_file', './test_veba_env')
     monkeypatch.setattr(getOvfProperties, 'ovfenv_cmd', r"""cat << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <Environment

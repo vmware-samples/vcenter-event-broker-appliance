@@ -1,0 +1,14 @@
+#!/bin/bash -x
+
+cmd=$1
+
+case "${cmd}" in
+  apply)
+    #kubeval --ignore-missing-schemas --quiet -v 1.21.5 -s file:///root/kubernetes-json-schema/ "$3"
+    # Add the YAML to be applied to a list for use with kubeval later
+    echo "$3" >> /root/kubeval-yamls.txt
+    ;;
+  *)
+    echo "$@"
+    ;;
+esac

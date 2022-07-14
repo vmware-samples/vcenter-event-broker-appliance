@@ -16,6 +16,7 @@ else:
 veba_config_file = "/root/config/veba-config.json"
 veba_env_file = "/root/config/shell_env"
 
+
 def debug(s):
     sys.stderr.write(s + " \n")  # Syserr only get logged on the console logs
     sys.stderr.flush()
@@ -46,7 +47,7 @@ def main(argv):
         sys.exit(1)
 
     ovf = get_ovf_properties()
-    print(ovf)
+    
     if path.isfile(veba_config_file):
         with open(veba_config_file) as fp:
             veba_config = json.load(fp)

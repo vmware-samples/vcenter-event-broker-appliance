@@ -4,20 +4,47 @@ FROM photon:4.0
 WORKDIR /root
 COPY veba-bom.json config/veba-bom.json
 COPY scripts scripts
+COPY files/downloads download
 COPY files setup
 ENV VEBA_VERSION=${veba_version}
 ENV VEBA_COMMIT=${veba_commit}
 
+# Symlink some binaries we want to no-op
 RUN ln -s /usr/bin/echo /usr/local/bin/systemctl \
  && ln -s /usr/bin/echo /usr/local/bin/hostnamectl \
  && ln -s /usr/bin/echo /usr/local/bin/mkfs \
  && ln -s /usr/bin/echo /usr/local/bin/mount \
  && ln -s /usr/bin/echo /usr/local/bin/parted \
  && ln -s /usr/bin/echo /usr/local/bin/kubeadm \
- && ln -s /usr/bin/echo /usr/local/bin/kubectl \
- && mkdir download \
+ && ln -s /usr/bin/echo /usr/local/bin/crictl \
+ # Run the important appliance setup scripts
  && bash scripts/photon-settings.sh \
+ && bash scripts/photon-containers.sh \
+ # Mock a succesfull install of kubernetes (enough for our tests anyway!)
+ && mkdir -p /etc/kubernetes \
  && touch /etc/kubernetes/admin.conf \
- && ln -s /root/setup/configs/* /root/config
+ && ln -s /root/setup/configs/* /root/config \
+ # Install BATS unit testing app
+ && git clone https://github.com/bats-core/bats-core.git bats \
+ && git clone https://github.com/bats-core/bats-support.git test_helper/bats-support \
+ && git clone https://github.com/bats-core/bats-assert.git test_helper/bats-assert \
+ && git clone https://github.com/bats-core/bats-file.git test_helper/bats-file \
+ && cd bats \
+ && ./install.sh /usr/local \
+ && cd /root \
+ # Install kubeval
+ && mkdir kubeval \
+ && cd kubeval \
+ && wget https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz \
+ && tar xf kubeval-linux-amd64.tar.gz \
+ && cp kubeval /usr/local/bin \
+ && cd /root \
+ && rm -rf kubeval \
+ # Configure kubectl to instead run kubeval with local schema's
+ && ln -s /root/setup/test/kubectl-val /usr/local/bin/kubectl \
+ && git clone --depth 1 --filter=blob:none --sparse https://github.com/yannh/kubernetes-json-schema.git \
+ && cd kubernetes-json-schema \
+ && git sparse-checkout set v1.21.5-local \
+ && ln -s v1.21.5-local v1.21.5-standalone
 
-CMD ["/bin/bash", "/root/setup/setup.sh"]
+CMD ["/bin/bash"]

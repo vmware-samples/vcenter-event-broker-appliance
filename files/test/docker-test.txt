@@ -1,7 +1,0 @@
-tdnf install python3
-tdnf install pip3
-tdnf install python3-xml
-tdnf install coreutils
-tdnf install open-vm-tools
-tdnf install gawk
-tdnf install openssh-server
