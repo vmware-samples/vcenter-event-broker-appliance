@@ -37,11 +37,11 @@
       <Category>Proxy Settings (optional)</Category>
         <Property ovf:key="guestinfo.http_proxy" ovf:type="string" ovf:userConfigurable="true">
             <Label>HTTP Proxy</Label>
-            <Description>Enter HTTP Proxy URL followed by the port. Example: "http://proxy.provider.com:3128"</Description>
+            <Description>Enter HTTP Proxy URL followed by the port. Example: http://proxy.provider.com:3128</Description>
         </Property>
         <Property ovf:key="guestinfo.https_proxy" ovf:type="string" ovf:userConfigurable="true">
             <Label>HTTPS Proxy</Label>
-            <Description>Enter HTTPS Proxy URL followed by the port. Example: "https://proxy.provider.com:3128"</Description>
+            <Description>Enter HTTPS Proxy URL followed by the port. Example: https://proxy.provider.com:3128</Description>
         </Property>
         <Property ovf:key="guestinfo.proxy_username" ovf:type="string" ovf:userConfigurable="true">
             <Label>Proxy Username (optional)</Label>

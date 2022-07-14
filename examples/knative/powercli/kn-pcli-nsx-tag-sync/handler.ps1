@@ -98,15 +98,22 @@ Function Process-Handler {
    } 
 
    $arguments = $cloudEventData.Arguments | Out-String
-   Write-Host "$(Get-Date) - DEBUG: CloudEventDataArguments:`n $arguments"
-   Write-Host "$(Get-Date) - DEBUG: VM name: $vmname"
+   if (${env:FUNCTION_DEBUG} -eq "true") {
+      Write-Host "$(Get-Date) - DEBUG: CloudEventDataArguments:`n $arguments"
+      Write-Host "$(Get-Date) - DEBUG: VM name: $vmname"
+   }
 
    # Get VM object from vCenter
    try {
       $vm = Get-VM -name $vmname | Select-Object Name, PersistentId
    }
    catch {
-      Write-Host "$(Get-Date) - ERROR: unable to retrieve VM object"
+      Write-Host "$(Get-Date) - WARNING: unable to retrieve VM object. Error category: $($error.exception[0].errorcategory)"
+      # This error will occur if an object other than a VM was tagged. We only care about VM tags, so gracefully return
+      if ($error.exception[0].errorcategory -eq "ObjectNotFound") {
+         Write-Host "$(Get-Date) - WARNING: $($vmname) was not found via Get-VM"
+         return
+      }
       throw $_
    }
 
@@ -179,18 +186,23 @@ Function Process-Handler {
 
    # POST to NSX
    try {
-      $response = ""
+      if (${env:FUNCTION_DEBUG} -eq "true") {
+         Write-Host "$(Get-Date) - DEBUG: NSX Body=$($nsxBody)"
+      }
+
+      $encodednsxbody = [System.Text.Encoding]::UTF8.GetBytes($nsxbody)
+
       if ($NSX_SKIP_CERT_CHECK -eq "true") {
-         $response = Invoke-Webrequest -Uri $nsxUrl -Method POST -Headers $headers -SkipHeaderValidation -Body $nsxbody -SkipCertificateCheck
+         $response = Invoke-Webrequest -Uri $nsxUrl -Method POST -Headers $headers -SkipHeaderValidation -Body $encodednsxbody -ContentType "application/json; charset=utf-8" -SkipCertificateCheck
       }
       else {
-         $response = Invoke-Webrequest -Uri $nsxUrl -Method POST -Headers $headers -SkipHeaderValidation -Body $nsxbody
+         $response = Invoke-Webrequest -Uri $nsxUrl -Method POST -Headers $headers -SkipHeaderValidation -Body $encodednsxbody -ContentType "application/json; charset=utf-8" 
       }
-   
+
       if (${env:FUNCTION_DEBUG} -eq "true") {
-         Write-Host "$(Get-Date) - DEBUG: Invoke-WebRequest response=$($response)"
+         Write-Host "$(Get-Date) - DEBUG: Invoke-WebRequest response code=$($response.StatusCode)"
       }
-   
+
       Write-Host "$(Get-Date) - vSphere Tag to NSX Operation complete"
       Write-Host "$(Get-Date) - Handler Processing complete"
    }

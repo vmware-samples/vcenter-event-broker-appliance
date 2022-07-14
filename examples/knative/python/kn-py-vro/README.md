@@ -35,7 +35,7 @@ Requirements:
 - Docker
 
 ```bash
-export IMAGE=<docker-username>/kn-py-vro:1.0
+export IMAGE=<docker-username>/kn-py-vro:1.1
 pack build --builder gcr.io/buildpacks/builder:v1 ${IMAGE}
 ```
 

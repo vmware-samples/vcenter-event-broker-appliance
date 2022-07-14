@@ -11,6 +11,15 @@ images:
   go: /assets/img/languages/go.png
   powershell: /assets/img/languages/powershell.png
 examples:
+  - title: Datastore Usage Alarm Email Notification
+    usecases:
+    - item: notification
+    id: kn-pcli-datastore-usage-email
+    description: Sends email notifications to a specified email address for datastore usage on disk alarms. Optional configuration for a per-datastore email, enabling different recipients for different datastores.
+    links:
+    - language: powercli
+      url: "/tree/master/examples/knative/powercli/kn-pcli-datastore-usage-email"
+
   - title: Echo Cloud Event for Knative
     usecases:
     - item: other
@@ -32,6 +41,15 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-email"
+
+  - title: Host Maintenance Alarm Actions
+    usecases:
+    - item: notification
+    id: kn-pcli-hostmaint-alarms
+    description: Automatically disables alarm actions when a host enters maintenance mode, enables alarm action when a host exits maintenance mode.
+    links:
+    - language: powercli
+      url: "/tree/master/examples/knative/powercli/kn-pcli-hostmaint-alarms"
 
   - title: Slack Notification
     usecases:
@@ -86,6 +104,15 @@ examples:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-ngw-slack"
 
+  - title: VMware HA Notification
+    usecases:
+    - item: notification
+    id: kn-pcli-ha-restarted-vms
+    description: Function to send an e-mail notification after an HA event. The email includes a list of VMs and timestamps showing when each VM was restarted by HA.
+    links:
+    - language: powercli
+      url: "/tree/master/examples/knative/powercli/kn-pcli-ha-restarted-vms"
+
   - title: VMware Horizon Notification
     usecases:
     - item: integration
@@ -112,7 +139,16 @@ examples:
     description: Function to enforce the `Notify Switches` value on a distributed virtual switch portgroup. Any changes to the `Notify Switches` value will be intercepted by the function and reset to the desired value.
     links:
     - language: powercli
-      url: "/tree/master/knative/powercli/kn-pcli-vds-pg-config"      
+      url: "/tree/master/knative/powercli/kn-pcli-vds-pg-config"
+
+  - title: Portgroup Compliance Check
+    usecases:
+    - item: notification
+    id: kn-pcli-pg-check
+    description: Creates a Slack notification when VM network portgroups are out of compliance. Tag VMs as `PCI`, tag portgroups as `PCI`, receive a Slack notification any time a tagged VM is moved off of a `PCI` portgroup.
+    links:
+    - language: powercli
+      url: "/tree/master/knative/powercli/kn-pcli-pg-check"
 
   - title: Enhancing vSphere Alarm Actions
     usecases:
@@ -141,6 +177,9 @@ examples:
     links:
     - language: powercli
       url: "/tree/master/examples/knative/powercli/kn-pcli-nsx-tag-sync"
+    - language: go
+      url: "/tree/master/examples/knative/go/kn-go-nsx-tag-sync"
+
 
   - title: vSphere Tagging
     usecases:
@@ -157,7 +196,7 @@ examples:
     usecases:
     - item: integration
     id: kn-ps-webhook-function
-    description: Function to ingest a non-CloudEvent using a custom incoming webhook
+    description: Function to ingest a non-CloudEvent using a custom incoming webhook.
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-webhook"
@@ -166,7 +205,7 @@ examples:
     usecases:
     - item: notification
     id: kn-ps-vrni-databus-function
-    description: Function that accepts an incoming webhook from the vRealize Network Insight Databus, constructs a CloudEvent and sends it to the VMware Event Router
+    description: Function that accepts an incoming webhook from the vRealize Network Insight Databus, constructs a CloudEvent and sends it to the VMware Event Router.
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-vrni-databus"
@@ -175,7 +214,7 @@ examples:
     usecases:
     - item: notification
     id: kn-ps-vsphere-inv-slack-function
-    description: Function to send a Slack notification when a specific vSphere inventory resource has been deleted
+    description: Function to send a Slack notification when a specific vSphere inventory resource has been deleted.
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-vsphere-inv-slack"
@@ -185,7 +224,7 @@ examples:
     - item: automation
     - item: remediation
     id: kn-pcli-snapshot-cron-function
-    description: Function to manage VM snapshots on a scheduled job (cron)
+    description: Function to manage VM snapshots on a scheduled job (cron).
     links:
     - language: powercli
       url: "/tree/master/examples/knative/powercli/kn-pcli-snapshot-cron"
@@ -194,20 +233,47 @@ examples:
     usecases:
     - item: integration
     id: kn-go-preemption-function
-    description: Function for triggering vSphere virtual machine preemption (power off) using a workflow engine and the vsphere-preemption prototype
+    description: Function for triggering vSphere virtual machine preemption (power off) using a workflow engine and the vsphere-preemption prototype.
     links:
     - language: go
       url: "/tree/master/examples/knative/go/kn-go-preemption"
 
   - title: vRealize Orchestrator
-    usecases: 
+    usecases:
     - item: integration
     - item: remediation
     id: kn-py-vro-function
     description: Trigger a vRealize Orchestrator workflow, passing all CloudEvent data as native vRO datatypes, using the vRO REST API.
-    links: 
+    links:
     - language: python
       url: "/tree/master/examples/knative/python/kn-py-vro"
+
+  - title: Zapier workflow integration
+    usecases:
+    - item: integration
+    id: kn-ps-zapier-function
+    description: Trigger a Zapier workflow, passing select CloudEvent data to a Zapier webhook.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-zapier"
+
+  - title: Transform Harbor webhook event notifications to CloudEvents
+    usecases:
+    - item: integration
+    id: kn-go-harbor-webhook-function
+    description: Function for receiving Project Harbor webhook notifications (events).
+    links:
+    - language: go
+      url: "/tree/master/examples/knative/go/kn-go-harbor-webhook"
+
+  - title: Creates a Slack notification when a Harbor webhook notification event got triggered
+    usecases:
+    - item: notification
+    id: kn-ps-harbor-slack-function
+    description: Function to send a Slack notification triggered by a Harbor webhook notification.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-harbor-slack"
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 

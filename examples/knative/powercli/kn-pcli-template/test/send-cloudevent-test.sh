@@ -3,12 +3,18 @@
 # The ce-subject value should match the event router subject in function.yaml
 echo "Testing Function ..."
 PAYLOAD_PATH="test-payload.json"
+SUBJECT="DvsReconfiguredEvent"
+
 if [ $# -gt 0 ]; then
     if test -f "$1"; then
         PAYLOAD_PATH=$1
     else
         echo "$1 not found"
         exit 1
+    fi
+
+    if [ $# -gt 1 ]; then
+        SUBJECT=$2
     fi
 fi
 curl -d@$PAYLOAD_PATH \
@@ -17,7 +23,7 @@ curl -d@$PAYLOAD_PATH \
     -H 'ce-id: d70079f9-fddd-4b7f-aa76-1193f28b0611' \
     -H 'ce-source: https://vcenter.local/sdk' \
     -H 'ce-type: com.vmware.event.router/event' \
-    -H 'ce-subject: DvsReconfiguredEvent' \
+    -H 'ce-subject: '$SUBJECT \
     -X POST localhost:8080
 
 echo "See docker container console for output"

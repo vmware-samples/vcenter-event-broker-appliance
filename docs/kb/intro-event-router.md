@@ -50,7 +50,7 @@ to normalize events from the supported event `providers`. See
   - with the [Horizon event provider](#provider-type-horizon)
   - with the [vcsim event provider](#provider-type-vcsim)
 
-**Note:** All implemented event `processors` use built-in retry mechanisms so
+> **Note:** All implemented event `processors` use built-in retry mechanisms so
 your function might still be involved multiple times depending on its response
 code. However, if an event `provider` crashes before sending an event to the
 configured `processor` or when the `processor` returns an error, the event is
@@ -64,8 +64,8 @@ not retried and discarded.
   router crashes **within seconds** right after startup and having received *n* events but before creating the
   first valid checkpoint (current checkpoint interval is 5s)
 - If an event cannot be successfully delivered (retried) by an event `processor` it is
-  logged and discarded, i.e. there is currently no support for dead letter
-  queues (see note below)
+  logged and discarded, i.e. there is currently no support for [dead letter
+  queues](https://en.wikipedia.org/wiki/Dead_letter_queue) (see note below)
 - Retries in the [OpenFaaS event processor](#processor-type-openfaas) are only
   supported when running in synchronous mode, i.e. `async: false` (see this
   OpenFaaS [issue](https://github.com/openfaas/nats-queue-worker/issues/84))
@@ -97,6 +97,7 @@ not retried and discarded.
   - [The `auth` section](#the-auth-section)
     - [Type `basic_auth`](#type-basic_auth)
     - [Type `aws_access_key`](#type-aws_access_key)
+    - [Type `aws_iam_role`](#type-aws_iam_role)
     - [Type `active_directory`](#type-active_directory)
   - [The `metricsProvider` section](#the-metricsprovider-section)
     - [Provider Type `default`](#provider-type-default)
@@ -143,7 +144,7 @@ version: <release_tag>
 
 The following sections describe the layout of the configuration file (YAML) and
 specific options for the supported event `providers`, `processors` and `metrics`
-endpoint. Configuration examples are provided [here](deploy/).
+endpoint. Configuration examples are provided [here](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/vmware-event-router/deploy).
 
 > **Note:** Currently only one event `provider` and one event `processor` can be
 > configured at a time, e.g. one vCenter Server instance streaming events to
@@ -197,7 +198,7 @@ metricsProvider:
 ## JSON Schema Validation
 
 In order to simplify the configuration and validation of the YAML configuration
-file a JSON schema [file](README.MD) is provided. Many editors/IDEs offer
+file a JSON schema [file](https://github.com/vmware-samples/vcenter-event-broker-appliance/blob/master/vmware-event-router/routerconfig.schema.json) is provided. Many editors/IDEs offer
 support for registering a schema file, e.g.
 [Jetbrains](https://www.jetbrains.com/help/rider/Settings_Languages_JSON_Schema.html)
 and [VS
@@ -428,15 +429,21 @@ only forwards events configured in the associated `rule` of an event bus. Rules
 in AWS EventBridge use pattern matching
 ([docs](https://docs.aws.amazon.com/eventbridge/latest/userguide/filtering-examples-structure.html)).
 Upon start, VMware Event Router contacts EventBridge (using the given IAM role)
-to parse and extract event categories from the configured rule ARN (see
-configuration option below).
+to parse the configured rule ARN (see configuration option below).
 
-The VMware Event Router uses the `"subject"` field in the event payload to store
-the event category, e.g. `"VmPoweredOnEvent"`. Thus it is required that you use
-a **specific pattern match** (`"detail->subject"`) that the VMware Event Router
-can parse to retrieve the desired event (forwarding) categories. For example,
-the following AWS EventBridge event pattern rule matches power on/off events
-(including DRS-enabled clusters):
+The VMware Event Router uses the pattern match library which supports a subset
+of the EventBridge pattern rules. You may only use these supported patterns in
+your specified EventBridge rule. Refer to [this
+page](https://github.com/timbray/quamina/blob/v0.2.0/PATTERNS.md) for the
+currently supported patterns in `Quamina`.
+
+> **Note:** EventBridge wraps each VMware Event Router event (CloudEvent) into
+> an EventBridge message envelop. The `detail` field contains the JSON
+> representation of the full CloudEvent as produced by the VMware Event Router.
+
+The following examples show supported and useful patterns.
+
+Example: Forward all CloudEvents containing one of the specified `subjects`:
 
 ```json
 {
@@ -446,10 +453,34 @@ the following AWS EventBridge event pattern rule matches power on/off events
 }
 ```
 
-`"subject"` can contain one or more event categories. Wildcards (`"*"`) are not
-supported. If one wants to modify the event pattern match rule **after**
-deploying the VMware Event Router, its internal rules cache is periodically
-synchronized with AWS EventBridge at a fixed interval of 5 minutes.
+Example: Forward all CloudEvents containing a `subject` with the prefix `Vm`:
+
+```json
+{
+  "detail": {
+    "subject": [{
+      "shellstyle": "Vm*"
+    }]
+  }
+}
+```
+
+Example: Forward all CloudEvents containing virtual machines with the prefix
+`Linux`:
+
+```json
+{
+  "detail": {
+    "data": {
+      "Vm": {
+        "Name": [{
+          "shellstyle": "Linux*"
+        }]
+      }
+    }
+  }
+}
+```
 
 > **Note:** A list of event names (categories) and how to retrieve them can be
 > found
@@ -463,7 +494,7 @@ as an event `processor`.
 | `region`   | String | AWS region to use, see [regions doc](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html). | true     | `us-west-1`                                                            |
 | `eventBus` | String | Name of the event bus to use                                                                                                            | true     | `default` or `arn:aws:events:us-west-1:1234567890:event-bus/customBus` |
 | `ruleARN`  | String | Rule ARN to use for event pattern matching                                                                                              | true     | `arn:aws:events:us-west-1:1234567890:rule/vmware-event-router`         |
-| `<auth>`   | Object | AWS IAM role credentials                                                                                                                | true     | (see `aws_access_key` example below)                                   |
+| `<auth>`   | Object | AWS IAM role credentials                                                                                                                | true     | (see `aws_access_key` and `aws_iam_role` examples below)               |
 
 ## The `auth` section
 
@@ -490,6 +521,9 @@ Supported providers/processors:
 
 ### Type `aws_access_key`
 
+Use an AWS IAM role with the provided access key ID and secret access key for
+authentication.
+
 Supported providers/processors:
 
 - `aws_event_bridge`
@@ -501,8 +535,48 @@ Supported providers/processors:
 | `awsAccessKeyAuth.accessKey` | String | Access Key ID for the IAM role used         | true     | `ABCDEFGHIJK`    |
 | `awsAccessKeyAuth.secretKey` | String | Secret Access Key for the IAM role used     | true     | `ZYXWVUTSRQPO`   |
 
-> **Note:** Currently only IAM user accounts with access key/secret are
-> supported to authenticate against AWS EventBridge. Please follow the [user
+> **Note:** Please follow the EventBridge IAM [user
+> guide](https://docs.aws.amazon.com/eventbridge/latest/userguide/getting-set-up-eventbridge.html)
+> before deploying the event router. Further information can also be found in
+> the
+> [authentication](https://docs.aws.amazon.com/eventbridge/latest/userguide/auth-and-access-control-eventbridge.html#authentication-eventbridge)
+> section.
+
+In addition to the recommendation in the AWS EventBridge user guide you might
+want to lock down the IAM role for the VMware Event Router and scope it to these
+permissions ("Action"):
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VisualEditor0",
+      "Effect": "Allow",
+      "Action": [
+        "events:PutEvents",
+        "events:ListRules",
+        "events:TestEventPattern"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+### Type `aws_iam_role`
+
+Use an AWS IAM role configured from the shared credentials file.
+
+Supported providers/processors:
+
+- `aws_event_bridge`
+
+| Field  | Type   | Description                  | Required | Example        |
+|--------|--------|------------------------------|----------|----------------|
+| `type` | String | Authentication method to use | true     | `aws_iam_role` |
+
+> **Note:** Please follow the EventBridge IAM [user
 > guide](https://docs.aws.amazon.com/eventbridge/latest/userguide/getting-set-up-eventbridge.html)
 > before deploying the event router. Further information can also be found in
 > the
@@ -592,7 +666,7 @@ using the Knative backend.
 
 ### Helm Deployment
 
-The Helm files are located in the [chart](chart/) directory. The `values.yaml`
+The Helm files are located in the [chart](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/vmware-event-router/chart) directory. The `values.yaml`
 file contains the allowed parameters and parameter descriptions which map to the
 VMware Event Router [configuration](#overview-configuration-file-structure-yaml)
 file.
@@ -756,7 +830,7 @@ Create a namespace where the VMware Event Router will be deployed to:
 $ kubectl create namespace vmware
 ```
 
-Use one of the configuration files provided [here](deploy/) to configure the
+Use one of the configuration files provided [here](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/vmware-event-router/deploy) to configure the
 router with **one** VMware vCenter Server `eventProvider` and **one** OpenFaaS
 **or** AWS EventBridge `eventProcessor`. Change the values to match your
 environment. The following example will use the OpenFaaS config sample.
@@ -847,7 +921,6 @@ Deploy the VMware Event Router:
 
 ```console
 $ kubectl -n vmware create -f release.yaml
-```
 ```
 
 Check the logs of the VMware Event Router to validate it started correctly:

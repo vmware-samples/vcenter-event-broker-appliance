@@ -90,8 +90,7 @@ plugins:
   - jekyll-redirect-from
   - jekyll-seo-tag
   - jekyll-github-metadata
-  - jekyll-simple-tab
-  
+
 # Include these subdirectories
 include:
   - CONTRIBUTING.md

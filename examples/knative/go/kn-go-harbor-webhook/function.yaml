@@ -1,0 +1,33 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-go-harbor-webhook
+  labels:
+    app: veba-ui
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+        - image: us.gcr.io/daisy-284300/veba/kn-go-harbor-webhook:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: ADDRESS
+              value: "0.0.0.0"
+            - name: WEBHOOK_PATH
+              value: "/webhook" # default
+            - name: DEBUG
+              value: "true"
+            - name: WEBHOOK_SECRET_PATH # remove this env to disable basic auth
+              value: "/var/bindings/webhook"
+          volumeMounts: # remove this when not using basic auth
+            - name: webhook-auth
+              mountPath: "/var/bindings/webhook"
+              readOnly: true
+      volumes: # remove this when not using basic auth
+        - name: webhook-auth
+          secret:
+            secretName: webhook-auth

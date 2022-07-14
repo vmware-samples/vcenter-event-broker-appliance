@@ -6,7 +6,7 @@ description: Deploying VMware Event Broker Appliance with Knative
 permalink: /kb/install-knative
 cta:
  title: Deploy a Function
- description: At this point, you have successfully deployed the VMware Event Broker Appliance and you are ready to start deploying your functions! 
+ description: At this point, you have successfully deployed the VMware Event Broker Appliance and you are ready to start deploying your functions!
  actions:
   - text: Check the [Knative Echo Function](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative/powershell/kn-ps-echo){:target="_blank"} to quickly get started
 ---
@@ -18,9 +18,9 @@ Customers looking to seamlessly extend their vCenter by either deploying our pre
 
 ### Requirements
 
-* 4 vCPU and 8GB of memory for VMware Event Broker Appliance
+* 6 vCPU and 8GB of memory for VMware Event Broker Appliance
 * vCenter Server 6.x or greater
-  *  The VEBA UI requires vCenter Server 7.0 or greater
+  *  **The VEBA UI requires vCenter Server 7.0 or greater**
 * vCenter TCP/443 accessible from Appliance IP address
 * Account to login to vCenter Server (readOnly is sufficient)
 
@@ -121,4 +121,3 @@ Webhook: https://[hostname]/stats/webhook
 ### Step 4
 
 You can verify that everything was deployed correctly by opening a web browser and accessing one of the endpoints along with the associated admin password you had specified as part of the OVA deployment.
-

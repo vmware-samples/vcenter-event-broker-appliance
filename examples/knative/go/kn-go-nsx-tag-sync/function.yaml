@@ -1,0 +1,88 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: kn-go-nsx-tag-sync
+  labels:
+    app: veba-ui
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      # max events in-flight - if this setting and prefetchCount in trigger is
+      # greater than 1 FIFO order is not respected
+      containerConcurrency: 1
+      containers:
+        - image: us.gcr.io/daisy-284300/veba/kn-go-nsx-tag-sync:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: VCENTER_URL
+              value: "https://replace.me"
+            - name: VCENTER_INSECURE
+              value: "false"
+            - name: VCENTER_SECRET_PATH
+              value: "/var/bindings/vsphere" # default
+            - name: NSX_URL
+              value: "https://replace.me"
+            - name: NSX_INSECURE
+              value: "false"
+            - name: NSX_SECRET_PATH
+              value: "/var/bindings/nsx" # default
+            - name: DEBUG
+              value: "true"
+          volumeMounts:
+            - name: vsphere-credentials
+              mountPath: /var/bindings/vsphere
+              readOnly: true
+            - name: nsx-credentials
+              mountPath: /var/bindings/nsx
+              readOnly: true
+      volumes:
+        - name: vsphere-credentials
+          secret:
+            secretName: vsphere-credentials
+        - name: nsx-credentials
+          secret:
+            secretName: nsx-credentials
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: veba-go-nsx-tag-sync-trigger-attach
+  annotations:
+    # Value must be between 1 and 1000
+    # A value of 1 RabbitMQ Trigger behaves as a FIFO queue when function maxScale=1
+    # Values above 1 break message ordering guarantees but can be seen as more performance oriented.
+    rabbitmq.eventing.knative.dev/prefetchCount: "1"
+spec:
+  broker: default
+  filter:
+    attributes:
+      subject: com.vmware.cis.tagging.attach
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: kn-go-nsx-tag-sync
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: veba-go-nsx-tag-sync-trigger-detach
+  annotations:
+    # Value must be between 1 and 1000
+    # A value of 1 RabbitMQ Trigger behaves as a FIFO queue when function maxScale=1
+    # Values above 1 break message ordering guarantees but can be seen as more performance oriented.
+    rabbitmq.eventing.knative.dev/prefetchCount: "1"
+spec:
+  broker: default
+  filter:
+    attributes:
+      subject: com.vmware.cis.tagging.detach
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: kn-go-nsx-tag-sync

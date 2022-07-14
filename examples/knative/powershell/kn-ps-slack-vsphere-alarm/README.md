@@ -183,7 +183,7 @@ kubectl apply -f in-memory-channel.yaml
 
 ## Deploy the Function and its Components
 
-Edit the `parallel.yaml` file with the name of the container image from Step 1 **if you made any changes to the function code**. If not, the default VMware container image will suffice and you can keep the defaults.
+Edit the `function.yaml` file with the name of the container image from Step 1 **if you made any changes to the function code**. If not, the default VMware container image will suffice and you can keep the defaults.
 
 Deploy the functions to the VMware Event Broker Appliance (VEBA).
 

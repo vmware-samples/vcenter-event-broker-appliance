@@ -23,3 +23,8 @@ checkpoints/
 
 # ignore RELEASE-specific CHANGELOG
 RELEASE_CHANGELOG.md
+
+# ignore python bytecode artifacts
+*.pyc
+*.pyo
+__pycache__

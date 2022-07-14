@@ -84,7 +84,6 @@ func loadAvg(position int) float64 {
 
 	values := strings.Fields(string(data))
 	load, err := strconv.ParseFloat(values[position], 64)
-
 	if err != nil {
 		return 0
 	}

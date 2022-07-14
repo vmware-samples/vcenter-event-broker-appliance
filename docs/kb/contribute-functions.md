@@ -5,7 +5,7 @@ title: VMware Event Broker Appliance - Building Functions
 description: Building Functions
 permalink: /kb/contribute-functions
 cta:
- title: Have a question? 
+ title: Have a question?
  description: Please check our [Frequently Asked Questions](/faq) first.
 ---
 
@@ -16,7 +16,7 @@ The VMware Event Broker Appliance (VEBA) uses Knative as a Function-as-a-Service
 [here](functions). You can also get started quickly with these quickstart
 [templates](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative){:target="_blank"}.
 
-## Instructions
+## Intro
 
 This guide describes how to create a function with PowerCLI (PowerShell) to
 apply a vSphere tag when a Virtual Machine is powered on.
@@ -26,6 +26,11 @@ apply a vSphere tag when a Virtual Machine is powered on.
 > correctly. Access to the Kubernetes environment in VEBA via `kubectl` is also
 > assumed to be working.
 
+A template for Knative PowerCLI functions is available in [kn-pcli-template](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative/powercli/kn-pcli-template). If you do not want to build all of the required files from scratch, you can copy all of the files from this template directory. Follow the instructions in the [README](https://github.com/vmware-samples/vcenter-event-broker-appliance/blob/master/examples/knative/powercli/kn-pcli-template/README.md) instead of the instructions on this page.
+
+To create a function from scratch, continue with the instructions on this page.
+
+## Instructions
 
 First, create a directory for your function code, credentials (implemented via
 Kubernetes [secrets](https://kubernetes.io/docs/concepts/configuration/secret/))
@@ -34,8 +39,6 @@ and test files.
 ```bash
 mkdir tag-fn && cd tag-fn
 ```
-
-A template for Knative PowerCLI functions is available in [kn-pcli-template](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/development/examples/knative/powercli/kn-pcli-template). If you do not want to build all of the required files from scratch, you can copy all of the files from this template directory, then follow the instructions in the README.
 
 Before we start looking at the actual function business logic (inside
 `handler.ps1`), let's discuss how `secrets`, such as credentials, are injected

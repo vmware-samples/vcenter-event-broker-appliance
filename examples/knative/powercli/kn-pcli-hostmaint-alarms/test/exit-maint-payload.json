@@ -1,0 +1,33 @@
+{
+    "Key": 910100,
+    "ChainId": 910098,
+    "CreatedTime": "2022-04-20T15:48:39.140999Z",
+    "UserName": "VSPHERE.LOCAL\\Administrator",
+    "Datacenter": {
+      "Name": "HomeLab",
+      "Datacenter": {
+        "Type": "Datacenter",
+        "Value": "datacenter-47"
+      }
+    },
+    "ComputeResource": {
+      "Name": "CL1",
+      "ComputeResource": {
+        "Type": "ClusterComputeResource",
+        "Value": "domain-c52"
+      }
+    },
+    "Host": {
+      "Name": "esx02.cl.vmweventbroker.io",
+      "Host": {
+        "Type": "HostSystem",
+        "Value": "REPLACE-ME"
+      }
+    },
+    "Vm": null,
+    "Ds": null,
+    "Net": null,
+    "Dvs": null,
+    "FullFormattedMessage": "Host esx02.cl.vmweventbroker.io in HomeLab has exited maintenance mode",
+    "ChangeTag": ""
+  }

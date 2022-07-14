@@ -209,12 +209,18 @@ This section demonstrates installation of the Let's Encrypt Certbot Docker image
 
 ### Steps
 
-Step 1 - Pull the Certbot Docker image
+Step 1 - Start the Docker daemon. VEBA uses containerd for its container runtime - the Docker daemon is disabled by default.
+
+```console
+systemctl start docker
+```
+
+Step 2 - Pull the Certbot Docker image
 ```console
 docker pull certbot/certbot
 ```
 
-Step 2 - Run certbot. For the `-d` (domain) switch, use your VEBA FQDN. You will be prompted for an e-mail address as well as some yes/no questions.
+Step 3 - Run certbot. For the `-d` (domain) switch, use your VEBA FQDN. You will be prompted for an e-mail address as well as some yes/no questions.
 ```console
  docker run -it --rm --name certbot -v "/etc/letsencrypt:/etc/letsencrypt" `
  -v "/var/lib/letsencrypt:/var/lib/letsencrypt" `
@@ -263,9 +269,9 @@ value(s) you've just added.
 Press Enter to Continue
 ```
 
-Step 3 - Using your public DNS provider's tools, configure the required TXT record as prompted in Step 2.
+Step 4 - Using your public DNS provider's tools, configure the required TXT record as prompted in Step 2.
 
-Step 4 - Press Enter to continue. If you have configured DNS properly, the certificate PEM files will be saved in the location specified.
+Step 5 - Press Enter to continue. If you have configured DNS properly, the certificate PEM files will be saved in the location specified.
 
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -281,6 +287,12 @@ NEXT STEPS:
 - This certificate will not be renewed automatically. Autorenewal of --manual certificates requires the use of an authentication hook script (--manual-auth-hook) but one was not provided. To renew this certificate, repeat this same certbot command before the certificate's expiry date.
 ```
 
-Step 5 - Install the certificate - follow the instructions starting with step 2 of [Replacing an Existing Cert on VEBA](#replacestep2).  Note from the output above that the public key file is named `fullchain.pem` - you will need to pass this value for the `--cert` argument when creating the Kubernetes TLS certificates.
+Step 6 - Install the certificate - follow the instructions starting with step 2 of [Replacing an Existing Cert on VEBA](#replacestep2).  Note from the output above that the public key file is named `fullchain.pem` - you will need to pass this value for the `--cert` argument when creating the Kubernetes TLS certificates.
 
-Step 6 (optional) - If you want to automate renewals, this is an excellent blog on configuring [automated certificate renewals](https://chariotsolutions.com/blog/post/automating-lets-encrypt-certificate-renewal-using-dns-challenge-type/) using DNS validation. 
+Step 7 - Stop the Docker daemon
+
+```console
+systemctl stop docker
+```
+
+Step 8 (optional) - If you want to automate renewals, this is an excellent blog on configuring [automated certificate renewals](https://chariotsolutions.com/blog/post/automating-lets-encrypt-certificate-renewal-using-dns-challenge-type/) using DNS validation. 

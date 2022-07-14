@@ -38,4 +38,4 @@ spec:
     ref:
       apiVersion: serving.knative.dev/v1
       kind: Service
-      name: kn-pcli-#REPLACE-ME#
+      name: kn-pcli-#REPLACE-FN-NAME#

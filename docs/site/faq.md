@@ -17,7 +17,7 @@ faqs:
     A: Yes! Follow the steps provided [here](/kb/advanced-certificates).
   - Q: What happens if vCenter Server and VMware Event Broker connectivity is lost?
     A: >
-        VMware [Event Router](https://vmweventbroker.io/kb/contribute-eventrouter) streams vCenter events as they get generated and being stateless, does not persist any event information. To provide a certain level of reliability, the following Event Delivery Guarantees exists: <br/>
+        VMware [Event Router](https://vmweventbroker.io/kb/event-router) streams vCenter events as they get generated and being stateless, does not persist any event information. To provide a certain level of reliability, the following Event Delivery Guarantees exists: <br/>
         - At-least-once event delivery semantics for the vCenter event provider by checkpointing the event stream into a file. In case of disconnection, the Event Router will replay all vCenter events of the last 10 minutes (10m reiteration) after a successful reconnection. <br/>
         - At-least-once event delivery semantics are not guaranteed if the event router crashes within seconds right after startup and having received *n* events but before creating the first valid checkpoint (current checkpoint interval is 5s). <br/>
   - Q: How long does it take for the functions to be invoked upon an event being generated?
@@ -25,7 +25,7 @@ faqs:
   - Q: Can I setup the VMware Event Broker Appliance components on Kubernetes?
     A: Yes! Follow the steps provided [here](/kb/event-router#deployment).
   - Q: Can I use a private registry like e.g. [Harbor](https://goharbor.io/) to have a source of truth for my functions (images)?
-    A: Yes! Follow the steps provided [here](https://rguske.github.io/post/using-harbor-with-the-vcenter-event-broker-appliance/).
+    A: Yes! Follow the steps provided [here](https://vmweventbroker.io/kb/private-registry).
   - Q: How can I monitor the Appliance, the Kubernetes components as well as the functions (pods) in terms of utilization, performance and state?
     A: vRealize Operations Manager provides these capabilities as described [here](https://rguske.github.io/post/monitoring-the-vmware-event-broker-appliance-with-vrealize-operations-manager/).
 - title: Common Questions - Functions

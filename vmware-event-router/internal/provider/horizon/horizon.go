@@ -30,14 +30,12 @@ const (
 	eventTypeScheme     = "%s/horizon.%s.v0" // router prefix + normalized event type
 )
 
-var (
-	defaultBackoff = backoff.Backoff{
-		Factor: 2,
-		Jitter: false,
-		Min:    time.Second,
-		Max:    5 * time.Second,
-	}
-)
+var defaultBackoff = backoff.Backoff{
+	Factor: 2,
+	Jitter: false,
+	Min:    time.Second,
+	Max:    5 * time.Second,
+}
 
 // EventStream handles the connection to the Horizon events API
 type EventStream struct {

@@ -1,0 +1,14 @@
+builds:
+  - id: function
+    # dir: .
+    # main: .
+    env:
+      - GOPRIVATE=*.vmware.com
+    flags:
+      - -tags
+      - netgo
+    ldflags:
+      - -s -w
+      - -extldflags "-static"
+      - -X main.buildCommit={{.Env.KO_COMMIT}}
+      - -X main.buildTag={{.Env.KO_TAG}}

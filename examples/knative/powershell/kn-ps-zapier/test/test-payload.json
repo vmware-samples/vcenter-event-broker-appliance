@@ -1,0 +1,44 @@
+{
+	"Key": 9766460,
+	"ChainId": 9766460,
+	"CreatedTime": "2022-04-22T21:54:38.628999Z",
+	"UserName": "hacker@vsphere.local",
+	"Datacenter": null,
+	"ComputeResource": null,
+	"Host": null,
+	"Vm": null,
+	"Ds": null,
+	"Net": null,
+	"Dvs": null,
+	"FullFormattedMessage": "Failed login hacker@vsphere.local from 10.0.1.337 at 04/22/2022 21:53:06 GMT in SSO",
+	"ChangeTag": "",
+	"EventTypeId": "com.vmware.sso.LoginFailure",
+	"Severity": "info",
+	"Message": "",
+	"Arguments": [
+	  {
+		"Key": "userName",
+		"Value": "hacker@vsphere.local"
+	  },
+	  {
+		"Key": "description",
+		"Value": "User hacker@vsphere.local@10.0.1.337 failed to log in with response code 401"
+	  },
+	  {
+		"Key": "userIp",
+		"Value": "10.0.1.337"
+	  },
+	  {
+		"Key": "timestamp",
+		"Value": "04/22/2022 21:53:06 GMT"
+	  },
+	  {
+		"Key": "_sourcehost_",
+		"Value": "vcsa.primp-industries.local"
+	  }
+	],
+	"ObjectId": "",
+	"ObjectType": "",
+	"ObjectName": "",
+	"Fault": null
+  }

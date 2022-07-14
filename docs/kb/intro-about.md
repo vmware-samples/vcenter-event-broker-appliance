@@ -52,4 +52,4 @@ VMware Event Broker Appliance enables customers to quickly get started with pre-
 
 ### Community Use Cases
 
-Please see [this list here](https://github.com/vmware-samples/vcenter-event-broker-appliance/USECASES.md) for a collection of use cases from the VMware Event Broker Appliance community.
+Please see [this list here](https://github.com/vmware-samples/vcenter-event-broker-appliance/blob/master/USECASES.md) for a collection of use cases from the VMware Event Broker Appliance community.

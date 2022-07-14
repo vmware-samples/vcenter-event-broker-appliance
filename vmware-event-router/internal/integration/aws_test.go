@@ -1,8 +1,9 @@
-// +build integration,aws
+//go:build integration && aws
 
 package integration_test
 
 import (
+	"sync/atomic"
 	"time"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
@@ -16,7 +17,8 @@ import (
 
 var _ = Describe("AWS Processor", func() {
 	BeforeEach(func() {
-		p, err := aws.NewEventBridgeProcessor(ctx, cfg, receiver, log)
+		ebClient = createClient(cfg)
+		p, err := aws.NewEventBridgeProcessor(ctx, cfg, receiver, log, aws.WithClient(ebClient))
 		Expect(err).NotTo(HaveOccurred())
 		awsProcessor = p
 
@@ -46,6 +48,11 @@ var _ = Describe("AWS Processor", func() {
 
 			It("should not error", func() {
 				Expect(err).ShouldNot(HaveOccurred())
+			})
+
+			It("should have sent the event", func() {
+				current := atomic.LoadInt32(&ebClient.sent)
+				Expect(current).To(Equal(int32(1)))
 			})
 		})
 
