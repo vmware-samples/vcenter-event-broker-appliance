@@ -1,4 +1,125 @@
 
+<a name="v0.7.3"></a>
+## [Release v0.7.3](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.7.2...v0.7.3)
+
+> Release Date: 2022-07-14
+
+### 🐞 Fix
+
+- [152f26e]	Resolved issues with old Flask versions
+- [0d710e8]	correctly handle quoted ovf properties Closes: [#824](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/824) (#824) 
+- [a045117]	update in-memory-channel.yaml to knative/eventing v1.1.0 release Closes: [#886](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/886) (#886) 
+- [253c3ff]	Update container image link (#878) 
+- [722a376]	Remove whitespace from comments
+- [012707b]	Handle unicode characters in tag names (#834) 
+- [26e084f]	NSX tag sync DEBUG statements (#833) 
+- [36d086d]	Bump gogo proto version (#829) 
+
+### 💫 Feature
+
+- [32f5996]	created kn-ps-harbor-slack function example (#916) 
+- [02c6c9e]	Add kn-go-harbor-webhook function (#914) 
+- [643a0e6]	Enhanced pattern matching for EventBridge (#909) 
+- [cb9d2ea]	Port datastore usage email function to Knative (#870) 
+- [c7cb2c6]	Port HA restart function to Knative (#867)  (#869) 
+- [3359684]	Add Zapier webhook example (#864) 
+- [98020a9]	Add optional event subject arg to testing scripts (#858) 
+- [e6ebd98]	Port hostmaint alarms function to Knative (#856) 
+- [0da7740]	Add iam_auth_role for EventBridge (#823) 
+- [78c6a3f]	Add kn-go-nsx-tag-sync Function (#836) 
+- [abdc839]	Slack alert when VMs are on unapproved portgroups (#812) 
+
+### 📃 Documentation
+
+- [9d8a6e0]	Add v0.7.3 release to website
+- [14040c3]	Fix Harbor example docs (#920) 
+- [90fcd0d]	Updated websites community page with veba calls infos (#905) 
+- [68c9bc4]	Updated vcenter events page with U3 references and data (#903) 
+- [f4c6c00]	Added link to dead letter queue explanation to event-router section (#901) 
+- [4dbcb9c]	updated faqs 3 and 6 on veba website (#899) 
+- [6687c71]	update additional resources page with latest content (#897) 
+- [2d632a0]	Update documentation (#861)  (#875) 
+- [b2981ae]	Add Docker daemon start/stop instructions (#882) 
+- [1d2150c]	Improvements to appliance build process and documentation Closes: 841
+- [178060e]	Make concurrency values consistent (#876) 
+- [624f24c]	Add datastore usage email function to website (#870) 
+- [fbd4fff]	Update AWS EventBridge auth (#873) 
+- [4f7dc04]	Update kn-pcli-template (#871) 
+- [8b29721]	Add kn-pcli-hostmaint-alarms to website (#862) 
+- [012512e]	Expand troubleshooting guide (#854) 
+- [8d6eb01]	Direct new function writers to PowerCLI template (#817) 
+- [074e45d]	Update bad links in functions pages (#820) 
+- [d05d1e2]	Open private container registry link in same window (#837) 
+- [39bfd6a]	Instructions for using private container registry (#827) 
+
+### 🧹 Chore
+
+- [3d8b395]	Update VEBA UI version (#918) 
+- [e1f7f12]	Go formatting
+- [1248bb3]	Update workflows (#911) 
+- [038a2f3]	Update Python examples
+- [e53daa5]	Update JSON schema (#852) 
+- [fb85eb1]	Add CodeQL scanning (#828) 
+
+### ⚠️ BREAKING
+
+### 📖 Commits
+
+- [d23524e]	Bump version to v0.7.3 for release
+- [9d8a6e0]	docs: Add v0.7.3 release to website
+- [5d1952d]	Bump version to release-0.7.3
+- [14040c3]	docs: Fix Harbor example docs (#920)
+- [3d8b395]	chore: Update VEBA UI version (#918)
+- [32f5996]	feat: created kn-ps-harbor-slack function example (#916)
+- [02c6c9e]	feat: Add kn-go-harbor-webhook function (#914)
+- [643a0e6]	feat: Enhanced pattern matching for EventBridge (#909)
+- [e1f7f12]	chore: Go formatting
+- [6e821c2]	chore(deps): Bump github/codeql-action from 1 to 2
+- [1248bb3]	chore: Update workflows (#911)
+- [90fcd0d]	docs: Updated websites community page with veba calls infos (#905)
+- [68c9bc4]	docs: Updated vcenter events page with U3 references and data (#903)
+- [f4c6c00]	docs: Added link to dead letter queue explanation to event-router section (#901)
+- [4dbcb9c]	docs: updated faqs 3 and 6 on veba website (#899)
+- [6687c71]	docs: update additional resources page with latest content (#897)
+- [2d632a0]	docs: Update documentation (#861) (#875)
+- [038a2f3]	chore: Update Python examples
+- [d4acb94]	chore(deps): Bump pip in /examples/knative/python/kn-py-slack
+- [f3f3036]	chore(deps): Bump pip in /examples/knative/python/kn-py-vro
+- [22caf50]	chore(deps): Bump pip in /examples/knative/python/kn-py-vm-attr
+- [58eeabe]	chore(deps): Bump pip in /examples/knative/python/kn-py-echo
+- [f4728ff]	chore(deps): Bump urllib3 in /examples/knative/python/kn-py-slack
+- [152f26e]	fix: Resolved issues with old Flask versions
+- [0d710e8]	fix: correctly handle quoted ovf properties Closes: [#824](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/824) (#824)
+- [a045117]	fix: update in-memory-channel.yaml to knative/eventing v1.1.0 release Closes: [#886](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues/886) (#886)
+- [b2981ae]	docs: Add Docker daemon start/stop instructions (#882)
+- [1d2150c]	docs: Improvements to appliance build process and documentation Closes: 841
+- [178060e]	docs: Make concurrency values consistent (#876)
+- [624f24c]	docs: Add datastore usage email function to website (#870)
+- [cb9d2ea]	feat: Port datastore usage email function to Knative (#870)
+- [253c3ff]	fix: Update container image link (#878)
+- [c7cb2c6]	feat: Port HA restart function to Knative (#867) (#869)
+- [fbd4fff]	docs: Update AWS EventBridge auth (#873)
+- [4f7dc04]	docs: Update kn-pcli-template (#871)
+- [3359684]	feat: Add Zapier webhook example (#864)
+- [8b29721]	docs: Add kn-pcli-hostmaint-alarms to website (#862)
+- [98020a9]	feat: Add optional event subject arg to testing scripts (#858)
+- [e6ebd98]	feat: Port hostmaint alarms function to Knative (#856)
+- [012512e]	docs: Expand troubleshooting guide (#854)
+- [e53daa5]	chore: Update JSON schema (#852)
+- [722a376]	fix: Remove whitespace from comments
+- [0da7740]	feat: Add iam_auth_role for EventBridge (#823)
+- [78c6a3f]	feat: Add kn-go-nsx-tag-sync Function (#836)
+- [012707b]	fix: Handle unicode characters in tag names (#834)
+- [8d6eb01]	docs: Direct new function writers to PowerCLI template (#817)
+- [074e45d]	docs: Update bad links in functions pages (#820)
+- [d05d1e2]	docs: Open private container registry link in same window (#837)
+- [39bfd6a]	docs: Instructions for using private container registry (#827)
+- [26e084f]	fix: NSX tag sync DEBUG statements (#833)
+- [36d086d]	fix: Bump gogo proto version (#829)
+- [fb85eb1]	chore: Add CodeQL scanning (#828)
+- [67e0e1d]	bug: fix website out of sync (#821)
+- [abdc839]	feat: Slack alert when VMs are on unapproved portgroups (#812)
+
 <a name="v0.7.2"></a>
 ## [Release v0.7.2](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.7.1...v0.7.2)
 
