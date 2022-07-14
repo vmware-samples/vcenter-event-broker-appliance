@@ -1,9 +1,8 @@
-#!/bin/bash +x
+#!/bin/bash
 
 rootdir="$(git rev-parse --show-toplevel)"
+cmd="bats setup/test/bats-tests/"
 if [ "$1" == "-d" ]; then
-  cmd="/bin/bash"
-else
-  cmd="bats setup/test/bats-tests/"
+  cmd="${cmd}; /bin/bash"
 fi
-docker run -it -v "${rootdir}"/files:/root/setup --privileged veba-test ${cmd}
+docker run -it -v "${rootdir}"/files:/root/setup:ro --privileged veba-test /bin/bash -c "${cmd}"

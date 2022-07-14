@@ -13,15 +13,15 @@
       <Locale>en_US</Locale>
    </PlatformSection>
    <PropertySection>
-         <Property oe:key="guestinfo.custom_veba_tls_ca_cert" oe:value=""/>
-         <Property oe:key="guestinfo.custom_veba_tls_private_key" oe:value=""/>
-         <Property oe:key="guestinfo.veba_debug" oe:value="True"/>
-         <Property oe:key="guestinfo.dns_server" oe:value="192.168.101.200"/>
-         <Property oe:key="guestinfo.dns_domain" oe:value="lab.core.pilue.co.uk"/>
+         <Property oe:key="guestinfo.custom_tls_ca_cert" oe:value=""/>
+         <Property oe:key="guestinfo.custom_tls_private_key" oe:value=""/>
+         <Property oe:key="guestinfo.debug" oe:value="True"/>
+         <Property oe:key="guestinfo.dns" oe:value="192.168.101.200"/>
+         <Property oe:key="guestinfo.domain" oe:value="lab.core.pilue.co.uk"/>
          <Property oe:key="guestinfo.enable_ssh" oe:value="True"/>
          <Property oe:key="guestinfo.gateway" oe:value="192.168.101.254"/>
-         <Property oe:key="guestinfo.horizon_enabled" oe:value="False"/>
-         <Property oe:key="guestinfo.horizon_disable_tls" oe:value="False"/>
+         <Property oe:key="guestinfo.horizon" oe:value="False"/>
+         <Property oe:key="guestinfo.horizon_disable_tls_verification" oe:value="False"/>
          <Property oe:key="guestinfo.horizon_domain" oe:value=""/>
          <Property oe:key="guestinfo.horizon_password" oe:value=""/>
          <Property oe:key="guestinfo.horizon_server" oe:value=""/>
@@ -29,10 +29,10 @@
          <Property oe:key="guestinfo.hostname" oe:value="veba.lab.core.pilue.co.uk"/>
          <Property oe:key="guestinfo.http_proxy" oe:value="http://192.168.101.240:3128"/>
          <Property oe:key="guestinfo.https_proxy" oe:value="http://192.168.101.240:3128"/>
-         <Property oe:key="guestinfo.ip_address" oe:value="192.168.101.31"/>
+         <Property oe:key="guestinfo.ipaddress" oe:value="192.168.101.31"/>
          <Property oe:key="guestinfo.netmask" oe:value="24 (255.255.255.0)"/>
          <Property oe:key="guestinfo.no_proxy" oe:value="localhost,127.0.0.1,lab.core.pilue.co.uk,192.168.101.31"/>
-         <Property oe:key="guestinfo.ntp_server" oe:value="ntp1.core.pilue.co.uk"/>
+         <Property oe:key="guestinfo.ntp" oe:value="ntp1.core.pilue.co.uk"/>
          <Property oe:key="guestinfo.pod_network_cidr" oe:value="10.10.0.0/16"/>
          <Property oe:key="guestinfo.proxy_password" oe:value="VM!ware1"/>
          <Property oe:key="guestinfo.proxy_username" oe:value="proxy-user"/>
@@ -41,13 +41,13 @@
          <Property oe:key="guestinfo.syslog_server_hostname" oe:value=""/>
          <Property oe:key="guestinfo.syslog_server_port" oe:value="514"/>
          <Property oe:key="guestinfo.syslog_server_protocol" oe:value="TCP"/>
-         <Property oe:key="guestinfo.vcenter_disable_tls" oe:value="True"/>
+         <Property oe:key="guestinfo.vcenter_disable_tls_verification" oe:value="True"/>
          <Property oe:key="guestinfo.vcenter_password" oe:value="VMware1!"/>
          <Property oe:key="guestinfo.vcenter_server" oe:value="vcsa01.lab.core.pilue.co.uk"/>
          <Property oe:key="guestinfo.vcenter_username" oe:value="administrator@vsphere.local"/>
-         <Property oe:key="guestinfo.vcenter_password_for_veba_ui" oe:value=""/>
-         <Property oe:key="guestinfo.vcenter_username_for_veba_ui" oe:value=""/>
-         <Property oe:key="guestinfo.webhook_enabled" oe:value="False"/>
+         <Property oe:key="guestinfo.vcenter_veba_ui_password" oe:value=""/>
+         <Property oe:key="guestinfo.vcenter_veba_ui_username" oe:value=""/>
+         <Property oe:key="guestinfo.webhook" oe:value="False"/>
          <Property oe:key="guestinfo.webhook_password" oe:value=""/>
          <Property oe:key="guestinfo.webhook_username" oe:value=""/>
    </PropertySection>

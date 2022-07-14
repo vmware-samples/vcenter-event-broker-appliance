@@ -5,7 +5,8 @@ setup() {
 
 @test "can run setup script" {
    # run the setup scripts
-   run setup.sh
+   bats_require_minimum_version 1.5.0
+   run -0 setup.sh
 }
 
 validate_yamls() {

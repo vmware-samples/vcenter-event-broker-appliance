@@ -13,8 +13,8 @@ echo -e "\e[92mSetting up VEBA UI Secret ..." > /dev/console
 kubectl -n vmware-system create secret generic veba-ui-secret \
     --from-literal=VCENTER_FQDN=${VCENTER_SERVER} \
     --from-literal=VCENTER_PORT=443 \
-    --from-literal=VCENTER_USER=${VCENTER_USERNAME_FOR_VEBA_UI} \
-    --from-literal=VCENTER_PASS=${VCENTER_PASSWORD_FOR_VEBA_UI} \
+    --from-literal=VCENTER_USER=${VCENTER_VEBA_UI_USERNAME} \
+    --from-literal=VCENTER_PASS=${VCENTER_VEBA_UI_PASSWORD} \
     --from-literal=VEBA_FQDN=${HOSTNAME}
 
 VEBA_BOM_FILE=/root/config/veba-bom.json

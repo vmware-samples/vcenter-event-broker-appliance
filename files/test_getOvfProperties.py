@@ -146,6 +146,7 @@ def get_veba_config(param):
 
     return veba_config[param]
 
+
 # Patch the ovfenv_cmd global to return a dumy ovf env XML
 @pytest.fixture(autouse=True)
 def ovfenv(monkeypatch):

@@ -4,10 +4,10 @@
 #@ load("@ytt:json", "json")
 #@ fqdn = json.decode(data.values.config)["HOSTNAME"]
 
-#@ vebaUIUsername = json.decode(data.values.config)["VCENTER_USERNAME_FOR_VEBA_UI"]
-#@ vebaUIPassword = json.decode(data.values.config)["VCENTER_PASSWORD_FOR_VEBA_UI"]
-#@ webhookEnabled = json.decode(data.values.config)["WEBHOOK_ENABLED"]
-#@ horizonEnabled = json.decode(data.values.config)["HORIZON_ENABLED"]
+#@ vebaUIUsername = json.decode(data.values.config)["VCENTER_VEBA_UI_USERNAME"]
+#@ vebaUIPassword = json.decode(data.values.config)["VCENTER_VEBA_UI_PASSWORD"]
+#@ webhookEnabled = json.decode(data.values.config)["WEBHOOK"]
+#@ horizonEnabled = json.decode(data.values.config)["HORIZON"]
 
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy

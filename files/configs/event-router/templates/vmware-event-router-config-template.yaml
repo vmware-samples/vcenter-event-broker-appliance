@@ -5,7 +5,7 @@
 #@ vcenter = json.decode(data.values.config)["VCENTER_SERVER"]
 #@ vcenterUsername = json.decode(data.values.config)["VCENTER_USERNAME"]
 #@ vcenterPassword = json.decode(data.values.config)["VCENTER_PASSWORD"]
-#@ vcenterTls = json.decode(data.values.config)["VCENTER_DISABLE_TLS"]
+#@ vcenterTls = json.decode(data.values.config)["VCENTER_DISABLE_TLS_VERIFICATION"]
 
 #@ routerName = "vmware-event-router-config-knative-" + data.values.eventProvider
 
@@ -45,7 +45,7 @@ eventProvider:
   #@ horizonDomain = json.decode(data.values.config)["HORIZON_DOMAIN"]
   #@ horizonUsername = json.decode(data.values.config)["HORIZON_USERNAME"]
   #@ horizonPassword = json.decode(data.values.config)["HORIZON_PASSWORD"]
-  #@ horizonNoTLS = json.decode(data.values.config)["HORIZON_DISABLE_TLS"]
+  #@ horizonNoTLS = json.decode(data.values.config)["HORIZON_DISABLE_TLS_VERIFICATION"]
   name: veba-horizon-01
   type: horizon
   horizon:

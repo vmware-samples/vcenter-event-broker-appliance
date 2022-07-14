@@ -1,4 +1,4 @@
-#!/bin/bash +x
+#!/bin/bash
 
 curdir=$(pwd)
 cd "$(git rev-parse --show-toplevel)"

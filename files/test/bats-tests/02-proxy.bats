@@ -18,6 +18,7 @@ setup() {
 }
 
 @test "proxy file HTTP_PROXY" {
+    skip
     if [ -z ${HTTP_PROXY} ]; then
         skip "HTTP_PROXY not set"
     fi

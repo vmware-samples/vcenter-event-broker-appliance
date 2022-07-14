@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cmd=$1
+
+case "${cmd}" in
+  apply)
+    # For the 'apply' command, add the YAML to be applied to a list for use with kubeval later
+    echo "$3" >> /root/kubeval-yamls.txt
+    ;;
+  *)
+    # Otherwise, just echo the command 
+    echo "$@"
+    ;;
+esac

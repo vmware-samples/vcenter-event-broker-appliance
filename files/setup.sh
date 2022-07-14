@@ -9,47 +9,7 @@ if [ -e /root/ran_customization ]; then
 fi
 
 # Extract all OVF Properties
-# TODO - Shouldn't need to pass all this - can just parse all OVF properties?
-PROPS=(
-veba_debug
-hostname
-ip_address
-netmask
-gateway
-dns_server
-dns_domain
-ntp_server
-http_proxy
-https_proxy
-proxy_username
-proxy_password
-no_proxy
-root_password
-enable_ssh
-vcenter_server
-vcenter_username
-vcenter_password
-vcenter_username_for_veba_ui
-vcenter_password_for_veba_ui
-vcenter_disable_tls
-horizon_enabled
-horizon_server
-horizon_domain
-horizon_username
-horizon_password
-horizon_disable_tls
-webhook_enabled
-webhook_username
-webhook_password
-custom_veba_tls_private_key
-custom_veba_tls_ca_cert
-pod_network_cidr
-syslog_server_hostname
-syslog_server_port
-syslog_server_protocol
-syslog_server_format)
-/root/setup/getOvfProperties.py ${PROPS[@]}
-
+/root/setup/getOvfProperties.py
 source /root/config/shell_env
 rm /root/config/shell_env
 
@@ -63,7 +23,7 @@ LOCAL_STOARGE_VOLUME_PATH="/data"
 export KUBECONFIG="/root/.kube/config"
 
 VEBA_LOG_FILE=/var/log/bootstrap.log
-if [ ${VEBA_DEBUG} == "True" ]; then
+if [ ${DEBUG} == "True" ]; then
 	VEBA_LOG_FILE=/var/log/bootstrap-debug.log
 	set -x
 	exec 2>> ${VEBA_LOG_FILE}
@@ -76,11 +36,11 @@ fi
 # Determine Event Providers
 EVENT_PROVIDERS=("vcenter")
 
-if [ ${WEBHOOK_ENABLED} == "True" ]; then
+if [ ${WEBHOOK} == "True" ]; then
 	EVENT_PROVIDERS+=("webhook")
 fi
 
-if [ ${HORIZON_ENABLED} == "True" ]; then
+if [ ${HORIZON} == "True" ]; then
 	EVENT_PROVIDERS+=("horizon")
 fi
 
@@ -118,7 +78,7 @@ echo -e "\e[92mStarting TinyWWW Configuration ..." > /dev/console
 echo -e "\e[92mStarting Ingress Router Configuration ..." > /dev/console
 . /root/setup/setup-09-ingress.sh
 
-if [[ ! -z ${VCENTER_USERNAME_FOR_VEBA_UI} ]] && [[ ! -z ${VCENTER_PASSWORD_FOR_VEBA_UI} ]]; then
+if [[ ! -z ${VCENTER_VEBA_UI_USERNAME} ]] && [[ ! -z ${VCENTER_VEBA_UI_PASSWORD} ]]; then
 	echo -e "\e[92mStarting Knative UI Configuration ..." > /dev/console
 	. /root/setup/setup-010-veba-ui.sh
 fi
@@ -140,7 +100,7 @@ echo -e "\e[92mStarting OS Banner Configuration ..."> /dev/console
 echo -e "\e[92mCustomization Completed ..." > /dev/console
 
 # Clear guestinfo.ovfEnv
-if [ ${VEBA_DEBUG} == "False" ]; then
+if [ ${DEBUG} == "False" ]; then
 	vmtoolsd --cmd "info-set guestinfo.ovfEnv NULL"
 fi
 

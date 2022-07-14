@@ -23,7 +23,6 @@ RUN ln -s /usr/bin/echo /usr/local/bin/systemctl \
  # Mock a succesfull install of kubernetes (enough for our tests anyway!)
  && mkdir -p /etc/kubernetes \
  && touch /etc/kubernetes/admin.conf \
- && ln -s /root/setup/configs/* /root/config \
  # Install BATS unit testing app
  && git clone https://github.com/bats-core/bats-core.git bats \
  && git clone https://github.com/bats-core/bats-support.git test_helper/bats-support \
@@ -41,7 +40,7 @@ RUN ln -s /usr/bin/echo /usr/local/bin/systemctl \
  && cd /root \
  && rm -rf kubeval \
  # Configure kubectl to instead run kubeval with local schema's
- && ln -s /root/setup/test/kubectl-val /usr/local/bin/kubectl \
+ && ln -s /root/setup/test/bin/kubectl /usr/local/bin/kubectl \
  && git clone --depth 1 --filter=blob:none --sparse https://github.com/yannh/kubernetes-json-schema.git \
  && cd kubernetes-json-schema \
  && git sparse-checkout set v1.21.5-local \

@@ -15,7 +15,7 @@ Appliance Configuration,Events,/events
 EOF
 
 # For Webhook Provider
-if [ ${WEBHOOK_ENABLED} == "True" ]; then
+if [ ${WEBHOOK} == "True" ]; then
     echo "Appliance Configuration,Webhook,/webhook" >> ${DCUI_ENDPOINTS_FILE}
 fi
 
@@ -25,11 +25,11 @@ Appliance Provider Stats,vCenter,/stats/vcenter
 EOF
 
 # For Horizon Provider
-if [ ${HORIZON_ENABLED} == "True" ]; then
+if [ ${HORIZON} == "True" ]; then
     echo "Appliance Provider Stats,Horizon,/stats/horizon" >> ${DCUI_ENDPOINTS_FILE}
 fi
 
 # For Webhook Provider
-if [ ${WEBHOOK_ENABLED} == "True" ]; then
+if [ ${WEBHOOK} == "True" ]; then
     echo "Appliance Provider Stats,Webhook,/stats/webhook" >> ${DCUI_ENDPOINTS_FILE}
 fi

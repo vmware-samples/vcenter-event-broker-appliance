@@ -14,17 +14,17 @@ cat > /etc/systemd/network/${NETWORK_CONFIG_FILE} << __CUSTOMIZE_PHOTON__
 Name=e*
 
 [Network]
-Address=${IP_ADDRESS}/${NETMASK}
+Address=${IPADDRESS}/${NETMASK}
 Gateway=${GATEWAY}
-DNS=${DNS_SERVER}
-Domain=${DNS_DOMAIN}
+DNS=${DNS}
+Domain=${DOMAIN}
 __CUSTOMIZE_PHOTON__
 
 # Remove default symlink to prevent reverting back to local DNS stub resolver
 rm -f /etc/resolv.conf || true
 cat > /etc/resolv.conf <<EOF
-nameserver ${DNS_SERVER}
-search ${DNS_DOMAIN}
+nameserver ${DNS}
+search ${DOMAIN}
 EOF
 
 echo -e "\e[92mConfiguring NTP ..." > /dev/console
@@ -34,11 +34,11 @@ cat > /etc/systemd/timesyncd.conf << __CUSTOMIZE_PHOTON__
 Name=e*
 
 [Time]
-NTP=${NTP_SERVER}
+NTP=${NTP}
 __CUSTOMIZE_PHOTON__
 
 echo -e "\e[92mConfiguring hostname ..." > /dev/console
-echo "${IP_ADDRESS} ${HOSTNAME}" >> /etc/hosts
+echo "${IPADDRESS} ${HOSTNAME}" >> /etc/hosts
 hostnamectl set-hostname ${HOSTNAME}
 
 echo -e "\e[92mRestarting Network ..." > /dev/console

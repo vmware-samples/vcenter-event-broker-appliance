@@ -2,7 +2,7 @@
 #@ load("@ytt:data", "data")
 
 #@ load("@ytt:json", "json")
-#@ debug = json.decode(data.values.config)["VEBA_DEBUG"]
+#@ debug = json.decode(data.values.config)["DEBUG"]
 
 #@ name = json.decode(data.values.bom)["tinywww"]["containers"][0]["name"]
 #@ version = json.decode(data.values.bom)["tinywww"]["containers"][0]["version"]

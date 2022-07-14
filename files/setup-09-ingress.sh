@@ -12,9 +12,9 @@ CERT_NAME=eventrouter-tls
 CN_NAME=$(hostname -f)
 
 # Customer provided TLS Certificate
-if [[ ! -z ${CUSTOM_VEBA_TLS_PRIVATE_KEY} ]] && [[ ! -z ${CUSTOM_VEBA_TLS_CA_CERT} ]]; then
-  echo ${CUSTOM_VEBA_TLS_PRIVATE_KEY} | /usr/bin/base64 -d > ${KEY_FILE}
-  echo ${CUSTOM_VEBA_TLS_CA_CERT} | /usr/bin/base64 -d > ${CERT_FILE}
+if [[ ! -z ${CUSTOM_TLS_PRIVATE_KEY} ]] && [[ ! -z ${CUSTOM_TLS_CA_CERT} ]]; then
+  echo ${CUSTOM_TLS_PRIVATE_KEY} | /usr/bin/base64 -d > ${KEY_FILE}
+  echo ${CUSTOM_TLS_CA_CERT} | /usr/bin/base64 -d > ${CERT_FILE}
 else
   # Create Self Sign TLS Certifcate
   openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ${KEY_FILE} -out ${CERT_FILE} -subj "/CN=${CN_NAME}/O=${CN_NAME}"

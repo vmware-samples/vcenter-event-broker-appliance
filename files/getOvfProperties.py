@@ -41,13 +41,15 @@ def get_ovf_properties():
     return properties
 
 
-def main(argv):
-    if len(argv) == 0:
-        debug('usage: getOvfProperties.py <property_name> <property_name> ...')
-        sys.exit(1)
+def remove_prefix(text, prefix):
+    if text.startswith(prefix):
+        return text[len(prefix):]
+    return text
 
+
+def main():
     ovf = get_ovf_properties()
-    
+
     if path.isfile(veba_config_file):
         with open(veba_config_file) as fp:
             veba_config = json.load(fp)
@@ -55,12 +57,8 @@ def main(argv):
         veba_config = {}
 
     with open(veba_env_file, 'w') as fp:
-        for property_name in argv:
-            try:
-                res = ovf[f'guestinfo.{property_name}']
-            except KeyError as err:
-                debug(f'ovfProperty not found: {err}')
-                continue
+        for prop, res in ovf.items():
+            property_name = remove_prefix(prop, 'guestinfo.')
 
             # Strip enclosing quotes if not a password
             if not re.search('password', property_name, flags=re.IGNORECASE):
@@ -85,4 +83,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
