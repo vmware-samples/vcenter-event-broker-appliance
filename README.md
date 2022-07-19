@@ -29,8 +29,6 @@ Follow](https://img.shields.io/twitter/follow/embano1?style=social)](https://twi
   - [Overview](#overview)
   - [Architecture](#architecture)
   - [Getting in touch](#getting-in-touch)
-    - [Community Calls](#community-calls)
-    - [Other Channels](#other-channels)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -122,18 +120,6 @@ VMware Event Broker Appliance, please see the [Architecture
 page](https://vmweventbroker.io/kb/architecture).
 
 ## Getting in touch
-
-### Community Calls
-
-Public VEBA community meetings are held every **last Tuesday** in the month at
-**8AM Pacific Time (US)**.
-
-- **Zoom:** <https://via.vmw.com/veba-ama>
-  - **Note:** The meeting is **password protected** to mitigate abuse. Please join the VEBA Slack [channel](https://vmwarecode.slack.com/archives/CQLT9B5AA) to receive the Zoom password or contact us in case of issues.
-- **Notes**: <https://via.vmw.com/veba-notes>
-- **Recording Playlist**: [VEBA Community Calls](https://youtube.com/playlist?list=PLnopqt07fPn3hspeQvarWuFH3IiwkMpDJ)
-
-### Other Channels
 
 Feel free to reach out to [Team #VEBA](https://vmweventbroker.io/#team-veba) and
 the community via:

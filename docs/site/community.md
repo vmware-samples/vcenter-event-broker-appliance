@@ -54,16 +54,6 @@ links:
 
 The VMware Event Broker Appliance team welcomes contributions from the community and this page presents the guidelines for contributing to VMware Event Broker Appliance. 
 
-## Community Calls
-
-Public VEBA community meetings are held every **last Tuesday** in the month at
-**8AM Pacific Time (US)**.
-
-- **Zoom:** <https://via.vmw.com/veba-ama>{:target="_blank"}
-  - **Note:** The meeting is **password protected** to mitigate abuse. Please join the VEBA Slack [channel](https://vmwarecode.slack.com/archives/CQLT9B5AA){:target="_blank"} to receive the Zoom password or contact us in case of issues.
-- **Notes**: <https://via.vmw.com/veba-notes>{:target="_blank"}
-- **Recording Playlist**: [VEBA Community Calls](https://youtube.com/playlist?list=PLnopqt07fPn3hspeQvarWuFH3IiwkMpDJ){:target="_blank"}
-
 ## Contributing
 
 Following the guidelines helps to make the contribution process easy,
@@ -114,7 +104,6 @@ the following requirements:
   Origin](https://cla.vmware.com/dco){:target="_blank"} doc.
 - The change is clearly documented and follows Git commit best practices (see
   below)
-
 
 ### Format of the Commit Message
 
