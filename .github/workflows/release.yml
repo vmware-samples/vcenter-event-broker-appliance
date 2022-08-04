@@ -88,7 +88,6 @@ jobs:
         uses: peter-evans/create-pull-request@923ad837f191474af6b1721408744feb989a4c27
         with:
           delete-branch: true
-          reviewers: embano1
           title: "Update CHANGELOG"
           body: |
             Update CHANGELOG.md for new release
