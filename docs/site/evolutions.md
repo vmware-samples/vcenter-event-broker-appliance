@@ -6,6 +6,15 @@ permalink: /evolution
 limit: 3
 entry:
 
+- title: VEBA [v0.7.4](https://github.com/vmware-samples/vcenter-event-broker-appliance/releases/tag/v0.7.4)
+  type: feature
+  date: Aug 2022
+  id: vzerosevenfour
+  detail:
+    subtitle: Features
+    text:
+    - Fixed VEBA vSphere UI for subscribing to multiple events for single function
+
 - title: VEBA [v0.7.3](https://github.com/vmware-samples/vcenter-event-broker-appliance/releases/tag/v0.7.3)
   type: feature
   date: Jul 2022
