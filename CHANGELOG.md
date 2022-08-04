@@ -1,4 +1,33 @@
 
+<a name="v0.7.4"></a>
+## [Release v0.7.4](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.7.3...v0.7.4)
+
+> Release Date: 2022-08-04
+
+### 📃 Documentation
+
+- [59f5920]	Update VEBA Evolution page w/v0.7.4 release (#935) 
+- [06a1112]	Remove community calls (#929) 
+
+### 🧹 Chore
+
+- [cf6ce0d]	Update VEBA UI version (#931) 
+
+### ⚠️ BREAKING
+
+### 📖 Commits
+
+- [a6d5734]	Bump version to v0.7.4 for release
+- [83c0fd5]	Bump version to release-0.7.4
+- [59f5920]	docs: Update VEBA Evolution page w/v0.7.4 release (#935)
+- [4214956]	chore(deps): Bump actions/stale from 5.1.0 to 5.1.1
+- [2391612]	chore(deps): Bump imjasonh/setup-ko from 0.4 to 0.5
+- [cf6ce0d]	chore: Update VEBA UI version (#931)
+- [06a1112]	docs: Remove community calls (#929)
+- [33f377c]	chore(deps): Bump actions/stale from 5.0.0 to 5.1.0
+- [0e183c3]	Add v0.7.4 Helm Chart
+- [0567194]	chore(deps): Bump actions/setup-go from 3.2.0 to 3.2.1
+
 <a name="v0.7.3"></a>
 ## [Release v0.7.3](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.7.2...v0.7.3)
 
