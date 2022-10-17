@@ -27,7 +27,7 @@ jobs:
             author: ${{ github.actor }}
 
       - name: Create comment
-        uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
+        uses: peter-evans/create-or-update-comment@2b2c85d0bf1b8a7b4e7e344bd5c71dc4b9196e9f
         with:
           issue-number: ${{ github.event.issue.number }}
           body: ${{ steps.template.outputs.result }}
