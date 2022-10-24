@@ -20,7 +20,7 @@ jobs:
 
       - name: Render template
         id: template
-        uses: chuhlomin/render-template@69462090a6315efa50069855670b3a4abab20512
+        uses: chuhlomin/render-template@204ce622bc2fd5c787ff5ca885ff19fb577e7a41
         with:
           template: .github/comment-template.md
           vars: |
