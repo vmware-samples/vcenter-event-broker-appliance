@@ -138,7 +138,7 @@ jobs:
 
       - name: Get Release URL
         id: get_release_url
-        uses: bruceadams/get-release@3a8733307b85cd96d52772b037617bd63d99522e # v1.2.3
+        uses: bruceadams/get-release@439b85889ca8b4f49a7474e8cb078e91ac74f135 # v1.2.3
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
