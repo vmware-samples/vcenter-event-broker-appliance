@@ -32,7 +32,7 @@ jobs:
         uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.4
         
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@c4a742cab115ed795e34d4513e2cf7d472deb55f
+        uses: actions/setup-go@d0a58c1c4d2b25278816e339b944508c875f3613
         with:
           go-version: ${{ matrix.go-version }}
         id: go
