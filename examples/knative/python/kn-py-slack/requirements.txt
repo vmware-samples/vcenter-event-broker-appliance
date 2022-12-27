@@ -16,4 +16,4 @@ requests==2.27.1
   chardet==3.0.4
   idna==2.7
   urllib3==1.26.5
-setuptools==49.2.1
+setuptools==65.5.1
