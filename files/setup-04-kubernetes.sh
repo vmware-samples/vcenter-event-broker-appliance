@@ -33,7 +33,7 @@ kubeadm init --ignore-preflight-errors SystemVerification --skip-token-print --c
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
-kubectl taint nodes --all node-role.kubernetes.io/master-
+kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 
 echo -e "\e[92mDeloying Antrea ..." > /dev/console
 kubectl apply -f /root/download/antrea.yml
