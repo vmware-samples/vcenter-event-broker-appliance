@@ -216,10 +216,10 @@
         ]
     },
     "csi": {
-        "gitRepoTag": "v0.0.19",
+        "gitRepoTag": "v0.0.23",
         "containers": [{
                 "name": "rancher/local-path-provisioner",
-                "version": "v0.0.19"
+                "version": "v0.0.23"
             },
             {
                 "name": "busybox",
