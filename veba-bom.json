@@ -31,10 +31,10 @@
             }]
     },
     "cadvisor": {
-        "gitRepoTag": "v0.37.5",
+        "gitRepoTag": "v0.47.0",
         "containers": [{
                 "name": "gcr.io/cadvisor/cadvisor",
-                "version": "v0.37.5"
+                "version": "v0.47.0"
             }]
     },
     "kind": {
