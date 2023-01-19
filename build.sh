@@ -21,11 +21,11 @@ if [[ ! -z $(git status -s | grep -vE 'photon-builder.json|test/.*\.sh') ]]; the
     exit
 fi
 
-rm -f output-vmware-iso/*.ova
+rm -f output-veba/*.ova
 
 VEBA_VERSION_FROM_BOM=$(jq -r < ${VEBA_BOM_FILE} '.veba.version')
 VEBA_COMMIT=$(git rev-parse --short HEAD)
 
 echo "Building VEBA OVA from ${VEBA_VERSION_FROM_BOM} ..."
-packer build -var "VEBA_VERSION=${VEBA_VERSION_FROM_BOM}" -var "VEBA_COMMIT=${VEBA_COMMIT}" -var-file=photon-builder.json -var-file=photon-version.json photon.json
+packer build -var "VEBA_VERSION=${VEBA_VERSION_FROM_BOM}" -var "VEBA_COMMIT=${VEBA_COMMIT}" .
 

@@ -1,5 +1,6 @@
 packer_cache/
 output-vmware-iso/
+output-veba/
 dist/
 .vscode
 .idea
