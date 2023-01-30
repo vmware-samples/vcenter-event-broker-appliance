@@ -14,7 +14,9 @@ do
             value=$(jq -r ".$component_name.containers[$i]" ${VEBA_BOM_FILE});
             container_name=$(jq -r '.name' <<< "$value");
             container_version=$(jq -r '.version' <<< "$value");
-            crictl pull "$container_name:$container_version"
+            if [ "${container_name}" != "kindest/node" ]; then
+                crictl pull "$container_name:$container_version"
+            fi
         done
     fi
 done
