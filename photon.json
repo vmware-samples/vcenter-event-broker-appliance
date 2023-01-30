@@ -12,6 +12,8 @@
       "vm_name": "{{ user `vm_name` }}",
       "guest_os_type": "Other",
       "version": "13",
+      "disk_type_id": "thin",
+      "skip_compaction": true,
       "disk_size": "25600",
       "disk_additional_size": [
         "25600"

@@ -31,7 +31,8 @@ tdnf install -y \
   unzip \
   tar \
   jq \
-  parted
+  parted \
+  apparmor-parser
 
 echo '> Adding K8s Repo'
 curl -L https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg -o /etc/pki/rpm-gpg/GOOGLE-RPM-GPG-KEY
