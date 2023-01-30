@@ -39,7 +39,7 @@ jobs:
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
 
       - name: GoReleaser Snapshot
-        uses: goreleaser/goreleaser-action@8f67e590f2d095516493f017008adc464e63adb1
+        uses: goreleaser/goreleaser-action@f82d6c1c344bcacabba2c841718984797f664a6b
         with:
           version: latest
           args: release --rm-dist --snapshot
