@@ -23,9 +23,9 @@ require (
 	go.uber.org/zap v1.16.0
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
 	gotest.tools/v3 v3.2.0
-	k8s.io/api v0.18.8
-	k8s.io/apimachinery v0.18.8
-	k8s.io/client-go v0.18.8
+	k8s.io/api v0.20.0
+	k8s.io/apimachinery v0.20.0
+	k8s.io/client-go v0.20.0
 	knative.dev/pkg v0.0.0-20201109175709-2c9320ae0640
 )
 
@@ -42,14 +42,14 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
-	github.com/go-logr/logr v0.1.0 // indirect
+	github.com/go-logr/logr v0.2.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
-	github.com/googleapis/gnostic v0.4.0 // indirect
+	github.com/googleapis/gnostic v0.4.1 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.14.8 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/iancoleman/orderedmap v0.0.0-20190318233801-ac98e3ecb4b0 // indirect
@@ -79,7 +79,7 @@ require (
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43 // indirect
 	golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44 // indirect
-	golang.org/x/text v0.3.3 // indirect
+	golang.org/x/text v0.3.4 // indirect
 	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.1.0 // indirect
@@ -94,10 +94,10 @@ require (
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	k8s.io/klog v1.0.0 // indirect
-	k8s.io/klog/v2 v2.0.0 // indirect
-	k8s.io/kube-openapi v0.0.0-20200410145947-bcb3869e6f29 // indirect
-	k8s.io/utils v0.0.0-20200603063816-c1c6865ac451 // indirect
-	sigs.k8s.io/structured-merge-diff/v3 v3.0.1-0.20200706213357-43c19bbb7fba // indirect
+	k8s.io/klog/v2 v2.4.0 // indirect
+	k8s.io/kube-openapi v0.0.0-20201113171705-d219536bb9fd // indirect
+	k8s.io/utils v0.0.0-20201110183641-67b214c5f920 // indirect
+	sigs.k8s.io/structured-merge-diff/v4 v4.0.2 // indirect
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )
 
