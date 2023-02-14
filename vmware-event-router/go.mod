@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/alecthomas/jsonschema v0.0.0-20200530073317-71f438968921
 	github.com/avast/retry-go v2.6.1+incompatible
-	github.com/aws/aws-sdk-go v1.33.12
+	github.com/aws/aws-sdk-go v1.34.0
 	github.com/benbjohnson/clock v1.1.0
 	github.com/cloudevents/sdk-go/v2 v2.3.1
 	github.com/embano1/waitgroup v0.0.0-20201120223302-1d5df9b49112
