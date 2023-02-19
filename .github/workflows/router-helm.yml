@@ -12,7 +12,7 @@ on:
       - 'vmware-event-router/**'
 
 env:
-  KIND_VERSION: v0.11.1
+  KIND_VERSION: v0.17.0
   NAMESPACE: vmware
   KO_DOCKER_REPO: kind.local
 
@@ -23,13 +23,13 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - name: Set up Go 1.18.x
+      - name: Set up Go
         uses: actions/setup-go@6edd4406fa81c3da01a34fa6f6343087c207a568
         with:
-          go-version: 1.18
+          go-version: 1.19
 
       - name: Setup ko
-        uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.4
+        uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.6
 
       - name: Check out code onto GOPATH
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
@@ -98,7 +98,7 @@ jobs:
             config:
               logLevel: debug
             vcenter:
-              address: https://vcsim.vmware.svc.cluster.local
+              address: https://vcsim.${NAMESPACE}.svc.cluster.local
               username: user
               password: pass
               insecure: true # ignore TLS certs
@@ -129,19 +129,19 @@ jobs:
     name: Knative Event Processor
     runs-on: ubuntu-latest
     env:
-      KNATIVE_VERSION: knative-v1.1.0 # same as VEBA BOM
+      KNATIVE_VERSION: knative-v1.8.3 # same as VEBA BOM
       BROKER_NAMESPACE: default
       BROKER_NAME: default
     timeout-minutes: 15
 
     steps:
-      - name: Set up Go 1.18.x
+      - name: Set up Go
         uses: actions/setup-go@6edd4406fa81c3da01a34fa6f6343087c207a568
         with:
-          go-version: 1.18
+          go-version: 1.19
 
       - name: Setup ko
-        uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.4
+        uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.6
 
       - name: Check out code onto GOPATH
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
@@ -192,7 +192,8 @@ jobs:
 
           echo "::group::Ingress"
           echo "waiting 10s before proceeding..." && sleep 10 # hack: give webhook mutating admission controllers some time to settle
-          kubectl apply -f https://github.com/knative/net-kourier/releases/download/${KNATIVE_VERSION}/kourier.yaml
+          # TODO (@embano1): hard-code version since v1.8.3 does not exist
+          kubectl apply -f https://github.com/knative-sandbox/net-kourier/releases/download/knative-v1.8.1/kourier.yaml
           kubectl -n kourier-system wait --timeout=3m --for=condition=Available deploy/3scale-kourier-gateway
           kubectl patch configmap/config-network \
           --namespace knative-serving \
