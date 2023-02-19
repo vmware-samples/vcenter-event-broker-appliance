@@ -102,10 +102,6 @@ func NewEventStream(ctx context.Context, cfg *config.ProviderConfigVCSIM, ms met
 // Stream implements the event provider interface and starts the event stream
 func (vcsim *EventStream) Stream(ctx context.Context, p processor.Processor) error {
 	mgr := event.NewManager(vcsim.client.Client)
-	defer func() {
-		// ignore error against vcsim
-		_, _ = mgr.Destroy(ctx)
-	}()
 
 	const (
 		pageSize = 10

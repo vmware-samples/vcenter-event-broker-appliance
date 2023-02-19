@@ -14,7 +14,6 @@ spec:
       containers:
         - name: vcsim
           image: vmware/vcsim:latest
-          args: ["/vcsim", "-l", ":8989"]
           ports:
             - name: https
               containerPort: 8989
