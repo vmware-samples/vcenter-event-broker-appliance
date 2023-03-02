@@ -8,7 +8,7 @@ on:
 
 jobs:
   login:
-    name: Verify GCR Login
+    name: Verify-GCR-Login
     runs-on: ubuntu-latest
     timeout-minutes: 3
     env:
