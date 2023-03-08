@@ -6,6 +6,17 @@ permalink: /evolution
 limit: 3
 entry:
 
+- title: VEBA [v0.7.5](https://github.com/vmware-samples/vcenter-event-broker-appliance/releases/tag/v0.7.5)
+  type: feature
+  date: Mar 2023
+  id: vzerosevenfive
+  detail:
+    subtitle: Features
+    text:
+    - Software Build-of-Material (SBOM) updated. See Release Notes for detailed Version changes
+    - Converted Virtual Appliance Packer format from JSON to HashiCorp Configuration Language (HCL)
+    - Various Documentation Updates & Bug Fixes
+
 - title: VEBA [v0.7.4](https://github.com/vmware-samples/vcenter-event-broker-appliance/releases/tag/v0.7.4)
   type: feature
   date: Aug 2022
