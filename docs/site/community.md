@@ -52,7 +52,7 @@ links:
   </div>
 </div>
 
-The VMware Event Broker Appliance team welcomes contributions from the community and this page presents the guidelines for contributing to VMware Event Broker Appliance. 
+The VMware Event Broker Appliance team welcomes contributions from the community and this page presents the guidelines for contributing to VMware Event Broker Appliance.
 
 ## Contributing
 
@@ -115,7 +115,7 @@ e.g. `Closes: #<number>`.
 
 The `CHANGELOG.md` and release page use **commit message prefixes** for grouping
 and highlighting. A commit message that starts with `[prefix:] ` will place this
-commit under the respective section in the `CHANGELOG`. 
+commit under the respective section in the `CHANGELOG`.
 
 The following example creates a commit referencing the `issue: 1234` and puts
 the commit message in the `Feature` `CHANGELOG` section:
