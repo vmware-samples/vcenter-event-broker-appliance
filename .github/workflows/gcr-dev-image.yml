@@ -38,7 +38,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
         
-      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+      - uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f
 
       - id: login_to_gcp
         uses: google-github-actions/auth@ef5d53e30bbcd8d0836f4288f5e50ff3e086997d
