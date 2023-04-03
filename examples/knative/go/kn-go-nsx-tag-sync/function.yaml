@@ -15,7 +15,7 @@ spec:
       # greater than 1 FIFO order is not respected
       containerConcurrency: 1
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-go-nsx-tag-sync:1.0
+        - image: us.gcr.io/daisy-284300/veba/kn-go-nsx-tag-sync:1.1
           imagePullPolicy: IfNotPresent
           env:
             - name: VCENTER_URL
