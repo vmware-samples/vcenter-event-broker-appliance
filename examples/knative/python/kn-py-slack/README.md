@@ -6,7 +6,7 @@ Example Knative Python function for sending to a Slack webhook when a Virtual Ma
 [Buildpacks](https://buildpacks.io) are used to create the container image.
 
 ```bash
-IMAGE=<docker-username>/kn-py-slack:1.1
+IMAGE=<docker-username>/kn-py-slack:1.2
 pack build -B gcr.io/buildpacks/builder:v1 ${IMAGE}
 ```
 
@@ -25,7 +25,7 @@ Update the `docker-test-env-variable` file with your Slack webook URL.
 Start the container image by running the following command:
 
 ```console
-docker run -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 <docker-username>/kn-py-slack:1.1
+docker run -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 <docker-username>/kn-py-slack:1.2
 
 Serving Flask app "handler.py" (lazy loading)
  * Environment: development
@@ -73,7 +73,7 @@ Finally, check your Slack channel to see if the test event posted.
 Push your container image to an accessible registry such as Docker once you're done developing and testing your function logic.
 
 ```console
-docker push <docker-username>/kn-py-slack:1.1
+docker push <docker-username>/kn-py-slack:1.2
 ```
 
 Update the `slack_secret.json` file with your Slack webhook configurations and then create the kubernetes secret which can then be accessed from within the function by using the environment variable named called `SLACK_SECRET`.

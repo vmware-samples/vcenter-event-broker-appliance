@@ -1,4 +1,4 @@
-module github.com/vmware-samples/vcenter-event-broker-appliance/examples/go/kn-echo
+module github.com/vmware-samples/vcenter-event-broker-appliance/examples/go/kn-go-echo
 
 go 1.15
 
