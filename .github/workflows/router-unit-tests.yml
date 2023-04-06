@@ -22,7 +22,7 @@ jobs:
     name: Unit Tests
     strategy:
       matrix:
-        go-version: ["1.18"]
+        go-version: ["1.19"]
         platform: ["ubuntu-latest"]
 
     runs-on: ${{ matrix.platform }}
@@ -30,13 +30,16 @@ jobs:
 
     steps:
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@84cbf8094393cdc5fe1fe1671ff2647332956b1a
+        uses: actions/setup-go@4d34df0c2316fe8122ab82dc22947d607c0c91f9
         with:
           go-version: ${{ matrix.go-version }}
         id: go
 
       - name: Check out code
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+
+      - name: Install tparse
+        run: go install github.com/mfridman/tparse@latest        
 
       - name: run unit tests
         run: make unit-test

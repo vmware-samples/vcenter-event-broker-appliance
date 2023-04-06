@@ -7,30 +7,20 @@ spec:
     spec:
       #@overlay/match missing_ok=True
       dnsPolicy: ClusterFirstWithHostNet
-      #@overlay/match missing_ok=True
-      hostNetwork: true
       containers:
       #@overlay/match by="name"
       - name: envoy
         ports:
         #@overlay/match by="name"
         - name: http
-          containerPort: 80
+          containerPort: 8080
+          #@overlay/match missing_ok=True
+          hostPort: 80
         #@overlay/match by="name"
         - name: https
-          containerPort: 443
-
-#@overlay/match by=overlay.subset({"kind":"Service", "metadata": {"name": "envoy", "namespace": "contour-external"}})
----
-spec:
-  type: NodePort
-  ports:
-  #@overlay/match by="name"
-  - name: http
-    targetPort: 80
-  #@overlay/match by="name"
-  - name: https
-    targetPort: 44
+          containerPort: 8443
+          #@overlay/match missing_ok=True
+          hostPort: 443
 
 #@overlay/match by=overlay.subset({"kind":"Job", "metadata": {"namespace": "contour-external"}})
 ---
@@ -42,18 +32,6 @@ spec:
       -
         #@overlay/match missing_ok=True
         imagePullPolicy: IfNotPresent
-
-#@overlay/match by=overlay.subset({"kind":"Deployment", "metadata": {"name": "contour", "namespace": "contour-external"}})
----
-spec:
-  template:
-    spec:
-      containers:
-      #@overlay/match by=overlay.subset({"name": "contour"})
-      - args:
-        #@overlay/append
-        - --envoy-service-http-port=80
-        - --envoy-service-https-port=443
 
 #@overlay/match by=overlay.subset({"kind":"Job", "metadata": {"namespace": "contour-internal"}})
 ---

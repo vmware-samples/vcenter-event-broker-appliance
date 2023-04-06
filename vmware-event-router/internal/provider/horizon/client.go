@@ -67,7 +67,7 @@ func newHorizonClient(ctx context.Context, server string, credentials AuthLoginR
 func newRESTClient(server string, insecure bool, log logger.Logger) *resty.Client {
 	// REST global client defaults
 	r := resty.New().SetLogger(log)
-	r.SetHostURL(server)
+	r.SetBaseURL(server)
 	r.SetHeader("content-type", "application/json")
 	r.SetAuthScheme("Bearer")
 	r.SetRetryCount(defaultRetries).SetRetryMaxWaitTime(defaultTimeout)
@@ -290,5 +290,5 @@ func (h *horizonClient) logout(ctx context.Context) error {
 
 // Remote returns the remote server address the client is connected to
 func (h *horizonClient) Remote() string {
-	return h.client.HostURL
+	return h.client.BaseURL
 }

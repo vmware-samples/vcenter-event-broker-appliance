@@ -14,8 +14,10 @@ import (
 	"github.com/embano1/waitgroup"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/rest"
+	"knative.dev/pkg/controller"
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/resolver"
+	"knative.dev/pkg/tracker"
 
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -96,8 +98,7 @@ func NewProcessor(ctx context.Context, cfg *config.ProcessorConfigKnative, ms me
 
 	// placeholder type, works with any addressable, e.g. Broker, kService
 	var source corev1.Service
-
-	uriResolver := resolver.NewURIResolver(ctx, func(name types.NamespacedName) {})
+	uriResolver := resolver.NewURIResolverFromTracker(ctx, tracker.New(func(name types.NamespacedName) {}, controller.GetTrackerLease(ctx)))
 	uri, err := uriResolver.URIFromDestinationV1(ctx, *cfg.Destination, &source)
 	if err != nil {
 		return nil, errors.Wrap(err, "get URI from destination")

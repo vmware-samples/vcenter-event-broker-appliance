@@ -9,11 +9,11 @@ Flask==2.1.2
   itsdangerous==2.1.2
   Jinja2==3.1.2
     MarkupSafe==2.1.1
-  Werkzeug==2.1.2
+  Werkzeug==2.2.3
 pip==21.1
 requests==2.27.1
-  certifi==2022.5.18.1
+  certifi==2022.12.7
   chardet==3.0.4
   idna==2.7
   urllib3==1.26.5
-setuptools==49.2.1
+setuptools==65.5.1

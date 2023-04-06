@@ -69,6 +69,7 @@ Find answers to the frequently asked questions about VMware Event Broker Applian
 </div>
 
 ## Have more questions?
+
 - Explore our [documentation](/kb)
 - Feel free to reach out
   - Email us at [dl-veba@vmware.com](mailto:dl-veba@vmware.com){:target="_blank"}

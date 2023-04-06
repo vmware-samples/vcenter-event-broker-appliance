@@ -11,17 +11,20 @@ jobs:
     name: Verify GCR Login
     runs-on: ubuntu-latest
     timeout-minutes: 3
+    env:
+      PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
 
     steps:
       - name: Check out code
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
 
-      - name: Login to GCP
-        uses: google-github-actions/setup-gcloud@877d4953d2c70a0ba7ef3290ae968eb24af233bb
+      - id: login_to_gcp
+        uses: google-github-actions/auth@ef5d53e30bbcd8d0836f4288f5e50ff3e086997d
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_email: ${{ secrets.GCP_EMAIL }}
-          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@62d4898025f6041e16b1068643bfc5a696863587
 
       - name: Configure Docker
         run: gcloud auth configure-docker --quiet

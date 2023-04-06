@@ -22,7 +22,7 @@ func Test_getVmRef(t *testing.T) {
 			vm:   "DC0_H0_VM0",
 			want: types.ManagedObjectReference{
 				Type:  "VirtualMachine",
-				Value: "vm-54",
+				Value: "vm-55",
 			},
 			wantErr: "",
 		},
@@ -64,7 +64,7 @@ func Test_getInstancedID(t *testing.T) {
 			name: "retrieves id for vm",
 			vm: types.ManagedObjectReference{
 				Type:  "VirtualMachine",
-				Value: "vm-54",
+				Value: "vm-55",
 			},
 			wantErr: "",
 		},

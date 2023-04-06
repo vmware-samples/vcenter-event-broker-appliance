@@ -9,14 +9,14 @@ Flask==2.1.2
   itsdangerous==2.1.2
   Jinja2==3.1.2
     MarkupSafe==2.1.1
-  Werkzeug==2.1.2
+  Werkzeug==2.2.3
 pip==21.1
 python-dotenv==0.17.1
 pyvmomi==7.0.2
   requests==2.27.1
-    certifi==2022.5.18.1
+    certifi==2022.12.7
     charset-normalizer==2.0.12
     idna==3.3
     urllib3==1.26.9
   six==1.16.0
-setuptools==49.2.1
+setuptools==65.5.1

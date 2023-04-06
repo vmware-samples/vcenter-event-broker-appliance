@@ -2,7 +2,7 @@ package metrics
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -76,7 +76,7 @@ func allLoadAvg() interface{} {
 func loadAvg(position int) float64 {
 	// intentionally ignoring errors to make this work under non GNU/Linux
 	// systems (testing)
-	data, err := ioutil.ReadFile("/proc/loadavg")
+	data, err := os.ReadFile("/proc/loadavg")
 	if err != nil {
 		//
 		return 0

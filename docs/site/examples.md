@@ -1,7 +1,6 @@
 ---
-layout: function
+layout: page
 id: functions
-type: knative
 title: Prebuilt Functions
 description: Community-sourced and validated prebuilt functions for Knative with VEBA.
 permalink: /examples
@@ -180,7 +179,6 @@ examples:
     - language: go
       url: "/tree/master/examples/knative/go/kn-go-nsx-tag-sync"
 
-
   - title: vSphere Tagging
     usecases:
     - item: automation
@@ -276,13 +274,13 @@ examples:
       url: "/tree/master/examples/knative/powershell/kn-ps-harbor-slack"
 ---
 
-A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below. 
+A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below.
 
 # Get started with our prebuilt functions
 
-These functions are prebuilt, available in ready to deploy container and `function.yaml` files for you to deploy as is. Should you need to modify the functions to fit your needs, the `README.md` files provided within each function folder will provide all the information you need to customize, build and deploy the function on your VMware Event Broker appliance. 
+These functions are prebuilt, available in ready to deploy container and `function.yaml` files for you to deploy as is. Should you need to modify the functions to fit your needs, the `README.md` files provided within each function folder will provide all the information you need to customize, build and deploy the function on your VMware Event Broker appliance.
 
-> **Note:** These functions are provided and tested to be used with the VMware Event Broker Appliance deployed with [Knative](/kb/install-knative) as the event stream processor. 
+> **Note:** These functions are provided and tested to be used with the VMware Event Broker Appliance deployed with [Knative](/kb/install-knative) as the event stream processor.
 
 
  <div class="examples wd-100">
@@ -305,7 +303,6 @@ These functions are prebuilt, available in ready to deploy container and `functi
       <span class="{{usecase.item}}">{{usecase.item}}</span>
       {% endfor %}
     </div>
-    
     {% endfor %}
 </div>
 

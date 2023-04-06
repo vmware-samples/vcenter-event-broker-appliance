@@ -1,6 +1,9 @@
 TEST_TIMEOUT = 20
-
 .DEFAULT_GOAL := help
+
+REQUIRED_BINS := tparse
+$(foreach bin,$(REQUIRED_BINS),\
+    $(if $(shell command -v $(bin) 2> /dev/null),,$(error Please install `$(bin)`)))
 
 .PHONY: help
 help: ## Display usage
@@ -9,7 +12,7 @@ help: ## Display usage
 
 .PHONY: tidy
 tidy: ## Sync and clean up Go dependencies
-	@go mod tidy -v
+	@go mod tidy -v -compat=1.17
 
 # intended for local dev use (won't check for unclean git)
 .PHONY: build
@@ -25,7 +28,7 @@ gofmt: ## Check code is gofmted
 .PHONY: unit-test
 unit-test: gofmt tidy ## Run unit tests
 	$(eval TAG=unit)
-	@go test -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover -v ./...
+	@go test -count 1 -tags=${TAG} -race -timeout $(TEST_TIMEOUT)s -cover -v -json ./... | tparse -all -notests
 
 .PHONY: integration-test
 integration-test: gofmt ## Run integration tests (requires Kubernetes cluster w/ OpenFaaS or use hack/run_integration_tests.sh)
