@@ -13,7 +13,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-go-preemption:1.0
+        - image: us.gcr.io/daisy-284300/veba/kn-go-preemption:1.1
           env:
             - name: TEMPORAL_URL
               value: "FILL_ME_IN"

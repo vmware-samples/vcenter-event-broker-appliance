@@ -1,4 +1,122 @@
 
+<a name="v0.7.5"></a>
+## [Release v0.7.5](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.7.4...v0.7.5)
+
+> Release Date: 2023-04-06
+
+### 🐞 Fix
+
+- [3a22207]	Update Github Action id with valid string (#1017) 
+- [c7c7acf]	Replace spaces with dash in Github Action Id (#1017) 
+- [641e723]	Broken workflows and bump deps
+- [f615f8f]	Remove kind node image from VEBA appliance (#993) 
+
+### 💫 Feature
+
+- [405aafd]	Build updated container images for Python/Go Examples (#1035) 
+- [cb72cf4]	Convert build to Packer HCL format (#1001) 
+- [373b65e]	Bump cadvisor to v0.47.0
+- [82e2f12]	Bump Fluent Bit to v2.0.8
+- [0a06f45]	Bump CSI local storage provisioner to v0.0.23
+- [9e7f7a7]	Bump YTT cli to v0.44.1 (#991) 
+- [0e90d6f]	Bump Knative Eventing/Serving to v1.8.3
+- [e6521e2]	Bump k8s version to v1.25.5
+
+### 📃 Documentation
+
+- [0c1baa1]	update evolution timeline for release v0.7.5 (#1023) 
+- [d69fec6]	update resource page with latest veba content (#1006) 
+- [5f0591c]	fix wrong page layout for websites functions section (#1007) 
+
+### 🧹 Chore
+
+- [8a1ac27]	Update Go Example Dependencies
+- [7775fc4]	Update Go deps
+- [15d7ea5]	Remove embano1 from workflow attribute (#938) 
+
+### ⚠️ BREAKING
+
+### 📖 Commits
+
+- [a84c9d2]	Bump version to v0.7.6 for release
+- [405aafd]	feat: Build updated container images for Python/Go Examples (#1035)
+- [ccf4ad3]	Bump version to release-0.7.5
+- [3bb9b50]	chore(deps): Bump peter-evans/create-pull-request from 4.2.4 to 5.0.0
+- [d7fbf48]	chore(deps): Bump peter-evans/create-or-update-comment
+- [3183acd]	chore(deps): Bump github.com/emicklei/go-restful
+- [8a1ac27]	chore: Update Go Example Dependencies
+- [4fbdbc8]	chore(deps): Bump actions/checkout from 3.4.0 to 3.5.0
+- [8f5ff73]	chore(deps): Bump actions/stale from 7.0.0 to 8.0.0
+- [18954e1]	chore(deps): Bump peter-evans/create-pull-request from 4.2.3 to 4.2.4
+- [22e2ac5]	chore(deps): Bump actions/setup-go from 3.5.0 to 4.0.0
+- [c695d9e]	chore(deps): Bump actions/checkout from 3.3.0 to 3.4.0
+- [0c1baa1]	docs: update evolution timeline for release v0.7.5 (#1023)
+- [d69fec6]	docs: update resource page with latest veba content (#1006)
+- [5f0591c]	docs: fix wrong page layout for websites functions section (#1007)
+- [7775fc4]	chore: Update Go deps
+- [c10836f]	chore(deps): Bump golang.org/x/net
+- [3a87b03]	chore(deps): Bump golang.org/x/net
+- [4760769]	chore(deps): Bump werkzeug in /examples/knative/python/kn-py-echo
+- [f00682c]	chore(deps): Bump werkzeug in /examples/knative/python/kn-py-vm-attr
+- [7431351]	chore(deps): Bump werkzeug in /examples/knative/python/kn-py-vro
+- [3a22207]	fix: Update Github Action id with valid string (#1017)
+- [c7c7acf]	fix: Replace spaces with dash in Github Action Id (#1017)
+- [a6676ac]	chore(deps): Bump golang.org/x/text
+- [641e723]	fix: Broken workflows and bump deps
+- [ae90b8e]	chore(deps): Bump werkzeug in /examples/knative/python/kn-py-slack
+- [cb72cf4]	feat: Convert build to Packer HCL format (#1001)
+- [99aafb8]	chore(deps): Bump k8s.io/client-go in /vmware-event-router
+- [d788227]	chore(deps): Bump google-github-actions/setup-gcloud from 1.0.1 to 1.1.0
+- [9f50423]	chore(deps): Bump peter-evans/create-or-update-comment
+- [d00f8ea]	chore(deps): Bump goreleaser/goreleaser-action from 4.1.0 to 4.2.0
+- [f615f8f]	fix: Remove kind node image from VEBA appliance (#993)
+- [373b65e]	feat: Bump cadvisor to v0.47.0
+- [82e2f12]	feat: Bump Fluent Bit to v2.0.8
+- [0a06f45]	feat: Bump CSI local storage provisioner to v0.0.23
+- [9e7f7a7]	feat: Bump YTT cli to v0.44.1 (#991)
+- [0e90d6f]	feat: Bump Knative Eventing/Serving to v1.8.3
+- [e6521e2]	feat: Bump k8s version to v1.25.5
+- [01af745]	chore(deps): Bump golangci/golangci-lint-action from 3.3.1 to 3.4.0
+- [ed21080]	chore(deps): Bump actions/upload-artifact from 3.1.1 to 3.1.2
+- [8e55a09]	chore(deps): Bump actions/checkout from 3.2.0 to 3.3.0
+- [1bfa082]	chore(deps): Bump setuptools in /examples/knative/python/kn-py-vro
+- [80673fb]	chore(deps): Bump setuptools in /examples/knative/python/kn-py-slack
+- [acd716b]	chore(deps): Bump setuptools in /examples/knative/python/kn-py-echo
+- [a549821]	chore(deps): Bump setuptools in /examples/knative/python/kn-py-vm-attr
+- [53ba980]	chore(deps): Bump actions/stale from 6.0.1 to 7.0.0
+- [f9f6e93]	chore(deps): Bump actions/checkout from 3.1.0 to 3.2.0
+- [b0789ce]	chore(deps): Bump actions/setup-go from 3.4.0 to 3.5.0
+- [29e6a93]	chore(deps): Bump goreleaser/goreleaser-action from 3.2.0 to 4.1.0
+- [b548392]	chore(deps): Bump certifi in /examples/knative/python/kn-py-vro
+- [c2b8325]	chore(deps): Bump certifi in /examples/knative/python/kn-py-vm-attr
+- [ea720a6]	chore(deps): Bump certifi in /examples/knative/python/kn-py-slack
+- [6685972]	chore(deps): Bump actions/setup-go from 3.3.1 to 3.4.0
+- [c6b0258]	chore(deps): Bump actions/stale from 5.1.1 to 6.0.1
+- [d7fe3d0]	chore(deps): Bump peter-evans/create-pull-request from 4.2.0 to 4.2.3
+- [6b7a666]	chore(deps): Bump golangci/golangci-lint-action from 3.3.0 to 3.3.1
+- [eab72d5]	chore(deps): Bump google-github-actions/setup-gcloud from 0.6.2 to 1.0.1
+- [0ab2c00]	chore(deps): Bump bruceadams/get-release from 1.3.1 to 1.3.2
+- [f39826e]	chore(deps): Bump chuhlomin/render-template from 1.5 to 1.6
+- [844a636]	chore(deps): Bump bruceadams/get-release from 1.2.3 to 1.3.1
+- [0aabeb4]	chore(deps): Bump peter-evans/create-or-update-comment
+- [99b0d47]	chore(deps): Bump actions/upload-artifact from 3.1.0 to 3.1.1
+- [5a4abe7]	chore(deps): Bump golangci/golangci-lint-action from 3.2.0 to 3.3.0
+- [4d4219e]	chore(deps): Bump actions/setup-go from 3.3.0 to 3.3.1
+- [2648024]	chore(deps): Bump peter-evans/create-pull-request from 4.1.4 to 4.2.0
+- [23b943b]	chore(deps): Bump goreleaser/goreleaser-action from 3.1.0 to 3.2.0
+- [329124c]	chore(deps): Bump peter-evans/create-pull-request from 4.1.3 to 4.1.4
+- [2b760c4]	chore(deps): Bump peter-evans/create-or-update-comment
+- [ab294e7]	chore(deps): Bump google-github-actions/setup-gcloud from 0.6.0 to 0.6.2
+- [4a5f353]	chore(deps): Bump actions/checkout from 3.0.2 to 3.1.0
+- [b7ec73d]	chore(deps): Bump peter-evans/create-pull-request from 4.1.2 to 4.1.3
+- [5ceb3d0]	chore(deps): Bump peter-evans/create-pull-request from 4.1.1 to 4.1.2
+- [acfa551]	chore(deps): Bump imjasonh/setup-ko from 0.5 to 0.6
+- [d1f4b61]	chore(deps): Bump goreleaser/goreleaser-action from 3.0.0 to 3.1.0
+- [d3aa710]	chore(deps): Bump actions/setup-go from 3.2.1 to 3.3.0
+- [92fae76]	chore(deps): Bump peter-evans/create-pull-request from 4.0.4 to 4.1.1
+- [c4d04b0]	chore(deps): Bump embano1/wip
+- [15d7ea5]	chore: Remove embano1 from workflow attribute (#938)
+
 <a name="v0.7.4"></a>
 ## [Release v0.7.4](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.7.3...v0.7.4)
 

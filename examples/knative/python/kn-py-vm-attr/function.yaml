@@ -13,7 +13,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-      - image: us.gcr.io/daisy-284300/veba/kn-py-vm-attr:1.1
+      - image: us.gcr.io/daisy-284300/veba/kn-py-vm-attr:1.2
         envFrom:
         - secretRef:
             name: vcconfig-secret
