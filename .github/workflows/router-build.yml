@@ -36,7 +36,7 @@ jobs:
         id: go
         
       - name: Check out code
-        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
 
       - name: GoReleaser Snapshot
         uses: goreleaser/goreleaser-action@f82d6c1c344bcacabba2c841718984797f664a6b
@@ -79,7 +79,7 @@ jobs:
         id: go
         
       - name: Check out code
-        uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
 
       - name: Get short COMMIT and TAG
         run: |
