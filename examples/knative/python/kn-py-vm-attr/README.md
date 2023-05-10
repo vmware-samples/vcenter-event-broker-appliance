@@ -133,6 +133,7 @@ kubectl -n ${VEBA_NS} create secret generic vcconfig-secret --from-file=VCCONFIG
 
 # update label for secret to show up in VEBA UI
 kubectl -n ${VEBA_NS} label secret vcconfig-secret app=veba-ui
+```
 
 Edit the `function.yaml` file with the name of the container image from *Step 1* if you made any changes.
 
