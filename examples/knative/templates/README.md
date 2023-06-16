@@ -8,7 +8,7 @@
 
 Pre-built base PowerShell Image:
 
-* us.gcr.io/daisy-284300/veba/ce-ps-base:1.4
+* us.gcr.io/daisy-284300/veba/ce-ps-base:1.5
 
 Pre-built base PowerCLI Image:
 
