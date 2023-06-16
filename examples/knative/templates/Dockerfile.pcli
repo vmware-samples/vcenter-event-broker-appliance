@@ -1,8 +1,25 @@
 FROM us.gcr.io/daisy-284300/veba/ce-ps-base:1.5
 
-ARG POWERCLI_VERSION="12.4.0.18633274"
+FROM lamw/ce-ps-base:1.5
+
+ARG POWERCLI_VERSION="13.1.0.21624340"
 
 RUN pwsh -c "\$ProgressPreference = \"SilentlyContinue\"; Install-Module VMware.PowerCLI -RequiredVersion ${POWERCLI_VERSION}" && \
     pwsh -c 'Set-PowerCLIConfiguration -ParticipateInCEIP $true -confirm:$false'
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends wget build-essential libssl-dev libncurses5-dev libsqlite3-dev libreadline-dev libtk8.6 libgdm-dev libdb4o-cil-dev libpcap-dev && \
+    cd /usr/src && \
+    wget https://www.python.org/ftp/python/3.7.9/Python-3.7.9.tgz && \
+    tar xzf Python-3.7.9.tgz && \
+    cd Python-3.7.9 && \
+    ./configure  && \
+    make && \
+    make install && \
+    apt-get clean
+
+# Install required pip modules and set python path
+RUN pip3 install six psutil lxml pyopenssl && \
+    pwsh -c 'Set-PowerCLIConfiguration -PythonPath /usr/local/bin/python3 -Scope AllUsers -Confirm:$false'
 
 CMD ["pwsh","./server.ps1"]
