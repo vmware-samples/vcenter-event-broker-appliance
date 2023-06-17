@@ -1,4 +1,4 @@
-FROM us.gcr.io/daisy-284300/veba/ce-ps-base:1.4
+FROM us.gcr.io/daisy-284300/veba/ce-ps-base:1.5
 
 ARG POWERCLI_VERSION="12.4.0.18633274"
 
