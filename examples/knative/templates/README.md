@@ -12,7 +12,7 @@ Pre-built base PowerShell Image:
 
 Pre-built base PowerCLI Image:
 
-* us.gcr.io/daisy-284300/veba/ce-pcli-base:1.4
+* us.gcr.io/daisy-284300/veba/ce-pcli-base:1.5
 # Build
 
 Build Base PowerShell Image
