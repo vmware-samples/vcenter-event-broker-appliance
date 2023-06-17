@@ -1,4 +1,4 @@
-FROM us.gcr.io/daisy-284300/veba/ce-ps-base:1.4
+FROM us.gcr.io/daisy-284300/veba/ce-ps-base:1.5
 
 ARG MAILKIT_VERSION="3.1.0"
 

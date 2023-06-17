@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-ps-slack:1.5
+        - image: us.gcr.io/daisy-284300/veba/kn-ps-slack:1.6
           envFrom:
             - secretRef:
                 name: slack-secret

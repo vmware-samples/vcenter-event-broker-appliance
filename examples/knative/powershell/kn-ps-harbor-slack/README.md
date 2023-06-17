@@ -7,7 +7,8 @@ Example Knative PowerShell function for sending Harbor CloudEvents to a Slack we
 Create the container image locally to test your function logic. Change the IMAGE name accordingly, example below for Docker.
 
 ```console
-export IMAGE=<docker-username>/kn-ps-#REPLACE-FN-NAME#:1.0
+export TAG=<version>
+export IMAGE=<docker-username>/kn-ps-#REPLACE-FN-NAME#:${TAG}
 docker build -t ${IMAGE}
 ```
 
