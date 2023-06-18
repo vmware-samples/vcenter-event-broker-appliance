@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-pcli-pg-check:1.0
+        - image: us.gcr.io/daisy-284300/veba/kn-pcli-pg-check:1.1
           envFrom:
             - secretRef:
                 name: pg-check-secret
