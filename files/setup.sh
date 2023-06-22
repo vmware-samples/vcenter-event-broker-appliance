@@ -1,11 +1,12 @@
 #!/bin/bash
-# Copyright 2019 VMware, Inc. All rights reserved.
+# Copyright 2023 VMware, Inc. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 set -euo pipefail
 
 # Extract all OVF Properties
 VEBA_DEBUG=$(/root/setup/getOvfProperty.py "guestinfo.debug")
+TANZU_SOURCES_DEBUG=$(/root/setup/getOvfProperty.py "guestinfo.tanzu_sources_debug")
 HOSTNAME=$(/root/setup/getOvfProperty.py "guestinfo.hostname" | tr '[:upper:]' '[:lower:]')
 IP_ADDRESS=$(/root/setup/getOvfProperty.py "guestinfo.ipaddress")
 NETMASK=$(/root/setup/getOvfProperty.py "guestinfo.netmask" | awk -F ' ' '{print $1}')
@@ -26,6 +27,8 @@ VCENTER_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_password")
 VCENTER_USERNAME_FOR_VEBA_UI=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_veba_ui_username")
 VCENTER_PASSWORD_FOR_VEBA_UI=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_veba_ui_password")
 VCENTER_DISABLE_TLS=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_disable_tls_verification")
+VCENTER_CHECKPOINTING_AGE=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_checkpoint_age")
+VCENTER_CHECKPOINTING_PERIOD=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_checkpoint_period")
 HORIZON_ENABLED=$(/root/setup/getOvfProperty.py "guestinfo.horizon")
 HORIZON_SERVER=$(/root/setup/getOvfProperty.py "guestinfo.horizon_server")
 HORIZON_DOMAIN=$(/root/setup/getOvfProperty.py "guestinfo.horizon_domain")
@@ -61,17 +64,6 @@ else
         echo
 	fi
 
-	# Determine Event Providers
-	EVENT_PROVIDERS=("vcenter")
-
-	if [ ${WEBHOOK_ENABLED} == "True" ]; then
-		EVENT_PROVIDERS+=("webhook")
-	fi
-
-	if [ ${HORIZON_ENABLED} == "True" ]; then
-		EVENT_PROVIDERS+=("horizon")
-	fi
-
 	# Customize the POD CIDR Network if provided or else default to 10.10.0.0/16
 	if [ -z "${POD_NETWORK_CIDR}" ]; then
 		POD_NETWORK_CIDR="10.16.0.0/16"
@@ -95,10 +87,11 @@ else
 	ESCAPED_WEBHOOK_PASSWORD=$(eval echo -n '${WEBHOOK_PASSWORD}' | jq -Rs .)
 
 	ESCAPED_PROXY_PASSWORD=$(eval echo -n '${PROXY_PASSWORD}' | jq -Rs .)
-	
+
 	cat > /root/config/veba-config.json <<EOF
 {
 	"VEBA_DEBUG": "${VEBA_DEBUG}",
+	"TANZU_SOURCES_DEBUG": "${TANZU_SOURCES_DEBUG}",
 	"HOSTNAME": "${HOSTNAME}",
 	"IP_ADDRESS": "${IP_ADDRESS}",
 	"NETMASK": "${NETMASK}",
@@ -119,6 +112,8 @@ else
 	"ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI": ${ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI},
 	"ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI": ${ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI},
 	"VCENTER_DISABLE_TLS": "${VCENTER_DISABLE_TLS}",
+	"VCENTER_CHECKPOINTING_AGE": ${VCENTER_CHECKPOINTING_AGE},
+	"VCENTER_CHECKPOINTING_PERIOD": ${VCENTER_CHECKPOINTING_PERIOD},
 	"HORIZON_ENABLED": "${HORIZON_ENABLED}",
 	"ESCAPED_HORIZON_SERVER": ${ESCAPED_HORIZON_SERVER},
 	"HORIZON_DOMAIN": "${HORIZON_DOMAIN}",
@@ -155,11 +150,18 @@ EOF
 	echo -e "\e[92mStarting Knative Configuration ..." > /dev/console
 	. /root/setup/setup-05-knative.sh
 
-	echo -e "\e[92mStarting VMware Event Processor Configuration ..." > /dev/console
-	. /root/setup/setup-06-event-processor.sh
+	echo -e "\e[92mStarting vSphere Sources Configuration ..." > /dev/console
+	. /root/setup/setup-06-vsphere-sources.sh
 
-	echo -e "\e[92mStarting VMware Event Router Configuration ..." > /dev/console
-	. /root/setup/setup-07-event-router.sh
+	if [ ${HORIZON_ENABLED} == "True" ]; then
+		echo -e "\e[92mStarting Horizon Sources Configuration ..." > /dev/console
+		. /root/setup/setup-06-horizon-sources.sh
+	fi
+
+	if [ ${WEBHOOK_ENABLED} == "True" ]; then
+		echo -e "\e[92mStarting VMware Event Provider Webhook Configuration ..." > /dev/console
+		. /root/setup/setup-07-event-router-webhook.sh
+	fi
 
 	echo -e "\e[92mStarting TinyWWW Configuration ..." > /dev/console
 	. /root/setup/setup-08-tinywww.sh

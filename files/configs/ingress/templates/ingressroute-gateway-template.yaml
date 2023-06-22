@@ -36,14 +36,6 @@ spec:
     services:
     - name: tinywww
       port: 8100
-  - conditions:
-    - prefix: /stats/vcenter
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /stats
-    services:
-    - name: vmware-event-router-vcenter
-      port: 8082
   #@ if webhookEnabled == "True":
   - conditions:
     - prefix: /stats/webhook
@@ -61,16 +53,6 @@ spec:
     services:
     - name: vmware-event-router-webhook
       port: 8080
-  #@ end
-  #@ if horizonEnabled == "True":
-  - conditions:
-    - prefix: /stats/horizon
-    pathRewritePolicy:
-      replacePrefix:
-      - replacement: /stats
-    services:
-    - name: vmware-event-router-horizon
-      port: 8082
   #@ end
   #@ if vebaUIUsername != "" and vebaUIPassword != "":
   - conditions:
