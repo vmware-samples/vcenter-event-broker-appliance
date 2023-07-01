@@ -32,6 +32,7 @@ jobs:
         uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753
         with:
           go-version: ${{ matrix.go-version }}
+          cache-dependency-path: vmware-event-router/go.sum
 
       - name: Create CHANGELOG for Release
         env:
@@ -46,7 +47,7 @@ jobs:
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@336e29918d653399e599bfca99fadc1d7ffbc9f7
         with:
-          args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
+          args: release --clean --release-notes RELEASE_CHANGELOG.md
           workdir: vmware-event-router
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -111,6 +112,8 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
+
       - name: Setup ko
         uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.6
         
@@ -118,10 +121,9 @@ jobs:
         uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753
         with:
           go-version: ${{ matrix.go-version }}
+          cache-dependency-path: vmware-event-router/go.sum
         id: go
         
-      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
-
       - id: login_to_gcp
         uses: google-github-actions/auth@35b0e87d162680511bf346c299f71c9c5c379033
         with:

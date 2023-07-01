@@ -20,11 +20,6 @@ archives:
     builds:
       - router
     name_template: "router_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
-    replacements: &replacements
-      darwin: Darwin
-      linux: Linux
-      windows: Windows
-      amd64: x86_64
     format_overrides:
       - goos: windows
         format: zip

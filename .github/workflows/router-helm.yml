@@ -23,19 +23,17 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
+      
       - name: Set up Go
         uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753
         with:
           go-version: 1.19
+          cache-dependency-path: vmware-event-router/go.sum
 
       - name: Setup ko
         uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.6
 
-      - name: Check out code onto GOPATH
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
-        with:
-          fetch-depth: 1
-    
       - name: Get short COMMIT and TAG (used by ko)
         run: |
           echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
@@ -135,18 +133,16 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
+
       - name: Set up Go
         uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753
         with:
           go-version: 1.19
+          cache-dependency-path: vmware-event-router/go.sum
 
       - name: Setup ko
         uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.6
-
-      - name: Check out code onto GOPATH
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
-        with:
-          fetch-depth: 1
 
       - name: Get short COMMIT and TAG (used by ko)
         run: |
