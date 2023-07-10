@@ -1,0 +1,50 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@ load("@ytt:json", "json")
+#@ tanzuSourcesDebug = json.decode(data.values.config)["TANZU_SOURCES_DEBUG"]
+
+#@ def updates():
+  #@ if tanzuSourcesDebug == "True":
+  level: "debug"
+  #@ end
+#@ end
+
+#@overlay/match by=overlay.subset({"kind":"Deployment", "metadata": {"name": "horizon-source-controller", "namespace": "vmware-sources"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by=overlay.all, expects="1+"
+      -
+        #@overlay/match missing_ok=True
+        imagePullPolicy: IfNotPresent
+
+#@overlay/match by=overlay.subset({"kind":"Deployment", "metadata": {"name": "horizon-source-webhook", "namespace": "vmware-sources"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by=overlay.all, expects="1+"
+      -
+        #@overlay/match missing_ok=True
+        imagePullPolicy: IfNotPresent
+
+#@overlay/match by=overlay.subset({"kind":"Deployment", "metadata": {"name": "vsphere-source-webhook", "namespace": "vmware-sources"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by=overlay.all, expects="1+"
+      -
+        #@overlay/match missing_ok=True
+        imagePullPolicy: IfNotPresent
+
+#@overlay/match by=overlay.subset({"metadata":{"name":"config-logging"}}), expects="1+"
+---
+data:
+  #@overlay/replace via=lambda a,_: json.encode(overlay.apply(json.decode(a), updates()), indent=2)
+  zap-logger-config:

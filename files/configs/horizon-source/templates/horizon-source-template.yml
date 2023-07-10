@@ -1,0 +1,27 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@ load("@ytt:json", "json")
+#@ horizon = json.decode(data.values.config)["ESCAPED_HORIZON_SERVER"]
+#@ horizonDisableTls = json.decode(data.values.config)["HORIZON_DISABLE_TLS"]
+
+apiVersion: sources.tanzu.vmware.com/v1alpha1
+kind: HorizonSource
+metadata:
+  name: horizon-source
+spec:
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: default
+      namespace: vmware-functions
+  address: #@ "https://"+horizon
+  #@ if horizonDisableTls == "True":
+  skipTLSVerify: true
+  #@ else:
+  skipTLSVerify: false
+  #@ end
+  secretRef:
+    name: horizon-creds
+  serviceAccountName: horizon-source-sa

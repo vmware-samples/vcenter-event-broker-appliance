@@ -56,6 +56,15 @@ wget https://github.com/knative/client/releases/download/knative-${KNATIVE_VERSI
 chmod +x kn-linux-amd64
 mv kn-linux-amd64 /usr/local/bin/kn
 
+echo '> Downloading Kn vSphere CLI'
+KNATIVE_VSPHERE_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["knative-vsphere-cli"].version')
+KNATIVE_VSPHERE_NUMERIC_VERSION=$(echo ${KNATIVE_VSPHERE_VERSION} | sed 's/v//g')
+curl -L https://github.com/vmware-tanzu/sources-for-knative/releases/download/${KNATIVE_VSPHERE_VERSION}/kn-vsphere_${KNATIVE_VSPHERE_NUMERIC_VERSION}_Linux_x86_64.tar.gz -o /root/kn-vsphere_${KNATIVE_VSPHERE_NUMERIC_VERSION}_Linux_x86_64.tar.gz
+tar -zxvf /root/kn-vsphere_${KNATIVE_VSPHERE_NUMERIC_VERSION}_Linux_x86_64.tar.gz -C /root
+mv /root/kn-vsphere_${KNATIVE_VSPHERE_NUMERIC_VERSION}_Linux_x86_64/kn-vsphere /usr/local/bin/kn-vsphere
+chmod +x /usr/local/bin/kn-vsphere
+rm -rf /root/kn-vsphere_${KNATIVE_VSPHERE_NUMERIC_VERSION}_Linux_x86_64*
+
 echo '> Downloading YTT CLI'
 YTT_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["ytt-cli"].version')
 wget https://github.com/vmware-tanzu/carvel-ytt/releases/download/${YTT_VERSION}/ytt-linux-amd64

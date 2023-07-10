@@ -6,9 +6,9 @@ set -euo pipefail
 
 # Sample Shell Script to test deployment of VEBA w/Knative Processor with the following:
 #    vSphere Sources         ✔️
-#    Horizon Sources         x
-#    vSphere VEBA UI Plugin  x
-#    Webhook Processor       x
+#    Horizon Sources         ✔️
+#    vSphere VEBA UI Plugin  ✔️
+#    Webhook Processor       ✔️
 
 # To run this on Windows, you can use a terminal like Git BASH or WSL Ubuntu
 # OVFTOOL_BIN_PATH="/C/Program Files/VMware/VMware OVF Tool/ovftool.exe"
@@ -22,7 +22,7 @@ DEPLOYMENT_TARGET_PASSWORD="VMware1!"
 DEPLOYMENT_TARGET_DATACENTER="Primp-Datacenter"
 DEPLOYMNET_TARGET_CLUSTER="Supermicro-Cluster"
 
-VEBA_NAME="VEBA-TEST-KNATIVE-PROCESSOR"
+VEBA_NAME="VEBA-TEST-KNATIVE-PROCESSOR-WITH-VEBA-UI-AND-WEBHOOK"
 VEBA_IP="192.168.30.9"
 VEBA_HOSTNAME="veba.primp-industries.local"
 VEBA_PREFIX="24 (255.255.255.0)"
@@ -30,20 +30,31 @@ VEBA_GW="192.168.30.1"
 VEBA_DNS="192.168.30.2"
 VEBA_DNS_DOMAIN="primp-industries.local"
 VEBA_NTP="pool.ntp.org"
-VEBA_OS_PASSWORD="VMware1!"
+VEBA_OS_PASSWORD='VMware1!'
 VEBA_ENABLE_SSH="True"
 VEBA_NETWORK="VM Network"
 VEBA_DATASTORE="sm-vsanDatastore"
 VEBA_DEBUG="True"
 VEBA_VCENTER_SERVER="vcsa.primp-industries.local"
+VEBA_UI_USERNAME="veba-ui@vsphere.local"
+VEBA_UI_PASSWORD='$VMware1!'
 VEBA_VCENTER_USERNAME="veba@vsphere.local"
 VEBA_VCENTER_PASSWORD="VMware1!"
 VEBA_VCENTER_DISABLE_TLS="True"
+VEBA_HORIZON_SERVER="horizon.primp-industries.local"
+VEBA_HORIZON_USERNAME="horizon@primp-industries.local"
+VEBA_HORIZON_PASSWORD="VMware1!"
+VEBA_HORIZON_DOMAIN="primp-industries.local"
+VEBA_HORIZON_DISABLE_TLS="True"
+VEBA_DOCKER_NETWORK="172.26.0.1/16"
 VEBA_HTTP_PROXY=""
 VEBA_HTTPS_PROXY=""
 VEBA_PROXY_USERNAME=""
 VEBA_PROXY_PASSWORD=""
 VEBA_NOPROXY=""
+VEBA_WEBHOOK="True"
+VEBA_WEBHOOK_USERNAME="veba"
+VEBA_WEBHOOK_PASSWORD="V3b@"
 VEBA_TANZU_SOURCES_DEBUG="False"
 
 ### DO NOT EDIT BEYOND HERE ###
@@ -74,7 +85,17 @@ VEBA_TANZU_SOURCES_DEBUG="False"
     --prop:guestinfo.vcenter_server=${VEBA_VCENTER_SERVER} \
     --prop:guestinfo.vcenter_username=${VEBA_VCENTER_USERNAME} \
     --prop:guestinfo.vcenter_password=${VEBA_VCENTER_PASSWORD} \
+    --prop:guestinfo.vcenter_veba_ui_username=${VEBA_UI_USERNAME} \
+    --prop:guestinfo.vcenter_veba_ui_password=${VEBA_UI_PASSWORD} \
     --prop:guestinfo.vcenter_disable_tls_verification=${VEBA_VCENTER_DISABLE_TLS} \
+    --prop:guestinfo.horizon_server=${VEBA_HORIZON_SERVER} \
+    --prop:guestinfo.horizon_domain=${VEBA_HORIZON_DOMAIN} \
+    --prop:guestinfo.horizon_username=${VEBA_HORIZON_USERNAME} \
+    --prop:guestinfo.horizon_password=${VEBA_HORIZON_PASSWORD} \
+    --prop:guestinfo.horizon_disable_tls_verification=${VEBA_HORIZON_DISABLE_TLS} \
+    --prop:guestinfo.webhook=${VEBA_WEBHOOK} \
+    --prop:guestinfo.webhook_username=${VEBA_WEBHOOK_USERNAME} \
+    --prop:guestinfo.webhook_password=${VEBA_WEBHOOK_PASSWORD} \
     --prop:guestinfo.debug=${VEBA_DEBUG} \
     --prop:guestinfo.tanzu_sources_debug=${VEBA_TANZU_SOURCES_DEBUG} \
     "${VEBA_OVA}" \

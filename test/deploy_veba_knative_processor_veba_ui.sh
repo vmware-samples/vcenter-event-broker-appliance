@@ -4,7 +4,11 @@
 
 set -euo pipefail
 
-# Sample Shell Script to test deployment of VEBA w/Knative Processor
+# Sample Shell Script to test deployment of VEBA w/Knative Processor with the following:
+#    vSphere Sources         ✔️
+#    Horizon Sources         x
+#    vSphere VEBA UI Plugin  ✔️
+#    Webhook Processor       x
 
 # To run this on Windows, you can use a terminal like Git BASH or WSL Ubuntu
 # OVFTOOL_BIN_PATH="/C/Program Files/VMware/VMware OVF Tool/ovftool.exe"
@@ -42,6 +46,7 @@ VEBA_HTTPS_PROXY=""
 VEBA_PROXY_USERNAME=""
 VEBA_PROXY_PASSWORD=""
 VEBA_NOPROXY=""
+VEBA_TANZU_SOURCES_DEBUG="False"
 
 ### DO NOT EDIT BEYOND HERE ###
 
@@ -75,5 +80,6 @@ VEBA_NOPROXY=""
     --prop:guestinfo.vcenter_veba_ui_password=${VEBA_UI_PASSWORD} \
     --prop:guestinfo.vcenter_disable_tls_verification=${VEBA_VCENTER_DISABLE_TLS} \
     --prop:guestinfo.debug=${VEBA_DEBUG} \
+    --prop:guestinfo.tanzu_sources_debug=${VEBA_TANZU_SOURCES_DEBUG} \
     "${VEBA_OVA}" \
     "vi://${DEPLOYMENT_TARGET_USERNAME}:${DEPLOYMENT_TARGET_PASSWORD}@${DEPLOYMENT_TARGET_ADDRESS}/${DEPLOYMENT_TARGET_DATACENTER}/host/${DEPLOYMNET_TARGET_CLUSTER}"
