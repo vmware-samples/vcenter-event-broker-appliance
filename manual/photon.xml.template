@@ -55,7 +55,7 @@
             <Label>No Proxy</Label>
             <Description>No Proxy for e.g. your internal domain suffix. Adding the appliance IP address is recommended. Comma separated (localhost, 127.0.0.1, domain.local)</Description>
         </Property>
-      <Category>OS Credentials</Category>
+      <Category>Credentials</Category>
         <Property ovf:key="guestinfo.root_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Root Password</Label>
             <Description>Password to login in as root. Please use a secure password</Description>
@@ -63,6 +63,14 @@
         <Property ovf:key="guestinfo.enable_ssh" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Enable SSH</Label>
             <Description>Automatically start SSH daemon</Description>
+        </Property>
+        <Property ovf:key="guestinfo.endpoint_username" ovf:type="string" ovf:userConfigurable="true" ovf:value="admin">
+            <Label>Endpoint Username</Label>
+            <Description>Username to login to VEBA endpoints (e.g. /bootstrap, /events, /top, etc.)</Description>
+        </Property>
+        <Property ovf:key="guestinfo.endpoint_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Endpoint Password</Label>
+            <Description>Password to login to VEBA endpoints (e.g. /bootstrap, /events, /top, etc.). Please use a secure password</Description>
         </Property>
      <Category>vSphere</Category>
         <Property ovf:key="guestinfo.vcenter_server" ovf:type="string" ovf:userConfigurable="true" ovf:value="">

@@ -28,6 +28,8 @@ spec:
     services:
     - name: tinywww
       port: 8100
+    authPolicy:
+      disabled: true
   - conditions:
     - prefix: /bootstrap
     pathRewritePolicy:
@@ -36,6 +38,8 @@ spec:
     services:
     - name: tinywww
       port: 8100
+    authPolicy:
+      disabled: true
   #@ if webhookEnabled == "True":
   - conditions:
     - prefix: /stats/webhook
@@ -45,6 +49,8 @@ spec:
     services:
     - name: vmware-event-router-webhook
       port: 8082
+    authPolicy:
+      disabled: true
   - conditions:
     - prefix: /webhook
     pathRewritePolicy:
@@ -53,6 +59,8 @@ spec:
     services:
     - name: vmware-event-router-webhook
       port: 8080
+    authPolicy:
+      disabled: true
   #@ end
   #@ if vebaUIUsername != "" and vebaUIPassword != "":
   - conditions:
@@ -60,12 +68,18 @@ spec:
     services:
     - name: veba-ui
       port: 80
+    authPolicy:
+      disabled: true
   #@ end
   virtualhost:
     fqdn: #@ fqdn
     tls:
       minimumProtocolVersion: "1.2"
       secretName: #@ data.values.secretName
+    authorization:
+      extensionRef:
+        name: htpasswd
+        namespace: projectcontour-auth
   includes:
   - name: sockeye
     namespace: vmware-functions

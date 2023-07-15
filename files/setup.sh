@@ -21,6 +21,8 @@ PROXY_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.proxy_password")
 NO_PROXY=$(/root/setup/getOvfProperty.py "guestinfo.no_proxy")
 ROOT_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.root_password")
 ENABLE_SSH=$(/root/setup/getOvfProperty.py "guestinfo.enable_ssh" | tr '[:upper:]' '[:lower:]')
+ENDPOINT_USERNAME=$(/root/setup/getOvfProperty.py "guestinfo.endpoint_username")
+ENDPOINT_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.endpoint_password")
 VCENTER_SERVER=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_server")
 VCENTER_USERNAME=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_username")
 VCENTER_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_password")
@@ -74,6 +76,8 @@ else
 	ESCAPED_VCENTER_USERNAME=$(eval echo -n '${VCENTER_USERNAME}' | jq -Rs .)
 	ESCAPED_VCENTER_PASSWORD=$(eval echo -n '${VCENTER_PASSWORD}' | jq -Rs .)
 	ESCAPED_ROOT_PASSWORD=$(eval echo -n '${ROOT_PASSWORD}' | jq -Rs .)
+	ESCAPED_ENDPOINT_USERNAME=$(eval echo -n '${ENDPOINT_USERNAME}' | jq -Rs .)
+	ESCAPED_ENDPOINT_PASSWORD=$(eval echo -n '${ENDPOINT_PASSWORD}' | jq -Rs .)
 
 	ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI=$(eval echo -n '${VCENTER_USERNAME_FOR_VEBA_UI}' | jq -Rs .)
 	ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI=$(eval echo -n '${VCENTER_PASSWORD_FOR_VEBA_UI}' | jq -Rs .)
@@ -81,7 +85,6 @@ else
 	ESCAPED_HORIZON_SERVER=$(eval echo -n '${HORIZON_SERVER}' | jq -Rs .)
 	ESCAPED_HORIZON_USERNAME=$(eval echo -n '${HORIZON_USERNAME}' | jq -Rs .)
 	ESCAPED_HORIZON_PASSWORD=$(eval echo -n '${HORIZON_PASSWORD}' | jq -Rs .)
-	ESCAPED_ROOT_PASSWORD=$(eval echo -n '${ROOT_PASSWORD}' | jq -Rs .)
 
 	ESCAPED_WEBHOOK_USERNAME=$(eval echo -n '${WEBHOOK_USERNAME}' | jq -Rs .)
 	ESCAPED_WEBHOOK_PASSWORD=$(eval echo -n '${WEBHOOK_PASSWORD}' | jq -Rs .)
@@ -106,6 +109,8 @@ else
 	"NO_PROXY": "${NO_PROXY}",
 	"ESCAPED_ROOT_PASSWORD": ${ESCAPED_ROOT_PASSWORD},
 	"ENABLE_SSH": "${ENABLE_SSH}",
+	"ESCAPED_ENDPOINT_USERNAME": ${ESCAPED_ENDPOINT_USERNAME},
+	"ESCAPED_ENDPOINT_PASSWORD": ${ESCAPED_ENDPOINT_PASSWORD},
 	"ESCAPED_VCENTER_SERVER": ${ESCAPED_VCENTER_SERVER},
 	"ESCAPED_VCENTER_USERNAME": ${ESCAPED_VCENTER_USERNAME},
 	"ESCAPED_VCENTER_PASSWORD": ${ESCAPED_VCENTER_PASSWORD},

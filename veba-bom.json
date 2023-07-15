@@ -254,6 +254,13 @@
             }
         ]
     },
+    "contour-authserver": {
+        "gitRepoTag": "v2",
+        "containers": [{
+            "name": "docker.io/projectcontour/contour-authserver",
+            "version": "v2"
+        }]
+    },
     "tinywww": {
         "gitRepoTag": "master",
         "containers": [{
