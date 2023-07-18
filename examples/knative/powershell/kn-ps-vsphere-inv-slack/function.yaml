@@ -30,8 +30,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/event
-      subject: TaskEvent
+      type: com.vmware.vsphere.TaskEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

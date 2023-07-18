@@ -60,7 +60,7 @@ spec:
   broker: default
   filter:
     attributes:
-      subject: com.vmware.cis.tagging.attach
+      type: com.vmware.vsphere.com.vmware.cis.tagging.attach.v0
   subscriber:
     ref:
       apiVersion: v1
@@ -80,7 +80,7 @@ spec:
   broker: default
   filter:
     attributes:
-      subject: com.vmware.cis.tagging.detach
+      type: com.vmware.vsphere.com.vmware.cis.tagging.detach.v0
   subscriber:
     ref:
       apiVersion: v1

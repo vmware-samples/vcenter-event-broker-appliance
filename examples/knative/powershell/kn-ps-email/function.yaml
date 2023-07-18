@@ -30,8 +30,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/event
-      subject: VmRemovedEvent
+      type: com.vmware.vsphere.VmRemovedEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

@@ -23,7 +23,7 @@ Function Process-Handler {
    Write-Host $(Get-Date) - "Cloud Event"
    Write-Host $(Get-Date) - "  Source: $($cloudEvent.Source)"
    Write-Host $(Get-Date) - "  Type: $($cloudEvent.Type)"
-   Write-Host $(Get-Date) - "  Subject: $($cloudEvent.Subject)"
+   Write-Host $(Get-Date) - "  EventClass: $($cloudEvent.EventClass)"
    Write-Host $(Get-Date) - "  Id: $($cloudEvent.Id)"
 
    # Decode CloudEvent

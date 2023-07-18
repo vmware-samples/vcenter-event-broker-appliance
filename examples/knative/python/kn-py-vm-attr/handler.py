@@ -30,7 +30,7 @@ def handler():
         # CloudEvent - simple validation
         ref_vm = event.data['Vm']['Vm']
         ref_user = event.data['UserName']
-        subject = event._attributes['subject']
+        type = event._attributes['type']
 
         vc_s = Session()
         attr_owner, attr_creation_date, attr_last_poweredon = vc_s.get_field_attributes()
@@ -47,7 +47,7 @@ def handler():
             resp.status_code = sc
             return resp
 
-        if subject in ["DrsVmPoweredOnEvent", "VmPoweredOnEvent"]:
+        if type in ["com.vmware.vsphere.DrsVmPoweredOnEvent.v0", "com.vmware.vsphere.VmPoweredOnEvent.v0"]:
             app.logger.info(f"Apply attribute > {attr_last_poweredon.name}")
             vc_s.set_custom_attr(
                 entity=vm_obj,
@@ -55,7 +55,7 @@ def handler():
                 value=date.today().strftime("%d/%m/%Y")
             )
 
-        if subject in ["VmCreatedEvent", "VmClonedEvent", "VmRegisteredEvent"]:
+        if type in ["com.vmware.vsphere.VmCreatedEvent.v0", "com.vmware.vsphere.VmClonedEvent.v0", "com.vmware.vsphere.VmRegisteredEvent.v0"]:
             app.logger.info(f"Apply attribute > {attr_owner.name}")
             vc_s.set_custom_attr(
                 entity=vm_obj,

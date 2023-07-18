@@ -13,7 +13,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-      - image: us.gcr.io/daisy-284300/veba/kn-py-vm-attr:1.2
+      - image: us.gcr.io/daisy-284300/veba/kn-py-vm-attr:1.3
         envFrom:
         - secretRef:
             name: vcconfig-secret
@@ -29,8 +29,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/event
-      subject: VmCreatedEvent
+      type: com.vmware.vsphere.VmCreatedEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1
@@ -47,8 +46,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/event
-      subject: VmClonedEvent
+      type: com.vmware.vsphere.VmClonedEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1
@@ -66,8 +64,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/event
-      subject: VmRegisteredEvent
+      type: com.vmware.vsphere.VmRegisteredEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1
@@ -85,8 +82,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/event
-      subject: DrsVmPoweredOnEvent
+      type: com.vmware.vsphere.DrsVmPoweredOnEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

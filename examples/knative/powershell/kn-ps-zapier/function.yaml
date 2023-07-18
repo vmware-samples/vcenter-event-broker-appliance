@@ -30,8 +30,8 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/eventex
-      subject: com.vmware.sso.LoginFailure
+      eventclass: eventex
+      subject: com.vmware.vsphere.com.vmware.sso.LoginFailure.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1
