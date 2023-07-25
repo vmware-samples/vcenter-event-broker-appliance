@@ -15,7 +15,7 @@ python-dateutil==2.8.2
   six==1.16.0
 regex==2021.11.10
 requests==2.31.0
-  certifi==2022.12.7
+  certifi==2023.7.22
   charset-normalizer==2.0.12
   idna==3.3
   urllib3==1.26.7
