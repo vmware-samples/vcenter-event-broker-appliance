@@ -12,7 +12,7 @@ Flask==2.3.2
   Werkzeug==2.2.3
 pip==21.1
 requests==2.31.0
-  certifi==2022.12.7
+  certifi==2023.7.22
   chardet==3.0.4
   idna==2.7
   urllib3==1.26.5
