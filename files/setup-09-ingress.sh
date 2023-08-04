@@ -6,6 +6,29 @@
 
 set -euo pipefail
 
+# Setup Contour AuthServer
+echo -e "\e[92mConfiguring Contour Ingress AuthServer ..." > /dev/console
+kubectl create namespace projectcontour-auth
+
+# Contour Auth Config files
+INGRESS_AUTHSERVER_TEMPLATE=/root/config/ingress/templates/ingress-authserver-template.yaml
+INGRESS_AUTHSERVER_CONFIG=/root/config/ingress/$(basename ${INGRESS_AUTHSERVER_TEMPLATE} | sed 's/-template//g')
+
+VEBA_BOM_FILE=/root/config/veba-bom.json
+INGRESS_AUTHSERVER_AUTH_FILE=/root/config/auth
+
+# Apply YTT overlay
+ytt --data-value-file bom=${VEBA_BOM_FILE} -f ${INGRESS_AUTHSERVER_TEMPLATE} > ${INGRESS_AUTHSERVER_CONFIG}
+kubectl apply -f ${INGRESS_AUTHSERVER_CONFIG}
+
+# Configure Auth file with admin user
+htpasswd -b -c ${INGRESS_AUTHSERVER_AUTH_FILE} ${ENDPOINT_USERNAME} ${ENDPOINT_PASSWORD}
+kubectl create secret generic -n projectcontour-auth passwords --from-file=${INGRESS_AUTHSERVER_AUTH_FILE}
+kubectl annotate secret -n projectcontour-auth passwords projectcontour.io/auth-type=basic
+
+# Create Extension Service
+kubectl apply -f /root/config/ingress/ingress-authserver-extensionservice.yaml
+
 KEY_FILE=/root/config/eventrouter.key
 CERT_FILE=/root/config/eventrouter.crt
 CERT_NAME=eventrouter-tls
