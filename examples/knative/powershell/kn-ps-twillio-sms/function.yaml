@@ -30,7 +30,7 @@ spec:
   broker: default
   filter:
     attributes:
-      subject: TaskEvent
+      subject: com.vmware.vsphere.TaskEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

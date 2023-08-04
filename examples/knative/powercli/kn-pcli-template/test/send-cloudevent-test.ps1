@@ -1,5 +1,4 @@
 # The ce-subject value should match the event router subject in function.yaml
-$subject = "DvsReconfiguredEvent"
 $payloadPath = "./test-payload.json"
 
 if ( $args.Count -gt 0 ) {
@@ -21,8 +20,7 @@ $headers = @{
     "ce-specversion" = "1.0";
     "ce-id" = "id-123";
     "ce-source" = "source-123";
-    "ce-type" = "com.vmware.event.router/event";
-    "ce-subject" = $($subject);
+    "ce-type" = "com.vmware.vsphere.DvsReconfiguredEvent.v0";
 }
 $body = Get-Content -Raw -Path $payloadPath
 

@@ -39,7 +39,7 @@ spec:
   broker: default
   filter:
     attributes:
-      subject: AlarmStatusChangedEvent
+      type: com.vmware.vsphere.AlarmStatusChangedEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

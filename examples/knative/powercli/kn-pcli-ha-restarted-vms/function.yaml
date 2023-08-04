@@ -30,10 +30,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/eventex
-      # Replace this subject with the event you need to trigger on
-      # Then, edit send-cloudevent-test.ps1 and send-cloudevent-test.sh in the /test folder
-      subject: com.vmware.vc.HA.ClusterFailoverActionCompletedEvent
+      type: com.vmware.vsphere.com.vmware.vc.HA.ClusterFailoverActionCompletedEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

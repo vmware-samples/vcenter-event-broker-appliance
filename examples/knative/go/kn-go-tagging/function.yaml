@@ -44,8 +44,7 @@ spec:
   broker: default
   filter:
     attributes:
-      subject: VmPoweredOffEvent
-      type: com.vmware.event.router/event
+      type: com.vmware.vsphere.VmPoweredOffEvent.v0
   subscriber:
     ref:
       apiVersion: v1

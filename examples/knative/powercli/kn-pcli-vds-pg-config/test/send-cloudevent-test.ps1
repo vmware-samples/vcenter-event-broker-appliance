@@ -4,8 +4,7 @@ $headers = @{
     "ce-specversion" = "1.0";
     "ce-id" = "id-123";
     "ce-source" = "source-123";
-    "ce-type" = "com.vmware.event.router/event";
-    "ce-subject" = "DvsReconfiguredEvent";
+    "ce-type" = "com.vmware.vsphere.DVPortgroupReconfiguredEvent.v0";
 }
 
 $body = Get-Content -Raw -Path "./test-payload.json"

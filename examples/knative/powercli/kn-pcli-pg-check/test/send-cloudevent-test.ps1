@@ -4,8 +4,7 @@ $headers = @{
     "ce-specversion" = "1.0";
     "ce-id" = "id-123";
     "ce-source" = "source-123";
-    "ce-type" = "com.vmware.event.router/event";
-    "ce-subject" = "VmReconfiguredEvent";
+    "ce-type" = "com.vmware.vsphere.VmReconfiguredEvent.v0";
 }
 
 $payloadPath = "./test-payload.json"
