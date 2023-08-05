@@ -78,6 +78,12 @@ curl -L https://github.com/containerd/containerd/releases/download/v${CONTAINERD
 tar -zxvf /root/download/containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz -C /usr
 rm -f /root/download/containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz
 containerd config default > /etc/containerd/config.toml
+
+# Update default version of the pause container to the one from VEBA BOM
+PAUSE_CONTAINER_NAME="registry.k8s.io/pause"
+PAUSE_CONTAINER_VERSION=$(jq -r --arg PAUSE_CONTAINER_NAME ${PAUSE_CONTAINER_NAME} '.kubernetes.containers[] | select(.name == $PAUSE_CONTAINER_NAME) | .version' ${VEBA_BOM_FILE})
+sed -i "s#sandbox_image.*#sandbox_image = \"${PAUSE_CONTAINER_NAME}:${PAUSE_CONTAINER_VERSION}\"#g" /etc/containerd/config.toml
+
 cat > /usr/lib/systemd/system/containerd.service <<EOF
 [Unit]
 Description=containerd container runtime
