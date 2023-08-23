@@ -1,6 +1,6 @@
 # kn-ps-harbor-slack
 
-Example Knative PowerShell function for sending Harbor CloudEvents to a Slack webhook. This function relies on the Harbor webhook [function example](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/development/examples/knative/go/kn-go-harbor-webhook) which is a requirement for this example.
+Example Knative PowerShell function for sending Harbor CloudEvents to a Slack webhook. This function only works with Harbor version 2.8.3 and onwards. For older Harbor versions, use the previous version of this function.
 
 # Step 1 - Build
 
@@ -36,77 +36,86 @@ docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variab
 In a separate terminal, run either `send-cloudevent-test.ps1` (PowerShell Script) or `send-cloudevent-test.sh` (Bash Script) to simulate a CloudEvent payload being sent to the local container image
 
 ```console
-Testing Function ...
-See docker container console for output
+08/23/2023 13:58:21 - PowerShell HTTP server start listening on 'http://*:8080/'
+08/23/2023 13:58:21 - Processing Init
 
-# Output from docker container console
-06/27/2022 09:47:31 - DEBUG: K8s Secrets:
-{"SLACK_WEBHOOK_URL":"**********","SLACK_MESSAGE_PRETEXT":":harbor: Harbor Slack Function :veba_official:"}
+08/23/2023 13:58:21 - Init Processing Completed
 
-06/27/2022 09:47:31 - DEBUG: CloudEventData
+08/23/2023 13:58:21 - Starting HTTP CloudEvent listener
+08/23/2023 13:58:24 - DEBUG: K8s Secrets:
+{"SLACK_WEBHOOK_URL":"**************","SLACK_MESSAGE_PRETEXT":":harbor: Harbor Slack Function :veba_official:"}
+
+08/23/2023 13:58:24 - DEBUG: CloudEventData
 
 Name                           Value
 ----                           -----
-event_data                     {resources, repository}
-occur_at                       1656076946
-type                           PUSH_ARTIFACT
-operator                       admin
+repository                     {repo_type, repo_full_name, name, namespace…}
+resources                      {System.Collections.Hashtable}
 
-
-
-06/27/2022 09:47:31 - DEBUG: "{
+08/23/2023 13:58:24 - DEBUG: "{
   "attachments": [
     {
-      "footer_icon": "https://raw.githubusercontent.com/vmware-samples/vcenter-event-broker-appliance/development/logo/veba_icon_only.png",
-      "footer": "Powered by VEBA",
       "pretext": ":harbor: Harbor Slack Function :veba_official:",
       "fields": [
         {
-          "short": "false",
-          "value": "PUSH_ARTIFACT",
-          "title": "Event Type"
+          "title": "Event Type",
+          "value": "harbor.artifact.pushed",
+          "short": "false"
         },
         {
-          "short": "false",
-          "value": "2022-06-25T11:42:42+00:00",
-          "title": "DateTime in UTC"
+          "title": "DateTime in UTC",
+          "value": "2023-08-22T15:57:41+00:00",
+          "short": "false"
         },
         {
-          "short": "false",
-          "value": "admin",
-          "title": "Username"
+          "title": "Unique Identifier",
+          "value": "291ee129-1d27-415c-bbe1-3ca45d5f230a",
+          "short": "false"
         },
         {
-          "short": "false",
-          "value": "veba-webhook/bitnami-nginx",
-          "title": "Repository Name"
+          "title": "Username",
+          "value": null,
+          "short": "false"
         },
         {
-          "short": "false",
+          "title": "Repository Name",
+          "value": "myapp/app",
+          "short": "false"
+        },
+        {
+          "title": "Repository Type",
           "value": "public",
-          "title": "Repository Type"
+          "short": "false"
         },
         {
-          "short": "false",
-          "value": "1.21.6-debian-10-r117",
-          "title": "Image Tag"
+          "title": "Image Tag",
+          "value": "1.0",
+          "short": "false"
         },
         {
-          "short": "false",
-          "value": "harbor.jarvis.tanzu/veba-webhook/bitnami-nginx:1.21.6-debian-10-r117",
-          "title": "Image Resource Data"
+          "title": "Image Resource Data",
+          "value": "harbor-cloudevents.vmware.net/myapp/app:1.0",
+          "short": "false"
         },
         {
-          "short": "false",
-          "value": "sha256:d3890814cc5a7cfc02403435281cdf51adfb6b67e223934d9d6137a4ad364286",
-          "title": "Image Digest"
+          "title": "Image Digest",
+          "value": "sha256:4d59a5bc7be95672d00edfd43622fc82f826bebbd5f497a7930a652031771ea8",
+          "short": "false"
         }
-      ]
+      ],
+      "footer": "Powered by VEBA",
+      "footer_icon": "https://raw.githubusercontent.com/vmware-samples/vcenter-event-broker-appliance/development/logo/veba_icon_only.png"
     }
   ]
 }"
-06/27/2022 09:47:31 - Sending Webhook payload to Slack ...
-06/27/2022 09:47:31 - Successfully sent Webhook ...
+08/23/2023 13:58:24 - Sending Webhook payload to Slack ...
+08/23/2023 13:58:25 - Successfully sent Webhook ...
+^C08/23/2023 13:59:53 - PowerShell HTTP Server stop requested. Waiting for server to stop
+08/23/2023 13:59:53 - Processing Shutdown
+
+08/23/2023 13:59:53 - Shutdown Processing Completed
+
+08/23/2023 13:59:53 - PowerShell HTTP server stop requested
 ```
 
 # Step 3 - Deploy
@@ -114,8 +123,6 @@ operator                       admin
 > **Note:** The following steps assume a working Knative environment using the
 `default` Rabbit `broker`. The Knative `service` and `trigger` will be installed in the
 `vmware-functions` Kubernetes namespace, assuming that the `broker` is also available there.
->
-> **Note:** Also, in order to receive incoming Harbor events and to ultimately invoke the Harbor-Slack-Function, it's necessary to have the [kn-go-harbor-webhook function example](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/development/examples/knative/go/kn-go-harbor-webhook) running properly first.
 
 Update the `slack_secret.json` file with your Slack webhook configurations and then create the kubernetes secret which can then be accessed from within the function by using the environment variable named called `SLACK_SECRET`.
 
@@ -128,7 +135,7 @@ kubectl -n vmware-functions create secret generic harbor-slack-secret --from-fil
 kubectl -n vmware-functions label secret harbor-slack-secret app=veba-ui
 ```
 
-Edit the `function.yaml` file with the name of the container image from Step 1 if you made any changes. If not, the default VMware container image will suffice. By default, the function deployment will filter on the `com.vmware.harbor.push_artifact.v0` Harbor Event. If you wish to change this, update the `type` field within `function.yaml` to the desired event type. A list of supported notification events is available on the official Harbor documentation under [Configure Webhook Notifications](https://goharbor.io/docs/2.5.0/working-with-projects/project-configuration/configure-webhooks/). Furthermore, use the VEBA Event viewer endpoint (`https://<VEBA-FQDN>/events`) to display all incoming events.
+Edit the `function.yaml` file with the name of the container image from Step 1 if you made any changes. If not, the default VMware container image will suffice. By default, the function deployment will filter on the `harbor.artifact.pushed` Harbor Event. If you wish to change this, update the `type` field within `function.yaml` to the desired event type. A list of supported notification events is available on the official Harbor documentation under [Configure Webhook Notifications](https://goharbor.io/docs/2.8.0/working-with-projects/project-configuration/configure-webhooks/). Furthermore, use the VEBA Event viewer endpoint (`https://<VEBA-FQDN>/events`) to display all incoming events.
 
 Deploy the function to the VMware Event Broker Appliance (VEBA).
 

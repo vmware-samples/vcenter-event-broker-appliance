@@ -1,21 +1,16 @@
 {
-	"type": "PUSH_ARTIFACT",
-	"occur_at": 1656076946,
-	"operator": "admin",
-	"event_data": {
-	  "resources": [
-		{
-		  "digest": "sha256:d3890814cc5a7cfc02403435281cdf51adfb6b67e223934d9d6137a4ad364286",
-		  "tag": "1.21.6-debian-10-r117",
-		  "resource_url": "harbor.jarvis.tanzu/veba-webhook/bitnami-nginx:1.21.6-debian-10-r117"
-		}
-	  ],
-	  "repository": {
-		"date_created": 1656076946,
-		"name": "bitnami-nginx",
-		"namespace": "veba-webhook",
-		"repo_full_name": "veba-webhook/bitnami-nginx",
-		"repo_type": "public"
+	"resources": [
+	  {
+		"digest": "sha256:4d59a5bc7be95672d00edfd43622fc82f826bebbd5f497a7930a652031771ea8",
+		"tag": "1.0",
+		"resource_url": "harbor-cloudevents.vmware.net/myapp/app:1.0"
 	  }
+	],
+	"repository": {
+	  "date_created": 1692714713,
+	  "name": "app",
+	  "namespace": "myapp",
+	  "repo_full_name": "myapp/app",
+	  "repo_type": "public"
 	}
   }

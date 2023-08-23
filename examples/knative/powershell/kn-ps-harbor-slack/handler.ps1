@@ -47,42 +47,47 @@ Function Process-Handler {
             fields = @(
                @{
                   title = "Event Type";
-                  value = $cloudEventData.type;
+                  value = $cloudEvent.type;
                   short = "false";
                }
                @{
-                     title = "DateTime in UTC";
-                     value = $cloudEvent.time;
-                     short = "false";
+                  title = "DateTime in UTC";
+                  value = $cloudEvent.time;
+                  short = "false";
                }
                @{
-                     title = "Username";
-                     value = $cloudEventData.operator;
-                     short = "false";
+                  title = "Unique Identifier";
+                  value = $cloudEvent.id;
+                  short = "false";
+               }
+               @{
+                  title = "Username";
+                  value = $cloudEvent.extensions.operator; # WIP
+                  short = "false";
                }
                @{
                   title = "Repository Name";
-                  value = $cloudEventData.event_data.repository.repo_full_name;
+                  value = $cloudEventData.repository.repo_full_name;
                   short = "false";
                }
                @{
                   title = "Repository Type";
-                  value = $cloudEventData.event_data.repository.repo_type;
+                  value = $cloudEventData.repository.repo_type;
                   short = "false";
                }
                @{
                   title = "Image Tag";
-                  value = $cloudEventData.event_data.resources[0].tag;
+                  value = $cloudEventData.resources[0].tag;
                   short = "false";
                }
                @{
                   title = "Image Resource Data";
-                  value = $cloudEventData.event_data.resources[0].resource_url;
+                  value = $cloudEventData.resources[0].resource_url;
                   short = "false";
                }
                @{
                   title = "Image Digest";
-                  value = $cloudEventData.event_data.resources[0].digest;
+                  value = $cloudEventData.resources[0].digest;
                   short = "false";
                }
             )
@@ -109,4 +114,5 @@ Function Process-Handler {
    }
 
    Write-Host "$(Get-Date) - Successfully sent Webhook ..."
+
 }

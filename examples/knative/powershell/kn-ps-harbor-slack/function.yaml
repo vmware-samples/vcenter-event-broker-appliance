@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-ps-harbor-slack:1.1
+        - image: registry.cloud-garage.net/rguske/kn-ps-harbor-slack:1.2 # needs to be updated
           envFrom:
             - secretRef:
                 name: harbor-slack-secret
@@ -30,8 +30,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.harbor.push_artifact.v0
-      subject: admin
+      type: harbor.artifact.pushed
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

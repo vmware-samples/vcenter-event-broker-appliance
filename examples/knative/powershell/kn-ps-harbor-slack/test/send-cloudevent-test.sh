@@ -4,11 +4,11 @@ echo "Testing Function ..."
 curl -d@test-payload.json \
     -H "Content-Type: application/json" \
     -H 'ce-specversion: 1.0' \
-    -H 'ce-id: d70079f9-fddd-4b7f-aa76-1193f28b0611' \
-    -H 'ce-source: /kn-go-harbor-webhook' \
-    -H 'ce-type: com.vmware.harbor.push_artifact.v0' \
-    -H 'ce-subject: admin' \
-    -H 'ce-time: 2022-06-25T11:42:42Z' \
+    -H 'ce-id: 291ee129-1d27-415c-bbe1-3ca45d5f230a' \
+    -H 'ce-source: /projects/2/webhook/policies/1' \
+    -H 'ce-type: harbor.artifact.pushed' \
+    -H 'ce-operator: admin' \
+    -H 'ce-time: 2023-08-22T15:57:41Z' \
     -X POST localhost:8080
 
 echo "See docker container console for output"

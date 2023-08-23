@@ -2,11 +2,11 @@
 $headers = @{
     "Content-Type" = "application/json";
     "ce-specversion" = "1.0";
-    "ce-id" = "d70079f9-fddd-4b7f-aa76-1193f28b0611";
-    "ce-source" = "/kn-go-harbor-webhook";
-    "ce-type" = "com.vmware.harbor.push_artifact.v0";
-    "ce-subject" = "admin";
-    "ce-time" = "2022-06-25T11:42:42Z";
+    "ce-id" = "291ee129-1d27-415c-bbe1-3ca45d5f230a";
+    "ce-source" = "/projects/2/webhook/policies/1";
+    "ce-type" = "harbor.artifact.pushed";
+    "ce-operator" = "admin";
+    "ce-time" = "2023-08-22T15:56:41Z";
 }
 
 $body = Get-Content -Raw -Path "./test-payload.json"
