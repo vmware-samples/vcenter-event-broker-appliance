@@ -32,7 +32,7 @@ jobs:
           cache-dependency-path: vmware-event-router/go.sum
 
       - name: Setup ko
-        uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.6
+        uses: ko-build/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa
 
       - name: Get short COMMIT and TAG (used by ko)
         run: |
@@ -142,7 +142,7 @@ jobs:
           cache-dependency-path: vmware-event-router/go.sum
 
       - name: Setup ko
-        uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.6
+        uses: ko-build/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa
 
       - name: Get short COMMIT and TAG (used by ko)
         run: |

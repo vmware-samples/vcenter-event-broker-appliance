@@ -12,7 +12,7 @@ Create the container image locally to test your function logic.
 ```
 # change the IMAGE name accordingly
 export TAG=<version>
-export IMAGE=us.gcr.io/daisy-284300/veba/kn-pcli-nsx-tag-sync:${TAG}
+export IMAGE=ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-pcli-nsx-tag-sync:${TAG}
 docker build -t ${IMAGE} .
 ```
 
@@ -44,7 +44,7 @@ Start the container image by running the following command:
 
 ```console
 export TAG=<version>
-export IMAGE=us.gcr.io/daisy-284300/veba/kn-pcli-nsx-tag-sync:${TAG}
+export IMAGE=ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-pcli-nsx-tag-sync:${TAG}
 docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 ${IMAGE}
 ```
 
@@ -163,7 +163,7 @@ done developing and testing your function logic.
 
 ```console
 export TAG=<version>
-export IMAGE=us.gcr.io/daisy-284300/veba/kn-pcli-nsx-tag-sync:${TAG}
+export IMAGE=ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-pcli-nsx-tag-sync:${TAG}
 docker push ${IMAGE}
 ```
 

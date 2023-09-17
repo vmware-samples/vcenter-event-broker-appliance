@@ -52,13 +52,13 @@ If you built a custom image in Step 1, comment out the default `IMAGE` command b
 Mac/Linux
 ```console
 export TAG=<version>
-export IMAGE=us.gcr.io/daisy-284300/veba/kn-pcli-ha-restarted-vms:${TAG}
+export IMAGE=ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-pcli-ha-restarted-vms:${TAG}
 docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 ${IMAGE}
 ```
 Windows
 ```console
 $TAG=<version>
-$IMAGE="us.gcr.io/daisy-284300/veba/kn-pcli-ha-restarted-vms:${TAG}"
+$IMAGE="ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-pcli-ha-restarted-vms:${TAG}"
 docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 ${IMAGE}
 ```
 

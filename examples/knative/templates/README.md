@@ -8,11 +8,11 @@
 
 Pre-built base PowerShell Image:
 
-* us.gcr.io/daisy-284300/veba/ce-ps-base:1.5
+* ghcr.io/vmware-samples/vcenter-event-broker-appliance/ce-ps-base:1.5
 
 Pre-built base PowerCLI Image:
 
-* us.gcr.io/daisy-284300/veba/ce-pcli-base:1.5
+* ghcr.io/vmware-samples/vcenter-event-broker-appliance/ce-pcli-base:1.5
 # Build
 
 Build Base PowerShell Image

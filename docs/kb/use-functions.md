@@ -126,7 +126,7 @@ Although the previous examples using the `kn-ps-echo` function did not require c
 You can verify whether a function requires a secret by looking at the function's `function.yaml`. Below is part of the `function.yaml` for `kn-ps-email`. Note the `secretRef:` section specifying the name of the secret the function expects.
 ```yaml
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-ps-email:1.4
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-ps-email:1.4
           envFrom:
             - secretRef:
                 name: email-secret
