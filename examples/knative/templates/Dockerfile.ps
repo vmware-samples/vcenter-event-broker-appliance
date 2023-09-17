@@ -1,5 +1,9 @@
 # Ubuntu 20.04 base image w/PowerShell 7.2.11
 FROM mcr.microsoft.com/powershell:lts-ubuntu-20.04
+
+LABEL maintainer="vCenter Event Broker Appliance Community"
+LABEL org.opencontainers.image.source="https://github.com/vmware-samples/vcenter-event-broker-appliance"
+
 ENV TERM linux-basic
 ENV PORT 8080
 

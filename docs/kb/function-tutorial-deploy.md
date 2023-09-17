@@ -49,7 +49,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-ps-slack:1.4
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-ps-slack:1.4
           envFrom:
             - secretRef:
                 name: slack-secret
@@ -59,7 +59,7 @@ spec:
 <snip>
 ```
 
-You can see that the default container referenced is: `us.gcr.io/daisy-284300/veba/kn-ps-slack:1.4`.  We will replace this with our own container registry address.
+You can see that the default container referenced is: `ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-ps-slack:1.4`.  We will replace this with our own container registry address.
 
 First, open a command prompt/terminal and push the Docker image (replace docker-username with your Docker username):
 

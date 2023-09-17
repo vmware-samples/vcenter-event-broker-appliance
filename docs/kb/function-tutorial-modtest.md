@@ -31,7 +31,7 @@ This part of the tutorial will go over:
 The PowerShell code is contained in the `handler.ps1` file.  The default function sends an alert to a Slack webhook when a Virtual Machine is powered off.  This handler file is included in the Docker image and so if it changes, it will require a rebuild of the Docker image.  You can see how the `handler.ps1` file is reference in the `Dockerfile` used to build the Docker image - note the `COPY handler.ps1 handler.ps1` command within the file:
 
 ```
-FROM us.gcr.io/daisy-284300/veba/ce-ps-base:1.4
+FROM ghcr.io/vmware-samples/vcenter-event-broker-appliance/ce-ps-base:1.4
 
 COPY handler.ps1 handler.ps1
 
@@ -107,10 +107,10 @@ docker build -t atauber/kn-ps-slack:1.1 .
  => => transferring dockerfile: 36B                                                                                                                               0.0s
  => [internal] load .dockerignore                                                                                                                                 0.0s
  => => transferring context: 2B                                                                                                                                   0.0s
- => [internal] load metadata for us.gcr.io/daisy-284300/veba/ce-ps-base:1.4                                                                                       0.3s
+ => [internal] load metadata for ghcr.io/vmware-samples/vcenter-event-broker-appliance/ce-ps-base:1.4                                                                                       0.3s
  => [internal] load build context                                                                                                                                 0.0s
  => => transferring context: 33B                                                                                                                                  0.0s
- => [1/2] FROM us.gcr.io/daisy-284300/veba/ce-ps-base:1.4@sha256:bb2c42f7355ad50e957e689dfb8f3fca0390f17290fdd2e1065d7d34a055f29b                                 0.0s
+ => [1/2] FROM ghcr.io/vmware-samples/vcenter-event-broker-appliance/ce-ps-base:1.4@sha256:bb2c42f7355ad50e957e689dfb8f3fca0390f17290fdd2e1065d7d34a055f29b                                 0.0s
  => CACHED [2/2] COPY handler.ps1 handler.ps1                                                                                                                     0.0s
  => exporting to image                                                                                                                                            0.0s
  => => exporting layers                                                                                                                                           0.0s

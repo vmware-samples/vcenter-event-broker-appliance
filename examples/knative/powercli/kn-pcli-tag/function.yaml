@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-pcli-tag:1.5
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-pcli-tag:1.5
           envFrom:
             - secretRef:
                 name: tag-secret

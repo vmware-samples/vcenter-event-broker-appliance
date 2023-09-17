@@ -5,7 +5,7 @@
     "vmware-event-router": {
         "gitRepoTag": "v0.7.5",
         "containers": [{
-            "name": "us.gcr.io/daisy-284300/veba/router",
+            "name": "ghcr.io/vmware-samples/vcenter-event-broker-appliance/router",
             "version": "v0.7.5"
         }]
     },
