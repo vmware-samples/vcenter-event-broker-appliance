@@ -53,7 +53,7 @@ export KO_DOCKER_REPO=ghcr.io/<docker-username>/<repo-name>
 Now you can build and push your new version of the example using `ko build`
 
 ```bash
-ko build . --image-label org.opencontainers.image.source="<github-domain>/<github-username>/<repo-name>"  --tags <new-version> --tags latest -B
+ko build . --image-label org.opencontainers.image.source="${KO_DOCKER_REPO}"  --tags ${KO_TAG} --tags latest -B
 ```
 
 ### Notes
