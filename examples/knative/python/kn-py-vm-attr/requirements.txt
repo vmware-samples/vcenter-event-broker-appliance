@@ -17,6 +17,6 @@ pyvmomi==7.0.2
     certifi==2023.7.22
     charset-normalizer==2.0.12
     idna==3.3
-    urllib3==1.26.17
+    urllib3==1.26.18
   six==1.16.0
 setuptools==65.5.1
