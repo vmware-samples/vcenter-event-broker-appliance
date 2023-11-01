@@ -8,7 +8,7 @@ linters-settings:
     local-prefixes: github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router
   goconst:
     min-len: 2
-    min-occurrences: 2
+    min-occurrences: 3
   gocritic:
     enabled-tags:
       - diagnostic
