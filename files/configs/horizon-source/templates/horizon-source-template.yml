@@ -25,3 +25,4 @@ spec:
   secretRef:
     name: horizon-creds
   serviceAccountName: horizon-source-sa
+  payloadEncoding: application/json

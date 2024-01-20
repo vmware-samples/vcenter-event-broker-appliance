@@ -30,3 +30,4 @@ spec:
   secretRef:
     name: vsphere-creds
   serviceAccountName: vsphere-source-sa
+  payloadEncoding: application/json
