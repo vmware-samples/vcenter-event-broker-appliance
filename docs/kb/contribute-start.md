@@ -20,11 +20,27 @@ The VMware Event Broker Appliance team welcomes contributions from the community
 
 Before you start working with the VMware Event Broker Appliance, please read our [Developer Certificate of Origin](https://cla.vmware.com/dco){:target="_blank"}. All contributions to this repository must be signed as described on that page. Your signature certifies that you wrote the patch or have the right to pass it on as an open-source patch.
 
+<!-- omit in toc -->
+## Table of Contents
+
+- [Contributing](#contributing)
+- [Step-by-step help](#step-by-step-help)
+  - [Preqrequisites](#preqrequisites)
+  - [Quickstart for Contributing](#quickstart-for-contributing)
+    - [Download the VEBA source code](#download-the-veba-source-code)
+    - [Configure git to sign code with your verified name and email](#configure-git-to-sign-code-with-your-verified-name-and-email)
+    - [Contribute documentation changes](#contribute-documentation-changes)
+    - [Changing or contributing new functions](#changing-or-contributing-new-functions)
+  - [Submitting Bug Reports and Feature Requests](#submitting-bug-reports-and-feature-requests)
+  - [Pull Requests (PRs)](#pull-requests-prs)
+  - [Commits](#commits)
+  - [Breaking Changes](#breaking-changes)
+
 # Step-by-step help
 
 If you're just starting out with containers and source control and are looking for additional guidance, browse to this [blog series](http://www.patrickkremer.com/veba/){:target="_blank"} on VEBA. The blog goes step-by-step with screenshots and assumes zero experience with any of the required tooling.
 
-# Preqrequisites
+## Preqrequisites
 
 You must create a [Github](https://github.com/join){:target="_blank"} account. You need to verify your email with Github in order to contribute to the VEBA repository.
 
@@ -33,27 +49,31 @@ The following tools are required:
  * [Docker](https://docs.docker.com/){:target="_blank"}
  * [Knative CLI](https://knative.dev/docs/install/install-kn/){:target="_blank"}
 
-# Quickstart for Contributing
+## Quickstart for Contributing
 
-## Download the VEBA source code
+### Download the VEBA source code
+
 ```bash
 git clone https://github.com/vmware-samples/vcenter-event-broker-appliance
 ```
 
-## Configure git to sign code with your verified name and email
+### Configure git to sign code with your verified name and email
+
 ```bash
 git config --global user.name "Your Name"
 git config --global user.email "youremail@domain.com"
 ```
 
-## Contribute documentation changes
+### Contribute documentation changes
 
-Make the necessary changes and save your files. 
+Make the necessary changes and save your files.
+
 ```bash
 git diff
 ```
 
 This is sample output from git. It will show you files that have changed as well as all display all changes.
+
 ```bash
 user@wrkst01 MINGW64 ~/Documents/git/vcenter-event-broker-appliance(master)
 $ git diff
@@ -63,16 +83,15 @@ index 4245046..f86f09f 100644
 +++ b/docs/kb/contribute-start.md
 @@ -6,6 +6,32 @@ description: Getting Started
  permalink: /kb/contribute-start
- ---
+---
 
 +# Preqrequisites
 +
-+Three tools are required in order to contribute functions - 
++Three tools are required in order to contribute functions -
 (output truncated)
 ```
 
 Commit the code and push your commit. -a commits all changed files, -s signs your commit, and -m is a commit message - a short description of your change.
-
 
 ```bash
 git commit -a -s -m "Add prereq and git diff output to contribution page."
@@ -81,9 +100,9 @@ git push
 
 You can then submit a pull request (PR) to the VEBA maintainers - a step-by-step guide with screenshots is available [here](http://www.patrickkremer.com/2019/12/vcenter-event-broker-appliance-part-v-contributing-to-the-veba-project/){:target="_blank"}
 
-# Changing or contributing new functions
+### Changing or contributing new functions
 
-The git commands are the same, but in order to change code, you must reference your own Docker image. The example YAML below comes from the Knative [kn-pcli-tag]](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative/powercli/kn-pcli-tag){:target="_blank"} sample function.
+The git commands are the same, but in order to change code, you must reference your own Docker image. The example YAML below comes from the Knative [kn-pcli-tag](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative/powercli/kn-pcli-tag) sample function.
 
 > Note: The `image:` references the `vmware` harbor registry account. You must change this to your own docker account.
 
@@ -94,17 +113,15 @@ metadata:
   name: kn-pcli-tag
   labels:
     app: veba-ui
+spec:
   template:
     metadata:
       annotations:
         autoscaling.knative.dev/maxScale: "1"
         autoscaling.knative.dev/minScale: "1"
-spec:
-  template:
-    metadata:
     spec:
       containers:
-        - image: projects.registry.vmware.com/veba/kn-pcli-tag:1.1
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-pcli-tag:1.5
           envFrom:
             - secretRef:
                 name: tag-secret
@@ -122,8 +139,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/event
-      subject: DrsVmPoweredOnEvent
+      type: com.vmware.vsphere.DrsVmPoweredOnEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1
@@ -132,12 +148,14 @@ spec:
 ```
 
 Once you've written or changed function code, you can deploy it to your VEBA appliance for testing.
+
 ```bash
 export TAG=<version>
 docker build -t <docker-username>/kn-pcli-tag:${TAG} .
 docker push <docker-username>/kn-pcli-tag:${TAG}
 kubectl -n vmware-functions apply -f function.yaml
 ```
+
 If everything works as expected, you can then commit your code and file a pull request for inclusion into the project.
 
 ## Submitting Bug Reports and Feature Requests
@@ -151,12 +169,13 @@ Feature requests should fall within the scope of the project.
 ## Pull Requests (PRs)
 
 Before submitting a pull request, please make sure that your change satisfies the following requirements:
+
 - VMware Event Broker Appliance can be built and deployed. See the getting started build guide [here](contribute-eventrouter.md).
 - The change is signed as described by the [Developer Certificate of Origin](https://cla.vmware.com/dco){:target="_blank"} doc.
 - The change is clearly documented and follows Git commit [best practices](https://chris.beams.io/posts/git-commit/){:target="_blank"}
 - Contributions to the [examples](/examples) contain a titled readme.
 
-### Commits
+## Commits
 
 Please follow the guidance provided
 [here](https://chris.beams.io/posts/git-commit/) how to write good commit
@@ -182,7 +201,7 @@ git add <files>
 git commit -s -m "fix: Race in VMware Event Router" -m "Closes: #issue-number"
 ```
 
-### Breaking Changes
+## Breaking Changes
 
 If this PR introduces a **breaking** change, please indicate this in the
 corresponding commit:

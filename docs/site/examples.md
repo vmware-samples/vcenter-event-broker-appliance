@@ -272,6 +272,17 @@ examples:
     links:
     - language: powershell
       url: "/tree/master/examples/knative/powershell/kn-ps-harbor-slack"
+
+  - title: Google Chat Notification
+    usecases:
+    - item: integration
+    - item: notification
+    id: kn-ps-google-chat-function
+    description: Function to send a Google Chat notification.
+    links:
+    - language: powershell
+      url: "/tree/master/examples/knative/powershell/kn-ps-google-chat"
+
 ---
 
 A complete and updated list of ready to use functions curated by the VMware Event Broker community is listed below.
@@ -280,7 +291,7 @@ A complete and updated list of ready to use functions curated by the VMware Even
 
 These functions are prebuilt, available in ready to deploy container and `function.yaml` files for you to deploy as is. Should you need to modify the functions to fit your needs, the `README.md` files provided within each function folder will provide all the information you need to customize, build and deploy the function on your VMware Event Broker appliance.
 
-> **Note:** These functions are provided and tested to be used with the VMware Event Broker Appliance deployed with [Knative](/kb/install-knative) as the event stream processor.
+> **Note:** These functions are provided and tested to be used with the VMware Event Broker Appliance deployed with [Knative](/kb/install-veba) as the event stream processor.
 
 
  <div class="examples wd-100">

@@ -8,15 +8,15 @@ cta:
  title: Learn More
  description: Find more about what makes VMware Event Broker Appliance possible
  actions:
-    - text: Install the [Appliance with Knative](install-knative) to extend your SDDC with our [community-sourced functions](/examples)
-    - text: Learn more about the [VMware Event Router](event-router) and supported Event Sources and Processors
+    - text: Install the [Appliance](install-veba) to extend your SDDC with our [community-sourced functions](/examples)
+    - text: Learn more about the [VMware Tanzu Sources for Knative](Tanzu Sources for Knative) and supported Event Sources
 ---
 
 # Architecture
 
 The VMware Event Broker Appliance follows a highly modular approach, using Kubernetes and containers as an abstraction layer between the base operating system ([Photon OS](https://github.com/vmware/photon)) and the required application services. Currently the following components are used in the appliance:
 
-- VMware Event Router ([Github](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/vmware-event-router){:target="_blank"})
+- Tanzu Sources for Knative ([Github](https://github.com/vmware-tanzu/sources-for-knative){:target="_blank"})
   - Supported Event Stream Sources:
     - VMware vCenter ([Website](https://www.vmware.com/products/vcenter-server.html){:target="_blank"})
     - VMware Horizon ([Website](https://www.vmware.com/products/horizon.html){:target="_blank"})
@@ -29,11 +29,11 @@ The VMware Event Broker Appliance follows a highly modular approach, using Kuber
 
 <img src="./img/veba-architecture.png" width="100%" align="center" class="border m-1 p-1"/>
 
-**[VMware Event Router](event-router)** implements the core functionality of the VMware Event Broker Appliance, that is connecting to event `streams` ("sources") and processing the events with a configurable event `processor` such as Knative.
+The **[Tanzu Sources for Knative](https://github.com/vmware-tanzu/sources-for-knative)** implements the core functionality of the VMware Event Broker Appliance, that is connecting to event producers and processing the events with a configurable event `processor` such as Knative.
 
 **Knative** is a Kubernetes-based platform to deploy and manage modern serverless workloads. Knative has two core building blocks, that is Serving (Knative Service) and Eventing (Broker, Channel, etc.).
-The VMware Event Router can be configured to directly send events to any addressable Knative resource (“reference”), e.g. a Knative Broker or Service. Broker is the recommended deployment model for the VMware Event Router. Please see the Knative documentation on Eventing for details around brokers, triggers, event filtering, etc.
-Alternatively, the router can send events to a URI, e.g. an external HTTP endpoint accepting CloudEvents.
+The Tanzu Sources (`VSphereSource`, `HorizonSource`) can be configured to directly send events to any addressable Knative resource (`sink`), e.g. a Knative Broker or Service. Broker is the recommended deployment model for a Source. Please see the Knative documentation on Eventing for details around brokers, triggers, event filtering, etc.
+Alternatively, a Source can send events to an URI, e.g. an external HTTP endpoint accepting CloudEvents.
 
 **Contour** is an ingress controller for Kubernetes that works by deploying the Envoy proxy as a reverse proxy and load balancer. Contour supports dynamic configuration updates out of the box while maintaining a lightweight profile. In the VMware Event Broker Appliance, Contour provides **TLS termination for the various HTTP(S) endpoints** served.
 
@@ -41,14 +41,14 @@ Alternatively, the router can send events to a URI, e.g. an external HTTP endpoi
 
 **Photon OS&trade;** is an open source Linux container host optimized for cloud-native applications, cloud platforms, and VMware infrastructure. Photon OS provides a **secure runtime environment for efficiently running containers** and out of the box support for Kubernetes. Photon OS is the foundation for many appliances built for the vSphere platform and its ecosystem and thus the first choice for building the VMware Event Broker Appliance.
 
-# Architectural Considerations
+## Architectural Considerations
 
-Even though the VMware Event Broker Appliance is instantiated as a single running virtual machine, internally its components follow a [microservices architecture](#architecture) running on Kubernetes. The individual services communicate via TCP/IP network sockets. Most of the communication is performed internally in the appliance so the chance of losing network packets is reduced. 
+Even though the VMware Event Broker Appliance is instantiated as a single running virtual machine, internally its components follow a [microservices architecture](#architecture) running on Kubernetes. The individual services communicate via TCP/IP network sockets. Most of the communication is performed internally in the appliance so the chance of losing network packets is reduced.
 
-However, in case of a component becoming unavailable (crash-loop, overloaded,or slow to respond), communication might be impacted and; it's important to understand the consequences for event delivery, i.e. function invocation. To avoid the risk of blocking remote calls, which could render the whole system unusable, sensible default timeouts are applied, which can be fine-tuned if needed.
+However, in case of a component becoming unavailable (crash-loop, overloaded, or slow to respond), communication might be impacted. It's important to understand the consequences for event delivery, i.e. function invocation. To avoid the risk of blocking remote calls, which could render the whole system unusable, sensible default timeouts are applied, which can be fine-tuned if needed.
 
 Kubernetes is a great platform and foundation for building highly available distributed systems. Even though we currently don't make use of its multi-node clustering capabilities (i.e. scale out), Kubernetes provides a lot of benefits to developers and users. Its self-healing capabilities continuously watch the critical VMware Event Broker Appliance components and user-deployed functions and trigger restarts when necessary.
 
-Kubernetes and its dependencies, such as the Docker, are deployed as systemd units. This addresses the "who watches the watcher" problem in case the Kubernetes node agent (kubelet) or Docker container runtime crashes.
+Kubernetes and its dependencies, such as the containerd, are deployed as systemd units. This addresses the "who watches the watcher" problem in case the Kubernetes node agent (kubelet) or Docker container runtime crashes.
 
 > **Note:** We are considering to use Kubernetes' cluster capabilities in the future to provide increased resiliency (node crashes), scalability (scale out individual components to handle higher load) and durability (replication and persistency). The downside is the added complexity of deploying and managing a multi-node VMware Event Broker Appliance environment.

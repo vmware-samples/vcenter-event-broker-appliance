@@ -6,112 +6,202 @@ description: Troubleshooting guide for general function issues
 permalink: /kb/troubleshoot-functions
 cta:
  title: Still having trouble?
- description: Please submit bug reports and feature requests by using our GitHub [Issues](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues){:target="_blank"} page or Join us on slack [#vcenter-event-broker-appliance](https://vmwarecode.slack.com/archives/CQLT9B5AA){:target="_blank"} on vmwarecode.slack.com.
+ description: Please submit bug reports and feature requests by using our GitHub [Issues](https://github.com/vmware-samples/vcenter-event-broker-appliance/issues){:target="_blank"} page.
 ---
 
-## Knative Function Troubleshooting
+# Troubleshooting Functions
 
-If a function is not behaving as expected, you can look at the logs to troubleshoot. You can either perform this operation remotely by copying the `/root/.kube/config` onto your local desktop and you can interact with VEBA using your local kubectl client or SSH to the appliance using the local kubectl client.
+If a function is not behaving as expected, you can look at the logs to troubleshoot. You can either perform this operation remotely by copying the `/root/.kube/config` onto your local desktop and you can interact with VEBA using your local `kubectl` client or `ssh` to the appliance using the local `kubectl` client.
 
-List out the pods.
+List out the pods within the `vmware-functions` namespace.
 
-```bash
-kubectl get pods -A
+```console
+kubectl -n vmware-functions get pods
 ```
 
 This is an example output:
 
 ```
-NAMESPACE            NAME                                                READY   STATUS      RESTARTS   AGE
-contour-external     contour-5869594b-b5tqk                              1/1     Running     0          22h
-contour-external     contour-5869594b-q94vd                              1/1     Running     0          22h
-contour-external     contour-certgen-v1.10.0-hm65q                       0/1     Completed   0          22h
-contour-external     envoy-6p2bv                                         2/2     Running     0          22h
-contour-internal     contour-5d47766fd8-5skt7                            1/1     Running     0          22h
-contour-internal     contour-5d47766fd8-6r5g4                            1/1     Running     0          22h
-contour-internal     contour-certgen-v1.10.0-rdd6z                       0/1     Completed   0          22h
-contour-internal     envoy-wwxct                                         2/2     Running     0          22h
-knative-eventing     eventing-controller-658f454d9d-mnqjb                1/1     Running     0          22h
-knative-eventing     eventing-webhook-69fdcdf8d4-mljtb                   1/1     Running     0          22h
-knative-eventing     rabbitmq-broker-controller-88fc96b44-bbvnb          1/1     Running     0          22h
-knative-serving      activator-85cd6f6f9-wl7rf                           1/1     Running     0          22h
-knative-serving      autoscaler-7959969587-z9rtq                         1/1     Running     0          22h
-knative-serving      contour-ingress-controller-6d5777577c-f5qzn         1/1     Running     0          22h
-knative-serving      controller-577558f799-mdjpt                         1/1     Running     0          22h
-knative-serving      webhook-78f446786-bn7xm                             1/1     Running     0          22h
-kube-system          antrea-agent-vbr5d                                  2/2     Running     0          22h
-kube-system          antrea-controller-85c944dc84-jc28b                  1/1     Running     0          22h
-kube-system          coredns-74ff55c5b-rqm7c                             1/1     Running     0          22h
-kube-system          coredns-74ff55c5b-vq827                             1/1     Running     0          22h
-kube-system          etcd-sjc-veba-01.tshirts.inc                        1/1     Running     0          22h
-kube-system          kube-apiserver-sjc-veba-01.tshirts.inc              1/1     Running     0          22h
-kube-system          kube-controller-manager-sjc-veba-01.tshirts.inc     1/1     Running     0          22h
-kube-system          kube-proxy-mwpxs                                    1/1     Running     0          22h
-kube-system          kube-scheduler-sjc-veba-01.tshirts.inc              1/1     Running     0          22h
-local-path-storage   local-path-provisioner-5696dbb894-7x626             1/1     Running     0          22h
-rabbitmq-system      rabbitmq-cluster-operator-7bbbb8d559-dqd85          1/1     Running     0          22h
-vmware-functions     default-broker-ingress-5c98bf68bc-2zpc6             1/1     Running     0          22h
-vmware-functions     kn-pcli-tag-00001-deployment-c845447d4-lnmrq        2/2     Running     0          7h41m
-vmware-functions     sockeye-65697bdfc4-cmfxc                            1/1     Running     0          22h
-vmware-functions     sockeye-trigger-dispatcher-7f4dbd7f78-n589p         1/1     Running     0          22h
-vmware-functions     veba-pcli-tag-trigger-dispatcher-7b477dd84d-zl2vm   1/1     Running     0          7h41m
-vmware-system        cadvisor-sk4j9                                      1/1     Running     0          22h
-vmware-system        tinywww-dd88dc7db-dqnnc                             1/1     Running     0          22h
-vmware-system        veba-rabbit-server-0                                1/1     Running     0          22h
-vmware-system        veba-ui-54967b4bf4-lpjrn                            1/1     Running     0          22h
-vmware-system        vmware-event-router-vcenter-6b76959df5-6mrb4        1/1     Running     3          22h
-vmware-system        vmware-event-router-webhook-6b48cc5b8c-sjzx8        1/1     Running     0          22h
+default-broker-ingress-78b9f88599-2vwwn           1/1     Running   1 (2d ago)   4d13h
+kn-pcli-tag-00001-deployment-6d6db78495-bdz8j     2/2     Running   0            8m8s
+sockeye-79b7fc7c55-klcnh                          1/1     Running   1 (2d ago)   4d13h
+sockeye-trigger-dispatcher-84cf59c5d9-wdfqj       1/1     Running   1 (2d ago)   4d13h
+vcsa-source-adapter-9984f787-h7bth                1/1     Running   0            18h
+veba-pcli-tag-trigger-dispatcher-796895df-4fx2c   1/1     Running   0            6m57s
 ```
 
-First, we want to see if the event router is capturing events and forwarding them on to a function.
+First, we want to see if the event-viewer application Sockeye is receiving events from the configured `VSphereSource`.
 
-Use this command to follow the live Event Router log.
+Use this command to follow the logs.
 
-```bash
-kubectl logs -n vmware-system deploy/vmware-event-router-vcenter
+```console
+kubectl logs -n vmware-functions deployment/sockeye -f
 ```
 
-For this sample troubleshooting, we have the sample [PowerCLI Tagging function](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative/powercli/kn-pcli-tag) running which will react to a VM powered on Event (`DrsVmPoweredOnEvent`). To see if the appliance is properly handling the event, create a test VM and power it on before proceeding with the next steps.
+You should continuously see event payloads on your terminal.
 
-When we look at the log output, we see various entries regarding `DrsVmPoweredOnEvent`, ending with the following:
+The same can be done by browsing the VEBA events endpoint `https://[veba-fqdn]/events`.
 
+For this sample troubleshooting, we have the sample [PowerCLI Tagging function](https://github.com/vmware-samples/vcenter-event-broker-appliance/blob/development/examples/knative/powercli/kn-pcli-tag) running which will react to a VM powered on Event `com.vmware.vsphere.DrsVmPoweredOnEvent.v0`. To see if the appliance is properly handling the event, create a test VM and power it on before proceeding with the next steps.
+
+When we look at the log output, we should see an entry similar to the following:
+
+```console
+Context Attributes,
+  specversion: 1.0
+  type: com.vmware.vsphere.DrsVmPoweredOnEvent.v0
+  source: https://vcsa.jarvis.lab/sdk
+  id: 280034
+  time: 2024-01-17T13:02:05.426999Z
+  datacontenttype: application/json
+Extensions,
+  eventclass: event
+  vsphereapiversion: 8.0.2.0
+Data,
+  {
+    "Key": 280034,
+    "ChainId": 280032,
+    "CreatedTime": "2024-01-17T13:02:05.426999Z",
+    "UserName": "VSPHERE.LOCAL\\Administrator",
+    "Datacenter": {
+      "Name": "jarvis-lab",
+      "Datacenter": {
+        "Type": "Datacenter",
+        "Value": "datacenter-1001"
+      }
+    },
+    "ComputeResource": {
+      "Name": "mk-1",
+      "ComputeResource": {
+        "Type": "ClusterComputeResource",
+        "Value": "domain-c1015"
+      }
+    },
+    "Host": {
+      "Name": "esxi02.jarvis.lab",
+      "Host": {
+        "Type": "HostSystem",
+        "Value": "host-1012"
+      }
+    },
+    "Vm": {
+      "Name": "workload1",
+      "Vm": {
+        "Type": "VirtualMachine",
+        "Value": "vm-2073"
+      }
+    },
+    "Ds": null,
+    "Net": null,
+    "Dvs": null,
+    "FullFormattedMessage": "DRS powered on workload1 on esxi02.jarvis.lab in jarvis-lab",
+    "ChangeTag": "",
+    "Template": false
+  }
 ```
-2021-09-24T13:57:05.015Z	INFO	[KNATIVE]	knative/knative.go:181	sending event	{"eventID": "c6d61d55-8100-459e-a1e7-7a936bac6e43", "subject": "DrsVmPoweredOnEvent"}
-2021-09-24T13:57:05.015Z	INFO	[KNATIVE]	knative/knative.go:193	successfully sent event	{"eventID": "c6d61d55-8100-459e-a1e7-7a936bac6e43"}
-2021-09-24T13:57:06.017Z	INFO	[VCENTER]	vcenter/vcenter.go:343	invoking processor	{"eventID": "87af3e86-6516-4377-9a9b-86c4c9b00b05"}
-```
 
-This lets us know that the function was invoked. If we still don't see the expected result, we need to look at the function logs.
+Similar in Sockeye:
 
-Each Knative function will have its own pod running in the vmware-functions namespace. If you have deployed the provided tagging function example from the VEBA examples, you can examine the logs with the following command.
+<img src="./img/veba-sockeye-poweredon-event.png" width="100%" align="center" class="border m-1 p-1"/>
 
+Each Knative function will have its own pod running in the `vmware-functions` namespace. If you have deployed the provided tagging function example from the [VEBA function examples](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/development/examples/knative), you can examine the logs with the following command:
 
-```bash
+```console
 kubectl logs -n vmware-functions deployment/kn-pcli-tag-00001-deployment user-container
 ```
 
 > **Note:** Replace the name of the deployment in the examples with the name within your environment.
 
-We don't need the `--follow` switch because we are just trying to look at recent logs, but `--follow` would work too.
+First indications of a working function can be obtained directly after deploying a function. For example if a function is successfully connected to a system. The Tagging function for example establishes a connection to the specified vCenter Server system. Here's a log output sample:
+
+```console
+kubectl -n vmware-functions logs kn-pcli-tag-00001-deployment-6d6db78495-bdz8j
+
+Defaulted container "user-container" out of: user-container, queue-proxy
+01/17/2024 10:34:57 - PowerShell HTTP server start listening on 'http://*:8080/'
+01/17/2024 10:34:57 - Processing Init
+
+01/17/2024 10:34:57 - Configuring PowerCLI Configuration Settings
+
+
+DefaultVIServerMode         : Multiple
+ProxyPolicy                 : UseSystemProxy
+ParticipateInCEIP           : True
+CEIPDataTransferProxyPolicy : UseSystemProxy
+DisplayDeprecationWarnings  : True
+InvalidCertificateAction    : Ignore
+WebOperationTimeoutSeconds  : 300
+VMConsoleWindowBrowser      :
+Scope                       : Session
+PythonPath                  : /usr/local/bin/python3
+
+DefaultVIServerMode         :
+ProxyPolicy                 :
+ParticipateInCEIP           : True
+CEIPDataTransferProxyPolicy :
+DisplayDeprecationWarnings  :
+InvalidCertificateAction    : Ignore
+WebOperationTimeoutSeconds  :
+VMConsoleWindowBrowser      :
+Scope                       : User
+PythonPath                  :
+
+DefaultVIServerMode         :
+ProxyPolicy                 :
+ParticipateInCEIP           :
+CEIPDataTransferProxyPolicy :
+DisplayDeprecationWarnings  :
+InvalidCertificateAction    :
+WebOperationTimeoutSeconds  :
+VMConsoleWindowBrowser      :
+Scope                       : AllUsers
+PythonPath                  : /usr/local/bin/python3
+
+01/17/2024 10:35:02 - Connecting to vCenter Server vcsa.jarvis.lab
+
+IsConnected   : True
+Id            : /VIServer=vsphere.local\administrator@vcsa.jarvis.lab:443/
+ServiceUri    : https://vcsa.jarvis.lab/sdk
+SessionSecret : "a58cfe1ebd168aff2345ab80c0a1343ae4414c3d"
+Name          : vcsa.jarvis.lab
+Port          : 443
+SessionId     : "a58cfe1ebd168aff2345ab80c0a1343ae4414c3d"
+User          : VSPHERE.LOCAL\Administrator
+Uid           : /VIServer=vsphere.local\administrator@vcsa.jarvis.lab:443/
+Version       : 8.0.2
+Build         : 22617221
+ProductLine   : vpx
+InstanceUuid  : 60b82abd-ba3b-4114-825b-d48c1bdd5dea
+RefCount      : 1
+ExtensionData : VMware.Vim.ServiceInstance
+
+01/17/2024 10:35:07 - Successfully connected to vcsa.jarvis.lab
+
+01/17/2024 10:35:07 - Init Processing Completed
+
+01/17/2024 10:35:07 - Starting HTTP CloudEvent listener
+```
+
+If a function got correctly invoked can be seen via the logs as well after the specified event occured.
 
 This command will show you the last 5 minutes worth of logs.
 
-```bash
-kubectl logs -n vmware-functions deployment/kn-pcli-tag-00001-deployment user-container --since=5m
+```console
+kubectl -n vmware-functions logs deployment/kn-pcli-tag-00001-deployment user-container --since=5m
 ```
 
 This command will show you the last 20 lines of logs.
 
-```bash
-kubectl logs -n vmware-functions deployment/kn-pcli-tag-00001-deployment user-container --tail=20
+```console
+kubectl -n vmware-functions logs deployment/kn-pcli-tag-00001-deployment user-container --tail=20
 ```
 
 Log output showing a successful function invocation:
 
-```
-09/24/2021 13:57:05 - Applying vSphere Tag "VEBA" to My-VEBA-Test-VM ...
+```console
+01/17/2024 10:37:41 - Applying vSphere Tag "backup-sla" to workload1 ...
 
-09/24/2021 13:57:09 - vSphere Tag Operation complete ...
+01/17/2024 10:37:51 - vSphere Tag Operation complete ...
 
-09/24/2021 13:57:09 - Handler Processing Completed ...
+01/17/2024 10:37:51 - Handler Processing Completed ...
 ```

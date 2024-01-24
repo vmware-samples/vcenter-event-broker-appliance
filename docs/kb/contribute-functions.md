@@ -14,7 +14,31 @@ cta:
 The VMware Event Broker Appliance (VEBA) uses Knative as a Function-as-a-Service
 (FaaS) platform. If you are looking to understand the basics of functions, start
 [here](functions). You can also get started quickly with these quickstart
-[templates](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative){:target="_blank"}.
+[templates](https://github.com/vmware-samples/vcenter-event-broker-appliance/tree/master/examples/knative).
+
+<!-- omit in toc -->
+## Table of Contents
+
+- [Writing your own Functions](#writing-your-own-functions)
+  - [Intro](#intro)
+  - [Instructions](#instructions)
+    - [Credentials (Secrets)](#credentials-secrets)
+    - [Dockerfile](#dockerfile)
+    - [Function (Business Logic) with PowerCLI](#function-business-logic-with-powercli)
+      - [A Note on Exception Handling](#a-note-on-exception-handling)
+    - [Build the Container Image](#build-the-container-image)
+    - [The Function Manifest](#the-function-manifest)
+    - [Create an Event Trigger](#create-an-event-trigger)
+    - [Deploy the Function in VEBA](#deploy-the-function-in-veba)
+  - [Coding - Best Practices](#coding---best-practices)
+    - [Single Responsibility Principle](#single-responsibility-principle)
+    - [Deterministic Behavior](#deterministic-behavior)
+    - [Keep Functions slim and up to date](#keep-functions-slim-and-up-to-date)
+    - [Keep Functions "warm"](#keep-functions-warm)
+    - [Return early/externalize long-running Tasks](#return-earlyexternalize-long-running-tasks)
+    - [Retries and Idempotency](#retries-and-idempotency)
+    - [Out of Order Message Arrival](#out-of-order-message-arrival)
+    - [Support Debugging](#support-debugging)
 
 ## Intro
 
@@ -22,7 +46,7 @@ This guide describes how to create a function with PowerCLI (PowerShell) to
 apply a vSphere tag when a Virtual Machine is powered on.
 
 > **Note:** The following steps assume VMware Event Broker Appliance has been
-> [installed (configured with Knative)](install-knative) and is running
+> [installed (configured with Knative)](install-veba) and is running
 > correctly. Access to the Kubernetes environment in VEBA via `kubectl` is also
 > assumed to be working.
 
@@ -47,7 +71,7 @@ and used inside a function.
 ### Credentials (Secrets)
 
 There's multiple ways to inject credentials or other forms of secrets into a
-VEBA function. 
+VEBA function.
 
 The schema and encoding of your credentials is flexible and will be projected
 into your function using OS environment variables (can be changed). The
@@ -85,7 +109,6 @@ entries) in a subsequent step.
 cat << EOF > simple_token.txt
 a1b2c3d4e5f6g7h8i9j0
 EOF
-
 
 # create a JSON file holding credentials and configuration information
 cat << EOF > vc_creds.json
@@ -278,7 +301,7 @@ docker push ${REGISTRY}:${TAG}
 ### The Function Manifest
 
 Create a file `function.yaml` to wire all components together before deploying
-it to VEBA. 
+it to VEBA.
 
 > **Note:** The following steps assume a working Knative environment using the
 > default Rabbit broker. The Knative service and trigger will be installed in
@@ -326,10 +349,10 @@ Let's discuss some important fields here:
 - `env`: array with a list of additional key/value strings projected as
   environment variables inside the function
 
-#### Create an Event Trigger
+### Create an Event Trigger
 
 In order to have your function execute on (specific) events, e.g assign a tag
-on a `DrsVmPoweredOnEvent`, we also need to create a `Trigger`.
+on a `com.vmware.vsphere.DrsVmPoweredOnEvent.v0`, we also need to create a `Trigger`.
 
 ```bash
 cat << EOF >> function.yaml
@@ -344,7 +367,7 @@ spec:
   broker: default
   filter:
     attributes:
-      subject: DrsVmPoweredOnEvent
+      type: com.vmware.vsphere.DrsVmPoweredOnEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1
@@ -399,7 +422,7 @@ undesired blocking behavior.
 Single Responsibility Principle (SRP) is the philosophy behind the UNIX command
 line tools. "Do one job and do it well". Solve complex problems by breaking them
 down with composition where the output of one program becomes the input of the
-next program. 
+next program.
 
 ⚠️ Generally, workflows should not be handled in functions but
 by workflow engines, such as vRealize Orchestrator (vRO). vRO and the VMware
@@ -536,7 +559,7 @@ Function Process-Init {
 Your primary goal should be to avoid long-running functions (minutes) as much as
 possible. The longer your function runs, the more things can go wrong and you
 might have to start from scratch (which might not be possible without additional
-persistency and safety measures in your logic). 
+persistency and safety measures in your logic).
 
 Usually that's an indicator that your function can be further broken down into
 smaller steps or could be better handled with a workflow engine, see [Single
@@ -572,7 +595,7 @@ the `broker` (manual step in VEBA).
 Even though unlikely due to the underlying TCP/IP guarantees, but nevertheless
 possible depending on event delivery issues, concurrency, retries, etc. dealing
 with out of order message arrival in your function/downstream logic might be a
-requirement. 
+requirement.
 
 Depending on the incoming event, e.g. a CloudEvent created by the `vcenter`
 event `provider` in VEBA, a function can use a specific ordering key (if
@@ -610,7 +633,7 @@ There's one guarantee in distributed systems: Things will go wrong. Besides
 writing safe, secure and deterministic code (see earlier sections), it's also
 important to provide useful and correct debugging information by logging to
 standard output (which then can be forwarded to a centrally logging system for
-durability). 
+durability).
 
 Here's another pseudo-code example (Python) which does not meet these
 requirements:
