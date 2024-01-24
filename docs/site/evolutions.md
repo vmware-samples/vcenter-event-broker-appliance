@@ -6,6 +6,21 @@ permalink: /evolution
 limit: 3
 entry:
 
+- title: VEBA [v0.8.0](https://github.com/vmware-samples/vcenter-event-broker-appliance/releases/tag/v0.8.0)
+  type: feature
+  date: Feb 2024
+  id: vzeroeightzero
+  detail:
+    subtitle: Features
+    text:
+    - Replaced VMware Event Router with VMware Tanzu Sources for Knative
+    - All VEBA endpoints now protected with basic authentication
+    - New Google Chat notification function
+    - Migrated function container images from Google (GCR) to Github (GHCR)
+    - Updated all Powershell/PowerCLI functions with the latest PS/PCLI base images
+    - Improved website documentation
+    - Various Bug Fixes and Code Improvements
+
 - title: VEBA [v0.7.5](https://github.com/vmware-samples/vcenter-event-broker-appliance/releases/tag/v0.7.5)
   type: feature
   date: Mar 2023

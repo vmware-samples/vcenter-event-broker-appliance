@@ -8,7 +8,7 @@ cta:
  description: Using private container registry with the VMware Event Broker Appliance.
 ---
 
-## Using private container registry with VEBA
+## Using private Container Registry with VEBA
 
 By default, the VMware Event Broker Appliance can integrate with any Open Container Initiative (OCI) compliant container registry for hosting and deploying container images that uses a TLS certificate from a trusted authority such as [Docker Hub](https://hub.docker.com/) or [Amazon Elastic Container Registry (ECR)](https://aws.amazon.com/ecr/) as an example.
 
@@ -16,7 +16,7 @@ For organizations that require the use of a private container registry and  uses
 
 ### Assumptions
 
-* VMware Event Broker Appliance v0.7.2 or later
+* VMware Event Broker Appliance v0.7.5 or later
 * Root CA Certificates from a trusted authority has been pre-downloaded onto your local desktop
 * Un-deploy any functions that has been attempted using private registry prior to instructions below
 
@@ -26,19 +26,19 @@ For organizations that require the use of a private container registry and  uses
 
 In this example, the root CA certificate key file is named `ca.crt` and is located in `/root`
 
-1. Copy the root CA certificate from your private registry to VMware Event Broker Appliance Appliance. If SSH has not been enabled, go ahead and start it up by logging into the VM Console and running the following command:
+- **Step 1:** Copy the root CA certificate from your private registry to VMware Event Broker Appliance Appliance. If SSH has not been enabled, go ahead and start it up by logging into the VM Console and running the following command:
 
 ```console
 systemctl start sshd
 ```
 
-1. SSH to the VMware Event Broker Appliance and make a backup of the original containerd configuration file
+- **Step 2:** SSH to the VMware Event Broker Appliance and make a backup of the original containerd configuration file
 
 ```console
 cp /etc/containerd/config.toml /etc/containerd/config.toml.bak
 ```
 
-1. Edit the '/etc/containerd/config.toml' file using VI and locate the following section `[plugins."io.containerd.grpc.v1.cri".registry.mirrors]` within the configuration file.
+- **Step 3:** Edit the '/etc/containerd/config.toml' file using VI and locate the following section `[plugins."io.containerd.grpc.v1.cri".registry.mirrors]` within the configuration file.
 
 Append the following two lines below this section and replace the **REPLACE_ME_FQDN** value with FQDN of the private registry and **REPLACE_ME_PATH_TO_ROOT_CA_CERT** value the full path to the root CA certificate located on the VMware Event Broker Appliance
 
@@ -48,13 +48,13 @@ Append the following two lines below this section and replace the **REPLACE_ME_F
    ca_file = "REPLACE_ME_PATH_TO_ROOT_CA_CERT"
 ```
 
-1. Restart the containerd service for the change to go into effect/.
+- **Step 4:** Restart the containerd service for the change to go into effect/.
 
 ```console
 systemctl restart containderd
 ```
 
-1. Verify containerd is successfully running before proceeding to the next step
+- **Step 5:** Verify containerd is successfully running before proceeding to the next step
 
 ```console
 systemctl status containerd
@@ -70,19 +70,19 @@ systemctl status containerd
      CGroup: /system.slice/containerd.service
 ```
 
-1. Create a kubernetes secret in the `knative-serving` namespace that points to full path of the root CA certificate of private registry which should reside within the VMware Event Broker Appliance
+- **Step 6:** Create a kubernetes secret in the `knative-serving` namespace that points to full path of the root CA certificate of private registry which should reside within the VMware Event Broker Appliance
 
 ```console
 kubectl -n knative-serving create secret generic customca --from-file=ca.crt=/root/ca.crt
 ```
 
-1. Retrieve the current Knative Serving controller deployment and save it to a file named `knative-serving-controller.yaml`
+- **Step 7:** Retrieve the current Knative Serving controller deployment and save it to a file named `knative-serving-controller.yaml`
 
 ```console
 kubectl -n knative-serving get deploy/controller -o yaml > knative-serving-controller.yaml
 ```
 
-1. Create the following YTT overlay which will be used to patch the Knative Serving controller to reference the root CA certificate from the private registry
+- **Step 8:** Create the following YTT overlay which will be used to patch the Knative Serving controller to reference the root CA certificate from the private registry
 
 ```console
 cat > overlay.yaml <<EOF
@@ -112,13 +112,13 @@ spec:
 EOF
 ```
 
-1. Apply the YTT transformation to create the new Knative Serving controller YAML file named `new-knative-serving-controller.yaml`
+- **Step 9:** Apply the YTT transformation to create the new Knative Serving controller YAML file named `new-knative-serving-controller.yaml`
 
 ```console
 ytt -f overlay.yaml -f knative-serving-controller.yaml > new-knative-serving-controller.yaml
 ```
 
-1. Apply the new Knative Serving controller configuration
+- **Step 10:** Apply the new Knative Serving controller configuration
 
 ```console
 kubectl apply -f new-knative-serving-controller.yaml

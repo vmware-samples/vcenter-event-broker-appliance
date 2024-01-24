@@ -8,23 +8,26 @@ cta:
  title: Get Started
  description: Extend your vCenter seamlessly with our pre-built functions
  actions:
-    - text: Install the [Appliance with Knative](install-knative) to extend your SDDC with our [community-sourced functions](/examples)
+    - text: Install the [Appliance](install-veba) to extend your SDDC with our [community-sourced functions](/examples)
     - text: Learn more about the [Events in vCenter](vcenter-events) and the [Event Specification](eventspec) used to send the events to a Function
     - text: Find steps to deploy a function - [instructions](use-functions).
 ---
 
 # Functions
 
-The VMware Event Broker Appliance can be deployed using the Knative event processor to provide customers with a Function-as-a-Service (FaaS) platform.
+The VMware Event Broker Appliance will be deployed with Knative being the event processor to provide customers with a Function-as-a-Service (FaaS) platform.
 
 ## Table of Contents
-- [Knative](#knative)
-  - [Knative Naming and Version Control](#knative-naming-and-version-control)
+
+- [Functions](#functions)
+  - [Table of Contents](#table-of-contents)
+  - [Knative](#knative)
+    - [Knative Naming and Version Control](#knative-naming-and-version-control)
     - [Knative Service](#knative-service)
-    - [Knative Trigger](#knative-trigger)
-    - [Knative Combined Service and Trigger](#knative-combined-service-and-trigger)
-    - [Knative Secrets](#knative-secrets)
-    - [Knative Environment Variables](#knative-environment-variables)
+  - [Knative Trigger](#knative-trigger)
+  - [Knative Combined Service and Trigger](#knative-combined-service-and-trigger)
+  - [Knative Secrets](#knative-secrets)
+  - [Knative Environment Variables](#knative-environment-variables)
 
 ## Knative
 
@@ -38,19 +41,22 @@ When it comes to authoring functions, it's important to understand the different
 
 A Knative Service `kn-service.yaml` defines the container image that will be executed upon invocation.
 
-```
+```yaml
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
- name: kn-ps-echo
- namespace: vmware-functions
- labels:
-   app: veba-ui
+  name: kn-ps-echo
+  labels:
+    app: veba-ui
 spec:
- template:
-  spec:
-   containers:
-    - image: projects.registry.vmware.com/veba/kn-ps-echo:1.0
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-ps-echo:1.6
 ```
 
 `kn-ps-echo`: The name of the Knative Service.
@@ -83,11 +89,11 @@ The value of this field:
 
 A Knative Trigger `kn-trigger.yaml` defines the vCenter Server events to subscribe from a given broker. By default, all events are subscribed to as shown in the example below.
 
-```
+```yaml
 apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
-  name: veba-ps-echo-trigger
+  name: kn-ps-echo-trigger
   labels:
     app: veba-ui
 spec:
@@ -99,7 +105,7 @@ spec:
       name: kn-ps-echo
 ```
 
-`veba-ps-echo-trigger`: The name of the Knative trigger
+`kn-ps-echo-trigger`: The name of the Knative trigger
 
 The value of this field:
 
@@ -115,7 +121,7 @@ The value of this field:
 
 To subscribe to a specific vCenter Server event, we can apply a filtering to our Knative Trigger like the example below:
 
-```
+```yaml
 apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
@@ -126,8 +132,7 @@ spec:
   broker: default
   filter:
     attributes:
-       type: com.vmware.event.router/event
-       subject: VmPoweredOffEvent
+      type: com.vmware.vsphere.VmPoweredOffEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1
@@ -147,14 +152,15 @@ The value of this field:
 
 `default`: The name of Knative broker. For VEBA with Embedded Knative Broker, the value will be `default`
 
-`VmPoweredOffEvent`: The name of the vCenter Server event Id. Please refer to [vCenter Events](vcenter-events) for list of supported events.
+`com.vmware.vsphere.VmPoweredOffEvent.v0`: The name of the vCenter Server event Id. Please refer to [vCenter Events](vcenter-events) for list of supported events.
 
 `kn-ps-echo`: The name of the Knative Service
 
-Today, a single Knative Trigger can only filter on one vCenter Server event. To associate multiple vCenter Server events to a given Knative Service, you simply create a Knative Trigger for each event as shown in the two examples below, one for `VmPoweredOffEvent` and `DrsVmPoweredOnEvent` vCenter Events respectively:
+Today, a single Knative Trigger can only filter on one vCenter Server event. To associate multiple vCenter Server events to a given Knative Service, you simply create a Knative Trigger for each event as shown in the two examples below, one for `com.vmware.vsphere.VmPoweredOffEvent.v0` and `com.vmware.vsphere.VmPoweredOnEvent.v0` vCenter Events respectively:
 
 `kn-trigger-1.yaml`
-```
+
+```yaml
 apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
@@ -165,8 +171,7 @@ spec:
   broker: default
   filter:
     attributes:
-       type: com.vmware.event.router/event
-       subject: VmPoweredOffEvent
+      type: com.vmware.vsphere.VmPoweredOffEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1
@@ -175,7 +180,8 @@ spec:
 ```
 
 `kn-trigger-2.yaml`
-```
+
+```yaml
 apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
@@ -186,8 +192,7 @@ spec:
   broker: default
   filter:
     attributes:
-       type: com.vmware.event.router/event
-       subject: DrsVmPoweredOnEvent
+      type: com.vmware.vsphere.VmPoweredOnEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1
@@ -199,18 +204,22 @@ spec:
 
 To simplify Knative function deployment, we can also combine the multiple manifest files into a single file. In the example below, the `function.yaml` contains both the Knative Service and Trigger definition.
 
-```
+```yaml
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
- name: kn-ps-echo
- labels:
-   app: veba-ui
+  name: kn-ps-echo
+  labels:
+    app: veba-ui
 spec:
- template:
-  spec:
-   containers:
-    - image: projects.registry.vmware.com/veba/kn-ps-echo:1.0
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-ps-echo:1.6
 ---
 apiVersion: eventing.knative.dev/v1
 kind: Trigger
@@ -222,8 +231,7 @@ spec:
   broker: default
   filter:
     attributes:
-       type: com.vmware.event.router/event
-       subject: VmPoweredOffEvent
+      type: com.vmware.vsphere.VmPoweredOffEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1
@@ -274,7 +282,7 @@ kubectl -n vmware-functions label secret slack-secret app=veba-ui
 
 To use the newly created Kubernetes secret, we will need to add a new section to our Knative Service called `envFrom` as shown in the example below.
 
-```
+```yaml
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
@@ -284,9 +292,12 @@ metadata:
 spec:
   template:
     metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: projects.registry.vmware.com/veba/kn-ps-slack:1.0
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-ps-slack:1.7
           envFrom:
             - secretRef:
                 name: slack-secret
@@ -301,8 +312,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/event
-      subject: VmPoweredOffEvent
+      type: com.vmware.vsphere.VmPoweredOffEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1
@@ -326,38 +336,40 @@ Knative functions also support defining additional environment variables that ca
 
 From within your function handler, you can now access the environment variable called `FUNCTION_DEBUG`. Using additional variables can be useful for debugging/troubleshooting purposes and can easily be changed by updating your Knative function deployment.
 
-```
+```yaml
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
- name: kn-ps-slack
- labels:
-   app: veba-ui
+  name: kn-ps-slack
+  labels:
+    app: veba-ui
 spec:
- template:
-  metadata:
-  spec:
-   containers:
-    - image: projects.registry.vmware.com/veba/kn-ps-echo:1.0
-      envFrom:
-        - secretRef:
-            name: slack-secret
-      env:
-        - name: FUNCTION_DEBUG
-          value: "true"
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "1"
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      containers:
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-ps-slack:1.7
+          envFrom:
+            - secretRef:
+                name: slack-secret
+          env:
+            - name: FUNCTION_DEBUG
+              value: "false"
 ---
 apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
-  name: veba-ps-echo-trigger
+  name: veba-ps-slack-trigger
   labels:
     app: veba-ui
 spec:
   broker: default
   filter:
     attributes:
-       type: com.vmware.event.router/event
-       subject: VmPoweredOffEvent
+      type: com.vmware.vsphere.VmPoweredOffEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

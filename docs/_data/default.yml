@@ -7,18 +7,18 @@ toc:
       - page: Architecture
         id: intro-architecture
         url: /kb/architecture
-      - page: VMware Event Router
-        id: intro-event-router
-        url: /kb/event-router
+      - page: VMware Tanzu Sources for Knative
+        id: intro-tanzu-sources
+        url: /kb/tanzu-sources
       - page: Functions
         id: intro-functions
         url: /kb/functions
 
   - title: Install
     subfolderitems:
-      - page: VEBA (Knative)
-        id: install-knative
-        url: /kb/install-knative
+      - page: VMware Event Broker Appliance
+        id: install-veba
+        url: /kb/install-veba
 
   - title: Use
     subfolderitems:
@@ -43,9 +43,6 @@ toc:
       - page: Build Functions
         id: contribute-functions
         url: /kb/contribute-functions
-      - page: Build Event Router
-        id: contribute-eventrouter
-        url: /kb/contribute-eventrouter
       - page: Build Appliance
         id: contribute-appliance
         url: /kb/contribute-appliance
@@ -57,22 +54,28 @@ toc:
     subfolderitems:
       - page: Deploy VEBA to Kubernetes
         id: advanced-deploy-k8s
-        url: /kb/event-router#deployment
-      - page: Deploy Event Router to Kind
+        url: /kb/tanzu-sources#installation-tanzu-sources-for-knative
+      - page: Deploy Tanzu Sources with KinD
         id: site-resources
-        url: /kb/deploy-event-router-kind
-      - page: In-depth Function Tutorial
+        url: /kb/deploy-tanzu-sources-kind
+      - page: Function Tutorial - Intro
         id: function-tutorial-intro
         url: /kb/function-tutorial-intro
-      - page: Replace TLS Certificates on VEBA
+      - page: Function Tutorial - Deploy
+        id: function-tutorial-deploy
+        url: kb/function-tutorial-deploy
+      - page: Function Tutorial - Modify & Test
+        id: function-tutorial-modtest
+        url: /kb/function-tutorial-modtest
+      - page: Certificate Management for VEBA
         id: advanced-certificates
         url: /kb/advanced-certificates
       - page: Using Private Container Registry with VEBA
         id: private-registry
         url: /kb/private-registry
-      - page: Monitoring VEBA with vROps
+      - page: Monitoring VEBA with Aria Operations
         id: site-resources
-        external_url: https://rguske.github.io/post/monitoring-the-vmware-event-broker-appliance-with-vrealize-operations-manager/
+        external_url: https://docs.vmware.com/en/VMware-vRealize-Operations-Management-Pack-for-Kubernetes/1.8/management-pack-for-kubernetes/GUID-4ED07321-A5C9-46D6-8EB0-2661D853C0E9.html
 
   - title: Troubleshoot
     subfolderitems:
