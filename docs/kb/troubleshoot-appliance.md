@@ -22,6 +22,10 @@ cta:
     - [Examine log files](#examine-log-files)
   - [Changing the vCenter service account](#changing-the-vcenter-service-account)
   - [Troubleshooting VMware Event Broker Appliance vSphere UI](#troubleshooting-vmware-event-broker-appliance-vsphere-ui)
+  - [Remove and re-register VMware Event Broker Appliance vSphere UI](#remove-and-re-register-vmware-event-broker-appliance-vsphere-ui)
+    - [Remove VEBA UI Plugin via vSphere H5 Client](#remove-veba-ui-plugin-via-vsphere-h5-client)
+    - [Remove VEBA UI Plugin via the Managed Object Browser (MOB)](#remove-veba-ui-plugin-via-the-managed-object-browser-mob)
+    - [Re-register the VEBA UI Remote Plugin](#re-register-the-veba-ui-remote-plugin)
 
 ## Requirements
 
@@ -328,5 +332,117 @@ Here is the command output:
    }
 }
 ```
+
+## Remove and re-register VMware Event Broker Appliance vSphere UI
+
+The VEBA UI is built as a vSphere remote plugin and natively integrates into the vSphere UI to the configured vCenter Server. Depending on your vSphere version, removing the VEBA UI plugin can be done directly via the vSphere H5 client (vSphere 8 only) or via the Managed Object Browser (MOB).
+
+### Remove VEBA UI Plugin via vSphere H5 Client
+
+Go to **Administration** and select **Client Plugins**. Select the **VMware Event Broker Plugin** and check the box to the left afterwards to make the **REMOVE** button accessible.
+
+<img src="./img/veba-undeploy-veba-ui-plugin-1.png" width="100%" align="center" class="border m-1 p-1"/>
+
+Click on **REMOVE** and confirm removing the plugin.
+
+A message banner as well as a task in the taskbar will confirm the successful uninstallation.
+
+<img src="./img/veba-undeploy-veba-ui-plugin-2.png" width="100%" align="center" class="border m-1 p-1"/>
+
+### Remove VEBA UI Plugin via the Managed Object Browser (MOB)
+
+In a web browser, navigate to `https://[VCENTER_FQDN_OR_IP]/mob`. Where `[VCENTER_FQDN_OR_IP]/mob` is the name of your vCenter Server or its IP address.
+
+Log in with your vCenter SSO admin credentials.
+
+* Click **Content**
+* Click **ExtensionManager**
+* Copy the name of the VEBA UI plugin `com.vmware.veba`
+* Click **UnregisterExtension**
+
+A new window appears.
+
+* Paste the key of the plugin and click **Invoke** Method
+
+This removes the plugin and results in void.
+
+<img src="./img/veba-unregister-veba-ui-plugin.png" width="100%" align="center" class="border m-1 p-1"/>
+
+* Close the window
+
+In the vSphere client, a message banner as well as a task in the taskbar will confirm the successful uninstallation.
+
+### Re-register the VEBA UI Remote Plugin
+
+As described in section [Troubleshooting VEBA UI](#troubleshooting-vmware-event-broker-appliance-vsphere-ui), the VEBA UI container will register itself as a vSphere remote plugin with the vCenter Server.
+
+By simply restarting the VEBA UI pod on the appliance the VEBA UI plugin will be re-registered automatically. SSH into the appliance first.
+
+```console
+ssh root@[VEBA_FQDN_OR_IP]
+```
+
+Check the pod state within the `vmware-system` namespace.
+
+```console
+kubectl -n vmware-system get pods
+
+NAME                                           READY   STATUS    RESTARTS       AGE
+cadvisor-p26cg                                 1/1     Running   4 (4d2h ago)   10d
+tinywww-5b795ddd75-sn5vf                       1/1     Running   4 (4d2h ago)   10d
+veba-rabbit-server-0                           1/1     Running   4 (4d2h ago)   10d
+veba-ui-5cf5d5db4-tn76g                        1/1     Running   4 (4d2h ago)   10d
+vmware-event-router-webhook-6bfb8cc946-8wlsd   1/1     Running   4 (4d2h ago)   10d
+```
+
+Delete the `veba-ui-xxxxx-xxxxx` pod.
+
+```console
+kubectl -n vmware-system delete po veba-ui-5cf5d5db4-tn76g
+
+pod "veba-ui-5cf5d5db4-tn76g" deleted
+```
+
+Validate the redeployment of the pod.
+
+```console
+kubectl -n vmware-system get pods
+
+NAME                                           READY   STATUS    RESTARTS       AGE
+cadvisor-p26cg                                 1/1     Running   4 (4d2h ago)   10d
+tinywww-5b795ddd75-sn5vf                       1/1     Running   4 (4d2h ago)   10d
+veba-rabbit-server-0                           1/1     Running   4 (4d2h ago)   10d
+veba-ui-5cf5d5db4-fq5ll                        1/1     Running   0              10s
+vmware-event-router-webhook-6bfb8cc946-8wlsd   1/1     Running   4 (4d2h ago)   10d
+```
+
+The logs should confirm a successful installation of the VEBA UI plugin (`VEBA Remote Plugin was initialized with vCenter Server VCENTER_FQDN: vcsa.jarvis.lab`).
+
+```console
+kubectl -n vmware-system logs deploy/veba-ui
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.0.3.RELEASE)
+
+[...]
+
+2024-01-23 12:12:31.490  INFO 1 --- [ost-startStop-1] o.a.c.c.C.[.[localhost].[/veba-ui]       : Initializing Spring embedded WebApplicationContext
+2024-01-23 12:12:31.490  INFO 1 --- [ost-startStop-1] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 2236 ms
+2024-01-23 12:12:31.511  INFO 1 --- [ost-startStop-1] c.v.s.r.configuration.Configuration      : VEBA Remote Plugin was initialized with
+vCenter Server VCENTER_FQDN: vcsa.jarvis.lab
+vCenter Server VCENTER_PORT: 443
+vCenter Server VEBA_FQDN: veba.jarvis.lab
+
+[...]
+```
+
+The operation will also appear as a task in vSphere and another message will appear via a banner showing that the VEBA UI plugin got successfully deployed.
+
+<img src="./img/veba-redeploy-veba-ui-plugin.png" width="100%" align="center" class="border m-1 p-1"/>
 
 <a name="bottom"></a>
