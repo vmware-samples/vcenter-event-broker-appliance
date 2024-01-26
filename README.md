@@ -3,21 +3,15 @@
 [![Photon OS
 4.0](https://img.shields.io/badge/Photon%20OS-4.0-orange)](https://vmware.github.io/photon/)
 [![Published VMware
-Fling](https://img.shields.io/badge/VMware-Fling-green)](https://flings.vmware.com/vmware-event-broker-appliance)
+Fling](https://img.shields.io/badge/VMware-Fling-green)](https://vmwa.re/flings)
 ![Website](https://img.shields.io/website?label=vmweventbroker.io&url=https%3A%2F%2Fvmweventbroker.io%2F)
-
-![VMware Event Router
-Build](https://github.com/vmware-samples/vcenter-event-broker-appliance/workflows/VMware%20Event%20Router%20Development%20Build/badge.svg)
-![VMware Event Router Unit
-Tests](https://github.com/vmware-samples/vcenter-event-broker-appliance/workflows/VMware%20Event%20Router%20Unit%20Tests/badge.svg)
-![VMware Event Router Integration
-Tests](https://github.com/vmware-samples/vcenter-event-broker-appliance/workflows/VMware%20Event%20Router%20Integration%20Tests/badge.svg)
 
 [![Twitter
 Follow](https://img.shields.io/twitter/follow/lamw?style=social)](https://twitter.com/lamw)
 [![Twitter
 Follow](https://img.shields.io/twitter/follow/embano1?style=social)](https://twitter.com/embano1)
-
+[![Twitter
+Follow](https://img.shields.io/twitter/follow/vmw_rguske?style=social)](https://twitter.com/vmw_rguske)
 
 <img src="logo/veba_icon_only.png" align="right" height="320px"/>
 
@@ -41,7 +35,7 @@ our [documentation](https://vmweventbroker.io/kb) to get started quickly.
 ## Overview
 
 The [VMware Event Broker
-Appliance](https://flings.vmware.com/vmware-event-broker-appliance#summary)
+Appliance](https://vmwa.re/flings)
 Fling enables customers to unlock the hidden potential of events in their SDDC
 to easily create [event-driven
 automation](https://octo.vmware.com/vsphere-power-event-driven-automation/). The
@@ -50,7 +44,7 @@ Horizon events as well as any valid `CloudEvent` through the native webhook
 event provider. Easily triggering custom or prebuilt actions to deliver powerful
 integrations within your datacenter across public cloud has never been more
 easier before. A detailed list of use cases and possibilities with VMware Event
-Broker Appliance is available [here](https://vmweventbroker.io)
+Broker Appliance is available [here](./USECASES.md)
 
 With this solution, end-users, partners and independent software vendors only
 have to write minimal business logic without going through a steep learning
@@ -64,24 +58,13 @@ Lambda.
 Learn more about the VMware Event Broker Appliance
 [here](https://vmweventbroker.io).
 
-Additional resources can be found [here](https://vmweventbroker.io) and some
-quick references are highlighted below
+Additional resources can be found [here](https://vmweventbroker.io/resources) and some
+quick references are highlighted below.
  - Watch [Michael Gasch](https://github.com/embano1) and [William
-   Lam](https://github.com/lamw/) of VMware present a session at VMworld 2019
-   called ["If This Then That" for vSphere- The Power of Event-Driven
-   Automation](https://www.vmware.com/vmworld/en/video-library/video-landing.html?sessionid=15614121705290019EX2&region=EU)
-   and at VMworld 2020 ["VEBA and the Power of Event-Driven Automation –
-   Reloaded"](https://www.vmware.com/vmworld/en/video-library/video-landing.html?sessionid=1586353214997001Abo2)(free
-   VMworld account login is required to view).
- - Watch [Partheeban Kandasamy (PK)](https://github.com/embano1), [Michael
-   Gasch](https://github.com/embano1) and [William
-   Lam](https://github.com/lamw/) present about [Unlocking the potential of
-   Events for SDDC automation](https://youtu.be/tOjp5_qn-Fg)
- - Watch [Michael Gasch](https://github.com/embano1) and [William
-   Lam](https://github.com/lamw/) present the [latest updates on VEBA at the
-   recent Omaha
-   VMUG](https://zoom.us/rec/share/4OMWH9hjC1rxTB4nshLC0LArcBCtHZ6n8zFO8IdWV7_P1BFphw8D_V8SotAYU5NL.HfS8ajp7BCctTpJO)
-   (password: `MYN%0k9`)
+   Lam](https://github.com/lamw/) present a session at VMware {Code} called [VEBA Revolutions - Unleashing the Power of Event-Driven Automation](https://youtu.be/jwgJpZM68mA?si=Vyafppqgebg1vhqd).
+ - Listen to [William Lam](https://github.com/lamw/) talking about [Event-Driven Automation with Project VEBA](https://open.spotify.com/episode/3xLuJFOB4BSY749gsGn88p?si=ox8jT4mWSrS5qp5V154sJQ) in Episode #006 of the Unexplored Territory podcast.
+ - Watch [Robert Guske](https://rguske.github.io/) present a session at ContainerDays 2023 called [Embark on a Transformative Odyssey - Event-Driven Automation Unveiled through Knative](https://youtu.be/J_3-ILnPbQQ?si=rutOJV_5xxl7vSmA).
+ - Watch [Michael Gasch](https://github.com/embano1) and [Steven Wong](https://twitter.com/cantbewong) present a session at KubeCon EU 2022 called [Optimize Kubernetes on vSphere with Event-Driven Automation](https://youtu.be/NJYBwJemdoY?si=ploMJ2tnWgZLRqbE).
 
 <!-- ## Users and Use Cases
 
@@ -91,8 +74,7 @@ Hear from the community on how they are taking advantage of the vCenter Server A
 
 VMware Event Broker Appliance is provided as a Virtual Appliance that can be
 deployed to any vSphere-based infrastructure, including an on-premises and/or
-any public cloud environment, running on vSphere such as VMware Cloud on AWS or
-VMware Cloud on Dell-EMC.
+any public cloud environment running on vSphere.
 
 The VMware Event Broker Appliance follows a highly modular approach, using
 Kubernetes and containers as an abstraction layer between the base operating
@@ -100,18 +82,16 @@ system ([Photon OS](https://github.com/vmware/photon)) and the required
 application services. Currently the following components are used in the
 appliance:
 
-- VMware Event Router
-  ([Github](https://github.com/vmware-samples/vcenter-event-broker-appliance/vmware-event-router))
+- Tanzu Sources for Knative ([Github](https://github.com/vmware-tanzu/sources-for-knative){:target="_blank"})
   - Supported Event Stream Sources:
-    - VMware vCenter
-      ([Website](https://www.vmware.com/products/vcenter-server.html))
-    - VMware Horizon  [(Website)](https://www.vmware.com/products/horizon.html)
+    - VMware vCenter ([Website](https://www.vmware.com/products/vcenter-server.html){:target="_blank"})
+    - VMware Horizon ([Website](https://www.vmware.com/products/horizon.html){:target="_blank"})
     - Incoming Webhooks
   - Supported Event Stream Processors:
-    - Knative [(Website)](https://knative.dev/)
-- Contour ([Github](https://github.com/projectcontour/contour))
-- Kubernetes ([Github](https://github.com/kubernetes/kubernetes))
-- Photon OS ([Github](https://github.com/vmware/photon))
+    - Knative ([Website](https://www.knative.dev/){:target="_blank"})
+- Contour ([Github](https://github.com/projectcontour/contour){:target="_blank"})
+- Kubernetes ([Github](https://github.com/kubernetes/kubernetes){:target="_blank"})
+- Photon OS ([Github](https://github.com/vmware/photon){:target="_blank"})
 
 <center><div style="height:250px;"><img src="docs/kb/img/veba-architecture.png"/></div></center>
 
@@ -121,13 +101,8 @@ page](https://vmweventbroker.io/kb/architecture).
 
 ## Getting in touch
 
-Feel free to reach out to [Team #VEBA](https://vmweventbroker.io/#team-veba) and
-the community via:
+Feel free to reach out to [Team #VEBA](https://vmweventbroker.io/#team-veba)
   - Email us at [dl-veba@vmware.com](mailto:dl-veba@vmware.com)
-  - Join our users on slack
-    [#vcenter-event-broker-appliance](https://vmwarecode.slack.com/archives/CQLT9B5AA)
-    which is part of the [VMware {Code}](https://code.vmware.com/web/code/join)
-    Slack instance
   - Follow for updates [@VMWEventBroker](https://twitter.com/VMWEventBroker)
 
 ## Contributing
