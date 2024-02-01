@@ -1,4 +1,6 @@
-# VMware Event Router
+# VMware Event Router (deprecated)
+
+> Important: The VMware Event Router is no longer used for project VEBA in version v0.8 and onwards. Instead, the successor [VMware Tanzu Sources for Knative](https://github.com/vmware-tanzu/sources-for-knative) will be used.
 
 The VMware Event Router is used to connect to various VMware event `providers`
 (i.e. "sources") and forward these events to different event `processors` (i.e.
