@@ -82,16 +82,16 @@ system ([Photon OS](https://github.com/vmware/photon)) and the required
 application services. Currently the following components are used in the
 appliance:
 
-- Tanzu Sources for Knative ([Github](https://github.com/vmware-tanzu/sources-for-knative){:target="_blank"})
+- Tanzu Sources for Knative ([Github](https://github.com/vmware-tanzu/sources-for-knative))
   - Supported Event Stream Sources:
-    - VMware vCenter ([Website](https://www.vmware.com/products/vcenter-server.html){:target="_blank"})
-    - VMware Horizon ([Website](https://www.vmware.com/products/horizon.html){:target="_blank"})
+    - VMware vCenter ([Website](https://www.vmware.com/products/vcenter-server.html))
+    - VMware Horizon ([Website](https://www.vmware.com/products/horizon.html))
     - Incoming Webhooks
   - Supported Event Stream Processors:
-    - Knative ([Website](https://www.knative.dev/){:target="_blank"})
-- Contour ([Github](https://github.com/projectcontour/contour){:target="_blank"})
-- Kubernetes ([Github](https://github.com/kubernetes/kubernetes){:target="_blank"})
-- Photon OS ([Github](https://github.com/vmware/photon){:target="_blank"})
+    - Knative ([Website](https://www.knative.dev/))
+- Contour ([Github](https://github.com/projectcontour/contour))
+- Kubernetes ([Github](https://github.com/kubernetes/kubernetes))
+- Photon OS ([Github](https://github.com/vmware/photon))
 
 <center><div style="height:250px;"><img src="docs/kb/img/veba-architecture.png"/></div></center>
 
