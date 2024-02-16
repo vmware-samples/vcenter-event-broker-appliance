@@ -17,136 +17,137 @@
         }]
     },
     "antrea": {
-        "gitRepoTag": "v1.10.0",
+        "gitRepoTag": "v1.15.0",
         "containers": [{
-            "name": "projects.registry.vmware.com/antrea/antrea-ubuntu",
-            "version": "v1.10.0"
-        }]
+                "name": "projects.registry.vmware.com/antrea/antrea-agent-ubuntu",
+                "version": "v1.15.0"
+            },
+            {
+                "name": "projects.registry.vmware.com/antrea/antrea-controller-ubuntu",
+                "version": "v1.15.0"
+            }
+        ]
     },
     "fluentbit": {
-        "gitRepoTag": "v2.0.8",
+        "gitRepoTag": "v2.2.2",
         "containers": [{
                 "name": "fluent/fluent-bit",
-                "version": "2.0.8"
+                "version": "2.2.2"
             }]
     },
     "cadvisor": {
-        "gitRepoTag": "v0.47.0",
+        "gitRepoTag": "v0.47.2",
         "containers": [{
                 "name": "gcr.io/cadvisor/cadvisor",
-                "version": "v0.47.0"
+                "version": "v0.47.2"
             }]
     },
     "kind": {
         "gitRepoTag": "main",
         "containers": [{
             "name": "kindest/node",
-            "version": "v1.25.3"
+            "version": "v1.29.1"
         }]
     },
     "kubernetes": {
-        "gitRepoTag": "v1.25.5",
+        "gitRepoTag": "v1.29.2",
         "containers": [{
                 "name": "registry.k8s.io/kube-apiserver",
-                "version": "v1.25.5"
+                "version": "v1.29.2"
             },
             {
                 "name": "registry.k8s.io/kube-controller-manager",
-                "version": "v1.25.5"
+                "version": "v1.29.2"
             },
             {
                 "name": "registry.k8s.io/kube-scheduler",
-                "version": "v1.25.5"
+                "version": "v1.29.2"
             },
             {
                 "name": "registry.k8s.io/kube-proxy",
-                "version": "v1.25.5"
+                "version": "v1.29.2"
             },
             {
                 "name": "registry.k8s.io/pause",
-                "version": "3.8"
+                "version": "3.9"
             },
             {
                 "name": "registry.k8s.io/etcd",
-                "version": "3.5.6-0"
+                "version": "3.5.10-0"
             },
             {
                 "name": "registry.k8s.io/coredns/coredns",
-                "version": "v1.9.3"
+                "version": "v1.11.1"
             }
         ]
     },
     "knative-cli": {
-        "version": "v1.8.1"
+        "version": "v1.13.0"
     },
     "knative-vsphere-cli": {
-        "version": "v0.37.1"
+        "version": "v0.39.0"
     },
     "knative-serving": {
-        "gitRepoTag": "v1.8.3",
+        "gitRepoTag": "v1.13.1",
             "containers": [{
                 "name": "gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256",
-                "version": "f78383554ed81895ff230217f3e0ce9bf9ff2048d4303cc9fb36342ac3f470b3"
+                "version": "e52286fc4843470383e917abc9c1b0c8d10f585c4274c57b612279869bc86f0d"
             },
             {
                 "name": "gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256",
-                "version": "24c6c8de9a6872ca796a13d1e8324a4dd250aacc5094975b60ce235122abb97f"
+                "version": "21f8e11a44bf1e260602d30e6762a3dc433c608d1dd0e309c0ff89728e71901d"
             },
             {
                 "name": "gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256",
-                "version": "f26a8b516112413cbba4244b36202354d1c98ed209301b255c55958213708a78"
+                "version": "34796e9f760bb67065c6f101296513b38d04d39d11888e919692ac46fa6dc7c2"
             },
             {
                 "name": "gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256",
-                "version": "ea48ea2f2433cc7e5c25940e79465ca7226750260faaa1724b95dd8cfac92034"
+                "version": "53d9aa4d2c7a82f5a01202e386f7503b21839cbe2e5e62f1e9bda2aa5f11b518"
             },
             {
-                "name": "gcr.io/knative-releases/knative.dev/serving/cmd/domain-mapping@sha256",
-                "version": "9197c51406208c8f3cc98c2b1f69ed2ba8b88e11cf765616700abecc5dd18350"
-            },
-            {
-                "name": "gcr.io/knative-releases/knative.dev/serving/cmd/domain-mapping-webhook@sha256",
-                "version": "1b6e7f382c878f8ac168ce36a92f1af4dbdac0f61aae9e73fe899486786a4bbf"
+                "name": "gcr.io/knative-releases/knative.dev/serving/cmd/default-domain@sha256",
+                "version": "0a9bf78e49c9de18a9737d4e8fa95c3f44963c5b5f720e518c3714a21c5443a1"
             },
             {
                 "name": "gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256",
-                "version": "e271d46b5168e25e9742f6f33a461cfcdc17b2460d4355fff7fe0c71fc1e4378"
+                "version": "700c69915dc7cd86dffb61c26b0ba34427fab809de1e3344589dd955b6440882"
             }
         ]
     },
     "knative-eventing": {
-        "gitRepoTag": "v1.8.3",
+        "gitRepoTag": "v1.13.1",
             "containers": [{
                 "name": "gcr.io/knative-releases/knative.dev/eventing/cmd/controller@sha256",
-                "version": "355466748777f8d198486ee8e49802f1abafc61de2a8d3a38bdb905cbdff7923"
+                "version": "b22190e614178012e48efaa879a97cb45ae8521b41d83fe7af860e017d833b18"
             },
             {
                 "name": "gcr.io/knative-releases/knative.dev/eventing/cmd/apiserver_receive_adapter@sha256",
-                "version": "c1064ea5c0df5fa4b53a5aa44e7e2fcef4f515997e74c120698123b013d59bbd"
+                "version": "b2810eab0de92174cdbaf6cbe18b7cb83244e9629fa7a02cc75240230e994e49"
             },
             {
                 "name": "gcr.io/knative-releases/knative.dev/eventing/cmd/mtping@sha256",
-                "version": "c616008cf825fde38999513aa9eda7c44e4285f84f85d1454eef5bfbb3cd1c40"
+                "version": "a0668c29d75dc4a2b8889ea11cd4732c2fd47f66f4682476c3776ee6163fd7e9"
             },
             {
                 "name": "gcr.io/knative-releases/knative.dev/eventing/cmd/webhook@sha256",
-                "version": "0f8753e4070b4fa02f56f9a80ce3ad7ea80f817ccc8b8c6e6a3a0dafdf869b57"
+                "version": "e6d2c8160556e941a2edcdcf1a000ee9b3aaecc0336ee491be52f6ac947fd438"
             }
         ]
     },
     "knative-contour": {
-        "gitRepoTag": "v1.8.1",
+        "gitRepoTag": "v1.13.0",
             "containers": [{
                 "name": "ghcr.io/projectcontour/contour",
-                "version": "v1.22.0"
+                "version": "v1.27.0"
             },
             {
                 "name": "docker.io/envoyproxy/envoy",
-                "version": "v1.23.0"
+                "version": "v1.28.0"
             },
             {
                 "name": "gcr.io/knative-releases/knative.dev/net-contour/cmd/controller@sha256",
-                "version": "b76866e644a6366cd55754efe5b5e3714fd69a7892a927221749c13ed3b7cead"
+                "version": "a14826bbd58f4eb73cb8af20e977b6841d29b1f7c9f8b48f24f8f36860780542"
             }
         ]
     },
@@ -159,66 +160,66 @@
         ]
     },
     "rabbitmq-operator": {
-        "gitRepoTag": "v1.14.0",
+        "gitRepoTag": "v2.7.0",
         "containers": [{
                 "name": "rabbitmqoperator/cluster-operator",
-                "version": "1.14.0"
+                "version": "2.7.0"
             },
             {
                 "name": "rabbitmq",
-                "version": "3.8.21-management"
+                "version": "3.12.12-management"
             }
         ]
     },
     "rabbitmq-broker": {
-        "gitRepoTag": "v1.8.3",
+        "gitRepoTag": "v1.13.0",
         "containers": [{
                 "name": "gcr.io/knative-releases/knative.dev/eventing-rabbitmq/cmd/controller/broker@sha256",
-                "version": "a990033b4b0974e22b5440ed0cc46b0813762120d59e77b5fb7a00b068020aaf"
+                "version": "ce2e5ed69fffee8b2af486fae0ebbdf3d2c95eda1ec8641a2f0a17a8e79db012"
             },
             {
                 "name": "gcr.io/knative-releases/knative.dev/eventing-rabbitmq/cmd/ingress@sha256",
-                "version": "7e510f999b98b83a0df16645989f58efd24e8445b798b77144a4d792479496f3"
+                "version": "0e841aab675cec7accd8e1ef8d1a5f4da1b85e4334ae58b15936d7a59347b30a"
             },
             {
                 "name": "gcr.io/knative-releases/knative.dev/eventing-rabbitmq/cmd/dispatcher@sha256",
-                "version": "7cd0225d481ad0dff8c64344c764674d2316e31d636ea7a891c13c53cd9094b0"
+                "version": "3b4f15ea5d50c1819610406ec90970ab59605dc3dbc6cbd8e339c36d11ba378b"
             },
             {
                 "name": "gcr.io/knative-releases/knative.dev/eventing-rabbitmq/cmd/webhook/broker@sha256",
-                "version": "0d80a0cf4159a371d1f5e0841e96018973c2c2db727824a991a3ebd92357333c"
+                "version": "2d78d88f48072377073481384eaf61b81784fb619339626a2875c94fe541ff27"
             }
         ]
     },
     "rabbitmq-messaging-topology-operator": {
-        "gitRepoTag": "v1.10.0",
+        "gitRepoTag": "v1.13.0",
         "containers": [{
                 "name": "rabbitmqoperator/messaging-topology-operator",
-                "version": "1.10.0"
+                "version": "1.13.0"
             }
         ]
     },
     "cert-manager": {
-        "gitRepoTag": "v1.11.0",
+        "gitRepoTag": "v1.14.2",
         "containers": [{
                 "name": "quay.io/jetstack/cert-manager-cainjector",
-                "version": "v1.11.0"
+                "version": "v1.14.2"
             },
             {
                 "name": "quay.io/jetstack/cert-manager-controller",
-                "version": "v1.11.0"
+                "version": "v1.14.2"
             },
             {
                 "name": "quay.io/jetstack/cert-manager-webhook",
-                "version": "v1.11.0"
+                "version": "v1.14.2"
             }
         ]
     },
     "csi": {
-        "gitRepoTag": "v0.0.23",
+        "gitRepoTag": "v0.0.26",
         "containers": [{
                 "name": "rancher/local-path-provisioner",
-                "version": "v0.0.23"
+                "version": "v0.0.26"
             },
             {
                 "name": "busybox",
@@ -227,34 +228,34 @@
         ]
     },
     "tanzu-sources": {
-        "gitRepoTag": "v0.37.1",
+        "gitRepoTag": "v0.39.0",
         "containers": [{
-            "name": "ghcr.io/vmware-tanzu/sources-for-knative/horizon-controller:v0.37.1@sha256",
-            "version": "ed68579626a4641ea721637ca801ff98eae3b3753449f5a481f63a647d6a5502"
+            "name": "ghcr.io/vmware-tanzu/sources-for-knative/horizon-controller:v0.39.0@sha256",
+            "version": "f3c8035a76a10109fe519f4cc3be306f9d91f8d568de16cc53d17aa5d3ce17f2"
             },
             {
-                "name": "ghcr.io/vmware-tanzu/sources-for-knative/horizon-webhook:v0.37.1@sha256",
-                "version": "f3cd8353cabf657dd5ff6af035c83f2bcf8ce759480f9cc7853701a4e15577bd"
+                "name": "ghcr.io/vmware-tanzu/sources-for-knative/horizon-webhook:v0.39.0@sha256",
+                "version": "d97131a04f6cf151d55cbccc3037ee586177928f48470db9faa77e04367585e3"
             },
             {
-                "name": "ghcr.io/vmware-tanzu/sources-for-knative/horizon-adapter:v0.37.1@sha256",
-                "version": "ea652efce54a1c40b94e4812b464b0cb085b0c5193f0ecbfe0e0f2c88c133495"
+                "name": "ghcr.io/vmware-tanzu/sources-for-knative/horizon-adapter:v0.39.0@sha256",
+                "version": "5a161ca177ef56eee656a22b63f95881c583e142e41ebac45bcea1fb15b273bc"
             },
             {
-                "name": "ghcr.io/vmware-tanzu/sources-for-knative/vsphere-controller:v0.37.1@sha256",
-                "version": "a923012b58b81272ced645240f41de07e50656d5083755a23c82d9171d1c0aed"
+                "name": "ghcr.io/vmware-tanzu/sources-for-knative/vsphere-controller:v0.39.0@sha256",
+                "version": "85e0026748e1756915e476cba3b658d3628d760e750ad1fe73cf15997693fb1a"
             },
             {
-                "name": "ghcr.io/vmware-tanzu/sources-for-knative/vsphere-adapter:v0.37.1@sha256",
-                "version": "c5b0145aa13c5ac9d57524638cc1227abc4ab741978ac223a039e824c97e1083"
+                "name": "ghcr.io/vmware-tanzu/sources-for-knative/vsphere-adapter:v0.39.0@sha256",
+                "version": "8a0dee786e3d4a4af83ee322ae9907dbfd1cd62428dbb5a4713afd46e9038e7e"
             }
         ]
     },
     "contour-authserver": {
-        "gitRepoTag": "v2",
+        "gitRepoTag": "v4",
         "containers": [{
-            "name": "docker.io/projectcontour/contour-authserver",
-            "version": "v2"
+            "name": "ghcr.io/projectcontour/contour-authserver",
+            "version": "v4"
         }]
     },
     "tinywww": {
@@ -272,9 +273,9 @@
         }]
     },
     "ytt-cli": {
-        "version": "v0.44.1"
+        "version": "v0.48.0"
     },
     "containerd": {
-        "version": "1.6.15"
+        "version": "1.7.13"
     }
 }
