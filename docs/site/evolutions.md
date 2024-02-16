@@ -13,6 +13,7 @@ entry:
   detail:
     subtitle: Features
     text:
+    - Software Build-of-Material (SBOM) updated. See Release Notes for detailed Version changes
     - Replaced VMware Event Router with VMware Tanzu Sources for Knative
     - All VEBA endpoints now protected with basic authentication
     - New Google Chat notification function
