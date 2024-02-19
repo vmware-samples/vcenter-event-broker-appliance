@@ -124,6 +124,7 @@ EOF
 cat > /etc/veba-release << EOF
 Version: ${VEBA_VERSION}
 Commit: ${VEBA_COMMIT}
+Processor: Knative
 EOF
 
 echo '> Creating VEBA DCUI systemd unit file...'

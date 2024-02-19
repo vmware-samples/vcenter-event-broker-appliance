@@ -11,7 +11,6 @@ VEBA_BOM_FILE=/root/config/veba-bom.json
 EVENT_PROVIDER="webhook"
 
 echo -e "\e[92mDeploying VMware Event Router Provider ${EVENT_PROVIDER} ..." > /dev/console
-grep -q "Processor:" /etc/veba-release || echo "Processor: Knative" >> /etc/veba-release
 
 # Setup Event Processor Configuration File
 EVENT_ROUTER_CONFIG_TEMPLATE=/root/config/event-router/templates/vmware-event-router-config-template.yaml
