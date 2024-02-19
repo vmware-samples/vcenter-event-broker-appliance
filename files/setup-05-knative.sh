@@ -43,6 +43,7 @@ RABBITMQ_CONFIG_TEMPLATE=/root/config/knative/templates/rabbit-template.yaml
 RABBITMQ_CONFIG=/root/config/knative/rabbit.yaml
 ytt --data-value-file bom=${VEBA_BOM_FILE} -f ${RABBITMQ_CONFIG_TEMPLATE} > ${RABBITMQ_CONFIG}
 kubectl apply -f ${RABBITMQ_CONFIG}
+kubectl wait --for=condition=ClusterAvailable rabbitmqcluster/veba-rabbit --timeout=${KUBECTL_WAIT} -n vmware-system
 kubectl wait --for=condition=Ready broker/default --timeout=${KUBECTL_WAIT} -n vmware-functions
 
 echo -e "\e[92mDeploying Sockeye ..." > /dev/console
