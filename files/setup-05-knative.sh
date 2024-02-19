@@ -6,6 +6,17 @@
 
 set -euo pipefail
 
+echo -e "\e[92mDeploying RabbitMQ Cluster Operator ..." > /dev/console
+kubectl apply -f /root/download/cluster-operator.yml
+
+echo -e "\e[92mDeploying Cert-Manager ..." > /dev/console
+kubectl apply -f /root/download/cert-manager.yaml
+kubectl wait deployment --all --timeout=${KUBECTL_WAIT} --for=condition=Available -n cert-manager
+
+echo -e "\e[92mDeploying RabbitMQ Messaging Operator ..." > /dev/console
+kubectl apply -f /root/download/messaging-topology-operator-with-certmanager.yaml
+kubectl wait deployment --all --timeout=${KUBECTL_WAIT} --for=condition=Available -n rabbitmq-system
+
 echo -e "\e[92mDeploying Knative Serving ..." > /dev/console
 kubectl apply -f /root/download/serving-crds.yaml
 kubectl apply -f /root/download/serving-core.yaml
@@ -21,17 +32,6 @@ echo -e "\e[92mDeploying Knative Eventing ..." > /dev/console
 kubectl apply -f /root/download/eventing-crds.yaml
 kubectl apply -f /root/download/eventing-core.yaml
 kubectl wait deployment --all --timeout=${KUBECTL_WAIT} --for=condition=Available -n knative-eventing
-
-echo -e "\e[92mDeploying RabbitMQ Cluster Operator ..." > /dev/console
-kubectl apply -f /root/download/cluster-operator.yml
-
-echo -e "\e[92mDeploying Cert-Manager ..." > /dev/console
-kubectl apply -f /root/download/cert-manager.yaml
-kubectl wait deployment --all --timeout=${KUBECTL_WAIT} --for=condition=Available -n cert-manager
-
-echo -e "\e[92mDeploying RabbitMQ Messaging Operator ..." > /dev/console
-kubectl apply -f /root/download/messaging-topology-operator-with-certmanager.yaml
-kubectl wait deployment --all --timeout=${KUBECTL_WAIT} --for=condition=Available -n rabbitmq-system
 
 echo -e "\e[92mDeploying RabbitMQ Broker ..." > /dev/console
 kubectl apply -f /root/download/rabbitmq-broker.yaml
