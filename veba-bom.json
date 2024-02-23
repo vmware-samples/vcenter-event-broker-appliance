@@ -1,12 +1,12 @@
 {
     "veba": {
-        "version": "release-0.8.0"
+        "version": "v0.8.0"
     },
     "vmware-event-router": {
-        "gitRepoTag": "release-0.8.0",
+        "gitRepoTag": "v0.8.0",
         "containers": [{
             "name": "ghcr.io/vmware-samples/vcenter-event-broker-appliance/router",
-            "version": "release-0.8.0"
+            "version": "v0.8.0"
         }]
     },
     "veba-ui": {
