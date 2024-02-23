@@ -56,12 +56,10 @@ spec:
       name: metrics
       protocol: TCP
       targetPort: 8082
-    #@ if data.values.eventProvider == "webhook":
     - port: 8080
       name: webhook
       protocol: TCP
       targetPort: 8080
-    #@ end
   selector:
     app: #@ routerName
   sessionAffinity: None

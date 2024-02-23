@@ -76,7 +76,7 @@ Function Process-Handler {
    }
 
    if (${env:FUNCTION_DEBUG} -eq "true") {
-      Write-Host "$(Get-Date) - DEBUG: Event - $($cloudEvent.subject)"
+      Write-Host "$(Get-Date) - DEBUG: Event - $($cloudEvent.type)"
    }
    $hostName = $cloudEventData.Host.Name
    $moRef = New-Object VMware.Vim.ManagedObjectReference
@@ -99,7 +99,7 @@ Function Process-Handler {
       throw $_
    }
 
-   if ($cloudEvent.subject -eq "EnteredMaintenanceModeEvent") {
+   if ($cloudEvent.type -eq "com.vmware.vsphere.EnteredMaintenanceModeEvent.v0") {
       # Disable alarm actions on the host
       Write-Host "$(Get-Date) - Disabling alarm actions on host: $hostName"
       try {
@@ -111,7 +111,7 @@ Function Process-Handler {
       }
    }
 
-   if ($cloudEvent.subject -eq "ExitMaintenanceModeEvent") {
+   if ($cloudEvent.type -eq "com.vmware.vsphere.ExitMaintenanceModeEvent.v0") {
       # Enable alarm actions on the host
       Write-Host "$(Get-Date) - Enabling alarm actions on host: $hostName"
       try {

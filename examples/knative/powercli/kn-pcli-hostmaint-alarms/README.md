@@ -11,14 +11,16 @@ Create the container image locally to test your function logic.
 Mac/Linux
 ```
 # change the IMAGE name accordingly, example below for Docker
-export IMAGE=<docker-username>/kn-pcli-hostmaint-alarms:1.0
+export TAG=<version>
+export IMAGE=<docker-username>/kn-pcli-hostmaint-alarms:${TAG}
 docker build -t ${IMAGE} .
 ```
 
 Windows
 ```
 # change the IMAGE name accordingly, example below for Docker
-$IMAGE="<docker-username>/kn-pcli-hostmaint-alarms:1.0"
+$TAG=<version>
+$IMAGE="<docker-username>/kn-pcli-hostmaint-alarms:${TAG}"
 docker build -t ${IMAGE} .
 ```
 # Step 2 - Test
@@ -43,12 +45,14 @@ If you built a custom image in Step 1, comment out the default `IMAGE` command b
 
 Mac/Linux
 ```console
-export IMAGE=us.gcr.io/daisy-284300/veba/kn-pcli-hostmaint-alarms:1.0
+export TAG=<version>
+export IMAGE=ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-pcli-hostmaint-alarms:${TAG}
 docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 ${IMAGE}
 ```
 Windows
 ```console
-$IMAGE="us.gcr.io/daisy-284300/veba/kn-pcli-hostmaint-alarms:1.0"
+$TAG=<version>
+$IMAGE="ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-pcli-hostmaint-alarms:${TAG}"
 docker run -e FUNCTION_DEBUG=true -e PORT=8080 --env-file docker-test-env-variable -it --rm -p 8080:8080 ${IMAGE}
 ```
 

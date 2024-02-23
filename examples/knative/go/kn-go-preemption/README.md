@@ -43,7 +43,7 @@ container artifacts.
 
 ```console
 # change the variables accordingly
-export KO_DOCKER_REPO=us.gcr.io/daisy-284300/veba
+export KO_DOCKER_REPO=ghcr.io/vmware-samples/vcenter-event-broker-appliance
 export KO_COMMIT=$(git rev-parse --short=8 HEAD)
 export KO_TAG=1.0
 
@@ -113,7 +113,7 @@ In the `function.yaml` file make the following modifications.
 
 If you changed the code and built a custom container image (see [Step
 1](#step-1---build)), change `image:
-us.gcr.io/daisy-284300/veba/kn-go-preemption:1.0` accordingly.
+ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-go-preemption:1.0` accordingly.
 
 ### Function Environment Variables
 

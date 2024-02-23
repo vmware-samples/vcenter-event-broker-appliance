@@ -1,0 +1,43 @@
+name: VMware Event Router Pre-Release Image Build
+
+on:
+  push:
+    branches:
+      - release-*
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./vmware-event-router
+
+jobs:
+  image:
+    strategy:
+      matrix:
+        go-version: ["1.19"]
+        platform: ["ubuntu-latest"]
+
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache-dependency-path: vmware-event-router/go.sum
+        id: go
+
+      - name: Setup ko
+        uses: ko-build/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa
+
+      - name: Get short COMMIT and TAG
+        run: |
+          echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
+
+      - name: Build and push multi-arch image
+        run: |
+          # build and push with pre-release tag
+          ko resolve --platform=linux/arm64,linux/amd64 --tags ${KO_COMMIT},${KO_TAG} -BRf deploy/event-router-k8s.yaml

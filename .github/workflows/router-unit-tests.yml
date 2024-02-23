@@ -29,14 +29,15 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@4d34df0c2316fe8122ab82dc22947d607c0c91f9
+        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491
         with:
           go-version: ${{ matrix.go-version }}
+          cache-dependency-path: vmware-event-router/go.sum
         id: go
-
-      - name: Check out code
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
 
       - name: Install tparse
         run: go install github.com/mfridman/tparse@latest        

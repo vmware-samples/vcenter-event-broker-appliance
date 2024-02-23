@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2021 VMware, Inc. All rights reserved.
+# Copyright 2023 VMware, Inc. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 # OS Specific Settings where ordering does not matter

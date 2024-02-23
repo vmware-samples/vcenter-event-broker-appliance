@@ -4,8 +4,7 @@ $headers = @{
     "ce-specversion" = "1.0";
     "ce-id" = "41289fef-0727-46f7-b1a9-b8145972c734";
     "ce-source" = "https://vcenter.local/sdk";
-    "ce-type" = "com.vmware.event.router/event";
-    "ce-subject" = "VmMigratedEvent";
+    "ce-type" = "com.vmware.vsphere.VmMigratedEvent.v0";
 }
 
 $body = Get-Content -Raw -Path "./test-payload.json"

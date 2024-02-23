@@ -24,32 +24,19 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     timeout-minutes: 20
-    env:
-      KO_DOCKER_REPO: us.gcr.io/daisy-284300/veba # .../router@sha256:
-      PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
     
     steps:
-      - name: Setup ko
-        uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.6
-        
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@4d34df0c2316fe8122ab82dc22947d607c0c91f9
+        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491
         with:
           go-version: ${{ matrix.go-version }}
+          cache-dependency-path: vmware-event-router/go.sum
         id: go
-        
-      - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
 
-      - id: login_to_gcp
-        uses: google-github-actions/auth@ef5d53e30bbcd8d0836f4288f5e50ff3e086997d
-        with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
 
-      - name: Set up gcloud
-        uses: google-github-actions/setup-gcloud@62d4898025f6041e16b1068643bfc5a696863587
-
-      - name: Configure Docker
-        run: gcloud auth configure-docker --quiet
+      - name: Setup ko
+        uses: ko-build/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa
 
       - name: Get short COMMIT and TAG
         run: |
@@ -57,6 +44,7 @@ jobs:
           echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
 
       - name: Build and push multi-arch image
+        id: build
         run: |
           # build and push with development tag
           ko resolve --platform=linux/arm64,linux/amd64 --tags ${KO_COMMIT},development -BRf deploy/event-router-k8s.yaml

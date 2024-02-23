@@ -17,15 +17,9 @@ links:
   - description: "Follow us at "
     url: "https://github.com/vmware-samples/vcenter-event-broker-appliance"
     label: vcenter-event-broker-appliance
-- title: Slack
-  image: /assets/img/icons/slack.svg
-  items:
-  - description: "Join us at"
-    url: "https://vmwarecode.slack.com/archives/CQLT9B5AA"
-    label: "&#35;vcenter-event-broker-appliance"
 - title: Email
   image: /assets/img/icons/email.svg
-  items: 
+  items:
   - description: "Email us at "
     url: "mailto:dl-veba@vmwarem.com"
     label: dl-veba@vmware.com

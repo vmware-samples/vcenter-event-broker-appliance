@@ -5,13 +5,25 @@ title: VMware Event Broker Appliance - Docs
 description: Contributing Documentation/Website Updates
 permalink: /kb/contribute-site
 cta:
- title: Have a question? 
+ title: Have a question?
  description: Please check our [Frequently Asked Questions](/faq) first.
 ---
 
 # Contribute to the Documentation or the Website
 
+<!-- omit in toc -->
+## Table of Contents
+
+- [Contribute to the Documentation or the Website](#contribute-to-the-documentation-or-the-website)
+  - [Structure](#structure)
+    - [Other Key Files and Folders](#other-key-files-and-folders)
+  - [Run the website locally](#run-the-website-locally)
+    - [Pre-Reqs](#pre-reqs)
+    - [Build and View Documentation](#build-and-view-documentation)
+
+
 ## Structure
+
 The website is hosted using [Github Pages](https://help.github.com/en/github/working-with-github-pages/about-github-pages){:target="_blank"} and built using [Jekyll](https://jekyllrb.com/){:target="_blank"}. The files that make up the website are contained within the `docs` folder (as Github Pages requires) within the master branch. You'll find more details about how they are organized and their purpose below.
 
 ```
@@ -45,6 +57,7 @@ permalink: /resources         # this is the short link for the page, if empty th
 ```
 
 ### Other Key Files and Folders
+
 - **_data/default.yml:** YAML content that drives the side-nav bar for the documentation
 - **_data/resources.yml:** YAML content for the videos, links and external references contained in the resources page
 - **_data/team.yml:** YAML data of the core team for the landing page
@@ -57,37 +70,42 @@ permalink: /resources         # this is the short link for the page, if empty th
   - **resources** - specifically designed for the resources page
 
 ## Run the website locally
+
 To validate changes to any file/folder to the website, please verify them locally before you push to the repo.
 
 ### Pre-Reqs
-* Install [Docker Client for your operating system](https://docs.docker.com/get-docker/)
+
+- Install [Docker Client for your operating system](https://docs.docker.com/get-docker/)
 
 ### Build and View Documentation
 
-Step 1 - Change into the `docs` directory
+- **Step 1:** Change into the `docs` directory
 
-Step 2 - Run the following command to start the [Jekyll Docker container image](https://github.com/envygeeks/jekyll-docker/) and begin serving the documentation:
+- **Step 2:** Run the following command to start the [Jekyll Docker container image](https://github.com/envygeeks/jekyll-docker/) and begin serving the documentation:
 
 Linux/Mac
-```bash
+
+```console
 docker run --rm \
   --volume="$PWD:/srv/jekyll" \
   --publish 4000:4000 \
-  jekyll/jekyll:3.8 \
+  jekyll/jekyll:3.8.6 \
   jekyll serve
 ```
 
-Windows: 
+Windows:
+
 ```powershell
 docker run --rm `
   --volume="${PWD}:/srv/jekyll" `
   --publish 4000:4000 `
-  jekyll/jekyll:3.8 `
+  jekyll/jekyll:3.8.6 `
   jekyll serve
 ```
 
 > Note: You may seen a warning saying `Auto-regeneration may not work on some Windows versions.` Symptoms of this warning are the inability to automatically see any local website changes in your browser. This makes website changes difficult as you must restart Jekyll after every local change to view the results. To work around this issue, try the `--force-polling` switch to the `jekyll serve` command.
-```powershell
+
+```console
 docker run --rm `
   --volume="${PWD}:/srv/jekyll" `
   --publish 4000:4000 `
@@ -95,9 +113,9 @@ docker run --rm `
   jekyll serve --force-polling
 ```
 
-Step 3 - Once the server is ready, you can open a browser to `http://localhost:4000` to review the documentation locally. If you need to change the default port (`4000`), modify the `--publish` arguments from step 2.
+- **Step 3:** Once the server is ready, you can open a browser to `http://localhost:4000` to review the documentation locally. If you need to change the default port (`4000`), modify the `--publish` arguments from step 2.
 
-```bash
+```console
 <snip>
 
 Configuration file: /srv/jekyll/_config.yml

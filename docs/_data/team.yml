@@ -13,6 +13,11 @@ members:
     website: https://www.williamlam.com/
     twitter: lamw
     github: lamw
+  - name: Robert Guske
+    img: https://avatars1.githubusercontent.com/u/31652019?v=4
+    website: https://rguske.github.io/
+    twitter: vmw_rguske
+    github: rguske
   - name: Frankie Gold 
     img: https://avatars1.githubusercontent.com/u/17328443?v=4
     twitter: codegold79
@@ -27,11 +32,6 @@ members:
     website: http://www.patrickkremer.com/
     twitter: kremerpatrick
     github: kremerpatrick
-  - name: Robert Guske
-    img: https://avatars1.githubusercontent.com/u/31652019?v=4
-    website: https://rguske.github.io/
-    twitter: vmw_rguske
-    github: rguske
   - name: Vladimir Velikov
     img: https://avatars3.githubusercontent.com/u/46163850?v=4
     website: https://pluginsblog.com/

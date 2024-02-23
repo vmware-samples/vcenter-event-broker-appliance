@@ -1,11 +1,12 @@
 #!/bin/bash
-# Copyright 2019 VMware, Inc. All rights reserved.
+# Copyright 2023 VMware, Inc. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 set -euo pipefail
 
 # Extract all OVF Properties
 VEBA_DEBUG=$(/root/setup/getOvfProperty.py "guestinfo.debug")
+TANZU_SOURCES_DEBUG=$(/root/setup/getOvfProperty.py "guestinfo.tanzu_sources_debug")
 HOSTNAME=$(/root/setup/getOvfProperty.py "guestinfo.hostname" | tr '[:upper:]' '[:lower:]')
 IP_ADDRESS=$(/root/setup/getOvfProperty.py "guestinfo.ipaddress")
 NETMASK=$(/root/setup/getOvfProperty.py "guestinfo.netmask" | awk -F ' ' '{print $1}')
@@ -20,12 +21,16 @@ PROXY_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.proxy_password")
 NO_PROXY=$(/root/setup/getOvfProperty.py "guestinfo.no_proxy")
 ROOT_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.root_password")
 ENABLE_SSH=$(/root/setup/getOvfProperty.py "guestinfo.enable_ssh" | tr '[:upper:]' '[:lower:]')
+ENDPOINT_USERNAME=$(/root/setup/getOvfProperty.py "guestinfo.endpoint_username")
+ENDPOINT_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.endpoint_password")
 VCENTER_SERVER=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_server")
 VCENTER_USERNAME=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_username")
 VCENTER_PASSWORD=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_password")
 VCENTER_USERNAME_FOR_VEBA_UI=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_veba_ui_username")
 VCENTER_PASSWORD_FOR_VEBA_UI=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_veba_ui_password")
 VCENTER_DISABLE_TLS=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_disable_tls_verification")
+VCENTER_CHECKPOINTING_AGE=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_checkpoint_age")
+VCENTER_CHECKPOINTING_PERIOD=$(/root/setup/getOvfProperty.py "guestinfo.vcenter_checkpoint_period")
 HORIZON_ENABLED=$(/root/setup/getOvfProperty.py "guestinfo.horizon")
 HORIZON_SERVER=$(/root/setup/getOvfProperty.py "guestinfo.horizon_server")
 HORIZON_DOMAIN=$(/root/setup/getOvfProperty.py "guestinfo.horizon_domain")
@@ -61,17 +66,6 @@ else
         echo
 	fi
 
-	# Determine Event Providers
-	EVENT_PROVIDERS=("vcenter")
-
-	if [ ${WEBHOOK_ENABLED} == "True" ]; then
-		EVENT_PROVIDERS+=("webhook")
-	fi
-
-	if [ ${HORIZON_ENABLED} == "True" ]; then
-		EVENT_PROVIDERS+=("horizon")
-	fi
-
 	# Customize the POD CIDR Network if provided or else default to 10.10.0.0/16
 	if [ -z "${POD_NETWORK_CIDR}" ]; then
 		POD_NETWORK_CIDR="10.16.0.0/16"
@@ -82,6 +76,8 @@ else
 	ESCAPED_VCENTER_USERNAME=$(eval echo -n '${VCENTER_USERNAME}' | jq -Rs .)
 	ESCAPED_VCENTER_PASSWORD=$(eval echo -n '${VCENTER_PASSWORD}' | jq -Rs .)
 	ESCAPED_ROOT_PASSWORD=$(eval echo -n '${ROOT_PASSWORD}' | jq -Rs .)
+	ESCAPED_ENDPOINT_USERNAME=$(eval echo -n '${ENDPOINT_USERNAME}' | jq -Rs .)
+	ESCAPED_ENDPOINT_PASSWORD=$(eval echo -n '${ENDPOINT_PASSWORD}' | jq -Rs .)
 
 	ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI=$(eval echo -n '${VCENTER_USERNAME_FOR_VEBA_UI}' | jq -Rs .)
 	ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI=$(eval echo -n '${VCENTER_PASSWORD_FOR_VEBA_UI}' | jq -Rs .)
@@ -89,16 +85,16 @@ else
 	ESCAPED_HORIZON_SERVER=$(eval echo -n '${HORIZON_SERVER}' | jq -Rs .)
 	ESCAPED_HORIZON_USERNAME=$(eval echo -n '${HORIZON_USERNAME}' | jq -Rs .)
 	ESCAPED_HORIZON_PASSWORD=$(eval echo -n '${HORIZON_PASSWORD}' | jq -Rs .)
-	ESCAPED_ROOT_PASSWORD=$(eval echo -n '${ROOT_PASSWORD}' | jq -Rs .)
 
 	ESCAPED_WEBHOOK_USERNAME=$(eval echo -n '${WEBHOOK_USERNAME}' | jq -Rs .)
 	ESCAPED_WEBHOOK_PASSWORD=$(eval echo -n '${WEBHOOK_PASSWORD}' | jq -Rs .)
 
 	ESCAPED_PROXY_PASSWORD=$(eval echo -n '${PROXY_PASSWORD}' | jq -Rs .)
-	
+
 	cat > /root/config/veba-config.json <<EOF
 {
 	"VEBA_DEBUG": "${VEBA_DEBUG}",
+	"TANZU_SOURCES_DEBUG": "${TANZU_SOURCES_DEBUG}",
 	"HOSTNAME": "${HOSTNAME}",
 	"IP_ADDRESS": "${IP_ADDRESS}",
 	"NETMASK": "${NETMASK}",
@@ -113,12 +109,16 @@ else
 	"NO_PROXY": "${NO_PROXY}",
 	"ESCAPED_ROOT_PASSWORD": ${ESCAPED_ROOT_PASSWORD},
 	"ENABLE_SSH": "${ENABLE_SSH}",
+	"ESCAPED_ENDPOINT_USERNAME": ${ESCAPED_ENDPOINT_USERNAME},
+	"ESCAPED_ENDPOINT_PASSWORD": ${ESCAPED_ENDPOINT_PASSWORD},
 	"ESCAPED_VCENTER_SERVER": ${ESCAPED_VCENTER_SERVER},
 	"ESCAPED_VCENTER_USERNAME": ${ESCAPED_VCENTER_USERNAME},
 	"ESCAPED_VCENTER_PASSWORD": ${ESCAPED_VCENTER_PASSWORD},
 	"ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI": ${ESCAPED_VCENTER_USERNAME_FOR_VEBA_UI},
 	"ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI": ${ESCAPED_VCENTER_PASSWORD_FOR_VEBA_UI},
 	"VCENTER_DISABLE_TLS": "${VCENTER_DISABLE_TLS}",
+	"VCENTER_CHECKPOINTING_AGE": ${VCENTER_CHECKPOINTING_AGE},
+	"VCENTER_CHECKPOINTING_PERIOD": ${VCENTER_CHECKPOINTING_PERIOD},
 	"HORIZON_ENABLED": "${HORIZON_ENABLED}",
 	"ESCAPED_HORIZON_SERVER": ${ESCAPED_HORIZON_SERVER},
 	"HORIZON_DOMAIN": "${HORIZON_DOMAIN}",
@@ -155,11 +155,18 @@ EOF
 	echo -e "\e[92mStarting Knative Configuration ..." > /dev/console
 	. /root/setup/setup-05-knative.sh
 
-	echo -e "\e[92mStarting VMware Event Processor Configuration ..." > /dev/console
-	. /root/setup/setup-06-event-processor.sh
+	echo -e "\e[92mStarting vSphere Sources Configuration ..." > /dev/console
+	. /root/setup/setup-06-vsphere-sources.sh
 
-	echo -e "\e[92mStarting VMware Event Router Configuration ..." > /dev/console
-	. /root/setup/setup-07-event-router.sh
+	if [ ${HORIZON_ENABLED} == "True" ]; then
+		echo -e "\e[92mStarting Horizon Sources Configuration ..." > /dev/console
+		. /root/setup/setup-06-horizon-sources.sh
+	fi
+
+	if [ ${WEBHOOK_ENABLED} == "True" ]; then
+		echo -e "\e[92mStarting VMware Event Provider Webhook Configuration ..." > /dev/console
+		. /root/setup/setup-07-event-router-webhook.sh
+	fi
 
 	echo -e "\e[92mStarting TinyWWW Configuration ..." > /dev/console
 	. /root/setup/setup-08-tinywww.sh

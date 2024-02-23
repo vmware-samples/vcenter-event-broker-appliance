@@ -1,0 +1,25 @@
+{
+	"ChangeTag": "",
+	"UserName": "VSPHERE.LOCAL\\machine-767f8016-870d-4a98-a457-8247454fa759",
+	"FullFormattedMessage": "Backup job failed",
+	"EventTypeId": "com.vmware.applmgmt.backup.job.failed.event",
+	"Severity": "info",
+	"Fault": null,
+	"Dvs": null,
+	"Message": "",
+	"Key": 2112913,
+	"Vm": null,
+	"ChainId": 2112913,
+	"Host": null,
+	"CreatedTime": "2024-01-16T17:10:30.181Z",
+	"Net": null,
+	"ComputeResource": null,
+	"Datacenter": null,
+	"Arguments": [
+	  {
+		"Key": "_sourcehost_",
+		"Value": "vcsa.primp-industries.local"
+	  }
+	],
+	"Ds": null
+  }

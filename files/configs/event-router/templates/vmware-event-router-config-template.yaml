@@ -2,11 +2,8 @@
 #@ load("@ytt:data", "data")
 
 #@ load("@ytt:json", "json")
-#@ vcenter = json.decode(data.values.config)["ESCAPED_VCENTER_SERVER"]
-#@ vcenterUsername = json.decode(data.values.config)["ESCAPED_VCENTER_USERNAME"]
-#@ vcenterPassword = json.decode(data.values.config)["ESCAPED_VCENTER_PASSWORD"]
-#@ vcenterTls = json.decode(data.values.config)["VCENTER_DISABLE_TLS"]
-
+#@ webhookUsername = json.decode(data.values.config)["ESCAPED_WEBHOOK_USERNAME"]
+#@ webhookPassword = json.decode(data.values.config)["ESCAPED_WEBHOOK_PASSWORD"]
 #@ routerName = "vmware-event-router-config-knative-" + data.values.eventProvider
 
 apiVersion: event-router.vmware.com/v1alpha1
@@ -23,48 +20,6 @@ eventProcessor:
         name: default
         namespace: vmware-functions
 eventProvider:
-  #@ if data.values.eventProvider == "vcenter":
-  name: veba-vc-01
-  type: vcenter
-  vcenter:
-    address: #@ "https://"+vcenter+"/sdk"
-    auth:
-      basicAuth:
-        username: #@ vcenterUsername
-        password: #@ vcenterPassword
-      type: basic_auth
-    #@ if vcenterTls == "True":
-    insecureSSL: true
-    #@ else:
-    insecureSSL: false
-    #@ end
-    checkpoint: false
-  #@ end
-  #@ if data.values.eventProvider == "horizon":
-  #@ horizon = json.decode(data.values.config)["ESCAPED_HORIZON_SERVER"]
-  #@ horizonDomain = json.decode(data.values.config)["HORIZON_DOMAIN"]
-  #@ horizonUsername = json.decode(data.values.config)["ESCAPED_HORIZON_USERNAME"]
-  #@ horizonPassword = json.decode(data.values.config)["ESCAPED_HORIZON_PASSWORD"]
-  #@ horizonNoTLS = json.decode(data.values.config)["HORIZON_DISABLE_TLS"]
-  name: veba-horizon-01
-  type: horizon
-  horizon:
-    address: #@ "https://"+horizon
-    auth:
-      type: active_directory
-      activeDirectoryAuth:
-        domain: #@ horizonDomain
-        username: #@ horizonUsername
-        password: #@ horizonPassword
-    #@ if horizonNoTLS == "True":
-    insecureSSL: true
-    #@ else:
-    insecureSSL: false
-    #@ end
-  #@ end
-  #@ if data.values.eventProvider == "webhook":
-  #@ webhookUsername = json.decode(data.values.config)["ESCAPED_WEBHOOK_USERNAME"]
-  #@ webhookPassword = json.decode(data.values.config)["ESCAPED_WEBHOOK_PASSWORD"]
   name: veba-webhook-01
   type: webhook
   webhook:
@@ -77,7 +32,6 @@ eventProvider:
         username: #@ webhookUsername
         password: #@ webhookPassword
     #@ end
-  #@ end
 kind: RouterConfig
 metadata:
   name: #@ routerName

@@ -82,6 +82,12 @@ ytt -f ${KNATIVE_CONTOUR_OVERLAY} -f ${KNATIVE_CONTOUR_TEMPLATE} > ${KNATIVE_CON
 
 curl -L https://github.com/knative/net-contour/releases/download/knative-${KNATIVE_CONTOUR_VERSION}/net-contour.yaml -o /root/download/net-contour.yaml
 
+echo '> Downloading Tanzu Sources for Knative ...'
+TANZU_SOURCES_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["tanzu-sources"].gitRepoTag')
+TANZU_SOURCES_TEMPLATE=/root/download/tanzu-sources/templates/tanzu-sources-release.yaml
+mkdir -p /root/download/tanzu-sources/templates
+curl -L https://github.com/vmware-tanzu/sources-for-knative/releases/download/${TANZU_SOURCES_VERSION}/release.yaml -o ${TANZU_SOURCES_TEMPLATE}
+
 echo '> Downloading Local Path Provisioner...'
 mkdir -p /root/download/local-provisioner/templates
 LOCAL_PROVISIONER_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["csi"].gitRepoTag')

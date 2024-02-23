@@ -32,19 +32,20 @@ tdnf install -y \
   tar \
   jq \
   parted \
-  apparmor-parser
+  apparmor-parser \
+  httpd
 
 echo '> Adding K8s Repo'
-curl -L https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg -o /etc/pki/rpm-gpg/GOOGLE-RPM-GPG-KEY
-rpm --import /etc/pki/rpm-gpg/GOOGLE-RPM-GPG-KEY
+K8S_PACKAGE_REPO_VERSION_FULL=$(jq -r < "${VEBA_BOM_FILE}" '.["kubernetes"].gitRepoTag')
+K8S_PACKAGE_REPO_VERSION=${K8S_PACKAGE_REPO_VERSION_FULL%.*}
 cat > /etc/yum.repos.d/kubernetes.repo << EOF
 [kubernetes]
 name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+baseurl=https://pkgs.k8s.io/core:/stable:/${K8S_PACKAGE_REPO_VERSION}/rpm/
 enabled=1
 gpgcheck=1
-repo_gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/GOOGLE-RPM-GPG-KEY
+gpgkey=https://pkgs.k8s.io/core:/stable:/${K8S_PACKAGE_REPO_VERSION}/rpm/repodata/repomd.xml.key
+exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
 EOF
 K8S_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["kubernetes"].gitRepoTag' | sed 's/v//g')
 # Ensure kubelet is updated to the latest desired K8s version
@@ -55,6 +56,14 @@ KNATIVE_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["knative-cli"].version')
 wget https://github.com/knative/client/releases/download/knative-${KNATIVE_VERSION}/kn-linux-amd64
 chmod +x kn-linux-amd64
 mv kn-linux-amd64 /usr/local/bin/kn
+
+echo '> Downloading Kn vSphere CLI'
+KNATIVE_VSPHERE_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["knative-vsphere-cli"].version')
+curl -L https://github.com/vmware-tanzu/sources-for-knative/releases/download/${KNATIVE_VSPHERE_VERSION}/kn-vsphere_Linux_x86_64.tar.gz -o /root/kn-vsphere_Linux_x86_64.tar.gz
+tar -zxvf /root/kn-vsphere_Linux_x86_64.tar.gz -C /root
+mv /root/kn-vsphere_Linux_x86_64/kn-vsphere /usr/local/bin/kn-vsphere
+chmod +x /usr/local/bin/kn-vsphere
+rm -rf /root/kn-vsphere_Linux_x86_64*
 
 echo '> Downloading YTT CLI'
 YTT_VERSION=$(jq -r < ${VEBA_BOM_FILE} '.["ytt-cli"].version')
@@ -68,6 +77,12 @@ curl -L https://github.com/containerd/containerd/releases/download/v${CONTAINERD
 tar -zxvf /root/download/containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz -C /usr
 rm -f /root/download/containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz
 containerd config default > /etc/containerd/config.toml
+
+# Update default version of the pause container to the one from VEBA BOM
+PAUSE_CONTAINER_NAME="registry.k8s.io/pause"
+PAUSE_CONTAINER_VERSION=$(jq -r --arg PAUSE_CONTAINER_NAME ${PAUSE_CONTAINER_NAME} '.kubernetes.containers[] | select(.name == $PAUSE_CONTAINER_NAME) | .version' ${VEBA_BOM_FILE})
+sed -i "s#sandbox_image.*#sandbox_image = \"${PAUSE_CONTAINER_NAME}:${PAUSE_CONTAINER_VERSION}\"#g" /etc/containerd/config.toml
+
 cat > /usr/lib/systemd/system/containerd.service <<EOF
 [Unit]
 Description=containerd container runtime
@@ -109,6 +124,7 @@ EOF
 cat > /etc/veba-release << EOF
 Version: ${VEBA_VERSION}
 Commit: ${VEBA_COMMIT}
+Processor: Knative
 EOF
 
 echo '> Creating VEBA DCUI systemd unit file...'

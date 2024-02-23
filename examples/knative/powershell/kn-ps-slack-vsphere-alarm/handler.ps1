@@ -35,7 +35,7 @@ Function Process-Handler {
 
    # This currently will process ALL enriched vSphere Alarms based on AlarmStatusChangedEvent
    # If you wish to limit this to a specific vSphere Alarm add $CloudEvent.AlarmInfo.Name -eq "alarm-name"
-   if($CloudEvent.Subject -eq "AlarmStatusChangedEvent") {
+   if($CloudEvent.Type -eq "com.vmware.vsphere.AlarmStatusChangedEvent.v0") {
 
       if($cloudEventData.To -eq "red" -or $cloudEventData.To -eq "yellow") {
 

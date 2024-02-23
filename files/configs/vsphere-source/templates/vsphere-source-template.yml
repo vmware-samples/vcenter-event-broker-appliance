@@ -1,0 +1,33 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@ load("@ytt:json", "json")
+#@ vcenter = json.decode(data.values.config)["ESCAPED_VCENTER_SERVER"]
+#@ vcenterDisableTls = json.decode(data.values.config)["VCENTER_DISABLE_TLS"]
+#@ vcenterCheckpointAge = json.decode(data.values.config)["VCENTER_CHECKPOINTING_AGE"]
+#@ vcenterCheckpointPeriod = json.decode(data.values.config)["VCENTER_CHECKPOINTING_PERIOD"]
+
+apiVersion: sources.tanzu.vmware.com/v1alpha1
+kind: VSphereSource
+metadata:
+  name: vsphere-source
+spec:
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: default
+      namespace: vmware-functions
+  address: #@ "https://"+vcenter
+  checkpointConfig:
+    maxAgeSeconds: #@ vcenterCheckpointAge
+    periodSeconds: #@ vcenterCheckpointPeriod
+  #@ if vcenterDisableTls == "True":
+  skipTLSVerify: true
+  #@ else:
+  skipTLSVerify: false
+  #@ end
+  secretRef:
+    name: vsphere-creds
+  serviceAccountName: vsphere-source-sa
+  payloadEncoding: application/json

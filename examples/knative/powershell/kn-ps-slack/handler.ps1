@@ -47,7 +47,7 @@ Function Process-Handler {
             fields = @(
                @{
                      title = "EventType";
-                     value = $cloudEvent.Subject;
+                     value = $cloudEvent.Type;
                      short = "false";
                }
                @{

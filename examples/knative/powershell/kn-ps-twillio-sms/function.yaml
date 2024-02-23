@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-ps-twillo-sms:1.1
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-ps-twillo-sms:1.2
           envFrom:
             - secretRef:
                 name: sms-secret
@@ -30,7 +30,7 @@ spec:
   broker: default
   filter:
     attributes:
-      subject: TaskEvent
+      subject: com.vmware.vsphere.TaskEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

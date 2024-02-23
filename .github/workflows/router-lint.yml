@@ -23,16 +23,17 @@ jobs:
     timeout-minutes: 20
 
     steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@4d34df0c2316fe8122ab82dc22947d607c0c91f9
+        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491
         with:
           go-version: ${{ matrix.go-version }}
+          cache: false # use golangci-lint caching
         id: go
 
-      - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
-
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@08e2f20817b15149a52b5b3ebe7de50aff2ba8c5
+        uses: golangci/golangci-lint-action@3cfe3a4abbb849e10058ce4af15d205b6da42804
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
           version: latest

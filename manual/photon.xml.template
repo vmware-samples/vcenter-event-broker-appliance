@@ -55,7 +55,7 @@
             <Label>No Proxy</Label>
             <Description>No Proxy for e.g. your internal domain suffix. Adding the appliance IP address is recommended. Comma separated (localhost, 127.0.0.1, domain.local)</Description>
         </Property>
-      <Category>OS Credentials</Category>
+      <Category>Credentials</Category>
         <Property ovf:key="guestinfo.root_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
             <Label>Root Password</Label>
             <Description>Password to login in as root. Please use a secure password</Description>
@@ -63,6 +63,14 @@
         <Property ovf:key="guestinfo.enable_ssh" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Enable SSH</Label>
             <Description>Automatically start SSH daemon</Description>
+        </Property>
+        <Property ovf:key="guestinfo.endpoint_username" ovf:type="string" ovf:userConfigurable="true" ovf:value="admin">
+            <Label>Endpoint Username</Label>
+            <Description>Username to login to VEBA endpoints (e.g. /bootstrap, /events, /top, etc.)</Description>
+        </Property>
+        <Property ovf:key="guestinfo.endpoint_password" ovf:password="true" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+            <Label>Endpoint Password</Label>
+            <Description>Password to login to VEBA endpoints (e.g. /bootstrap, /events, /top, etc.). Please use a secure password</Description>
         </Property>
      <Category>vSphere</Category>
         <Property ovf:key="guestinfo.vcenter_server" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
@@ -88,6 +96,14 @@
         <Property ovf:key="guestinfo.vcenter_disable_tls_verification" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Disable vCenter Server TLS Verification</Label>
             <Description>Disable TLS Verification for vCenter Server (required for self-sign certificate)</Description>
+        </Property>
+        <Property ovf:key="guestinfo.vcenter_checkpoint_age" ovf:type="string" ovf:userConfigurable="true" ovf:value="300">
+            <Label>vCenter Checkpointing Age</Label>
+            <Description>Maximum allowed age (seconds) for replaying events determined by last successful event in checkpoint (default 300s)</Description>
+        </Property>
+        <Property ovf:key="guestinfo.vcenter_checkpoint_period" ovf:type="string" ovf:userConfigurable="true" ovf:value="10">
+            <Label>vCenter Checkpointing Period</Label>
+            <Description>Period (seconds) between saving checkpoints (default 10s)</Description>
         </Property>
      <Category>Horizon</Category>
         <Property ovf:key="guestinfo.horizon" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
@@ -157,6 +173,10 @@
         <Property ovf:key="guestinfo.debug" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
             <Label>Debugging</Label>
             <Description>Enable Debugging</Description>
+        </Property>
+        <Property ovf:key="guestinfo.tanzu_sources_debug" ovf:type="boolean" ovf:userConfigurable="true" ovf:value="false">
+            <Label>Tanzu Sources for Knative Debugging</Label>
+            <Description>Enable Debugging for Tanzu Sources for Knative</Description>
         </Property>
         <Property ovf:key="guestinfo.pod_network_cidr" ovf:type="string" ovf:userConfigurable="true" ovf:value="10.10.0.0/16">
             <Label>POD CIDR Network</Label>

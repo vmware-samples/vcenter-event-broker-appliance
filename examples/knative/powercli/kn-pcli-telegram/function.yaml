@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-pcli-telegram:1.1
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-pcli-telegram:1.2
           envFrom:
             - secretRef:
                 name: telegram-secret
@@ -30,7 +30,7 @@ spec:
   broker: default
   filter:
     attributes:
-      subject: VmMigratedEvent
+      subject: com.vmware.vsphere.VmMigratedEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

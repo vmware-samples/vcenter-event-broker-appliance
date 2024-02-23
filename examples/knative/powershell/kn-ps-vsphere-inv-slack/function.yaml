@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: projects.registry.vmware.com/veba/kn-ps-vsphere-inv-slack:1.0
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-ps-vsphere-inv-slack:1.1
           envFrom:
             - secretRef:
                 name: slack-secret
@@ -30,8 +30,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/event
-      subject: TaskEvent
+      type: com.vmware.vsphere.TaskEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-pcli-hostmaint-alarms:1.0
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-pcli-hostmaint-alarms:1.2
           envFrom:
             - secretRef:
                 name: hostmaint-secret
@@ -30,10 +30,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/event
-      # Replace this subject with the event you need to trigger on
-      # Then, edit send-cloudevent-test.ps1 and send-cloudevent-test.sh in the /test folder
-      subject: ExitMaintenanceModeEvent
+      type: com.vmware.vsphere.ExitMaintenanceModeEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1
@@ -50,10 +47,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/event
-      # Replace this subject with the event you need to trigger on
-      # Then, edit send-cloudevent-test.ps1 and send-cloudevent-test.sh in the /test folder
-      subject: EnteredMaintenanceModeEvent
+      type: com.vmware.vsphere.EnteredMaintenanceModeEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

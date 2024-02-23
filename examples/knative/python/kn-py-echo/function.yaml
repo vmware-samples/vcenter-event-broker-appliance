@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-py-echo:1.2
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-py-echo:1.2
 ---
 apiVersion: eventing.knative.dev/v1
 kind: Trigger
@@ -24,8 +24,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/event
-      subject: VmPoweredOffEvent
+      type: com.vmware.vsphere.VmPoweredOffEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

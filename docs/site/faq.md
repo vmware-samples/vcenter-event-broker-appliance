@@ -10,30 +10,30 @@ faqs:
   items:
   - Q: Can I connect to more than one vCenter per Appliance deployment?
     A: >
-        No. The Appliance is currently designed to support one vCenter as the event source. Customers that are familiar with deploying the components on Kubernetes can deploy multiple instances of the VMware Event Router container.
+        No. During the deployment of the VMware Event Broker Appliance to vSphere, only one vSphere source and one Horizon source can be configured at a time.
 
-        > **Note:** It is possible though to run **multiple instances** of the event router with different configurations to address multi-vCenter scenarios.
+        > **Note:** It is possible though to run multiple instances of a source (e.g. `VSphereSource`) with different configurations to address multi-vCenter scenarios. This decision was made for scalability and resource/tenancy isolation purposes.
   - Q: Can the default TLS certificates that are being used on the Appliance be updated?
     A: Yes! Follow the steps provided [here](/kb/advanced-certificates).
   - Q: What happens if vCenter Server and VMware Event Broker connectivity is lost?
     A: >
-        VMware [Event Router](https://vmweventbroker.io/kb/event-router) streams vCenter events as they get generated and being stateless, does not persist any event information. To provide a certain level of reliability, the following Event Delivery Guarantees exists: <br/>
-        - At-least-once event delivery semantics for the vCenter event provider by checkpointing the event stream into a file. In case of disconnection, the Event Router will replay all vCenter events of the last 10 minutes (10m reiteration) after a successful reconnection. <br/>
-        - At-least-once event delivery semantics are not guaranteed if the event router crashes within seconds right after startup and having received *n* events but before creating the first valid checkpoint (current checkpoint interval is 5s). <br/>
+        A configured VMware [Tanzu Source](https://vmweventbroker.io/kb/tanzu-sources) streams vCenter events as they get generated and being stateless, does not persist any event information. To provide a certain level of reliability, the following Event Delivery Guarantees exists: <br/>
+        - **At-least-once event delivery** semantics for the vCenter event provider by checkpointing the event stream into a file. In case of disconnection, the Event Router will replay all vCenter events of the last 5 minutes (5m reiteration) after a successful reconnection. <br/>
+        - **At-least-once event delivery** semantics are not guaranteed if the source-adapter (pod) crashes within seconds right after startup and having received *n* events but before creating the first valid checkpoint (current checkpoint interval is 10s). <br/>
   - Q: How long does it take for the functions to be invoked upon an event being generated?
     A: Instantaneous to a few seconds! The function execution itself is not considered in this answer since that is dependent on the logic that is being implemented.
   - Q: Can I setup the VMware Event Broker Appliance components on Kubernetes?
-    A: Yes! Follow the steps provided [here](/kb/event-router#deployment).
+    A: Yes! Follow the steps provided [here](/kb/tanzu-sources#installation-tanzu-sources-for-knative).
   - Q: Can I use a private registry like e.g. [Harbor](https://goharbor.io/) to have a source of truth for my functions (images)?
     A: Yes! Follow the steps provided [here](https://vmweventbroker.io/kb/private-registry).
   - Q: How can I monitor the Appliance, the Kubernetes components as well as the functions (pods) in terms of utilization, performance and state?
-    A: vRealize Operations Manager provides these capabilities as described [here](https://rguske.github.io/post/monitoring-the-vmware-event-broker-appliance-with-vrealize-operations-manager/).
+    A: VMware Aria Operations provides these capabilities as described [here](https://docs.vmware.com/en/VMware-vRealize-Operations-Management-Pack-for-Kubernetes/1.8/management-pack-for-kubernetes/GUID-4ED07321-A5C9-46D6-8EB0-2661D853C0E9.html).
 - title: Common Questions - Functions
   id: function
   items:
   - Q: How do I obtain the Events in the function?
     A: >
-        Events are made available as stdin argument for the language that you are writing the function on. For example, <br/>
+        Events are made available as `stdin` argument for the language that you are writing the function on. For example, <br/>
         - In Powershell the event is made available using the `$args` variable as shown here `$json = $args | ConvertFrom-Json` <br/>
         - In Python the event is made available with the `req` variable as shown here `cevent = json.loads(req)`
   - Q: How do I obtain the config file within the function?
@@ -73,6 +73,5 @@ Find answers to the frequently asked questions about VMware Event Broker Applian
 - Explore our [documentation](/kb)
 - Feel free to reach out
   - Email us at [dl-veba@vmware.com](mailto:dl-veba@vmware.com){:target="_blank"}
-  - Join us on slack [#vcenter-event-broker-appliance](https://vmwarecode.slack.com/archives/CQLT9B5AA){:target="_blank"} on vmwarecode.slack.com
   - Tweet at us [@VMWEventBroker](https://twitter.com/VMWEventBroker){:target="_blank"}
   - Explore our Github repository [here](https://github.com/vmware-samples/vcenter-event-broker-appliance){:target="_blank"}

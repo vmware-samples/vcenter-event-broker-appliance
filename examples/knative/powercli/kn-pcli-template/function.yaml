@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-pcli-#REPLACE-FN-NAME#:1.0
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-pcli-#REPLACE-FN-NAME#:1.0
           envFrom:
             - secretRef:
                 name: vds-secret
@@ -30,10 +30,7 @@ spec:
   broker: default
   filter:
     attributes:
-      type: com.vmware.event.router/event
-      # Replace this subject with the event you need to trigger on
-      # Then, edit send-cloudevent-test.ps1 and send-cloudevent-test.sh in the /test folder
-      subject: DvsReconfiguredEvent
+      type: com.vmware.vsphere.DvsReconfiguredEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

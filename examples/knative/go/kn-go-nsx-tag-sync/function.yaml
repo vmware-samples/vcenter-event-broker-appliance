@@ -15,7 +15,7 @@ spec:
       # greater than 1 FIFO order is not respected
       containerConcurrency: 1
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-go-nsx-tag-sync:1.1
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-go-nsx-tag-sync:1.1
           imagePullPolicy: IfNotPresent
           env:
             - name: VCENTER_URL
@@ -60,7 +60,7 @@ spec:
   broker: default
   filter:
     attributes:
-      subject: com.vmware.cis.tagging.attach
+      type: com.vmware.vsphere.com.vmware.cis.tagging.attach.v0
   subscriber:
     ref:
       apiVersion: v1
@@ -80,7 +80,7 @@ spec:
   broker: default
   filter:
     attributes:
-      subject: com.vmware.cis.tagging.detach
+      type: com.vmware.vsphere.com.vmware.cis.tagging.detach.v0
   subscriber:
     ref:
       apiVersion: v1

@@ -2,9 +2,9 @@
   "specversion": "1.0",
   "id": "42516969-218a-406f-9ccc-db387befc4bf",
   "source": "https://vcsa.local/sdk",
-  "type": "com.vmware.event.router/event",
+  "eventclass": "event",
+  "type": "com.vmware.vsphere.DrsVmPoweredOnEvent.v0",
   "datacontenttype": "application/json",
-  "subject": "DrsVmPoweredOnEvent",
   "time": "2021-05-04T07:33:33.773581268Z",
   "knativearrivaltime": "2021-05-04T07:33:33.772937393Z",
   "data": {

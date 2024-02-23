@@ -13,7 +13,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: us.gcr.io/daisy-284300/veba/kn-go-preemption:1.1
+        - image: ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-go-preemption:1.1
           env:
             - name: TEMPORAL_URL
               value: "FILL_ME_IN"
@@ -39,7 +39,7 @@ spec:
   broker: default
   filter:
     attributes:
-      subject: AlarmStatusChangedEvent
+      type: com.vmware.vsphere.AlarmStatusChangedEvent.v0
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1

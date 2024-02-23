@@ -29,30 +29,31 @@ jobs:
     timeout-minutes: 20
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@4d34df0c2316fe8122ab82dc22947d607c0c91f9
+        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491
         with:
           go-version: ${{ matrix.go-version }}
+          cache-dependency-path: vmware-event-router/go.sum
         id: go
         
-      - name: Check out code
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
-
       - name: GoReleaser Snapshot
-        uses: goreleaser/goreleaser-action@f82d6c1c344bcacabba2c841718984797f664a6b
+        uses: goreleaser/goreleaser-action@7ec5c2b0c6cdda6e8bbb49444bc797dd33d74dd8
         with:
           version: latest
-          args: release --rm-dist --snapshot
+          args: release --clean --snapshot
           workdir: vmware-event-router
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Archive run artifacts
-        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3
         with:
           name: dist
           path: |
-            vmware-event-router/dist/router_Linux_*.tar.gz
+            vmware-event-router/dist/router_linux_*.tar.gz
             vmware-event-router/dist/checksums.txt
           retention-days: 1
 
@@ -65,22 +66,21 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     timeout-minutes: 20
-    env:
-      KO_DOCKER_REPO: us.gcr.io/daisy-284300/veba # .../router@sha256:
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        
       - name: Setup ko
-        uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.6
+        uses: ko-build/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa
 
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@4d34df0c2316fe8122ab82dc22947d607c0c91f9
+        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491
         with:
           go-version: ${{ matrix.go-version }}
+          cache-dependency-path: vmware-event-router/go.sum
         id: go
         
-      - name: Check out code
-        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
-
       - name: Get short COMMIT and TAG
         run: |
           echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
@@ -92,7 +92,7 @@ jobs:
           ko resolve --platform=linux/arm64,linux/amd64 --push=false --tags ${KO_TAG},${KO_COMMIT},latest -BRf deploy/event-router-k8s.yaml > release.yaml
 
       - name: Archive run artifacts
-        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3
         with:
           name: release
           path: |

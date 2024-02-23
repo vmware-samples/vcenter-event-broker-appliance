@@ -14,8 +14,9 @@ source "vmware-iso" "veba" {
   disk_additional_size = ["25600"]
   disk_size            = "25600"
   disk_type_id         = "thin"
+  disk_adapter_type    = "pvscsi"
   format               = "ovf"
-  guest_os_type        = "Other"
+  guest_os_type        = "vmware-photon-64"
   headless             = false
   http_directory       = "http"
   insecure_connection  = true
@@ -32,7 +33,7 @@ source "vmware-iso" "veba" {
   ssh_password         = "${var.guest_password}"
   ssh_port             = 22
   ssh_username         = "${var.guest_username}"
-  version              = "13"
+  version              = "17"
   vm_name              = "${var.vm_name}"
   cpus                 = "${var.numvcpus}"
   memory               = "${var.ramsize}"
@@ -114,13 +115,13 @@ build {
   }
 
   provisioner "file" {
-    destination = "/root/setup/setup-06-event-processor.sh"
-    source      = "files/setup-06-event-processor.sh"
+    destination = "/root/setup/setup-06-vsphere-sources.sh"
+    source      = "files/setup-06-vsphere-sources.sh"
   }
 
   provisioner "file" {
-    destination = "/root/setup/setup-07-event-router.sh"
-    source      = "files/setup-07-event-router.sh"
+    destination = "/root/setup/setup-07-event-router-webhook.sh"
+    source      = "files/setup-07-event-router-webhook.sh"
   }
 
   provisioner "file" {

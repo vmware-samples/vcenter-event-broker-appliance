@@ -4,7 +4,11 @@
 
 set -euo pipefail
 
-# Sample Shell Script to test deployment of VEBA w/Knative Processor
+# Sample Shell Script to test deployment of VEBA w/Knative Processor with the following:
+#    vSphere Sources         ✔️
+#    Horizon Sources         x
+#    vSphere VEBA UI Plugin  ✔️
+#    Webhook Processor       x
 
 # To run this on Windows, you can use a terminal like Git BASH or WSL Ubuntu
 # OVFTOOL_BIN_PATH="/C/Program Files/VMware/VMware OVF Tool/ovftool.exe"
@@ -28,6 +32,8 @@ VEBA_DNS_DOMAIN="primp-industries.local"
 VEBA_NTP="pool.ntp.org"
 VEBA_OS_PASSWORD='VMware1!'
 VEBA_ENABLE_SSH="True"
+VEBA_ENDPOINT_USERNAME="admin"
+VEBA_ENDPOINT_PASSWORD="VMware1!"
 VEBA_NETWORK="VM Network"
 VEBA_DATASTORE="sm-vsanDatastore"
 VEBA_DEBUG="True"
@@ -42,6 +48,7 @@ VEBA_HTTPS_PROXY=""
 VEBA_PROXY_USERNAME=""
 VEBA_PROXY_PASSWORD=""
 VEBA_NOPROXY=""
+VEBA_TANZU_SOURCES_DEBUG="False"
 
 ### DO NOT EDIT BEYOND HERE ###
 
@@ -68,6 +75,8 @@ VEBA_NOPROXY=""
     --prop:guestinfo.no_proxy=${VEBA_NOPROXY} \
     --prop:guestinfo.root_password=${VEBA_OS_PASSWORD} \
     --prop:guestinfo.enable_ssh=${VEBA_ENABLE_SSH} \
+    --prop:guestinfo.endpoint_username=${VEBA_ENDPOINT_USERNAME} \
+    --prop:guestinfo.endpoint_password=${VEBA_ENDPOINT_PASSWORD} \
     --prop:guestinfo.vcenter_server=${VEBA_VCENTER_SERVER} \
     --prop:guestinfo.vcenter_username=${VEBA_VCENTER_USERNAME} \
     --prop:guestinfo.vcenter_password=${VEBA_VCENTER_PASSWORD} \
@@ -75,5 +84,6 @@ VEBA_NOPROXY=""
     --prop:guestinfo.vcenter_veba_ui_password=${VEBA_UI_PASSWORD} \
     --prop:guestinfo.vcenter_disable_tls_verification=${VEBA_VCENTER_DISABLE_TLS} \
     --prop:guestinfo.debug=${VEBA_DEBUG} \
+    --prop:guestinfo.tanzu_sources_debug=${VEBA_TANZU_SOURCES_DEBUG} \
     "${VEBA_OVA}" \
     "vi://${DEPLOYMENT_TARGET_USERNAME}:${DEPLOYMENT_TARGET_PASSWORD}@${DEPLOYMENT_TARGET_ADDRESS}/${DEPLOYMENT_TARGET_DATACENTER}/host/${DEPLOYMNET_TARGET_CLUSTER}"

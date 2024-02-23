@@ -4,8 +4,7 @@ $headers = @{
     "ce-specversion" = "1.0";
     "ce-id" = "d70079f9-fddd-4b7f-aa76-1193f28b0611";
     "ce-source" = "https://vcenter.local/sdk";
-    "ce-type" = "com.vmware.event.router/event";
-    "ce-subject" = "VmRemovedEvent";
+    "ce-type" = "com.vmware.vsphere.VmRemovedEvent.v0";
 }
 
 $body = Get-Content -Raw -Path "./test-payload.json"
