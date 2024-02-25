@@ -1,4 +1,152 @@
 
+<a name="v0.8.0"></a>
+## [Release v0.8.0](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.7.5...v0.8.0)
+
+> Release Date: 2024-02-25
+
+### 🐞 Fix
+
+- [a7bf8ff]	Update /etc/veba-release to include Knative processor entry (#1172) 
+- [9ceb6f0]	Update Tag Attach/Detach func to type filter
+- [db13d7e]	Default to JSON payload encoding for Tanzu Sources
+- [437dede]	Use correct FROM image in PowerCLI template (#1106) 
+- [4a28e07]	Replace Containerd config with pause container from VEBA BOM (#1085) 
+- [cc3cbd4]	Ensure all VEBA endpoints have common auth (#1078) 
+- [0620f79]	workflows
+- [6d07374]	Update PowerShell base image to use Microsoft container image (#1067) 
+
+### 💫 Feature
+
+- [e483c7e]	Re-order Knative deployment based on Knative E2E testing (#1169) 
+- [7df53d6]	Google Chat Notification function
+- [504b6cf]	Update examples for Tanzu Sources for Knative (#1073) 
+- [b4d6f40]	Integrate Tanzu Sources (vSphere/Horizon) for Knative
+- [1797894]	Update examples with latest PS/PCLI images
+- [bdfa9ff]	Update PowerCLI base image to latest 13.1
+
+### 📃 Documentation
+
+- [70f2f45]	missing closing ``` Signed-off-by: Klaus Mueller <klml[@muenchen](https://github.com/muenchen).de>
+
+### 🧹 Chore
+
+- [db23435]	Cleanup unused GH workflows (#1102) 
+- [89612bb]	raise goconst threshold
+- [8c386b4]	go mod tidy
+
+### ⚠️ BREAKING
+
+### 📖 Commits
+
+- [d6e73bf]	Bump version to v0.8.0 for release
+- [c66afd3]	Bump version to v0.8.0 for release
+- [8751425]	Bump version to release-0.8.0
+- [db23435]	chore: Cleanup unused GH workflows (#1102)
+- [a7bf8ff]	fix: Update /etc/veba-release to include Knative processor entry (#1172)
+- [e483c7e]	feat: Re-order Knative deployment based on Knative E2E testing (#1169)
+- [5f450ca]	added new wait condition to setup-05-knative.sh (#1167)
+- [cf3bda3]	updated kn-vsphere binary download (#1165)
+- [c11b5df]	update all veba core-components to a higher version (#1158)
+- [647b710]	chore(deps): Bump golangci/golangci-lint-action from 3.7.0 to 3.7.1
+- [0cb75fd]	chore(deps): Bump actions/upload-artifact from 4.3.0 to 4.3.1
+- [89f0866]	fixed wrong md formatting in readme (#1160)
+- [9c0ca2d]	chore(deps): Bump peter-evans/create-pull-request from 5.0.2 to 6.0.0
+- [a30b5a1]	update readme file according to veba v0.8 changes (#1133)
+- [f31d404]	chore(deps): Bump peter-evans/create-or-update-comment
+- [d58fdf2]	add re-registration veba-ui plugin guidance to docs (#1136)
+- [51a504a]	major updates on website and documentation for v0.8 (#1074) (#1108) (#1132)
+- [e3b7a78]	chore(deps): Bump actions/upload-artifact from 4.2.0 to 4.3.0
+- [9ceb6f0]	fix: Update Tag Attach/Detach func to type filter
+- [db13d7e]	fix: Default to JSON payload encoding for Tanzu Sources
+- [7df53d6]	feat: Google Chat Notification function
+- [b502c31]	chore(deps): Bump actions/upload-artifact from 4.1.0 to 4.2.0
+- [cc4c68e]	chore(deps): Bump actions/upload-artifact from 4.0.0 to 4.1.0
+- [21644e4]	chore(deps): Bump jinja2 in /examples/knative/python/kn-py-vro
+- [cb6b0a6]	chore(deps): Bump jinja2 in /examples/knative/python/kn-py-vm-attr
+- [f58ee67]	chore(deps): Bump jinja2 in /examples/knative/python/kn-py-echo
+- [789a034]	chore(deps): Bump jinja2 in /examples/knative/python/kn-py-slack
+- [618d01b]	chore(deps): Bump actions/upload-artifact from 3.1.3 to 4.0.0
+- [fd43d79]	chore(deps): Bump github/codeql-action from 2 to 3
+- [e343399]	chore(deps): Bump chuhlomin/render-template from 1.8 to 1.9
+- [b360cd8]	chore(deps): Bump actions/stale from 8.0.0 to 9.0.0
+- [30ce2a4]	chore(deps): Bump actions/setup-go from 4.1.0 to 5.0.0
+- [8fb4235]	chore(deps): Bump pip in /examples/knative/python/kn-py-vm-attr
+- [4de143d]	chore(deps): Bump pip in /examples/knative/python/kn-py-echo
+- [62872c0]	chore(deps): Bump pip in /examples/knative/python/kn-py-slack
+- [a213acc]	chore(deps): Bump pip in /examples/knative/python/kn-py-vro
+- [89612bb]	chore: raise goconst threshold
+- [000737d]	tests: remove openfaas integration tests
+- [8c386b4]	chore: go mod tidy
+- [5cf5520]	chore(deps): Bump google.golang.org/grpc in /vmware-event-router
+- [74038e2]	chore(deps): Bump google.golang.org/grpc
+- [cf35ee5]	chore(deps): Bump werkzeug in /examples/knative/python/kn-py-vro
+- [9e90930]	chore(deps): Bump werkzeug in /examples/knative/python/kn-py-echo
+- [1d5497a]	chore(deps): Bump werkzeug in /examples/knative/python/kn-py-vm-attr
+- [c096fc4]	chore(deps): Bump werkzeug in /examples/knative/python/kn-py-slack
+- [5ceda10]	chore(deps): Bump peter-evans/create-or-update-comment
+- [e072502]	chore(deps): Bump urllib3 in /examples/knative/python/kn-py-vro
+- [d0c6ea6]	chore(deps): Bump urllib3 in /examples/knative/python/kn-py-vm-attr
+- [ae4d5ac]	chore(deps): Bump urllib3 in /examples/knative/python/kn-py-slack
+- [29f3301]	chore(deps): Bump actions/checkout from 4.1.0 to 4.1.1
+- [a8e4734]	chore(deps): Bump golang.org/x/net
+- [3240a94]	chore(deps): Bump golang.org/x/net in /examples/knative/go/kn-go-tagging
+- [1895610]	chore(deps): Bump golang.org/x/net in /vmware-event-router
+- [ae027cd]	chore(deps): Bump golang.org/x/net
+- [16201ce]	chore(deps): Bump chuhlomin/render-template from 1.7 to 1.8
+- [550d6ee]	chore(deps): Bump urllib3 in /examples/knative/python/kn-py-vro
+- [460d782]	chore(deps): Bump urllib3 in /examples/knative/python/kn-py-vm-attr
+- [c88e201]	chore(deps): Bump urllib3 in /examples/knative/python/kn-py-slack
+- [437dede]	fix: Use correct FROM image in PowerCLI template (#1106)
+- [cd46e74]	chore(deps): Bump actions/checkout from 4.0.0 to 4.1.0
+- [7949097]	chore(deps): Bump goreleaser/goreleaser-action from 4.6.0 to 5.0.0
+- [4cc2d66]	migrate router and example from gcr to ghcr
+- [5743ccd]	chore(deps): Bump goreleaser/goreleaser-action from 4.6.0 to 5.0.0
+- [65f96de]	chore(deps): Bump actions/upload-artifact from 3.1.2 to 3.1.3
+- [d94a640]	chore(deps): Bump goreleaser/goreleaser-action from 4.4.0 to 4.6.0
+- [6bcf411]	chore(deps): Bump actions/checkout from 3.6.0 to 4.0.0
+- [8ba32fc]	chore(deps): Bump gopkg.in/yaml.v3
+- [8ed6765]	chore(deps): Bump actions/checkout from 3.5.3 to 3.6.0
+- [d389531]	chore(deps): Bump golangci/golangci-lint-action from 3.6.0 to 3.7.0
+- [b95e6df]	chore(deps): Bump goreleaser/goreleaser-action from 4.3.0 to 4.4.0
+- [260ab8e]	chore(deps): Bump actions/setup-go from 4.0.1 to 4.1.0
+- [4a28e07]	fix: Replace Containerd config with pause container from VEBA BOM (#1085)
+- [504b6cf]	feat: Update examples for Tanzu Sources for Knative (#1073)
+- [cc3cbd4]	fix: Ensure all VEBA endpoints have common auth (#1078)
+- [b11959b]	chore(deps): Bump certifi in /examples/knative/python/kn-py-vro
+- [7357ec4]	chore(deps): Bump certifi in /examples/knative/python/kn-py-vm-attr
+- [f969796]	chore(deps): Bump certifi in /examples/knative/python/kn-py-slack
+- [b4d6f40]	feat: Integrate Tanzu Sources (vSphere/Horizon) for Knative
+- [0a2abca]	chore(deps): Bump google.golang.org/grpc
+- [cb0ddcd]	ci: disable depguard linter
+- [0620f79]	fix: workflows
+- [1797894]	feat: Update examples with latest PS/PCLI images
+- [bdfa9ff]	feat: Update PowerCLI base image to latest 13.1
+- [6d07374]	fix: Update PowerShell base image to use Microsoft container image (#1067)
+- [91b859d]	chore(deps): Bump peter-evans/create-pull-request from 5.0.1 to 5.0.2
+- [814a2ff]	chore(deps): Bump goreleaser/goreleaser-action from 4.2.0 to 4.3.0
+- [6133d96]	chore(deps): Bump golangci/golangci-lint-action from 3.5.0 to 3.6.0
+- [946a57a]	chore(deps): Bump actions/checkout from 3.5.2 to 3.5.3
+- [c8c4001]	chore(deps): Bump peter-evans/create-or-update-comment
+- [96241b0]	chore(deps): Bump golangci/golangci-lint-action from 3.4.0 to 3.5.0
+- [42873cd]	chore(deps): Bump requests in /examples/knative/python/kn-py-vm-attr
+- [356ada8]	chore(deps): Bump requests in /examples/knative/python/kn-py-slack
+- [248a8ea]	chore(deps): Bump requests in /examples/knative/python/kn-py-vro
+- [70f2f45]	docs: missing closing ``` Signed-off-by: Klaus Mueller <klml[@muenchen](https://github.com/muenchen).de>
+- [afea64d]	chore(deps): Bump actions/setup-go from 4.0.0 to 4.0.1
+- [51089cc]	chore(deps): Bump chuhlomin/render-template from 1.6 to 1.7
+- [e997d5f]	chore(deps): Bump google-github-actions/setup-gcloud from 1.1.0 to 1.1.1
+- [d79182a]	chore(deps): Bump google-github-actions/auth from 1.1.0 to 1.1.1
+- [4764102]	chore(deps): Bump peter-evans/create-pull-request from 5.0.0 to 5.0.1
+- [ea9f21e]	chore(deps): Bump peter-evans/create-or-update-comment
+- [4407d78]	chore(deps): Bump flask in /examples/knative/python/kn-py-slack
+- [e44a683]	chore(deps): Bump flask in /examples/knative/python/kn-py-vm-attr
+- [9600c32]	chore(deps): Bump flask in /examples/knative/python/kn-py-vro
+- [9f63b45]	chore(deps): Bump flask in /examples/knative/python/kn-py-echo
+- [14af645]	Update WIP action to v2
+- [15f0c82]	chore(deps): Bump google-github-actions/auth from 1.0.0 to 1.1.0
+- [4b41b14]	chore(deps): Bump actions/checkout from 3.5.1 to 3.5.2
+- [cd4b011]	chore(deps): Bump actions/checkout from 3.5.0 to 3.5.1
+
 <a name="v0.7.5"></a>
 ## [Release v0.7.5](https://github.com/vmware-samples/vcenter-event-broker-appliance/compare/v0.7.4...v0.7.5)
 
