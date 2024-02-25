@@ -35,4 +35,3 @@ release:
     owner: vmware-samples
     name: vcenter-event-broker-appliance
   target_commitish: "{{ .Commit }}"
-  name_template: "router_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
