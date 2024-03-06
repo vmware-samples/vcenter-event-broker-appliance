@@ -3,7 +3,7 @@ module github.com/vmware-samples/vcenter-event-broker-appliance/examples/knative
 go 1.18
 
 require (
-	github.com/cloudevents/sdk-go/v2 v2.13.0
+	github.com/cloudevents/sdk-go/v2 v2.15.2
 	github.com/embano1/vsphere v0.2.5
 	github.com/goharbor/harbor/src v0.0.0-20230324105651-7da7133bc2c8
 	github.com/google/uuid v1.3.0
