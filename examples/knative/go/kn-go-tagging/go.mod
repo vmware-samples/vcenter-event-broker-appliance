@@ -3,7 +3,7 @@ module github.com/vmware-samples/vcenter-event-broker-appliance/examples/knative
 go 1.16
 
 require (
-	github.com/cloudevents/sdk-go/v2 v2.13.0
+	github.com/cloudevents/sdk-go/v2 v2.15.2
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/vmware/govmomi v0.30.4
 	go.uber.org/atomic v1.10.0 // indirect
