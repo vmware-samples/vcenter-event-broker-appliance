@@ -33,7 +33,7 @@ jobs:
           cache-dependency-path: vmware-event-router/go.sum
         id: go
 
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633
 
       - name: Setup ko
         uses: ko-build/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa
