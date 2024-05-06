@@ -33,7 +33,7 @@ jobs:
         id: go
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@9d1e0624a798bb64f6c3cea93db47765312263dc
+        uses: golangci/golangci-lint-action@38e1018663fa5173f3968ea0777460d3de38f256
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
           version: latest
