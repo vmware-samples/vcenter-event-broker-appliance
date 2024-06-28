@@ -176,7 +176,7 @@ a minimal `Dockerfile` for PowerCLI:
 
 ```bash
 cat << EOF > Dockerfile
-FROM projects.registry.vmware.com/veba/ce-pcli-base:latest
+FROM ghcr.io/vmware-samples/vcenter-event-broker-appliance/ce-pcli-base:latest
 COPY handler.ps1 handler.ps1
 CMD ["pwsh","./server.ps1"]
 EOF

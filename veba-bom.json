@@ -12,18 +12,18 @@
     "veba-ui": {
         "gitRepoTag": "v0.0.0",
         "containers": [{
-            "name": "projects.registry.vmware.com/veba/veba-ui",
+            "name": "ghcr.io/vmware-samples/vcenter-event-broker-appliance/veba-ui",
             "version": "c2eecec0"
         }]
     },
     "antrea": {
         "gitRepoTag": "v1.15.0",
         "containers": [{
-                "name": "projects.registry.vmware.com/antrea/antrea-agent-ubuntu",
+                "name": "antrea/antrea-agent-ubuntu",
                 "version": "v1.15.0"
             },
             {
-                "name": "projects.registry.vmware.com/antrea/antrea-controller-ubuntu",
+                "name": "antrea/antrea-controller-ubuntu",
                 "version": "v1.15.0"
             }
         ]
@@ -154,7 +154,7 @@
     "knative-function": {
         "gitRepoTag": "latest",
             "containers": [{
-                "name": "projects.registry.vmware.com/veba/kn-echo",
+                "name": "ghcr.io/vmware-samples/vcenter-event-broker-appliance/kn-echo",
                 "version": "latest"
             }
         ]
@@ -261,7 +261,7 @@
     "tinywww": {
         "gitRepoTag": "master",
         "containers": [{
-            "name": "projects.registry.vmware.com/veba/tinywww",
+            "name": "ghcr.io/vmware-samples/vcenter-event-broker-appliance/tinywww",
             "version": "latest"
         }]
     },
