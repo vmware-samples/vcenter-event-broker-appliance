@@ -18,5 +18,5 @@ requests==2.32.0
   certifi==2023.7.22
   charset-normalizer==2.0.12
   idna==3.7
-  urllib3==1.26.18
+  urllib3==1.26.19
 setuptools==65.5.1
