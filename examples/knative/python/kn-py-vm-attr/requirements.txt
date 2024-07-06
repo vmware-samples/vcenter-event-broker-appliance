@@ -14,7 +14,7 @@ pip==23.3
 python-dotenv==0.17.1
 pyvmomi==7.0.2
   requests==2.32.2
-    certifi==2023.7.22
+    certifi==2024.7.4
     charset-normalizer==2.0.12
     idna==3.7
     urllib3==1.26.18
