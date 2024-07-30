@@ -19,4 +19,4 @@ requests==2.32.0
   charset-normalizer==2.0.12
   idna==3.7
   urllib3==1.26.19
-setuptools==65.5.1
+setuptools==70.0.0
