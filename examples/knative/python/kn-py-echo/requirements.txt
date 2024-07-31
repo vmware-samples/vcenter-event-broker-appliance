@@ -11,4 +11,4 @@ Flask==2.3.2
     MarkupSafe==2.1.1
   Werkzeug==3.0.3
 pip==23.3
-setuptools==65.5.1
+setuptools==70.0.0
