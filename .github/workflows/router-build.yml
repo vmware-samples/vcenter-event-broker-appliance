@@ -49,7 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Archive run artifacts
-        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b
+        uses: actions/upload-artifact@89ef406dd8d7e03cfd12d9e0a4a378f454709029
         with:
           name: dist
           path: |
@@ -92,7 +92,7 @@ jobs:
           ko resolve --platform=linux/arm64,linux/amd64 --push=false --tags ${KO_TAG},${KO_COMMIT},latest -BRf deploy/event-router-k8s.yaml > release.yaml
 
       - name: Archive run artifacts
-        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b
+        uses: actions/upload-artifact@89ef406dd8d7e03cfd12d9e0a4a378f454709029
         with:
           name: release
           path: |
