@@ -38,6 +38,9 @@ kubectl apply -f /root/download/rabbitmq-broker.yaml
 kubectl wait --for=condition=available deploy/rabbitmq-broker-controller --timeout=${KUBECTL_WAIT} -n knative-eventing
 kubectl wait --for=condition=available deploy/rabbitmq-broker-webhook --timeout=${KUBECTL_WAIT} -n knative-eventing
 
+### Sleep command to workaround issue #1176
+sleep 15
+
 echo -e "\e[92mDeploying RabbitMQ Cluster ..." > /dev/console
 RABBITMQ_CONFIG_TEMPLATE=/root/config/knative/templates/rabbit-template.yaml
 RABBITMQ_CONFIG=/root/config/knative/rabbit.yaml
