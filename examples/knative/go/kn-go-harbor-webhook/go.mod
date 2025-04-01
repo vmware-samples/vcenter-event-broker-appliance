@@ -14,7 +14,7 @@ require (
 )
 
 require (
-	github.com/beego/beego/v2 v2.3.4 // indirect
+	github.com/beego/beego/v2 v2.3.6 // indirect
 	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
