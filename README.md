@@ -1,3 +1,21 @@
+<!-- markdownlint-disable first-line-h1 no-inline-html -->
+
+> [!IMPORTANT]
+>
+> **This project has been archived.**
+>
+> We sincerely thank our incredible community for your support, contributions,
+> and feedback throughout the VMware Event Broker Appliance journey. Your
+> passion and engagement made this project possible.
+>
+> As the project is now archived, there will be no further updates or active
+> maintenance. If you’d like to see similar event-driven solutions in the
+> future, please share your feedback for an event bus for VMware Cloud
+> Foundation by commenting and voting on
+> [VCF-I-996](https://vcf.ideas.aha.io/ideas/VCF-I-996).
+>
+> Thank you for being an essential part of our story!
+
 # VMware Event Broker Appliance
 
 [![Photon OS
@@ -22,7 +40,6 @@ Follow](https://img.shields.io/twitter/follow/vmw_rguske?style=social)](https://
   - [Getting Started](#getting-started)
   - [Overview](#overview)
   - [Architecture](#architecture)
-  - [Getting in touch](#getting-in-touch)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -58,17 +75,21 @@ Lambda.
 Learn more about the VMware Event Broker Appliance
 [here](https://vmweventbroker.io).
 
-Additional resources can be found [here](https://vmweventbroker.io/resources) and some
-quick references are highlighted below.
+Additional resources can be found [here](https://vmweventbroker.io/resources)
+and some quick references are highlighted below.
  - Watch [Michael Gasch](https://github.com/embano1) and [William
-   Lam](https://github.com/lamw/) present a session at VMware {Code} called [VEBA Revolutions - Unleashing the Power of Event-Driven Automation](https://youtu.be/jwgJpZM68mA?si=Vyafppqgebg1vhqd).
- - Listen to [William Lam](https://github.com/lamw/) talking about [Event-Driven Automation with Project VEBA](https://open.spotify.com/episode/3xLuJFOB4BSY749gsGn88p?si=ox8jT4mWSrS5qp5V154sJQ) in Episode #006 of the Unexplored Territory podcast.
- - Watch [Robert Guske](https://rguske.github.io/) present a session at ContainerDays 2023 called [Embark on a Transformative Odyssey - Event-Driven Automation Unveiled through Knative](https://youtu.be/J_3-ILnPbQQ?si=rutOJV_5xxl7vSmA).
- - Watch [Michael Gasch](https://github.com/embano1) and [Steven Wong](https://twitter.com/cantbewong) present a session at KubeCon EU 2022 called [Optimize Kubernetes on vSphere with Event-Driven Automation](https://youtu.be/NJYBwJemdoY?si=ploMJ2tnWgZLRqbE).
-
-<!-- ## Users and Use Cases
-
-Hear from the community on how they are taking advantage of the vCenter Server Appliance [here](https://vmweventbroker.io/casestudy-wip.md) -->
+   Lam](https://github.com/lamw/) present a session at VMware {Code} called
+   [VEBA Revolutions - Unleashing the Power of Event-Driven Automation](https://youtu.be/jwgJpZM68mA?si=Vyafppqgebg1vhqd).
+ - Listen to [William Lam](https://github.com/lamw/) talking about
+   [Event-Driven Automation with Project VEBA](https://open.spotify.com/episode/3xLuJFOB4BSY749gsGn88p?si=ox8jT4mWSrS5qp5V154sJQ)
+   in Episode #006 of the Unexplored Territory podcast.
+ - Watch [Robert Guske](https://rguske.github.io/) present a session at
+   ContainerDays 2023 called
+   [Embark on a Transformative Odyssey - Event-Driven Automation Unveiled through Knative](https://youtu.be/J_3-ILnPbQQ?si=rutOJV_5xxl7vSmA).
+ - Watch [Michael Gasch](https://github.com/embano1) and
+   [Steven Wong](https://twitter.com/cantbewong) present a session at KubeCon EU
+   2022 called
+   [Optimize Kubernetes on vSphere with Event-Driven Automation](https://youtu.be/NJYBwJemdoY?si=ploMJ2tnWgZLRqbE).
 
 ## Architecture
 
@@ -98,12 +119,6 @@ appliance:
 For more details about the individual components and how they are used in the
 VMware Event Broker Appliance, please see the [Architecture
 page](https://vmweventbroker.io/kb/architecture).
-
-## Getting in touch
-
-Feel free to reach out to [Team #VEBA](https://vmweventbroker.io/#team-veba)
-  - Email us at [dl-veba@vmware.com](mailto:dl-veba@vmware.com)
-  - Follow for updates [@VMWEventBroker](https://twitter.com/VMWEventBroker)
 
 ## Contributing
 

@@ -5,6 +5,18 @@ title: Frequently Asked Questions
 description: A compilation of frequently asked questions for VMware Event Broker Appliance
 permalink: /faq
 faqs:
+- title: Project Archival
+  id: archival
+  items:
+  - Q: Is this project no longer maintained?
+    A: >
+      This project has been archived.
+
+      We sincerely thank our incredible community for your support, contributions, and feedback throughout the VMware Event Broker Appliance journey. Your passion and engagement made this project possible.
+
+      As the project is now archived, there will be no further updates or active maintenance. If you’d like to see similar event-driven solutions in the future, please share your feedback or an event bus for VMware Cloud Foundation by commenting on [VCF-I-996](https://vcf.ideas.aha.io/ideas/VCF-I-996).
+
+      Thank you for being an essential part of our story!
 - title: Common Questions - Appliance
   id: appliance
   items:
