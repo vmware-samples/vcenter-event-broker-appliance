@@ -72,7 +72,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         
       - name: Setup ko
-        uses: ko-build/setup-ko@3aebd0597dc1e9d1a26bcfdb7cbeb19c131d3037
+        uses: ko-build/setup-ko@d006021bd0c28d1ce33a07e7943d48b079944c8d
 
       - name: Set up Go ${{ matrix.go-version }}
         uses: actions/setup-go@3041bf56c941b39c61721a86cd11f3bb1338122a

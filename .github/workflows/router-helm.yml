@@ -36,7 +36,7 @@ jobs:
           cache-dependency-path: vmware-event-router/go.sum
 
       - name: Setup ko
-        uses: ko-build/setup-ko@3aebd0597dc1e9d1a26bcfdb7cbeb19c131d3037
+        uses: ko-build/setup-ko@d006021bd0c28d1ce33a07e7943d48b079944c8d
 
       - name: Get short COMMIT and TAG (used by ko)
         run: |
