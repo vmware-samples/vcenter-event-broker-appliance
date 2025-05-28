@@ -22,14 +22,6 @@
 4.0](https://img.shields.io/badge/Photon%20OS-4.0-orange)](https://vmware.github.io/photon/)
 [![Published VMware
 Fling](https://img.shields.io/badge/VMware-Fling-green)](https://vmwa.re/flings)
-![Website](https://img.shields.io/website?label=vmweventbroker.io&url=https%3A%2F%2Fvmweventbroker.io%2F)
-
-[![Twitter
-Follow](https://img.shields.io/twitter/follow/lamw?style=social)](https://twitter.com/lamw)
-[![Twitter
-Follow](https://img.shields.io/twitter/follow/embano1?style=social)](https://twitter.com/embano1)
-[![Twitter
-Follow](https://img.shields.io/twitter/follow/vmw_rguske?style=social)](https://twitter.com/vmw_rguske)
 
 <img src="logo/veba_icon_only.png" align="right" height="320px"/>
 
@@ -43,20 +35,11 @@ Follow](https://img.shields.io/twitter/follow/vmw_rguske?style=social)](https://
   - [Contributing](#contributing)
   - [License](#license)
 
-
-## Getting Started
-
-Visit our website [vmweventbroker.io](https://vmweventbroker.io/) and explore
-our [documentation](https://vmweventbroker.io/kb) to get started quickly.
-
 ## Overview
 
-The [VMware Event Broker
-Appliance](https://vmwa.re/flings)
-Fling enables customers to unlock the hidden potential of events in their SDDC
-to easily create [event-driven
-automation](https://octo.vmware.com/vsphere-power-event-driven-automation/). The
-VMware Event Broker Appliance includes support for vCenter Server and VMware
+The VMware Event Broker Appliance Fling enables customers to unlock the hidden
+potential of events in their SDDC to easily create [event-driven automation](https://octo.vmware.com/vsphere-power-event-driven-automation/).
+The VMware Event Broker Appliance includes support for vCenter Server and VMware
 Horizon events as well as any valid `CloudEvent` through the native webhook
 event provider. Easily triggering custom or prebuilt actions to deliver powerful
 integrations within your datacenter across public cloud has never been more
@@ -71,9 +54,6 @@ for VI/Cloud Admins, SRE/Operators, Automation Engineers and 3rd Party Vendors.
 More importantly, it will enable new integration use cases and workflows to grow
 the VMware ecosystem and community, similar to what AWS has achieved with AWS
 Lambda.
-
-Learn more about the VMware Event Broker Appliance
-[here](https://vmweventbroker.io).
 
 Additional resources can be found [here](https://vmweventbroker.io/resources)
 and some quick references are highlighted below.
@@ -115,23 +95,6 @@ appliance:
 - Photon OS ([Github](https://github.com/vmware/photon))
 
 <center><div style="height:250px;"><img src="docs/kb/img/veba-architecture.png"/></div></center>
-
-For more details about the individual components and how they are used in the
-VMware Event Broker Appliance, please see the [Architecture
-page](https://vmweventbroker.io/kb/architecture).
-
-## Contributing
-
-The VMware Event Broker Appliance team welcomes contributions from the
-community.
-
-To help you get started making contributions to VMware Event Broker Appliance,
-we have collected some helpful best practices in the [Contributing
-guidelines](https://vmweventbroker.io/community#guidelines).
-
-Before submitting a pull request, please make sure that your change satisfies
-the requirements specified
-[here](https://vmweventbroker.io/community#pull-requests)
 
 ## License
 
